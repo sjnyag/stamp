@@ -1,29 +1,118 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'realm-android'
+apply plugin: 'com.github.triplet.play'
+
+final taggingPlayerVersionCode = hasProperty('version_code') ? property('version_code').toInteger() : 1
+final taggingPlayerVersionName = hasProperty('version_name') ? '0.1.0.' + property('version_name') : '0.1.0.0'
+
+final taggingPlayerKeystorePassword = hasProperty('keystore_password') ? property('keystore_password') : ''
+final taggingPlayerKeyAlias = hasProperty('key_alias') ? property('key_alias') : ''
+final taggingPlayerKeyPassword = hasProperty('key_password') ? property('key_password') : ''
+final taggingPlayerKeyFile = hasProperty('key_file') ? property('key_file') : 'ci/debug.jks'
+final taggingPlayerPlayAPIJson = hasProperty('play_api_json') ? property('play_api_json') : 'ci/play.json'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion '25.0.2'
+
     defaultConfig {
         applicationId "com.sjn.taggingplayer"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode taggingPlayerVersionCode
+        versionName taggingPlayerVersionName
+        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    lintOptions {
+        abortOnError true
+    }
+    packagingOptions {
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/MANIFEST.MF'
+    }
+    signingConfigs {
+        src {
+            storeFile file(taggingPlayerKeyFile)
+            storePassword taggingPlayerKeystorePassword
+            keyAlias taggingPlayerKeyAlias
+            keyPassword taggingPlayerKeyPassword
+        }
+    }
     buildTypes {
+        debug {
+            debuggable true
+        }
         release {
+            debuggable false
             minifyEnabled false
+            signingConfig signingConfigs.src
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    applicationVariants.all {
+        variant -> variant.resValue "string", "versionName", variant.versionName
+    }
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:25.0.1'
+    compile 'com.android.support:cardview-v7:25.0.1'
+    compile 'com.android.support:leanback-v17:25.0.1'
+    compile 'com.android.support:design:25.0.1'
+    compile 'com.android.support:mediarouter-v7:25.0.1'
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.google.android.support:wearable:2.0.0'
+    compile 'com.google.android.gms:play-services-cast-framework:10.0.1'
+    compile 'com.google.firebase:firebase-core:10.0.1'
+    compile 'com.google.firebase:firebase-crash:9.0.2'
+    compile 'com.google.code.gson:gson:2.7'
+    compile 'com.google.guava:guava:20.0'
+    compile 'com.squareup.picasso:picasso:2.3.3'
+    compile 'com.squareup.okhttp3:okhttp:3.3.1'
+    compile 'com.mikepenz:iconics-core:2.6.5@aar'
+    compile('com.mikepenz:materialdrawer:5.3.0@aar') {
+        transitive = true
+    }
+    compile('com.github.afollestad.material-dialogs:core:0.8.5.8@aar') {
+        transitive = true
+    }
+    compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
+    compile 'com.github.vajro:MaterialDesignLibrary:1.6'
+    compile 'com.anupcowkur:reservoir:2.1'
+    compile 'com.sothree.slidinguppanel:library:3.3.0'
+    compile 'net.danlew:android.joda:2.6.0'
+    compile 'me.relex:circleindicator:1.2.1@aar'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    androidTestCompile 'junit:junit:4.12'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test:rules:0.5'
+    androidTestCompile 'com.android.support:support-annotations:25.0.1'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.1.1'
-    testCompile 'junit:junit:4.12'
+    provided 'org.projectlombok:lombok:1.12.6'
+}
+
+play {
+    track = 'alpha'
+    jsonFile = file(taggingPlayerPlayAPIJson)
 }
