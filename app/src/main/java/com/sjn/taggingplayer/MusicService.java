@@ -38,6 +38,7 @@ import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.cast.framework.SessionManagerListener;
+import com.sjn.taggingplayer.model.LocalMediaSource;
 import com.sjn.taggingplayer.model.MusicProvider;
 import com.sjn.taggingplayer.playback.CastPlayback;
 import com.sjn.taggingplayer.playback.LocalPlayback;
@@ -45,10 +46,13 @@ import com.sjn.taggingplayer.playback.Playback;
 import com.sjn.taggingplayer.playback.PlaybackManager;
 import com.sjn.taggingplayer.playback.QueueManager;
 import com.sjn.taggingplayer.ui.NowPlayingActivity;
+import com.sjn.taggingplayer.ui.RequestPermissionActivity;
 import com.sjn.taggingplayer.utils.CarHelper;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.TvHelper;
 import com.sjn.taggingplayer.utils.WearHelper;
+
+import net.danlew.android.joda.JodaTimeAndroid;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -113,7 +117,7 @@ import static com.sjn.taggingplayer.utils.MediaIDHelper.MEDIA_ID_ROOT;
  * @see <a href="README.md">README.md</a> for more details.
  */
 public class MusicService extends MediaBrowserServiceCompat implements
-        PlaybackManager.PlaybackServiceCallback {
+        PlaybackManager.PlaybackServiceCallback, LocalMediaSource.PermissionRequiredCallback {
 
     private static final String TAG = LogHelper.makeLogTag(MusicService.class);
 
@@ -156,9 +160,10 @@ public class MusicService extends MediaBrowserServiceCompat implements
     @Override
     public void onCreate() {
         super.onCreate();
+        JodaTimeAndroid.init(this);
         LogHelper.d(TAG, "onCreate");
 
-        mMusicProvider = new MusicProvider();
+        mMusicProvider = new MusicProvider(new LocalMediaSource(this, this));
 
         // To make the app more responsive, fetch and cache catalog information now.
         // This can help improve the response time in the method
@@ -400,6 +405,14 @@ public class MusicService extends MediaBrowserServiceCompat implements
 
     private void unregisterCarConnectionReceiver() {
         unregisterReceiver(mCarConnectionReceiver);
+    }
+
+    @Override
+    public void onPermissionRequired() {
+        Intent intent = new Intent(this, RequestPermissionActivity.class);
+        intent.putExtra(RequestPermissionActivity.KEY_PERMISSIONS, LocalMediaSource.PERMISSIONS);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     /**

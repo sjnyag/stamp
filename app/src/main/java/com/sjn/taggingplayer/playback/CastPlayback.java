@@ -326,7 +326,7 @@ public class CastPlayback implements Playback {
         @Override
         public void onMetadataUpdated() {
             LogHelper.d(TAG, "RemoteMediaClient.onMetadataUpdated");
-            setMetadataFromRemote();
+            //setMetadataFromRemote();
         }
 
         @Override
@@ -337,11 +337,6 @@ public class CastPlayback implements Playback {
 
         @Override
         public void onSendingRemoteMediaRequest() {
-        }
-
-        @Override
-        public void onAdBreakStatusUpdated() {
-
         }
 
         @Override
