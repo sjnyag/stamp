@@ -244,7 +244,7 @@ public class QueueManager implements QueueProvider.QueueListener {
         for (MediaSessionCompat.QueueItem queueItem : mPlayingQueue) {
             queueList.add(
                     new MediaMetadataCompat.Builder()
-                            .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, queueItem.getDescription().getMediaId())
+                            .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, MediaIDHelper.extractMusicIDFromMediaID(queueItem.getDescription().getMediaId()))
                             .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, queueItem.getDescription().getDescription().toString())
                             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, queueItem.getDescription().getSubtitle().toString())
                             .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, queueItem.getDescription().getIconUri().toString())

@@ -31,7 +31,7 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import com.sjn.taggingplayer.MusicService;
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.ui.MediaBrowserProvider;
-import com.sjn.taggingplayer.ui.PlaybackControlsFragment;
+import com.sjn.taggingplayer.ui.fragment.PlaybackControlsFragment;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.NetworkHelper;
 import com.sjn.taggingplayer.utils.ResourceHelper;
@@ -75,10 +75,10 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
         super.onStart();
         LogHelper.d(TAG, "Activity onStart");
 
-        mControlsFragment = (PlaybackControlsFragment) getFragmentManager()
+        mControlsFragment = (PlaybackControlsFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_playback_controls);
         if (mControlsFragment == null) {
-            throw new IllegalStateException("Mising fragment with id 'controls'. Cannot continue.");
+            throw new IllegalStateException("Missing fragment with id 'controls'. Cannot continue.");
         }
 
         hidePlaybackControls();
@@ -108,10 +108,7 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
     protected void showPlaybackControls() {
         LogHelper.d(TAG, "showPlaybackControls");
         if (NetworkHelper.isOnline(this)) {
-            getFragmentManager().beginTransaction()
-                    .setCustomAnimations(
-                            R.animator.slide_in_from_bottom, R.animator.slide_out_to_bottom,
-                            R.animator.slide_in_from_bottom, R.animator.slide_out_to_bottom)
+            getSupportFragmentManager().beginTransaction()
                     .show(mControlsFragment)
                     .commit();
         }
@@ -119,7 +116,7 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
 
     protected void hidePlaybackControls() {
         LogHelper.d(TAG, "hidePlaybackControls");
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .hide(mControlsFragment)
                 .commit();
     }

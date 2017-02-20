@@ -33,6 +33,8 @@
     <string name="play_pause">play or pause</string>
     <string name="skip_next">skip to next</string>
     <string name="skip_prev">skip to previous</string>
+    <string name="shuffle">shuffle</string>
+    <string name="repeat">repeat</string>
     <string name="touch_to_cast">Touch to connect to a Google Cast device</string>
     <!-- Use the default receiver. To customize a styled media receiver, you can use
          the css and images under <project-root>/docs/cast_styled_receiver -->
@@ -71,4 +73,9 @@
     <string name="drawer_edit_playlist">Edit Playlist</string>
     <string name="drawer_setting">Setting</string>
     <string name="drawer_tag_mode_title">Tag Edit Mode</string>
+
+    <string name="all_song_tab_all">all</string>
+    <string name="all_song_tab_artist">artist</string>
+    <string name="all_song_tab_album">album</string>
+    <string name="all_song_tab_playlist">playlist</string>
 </resources>

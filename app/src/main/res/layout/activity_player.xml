@@ -14,53 +14,75 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<android.support.v4.widget.DrawerLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".MusicPlayerActivity">
+    tools:context=".ui.activity.MusicPlayerActivity">
 
-    <RelativeLayout
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+        android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        sothree:umanoPanelHeight="@dimen/playback_controls_albumart_size"
+        sothree:umanoShadowHeight="8dp">
 
-        <include layout="@layout/include_toolbar" android:id="@+id/toolbar_container"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/container"
+            <include
+                android:id="@+id/toolbar_container"
+                layout="@layout/include_toolbar"/>
+
+            <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/toolbar_container"/>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/dragView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/toolbar_container"
-            android:layout_above="@+id/controls_container"/>
+            android:background="#ffffff"
+            android:clickable="true"
+            android:focusable="false"
+            android:orientation="vertical">
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/controls_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            app:cardElevation="8dp">
+            <android.support.v7.widget.CardView
+                android:id="@+id/controls_container"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/playback_controls_albumart_size"
+                android:background="#ffffff"
+                app:cardElevation="8dp">
 
-            <fragment android:name="com.sjn.taggingplayer.ui.PlaybackControlsFragment"
-                android:id="@+id/fragment_playback_controls"
+                <fragment
+                    android:id="@+id/fragment_playback_controls"
+                    android:name="com.sjn.taggingplayer.ui.fragment.PlaybackControlsFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    tools:layout="@layout/fragment_playback_controls"/>
+
+            </android.support.v7.widget.CardView>
+
+            <fragment
+                android:id="@+id/fragment_full_player"
+                android:name="com.sjn.taggingplayer.ui.fragment.FullScreenPlayerFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                tools:layout="@layout/fragment_playback_controls" />
+                tools:layout="@layout/fragment_full_player"/>
 
-        </android.support.v7.widget.CardView>
+        </LinearLayout>
 
-    </RelativeLayout>
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 
-    <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        app:headerLayout="@layout/nav_header"
-        app:menu="@menu/drawer"/>
-
-</android.support.v4.widget.DrawerLayout>
+</FrameLayout>

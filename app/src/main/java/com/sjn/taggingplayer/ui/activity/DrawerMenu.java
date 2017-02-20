@@ -3,7 +3,9 @@ package com.sjn.taggingplayer.ui.activity;
 import android.support.v4.app.Fragment;
 
 import com.sjn.taggingplayer.R;
-import com.sjn.taggingplayer.ui.MediaBrowserFragment;
+import com.sjn.taggingplayer.ui.fragment.MediaBrowserFragment;
+import com.sjn.taggingplayer.ui.fragment.AllSongPagerFragment;
+import com.sjn.taggingplayer.ui.fragment.QueueFragment;
 import com.sjn.taggingplayer.utils.MediaIDHelper;
 
 import lombok.Getter;
@@ -11,7 +13,7 @@ import lombok.experimental.Accessors;
 
 @Accessors(prefix = "m")
 @Getter
-enum DrawerMenu {
+public enum DrawerMenu {
     HOME(R.id.navigation_home, null) {
         @Override
         Fragment getFragment() {
@@ -27,31 +29,31 @@ enum DrawerMenu {
     QUEUE(R.id.navigation_queue, MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE) {
         @Override
         Fragment getFragment() {
-            return new MediaBrowserFragment();
+            return new QueueFragment();
         }
     },
     TAG(R.id.navigation_tag, MediaIDHelper.MEDIA_ID_MUSICS_BY_TAG) {
         @Override
-        Fragment getFragment() {
-            return new MediaBrowserFragment();
+        MediaBrowserFragment getFragment() {
+            return getDefaultFragment(mMediaId);
         }
     },
     NEW(R.id.navigation_new, MediaIDHelper.MEDIA_ID_MUSICS_BY_NEW) {
         @Override
-        Fragment getFragment() {
-            return new MediaBrowserFragment();
+        MediaBrowserFragment getFragment() {
+            return getDefaultFragment(mMediaId);
         }
     },
     TOP_SONG(R.id.navigation_top_song, MediaIDHelper.MEDIA_ID_MUSICS_BY_TOP_SONG) {
         @Override
-        Fragment getFragment() {
-            return new MediaBrowserFragment();
+        MediaBrowserFragment getFragment() {
+            return getDefaultFragment(mMediaId);
         }
     },
     ALL(R.id.navigation_all_music, null) {
         @Override
         Fragment getFragment() {
-            return new MediaBrowserFragment();
+            return new AllSongPagerFragment();
         }
     },
     RANKING(R.id.navigation_ranking, null) {
@@ -81,6 +83,12 @@ enum DrawerMenu {
     }
 
     abstract Fragment getFragment();
+
+    private static MediaBrowserFragment getDefaultFragment(String mediaId) {
+        MediaBrowserFragment mediaBrowserFragment = new MediaBrowserFragment();
+        mediaBrowserFragment.setMediaId(mediaId);
+        return mediaBrowserFragment;
+    }
 
     public static DrawerMenu of(long menuId) {
         for (DrawerMenu drawerMenu : DrawerMenu.values()) {

@@ -68,10 +68,6 @@
         </activity>
 
         <!-- Placeholder activity for phone UI -->
-        <activity
-            android:name=".ui.activity.PlaceholderActivity"
-            android:label="@string/app_name">
-        </activity>
 
         <!-- Proxy activity that opens either the NowPlaying TV or the mobile UI, depending on
         the current environment -->
@@ -154,7 +150,7 @@
         <!-- A full screen activity showing controls and a seek bar for
              the current playing music -->
         <activity
-            android:name=".ui.activity.FullScreenPlayerActivity"
+            android:name=".ui.fragment.FullScreenPlayerFragment"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.activity.MusicPlayerActivity">

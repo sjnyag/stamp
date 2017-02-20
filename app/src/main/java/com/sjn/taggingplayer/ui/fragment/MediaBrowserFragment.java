@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sjn.taggingplayer.ui;
+package com.sjn.taggingplayer.ui.fragment;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -39,6 +39,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sjn.taggingplayer.R;
+import com.sjn.taggingplayer.ui.MediaBrowserProvider;
+import com.sjn.taggingplayer.ui.MediaItemViewHolder;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.MediaIDHelper;
 import com.sjn.taggingplayer.utils.NetworkHelper;

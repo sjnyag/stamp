@@ -52,7 +52,7 @@ public class MediaItemViewHolder {
     TextView mDescriptionView;
 
     // Returns a view for use in media item list.
-    static View setupListView(Activity activity, View convertView, ViewGroup parent,
+    public static View setupListView(Activity activity, View convertView, ViewGroup parent,
                               MediaBrowserCompat.MediaItem item) {
         if (sColorStateNotPlaying == null || sColorStatePlaying == null) {
             initializeColorStateLists(activity);
