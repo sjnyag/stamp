@@ -7,33 +7,29 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v4.media.MediaMetadataCompat;
+import android.util.SparseArray;
 
 import com.anupcowkur.reservoir.Reservoir;
 import com.anupcowkur.reservoir.ReservoirPutCallback;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.gson.reflect.TypeToken;
+import com.sjn.taggingplayer.media.source.MusicProviderSource;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import static com.sjn.taggingplayer.model.MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE;
+import static com.sjn.taggingplayer.media.source.MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE;
 
-/**
- * Created by sjnya on 2016/04/15.
- */
 public class MediaRetrieveHelper {
     private static final String TAG = LogHelper.makeLogTag(MediaRetrieveHelper.class);
-    private static final String UNKNOWN_TAG = "<unknown>";
 
     private static final String[] GENRE_PROJECTION = {
             MediaStore.Audio.Genres.NAME,
@@ -50,7 +46,8 @@ public class MediaRetrieveHelper {
             MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.ALBUM_ID,
             MediaStore.Audio.Media.DISPLAY_NAME,
-            MediaStore.Audio.Media.DATE_ADDED};
+            MediaStore.Audio.Media.DATE_MODIFIED,
+    };
 
     private static final String MUSIC_SELECTION = MediaStore.Audio.Media.IS_MUSIC + " != 0";
     private static final int DISK_CACHE_SIZE = 1024 * 1024 * 10; // 10MB
@@ -89,69 +86,50 @@ public class MediaRetrieveHelper {
         return new ArrayList<>();
     }
 
-    public static void writeCache(final List<MediaCursorContainer> list) {
-        Reservoir.putAsync(CACHE_KEY, list, new ReservoirPutCallback() {
-            @Override
-            public void onSuccess() {
-                LogHelper.i(TAG, "Write " + list.size() + "songs to cache");
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    public static void updateCache(Context context) {
-        new CacheUpdateAsyncTask(context).execute();
-    }
-
-    public static List<MediaCursorContainer> retrieve(Context context) {
-        return uniqueMerge(retrieveMediaByGenre(context), retrieveAllMedia(context));
-    }
-
-    private static List<MediaCursorContainer> retrieveAllMedia(Context context) {
-        return fetchMediaWithGenre(context, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, UNKNOWN_TAG);
-    }
-
-    private static List<MediaCursorContainer> retrieveMediaByGenre(Context context) {
+    public static List<MediaCursorContainer> retrieveAllMedia(Context context, boolean hasStoragePermission) {
         List<MediaCursorContainer> mediaList = new ArrayList<>();
-
-        Cursor cursor = context.getContentResolver().query(
-                MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI, GENRE_PROJECTION, null, null, null);
-
-        if (cursor == null) {
-            return null;
-        }
-        if (cursor.moveToFirst()) {
-            do {
-                mediaList = merge(mediaList, fetchMediaWithGenre(context, getGenreCursorUri(cursor), getGenre(cursor)));
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return mediaList;
-    }
-
-    private static List<MediaCursorContainer> fetchMediaWithGenre(Context context, Uri uri, String genre) {
-        List<MediaCursorContainer> mediaList = new ArrayList<>();
-
+        //FIXME
+        SparseArray<String> genreMap = createGenreMap(context, false);
+        Uri uri = hasStoragePermission ? MediaStore.Audio.Media.EXTERNAL_CONTENT_URI : MediaStore.Audio.Media.INTERNAL_CONTENT_URI;
         Cursor mediaCursor = context.getContentResolver().query(
                 uri, MEDIA_PROJECTION, MUSIC_SELECTION, null, null);
-
-        if (mediaCursor == null) {
-            return null;
-        }
-        if (mediaCursor.moveToFirst()) {
+        if (mediaCursor != null && mediaCursor.moveToFirst()) {
             do {
-                mediaList.add(parseCursor(mediaCursor, genre));
+                mediaList.add(parseCursor(mediaCursor, genreMap));
             } while (mediaCursor.moveToNext());
+            mediaCursor.close();
         }
-        mediaCursor.close();
         return mediaList;
     }
 
-    private static MediaCursorContainer parseCursor(Cursor cursor, String genre) {
+    public static void retrieveAndUpdateCache(Context context, boolean hasStoragePermission, MusicProviderSource.OnListChangeListener listener) {
+        new CacheUpdateAsyncTask(context, hasStoragePermission, listener).execute();
+    }
+
+    private static SparseArray<String> createGenreMap(Context context, boolean hasStoragePermission) {
+        SparseArray<String> genreMap = new SparseArray<>();
+        if (!hasStoragePermission) {
+            return genreMap;
+        }
+        try {
+            Cursor cursor = context.getContentResolver().query(
+                    MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI, GENRE_PROJECTION, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    genreMap.put(cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Genres._ID)),
+                            cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Genres.NAME))
+                    );
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return genreMap;
+
+    }
+
+    private static MediaCursorContainer parseCursor(Cursor cursor, SparseArray<String> genreMap) {
         String title = cursor.getString(0);
         String artist = cursor.getString(1);
         String album = cursor.getString(2);
@@ -162,80 +140,24 @@ public class MediaRetrieveHelper {
         String musicId = cursor.getString(7);
         long albumId = cursor.getLong(8);
         String dateAdded = TimeHelper.toRFC3339(cursor.getLong(10));
-        return new MediaCursorContainer(musicId, source, album, artist, duration, genre, getAlbumArtUri(albumId).toString(), title, trackNumber, totalTrackCount, dateAdded);
-    }
-
-    private static String getGenre(Cursor genreCursor) {
-        String genre = UNKNOWN_TAG;
-        try {
-            genre = genreCursor.getString(
-                    genreCursor.getColumnIndexOrThrow(MediaStore.Audio.Genres.NAME));
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+        String genre = "";
+        /*
+        if (genreMap == null || genreMap.size() == 0) {
+            genre = "";
+        } else {
+            try {
+                genre = genreMap.get(cursor.getInt(11));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        if (genre != null && genre.trim().equals("")) {
-            genre = UNKNOWN_TAG;
-        }
-        return genre;
+        */
+        return new MediaCursorContainer(musicId, source, album, artist, duration, genre, makeAlbumArtUri(albumId).toString(), title, trackNumber, totalTrackCount, dateAdded);
     }
 
-    private static Uri getGenreCursorUri(Cursor genreCursor) {
-        int index = genreCursor.getColumnIndexOrThrow(MediaStore.Audio.Genres._ID);
-        long genreId = Long.parseLong(genreCursor.getString(index));
-        return MediaStore.Audio.Genres.Members.getContentUri("external", genreId);
-    }
-
-    public static Uri getAlbumArtUri(long albumId) {
+    static Uri makeAlbumArtUri(long albumId) {
         Uri albumArtUri = Uri.parse("content://media/external/audio/albumart");
         return ContentUris.withAppendedId(albumArtUri, albumId);
-    }
-
-    private static List<MediaCursorContainer> uniqueMerge(List<MediaCursorContainer> srcList, List<MediaCursorContainer> newList) {
-        if (newList == null) {
-            return srcList;
-        }
-        if (srcList == null) {
-            return newList;
-        }
-
-        if (srcList.size() != 0 && newList.size() != 0) {
-            ConcurrentMap<String, MediaCursorContainer> srcMap = toMap(srcList);
-            for (MediaCursorContainer media : newList) {
-                if (!srcMap.containsKey(media.getMusicId())) {
-                    srcList.add(media);
-                }
-            }
-        } else if (srcList.size() == 0 && newList.size() != 0) {
-            srcList = newList;
-        }
-        return srcList;
-    }
-
-    private static List<MediaCursorContainer> merge(List<MediaCursorContainer> srcList, List<MediaCursorContainer> newList) {
-        if (newList == null) {
-            return srcList;
-        }
-        if (srcList == null) {
-            return newList;
-        }
-
-        if (srcList.size() != 0 && newList.size() != 0) {
-            srcList.addAll(newList);
-        } else if (srcList.size() == 0 && newList.size() != 0) {
-            srcList = newList;
-        }
-        return srcList;
-    }
-
-    private static ConcurrentMap<String, MediaCursorContainer> toMap(List<MediaCursorContainer> metadataCompatList) {
-        ConcurrentMap<String, MediaCursorContainer> map = new ConcurrentHashMap<>();
-        if (metadataCompatList == null) {
-            return map;
-        }
-        for (MediaCursorContainer media : metadataCompatList) {
-            map.put(media.getMusicId(), media);
-        }
-        return map;
     }
 
     @Accessors(prefix = "m")
@@ -273,12 +195,16 @@ public class MediaRetrieveHelper {
         }
     }
 
-    static class CacheUpdateAsyncTask extends AsyncTask<Void, Void, String> {
+    private static class CacheUpdateAsyncTask extends AsyncTask<Void, Void, String> {
 
         private Context mContext;
+        private boolean mHasStoragePermission;
+        private MusicProviderSource.OnListChangeListener mListener;
 
-        public CacheUpdateAsyncTask(Context context) {
+        CacheUpdateAsyncTask(Context context, boolean hasStoragePermission, MusicProviderSource.OnListChangeListener listener) {
             mContext = context;
+            mHasStoragePermission = hasStoragePermission;
+            mListener = listener;
         }
 
         @Override
@@ -288,13 +214,31 @@ public class MediaRetrieveHelper {
 
         @Override
         protected String doInBackground(Void... params) {
-            writeCache(retrieve(mContext));
+            List<MediaCursorContainer> trackList = retrieveAllMedia(mContext, mHasStoragePermission);
+            writeCache(trackList);
+            if (mListener != null) {
+                mListener.onSourceChange(createIterator(trackList));
+            }
             return null;
         }
 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
+        }
+
+        private static void writeCache(final List<MediaCursorContainer> list) {
+            Reservoir.putAsync(CACHE_KEY, list, new ReservoirPutCallback() {
+                @Override
+                public void onSuccess() {
+                    LogHelper.i(TAG, "Write " + list.size() + "songs to cache");
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    e.printStackTrace();
+                }
+            });
         }
     }
 

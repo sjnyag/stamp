@@ -138,24 +138,24 @@ public class TvVerticalGridFragment extends VerticalGridSupportFragment {
 
     private final MediaBrowserCompat.SubscriptionCallback mSubscriptionCallback =
             new MediaBrowserCompat.SubscriptionCallback() {
-        @Override
-        public void onChildrenLoaded(@NonNull String parentId, @NonNull
-                List<MediaBrowserCompat.MediaItem> children) {
-            mAdapter.clear();
-            for (int i = 0; i < children.size(); i++) {
-                MediaBrowserCompat.MediaItem item = children.get(i);
-                if (!item.isPlayable()) {
-                    LogHelper.e(TAG, "Cannot show non-playable items. Ignoring ", item.getMediaId());
-                } else {
-                    mAdapter.add(item);
+                @Override
+                public void onChildrenLoaded(@NonNull String parentId, @NonNull
+                        List<MediaBrowserCompat.MediaItem> children) {
+                    mAdapter.clear();
+                    for (int i = 0; i < children.size(); i++) {
+                        MediaBrowserCompat.MediaItem item = children.get(i);
+                        if (!item.isPlayable()) {
+                            LogHelper.e(TAG, "Cannot show non-playable items. Ignoring ", item.getMediaId());
+                        } else {
+                            mAdapter.add(item);
+                        }
+                    }
+                    mAdapter.notifyArrayItemRangeChanged(0, children.size());
                 }
-            }
-            mAdapter.notifyArrayItemRangeChanged(0, children.size());
-        }
 
-        @Override
-        public void onError(@NonNull String id) {
-            LogHelper.e(TAG, "browse fragment subscription onError, id=", id);
-        }
-    };
+                @Override
+                public void onError(@NonNull String id) {
+                    LogHelper.e(TAG, "browse fragment subscription onError, id=", id);
+                }
+            };
 }

@@ -17,7 +17,6 @@ package com.sjn.taggingplayer.ui;
 
 import android.content.ComponentName;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,10 +37,11 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.sjn.taggingplayer.AlbumArtCache;
 import com.sjn.taggingplayer.MusicService;
 import com.sjn.taggingplayer.R;
+import com.sjn.taggingplayer.media.player.CastPlayer;
 import com.sjn.taggingplayer.utils.LogHelper;
+import com.squareup.picasso.Picasso;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -87,7 +87,7 @@ public class FullScreenPlayerActivity extends ActionBarCastActivity {
     };
 
     private final ScheduledExecutorService mExecutorService =
-        Executors.newSingleThreadScheduledExecutor();
+            Executors.newSingleThreadScheduledExecutor();
 
     private ScheduledFuture<?> mScheduleFuture;
     private PlaybackStateCompat mLastPlaybackState;
@@ -110,16 +110,16 @@ public class FullScreenPlayerActivity extends ActionBarCastActivity {
 
     private final MediaBrowserCompat.ConnectionCallback mConnectionCallback =
             new MediaBrowserCompat.ConnectionCallback() {
-        @Override
-        public void onConnected() {
-            LogHelper.d(TAG, "onConnected");
-            try {
-                connectToSession(mMediaBrowser.getSessionToken());
-            } catch (RemoteException e) {
-                LogHelper.e(TAG, e, "could not connect media controller");
-            }
-        }
-    };
+                @Override
+                public void onConnected() {
+                    LogHelper.d(TAG, "onConnected");
+                    try {
+                        connectToSession(mMediaBrowser.getSessionToken());
+                    } catch (RemoteException e) {
+                        LogHelper.e(TAG, e, "could not connect media controller");
+                    }
+                }
+            };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -150,7 +150,7 @@ public class FullScreenPlayerActivity extends ActionBarCastActivity {
             @Override
             public void onClick(View v) {
                 MediaControllerCompat.TransportControls controls =
-                    getSupportMediaController().getTransportControls();
+                        getSupportMediaController().getTransportControls();
                 controls.skipToNext();
             }
         });
@@ -159,7 +159,7 @@ public class FullScreenPlayerActivity extends ActionBarCastActivity {
             @Override
             public void onClick(View v) {
                 MediaControllerCompat.TransportControls controls =
-                    getSupportMediaController().getTransportControls();
+                        getSupportMediaController().getTransportControls();
                 controls.skipToPrevious();
             }
         });
@@ -213,7 +213,7 @@ public class FullScreenPlayerActivity extends ActionBarCastActivity {
         }
 
         mMediaBrowser = new MediaBrowserCompat(this,
-            new ComponentName(this, MusicService.class), mConnectionCallback, null);
+                new ComponentName(this, MusicService.class), mConnectionCallback, null);
     }
 
     private void connectToSession(MediaSessionCompat.Token token) throws RemoteException {
@@ -242,7 +242,7 @@ public class FullScreenPlayerActivity extends ActionBarCastActivity {
     private void updateFromParams(Intent intent) {
         if (intent != null) {
             MediaDescriptionCompat description = intent.getParcelableExtra(
-                MusicPlayerActivity.EXTRA_CURRENT_MEDIA_DESCRIPTION);
+                    MusicPlayerActivity.EXTRA_CURRENT_MEDIA_DESCRIPTION);
             if (description != null) {
                 updateMediaDescription(description);
             }
@@ -299,29 +299,8 @@ public class FullScreenPlayerActivity extends ActionBarCastActivity {
         if (description.getIconUri() == null) {
             return;
         }
-        String artUrl = description.getIconUri().toString();
-        mCurrentArtUrl = artUrl;
-        AlbumArtCache cache = AlbumArtCache.getInstance();
-        Bitmap art = cache.getBigImage(artUrl);
-        if (art == null) {
-            art = description.getIconBitmap();
-        }
-        if (art != null) {
-            // if we have the art cached or from the MediaDescription, use it:
-            mBackgroundImage.setImageBitmap(art);
-        } else {
-            // otherwise, fetch a high res version and update:
-            cache.fetch(artUrl, new AlbumArtCache.FetchListener() {
-                @Override
-                public void onFetched(String artUrl, Bitmap bitmap, Bitmap icon) {
-                    // sanity check, in case a new fetch request has been done while
-                    // the previous hasn't yet returned:
-                    if (artUrl.equals(mCurrentArtUrl)) {
-                        mBackgroundImage.setImageBitmap(bitmap);
-                    }
-                }
-            });
-        }
+        mCurrentArtUrl = description.getIconUri().toString();
+        Picasso.with(this).load(mCurrentArtUrl).resize(800, 800).into(mBackgroundImage);
     }
 
     private void updateMediaDescription(MediaDescriptionCompat description) {
@@ -341,7 +320,7 @@ public class FullScreenPlayerActivity extends ActionBarCastActivity {
         LogHelper.d(TAG, "updateDuration called ");
         int duration = (int) metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
         mSeekbar.setMax(duration);
-        mEnd.setText(DateUtils.formatElapsedTime(duration/1000));
+        mEnd.setText(DateUtils.formatElapsedTime(duration / 1000));
     }
 
     private void updatePlaybackState(PlaybackStateCompat state) {
@@ -351,9 +330,9 @@ public class FullScreenPlayerActivity extends ActionBarCastActivity {
         mLastPlaybackState = state;
         if (getSupportMediaController() != null && getSupportMediaController().getExtras() != null) {
             String castName = getSupportMediaController()
-                    .getExtras().getString(MusicService.EXTRA_CONNECTED_CAST);
+                    .getExtras().getString(CastPlayer.EXTRA_CONNECTED_CAST);
             String line3Text = castName == null ? "" : getResources()
-                        .getString(R.string.casting_to_device, castName);
+                    .getString(R.string.casting_to_device, castName);
             mLine3.setText(line3Text);
         }
 
@@ -390,9 +369,9 @@ public class FullScreenPlayerActivity extends ActionBarCastActivity {
         }
 
         mSkipNext.setVisibility((state.getActions() & PlaybackStateCompat.ACTION_SKIP_TO_NEXT) == 0
-            ? INVISIBLE : VISIBLE );
+                ? INVISIBLE : VISIBLE);
         mSkipPrev.setVisibility((state.getActions() & PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS) == 0
-            ? INVISIBLE : VISIBLE );
+                ? INVISIBLE : VISIBLE);
     }
 
     private void updateProgress() {

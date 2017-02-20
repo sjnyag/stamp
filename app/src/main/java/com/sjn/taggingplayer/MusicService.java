@@ -16,11 +16,7 @@
 
 package com.sjn.taggingplayer;
 
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -28,28 +24,18 @@ import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.v4.media.MediaBrowserCompat.MediaItem;
 import android.support.v4.media.MediaBrowserServiceCompat;
-import android.support.v4.media.MediaMetadataCompat;
-import android.support.v4.media.session.MediaButtonReceiver;
-import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.media.MediaRouter;
 
-import com.google.android.gms.cast.framework.CastContext;
-import com.google.android.gms.cast.framework.CastSession;
-import com.google.android.gms.cast.framework.SessionManager;
-import com.google.android.gms.cast.framework.SessionManagerListener;
-import com.sjn.taggingplayer.model.LocalMediaSource;
-import com.sjn.taggingplayer.model.MusicProvider;
-import com.sjn.taggingplayer.playback.CastPlayback;
-import com.sjn.taggingplayer.playback.LocalPlayback;
-import com.sjn.taggingplayer.playback.Playback;
-import com.sjn.taggingplayer.playback.PlaybackManager;
-import com.sjn.taggingplayer.playback.QueueManager;
-import com.sjn.taggingplayer.ui.NowPlayingActivity;
-import com.sjn.taggingplayer.ui.RequestPermissionActivity;
+import com.sjn.taggingplayer.media.CustomController;
+import com.sjn.taggingplayer.media.playback.Playback;
+import com.sjn.taggingplayer.media.playback.PlaybackManager;
+import com.sjn.taggingplayer.media.player.CarPlayer;
+import com.sjn.taggingplayer.media.player.CastPlayer;
+import com.sjn.taggingplayer.media.player.Player;
+import com.sjn.taggingplayer.media.provider.MusicProvider;
+import com.sjn.taggingplayer.media.source.LocalMediaSource;
 import com.sjn.taggingplayer.utils.CarHelper;
 import com.sjn.taggingplayer.utils.LogHelper;
-import com.sjn.taggingplayer.utils.TvHelper;
 import com.sjn.taggingplayer.utils.WearHelper;
 
 import net.danlew.android.joda.JodaTimeAndroid;
@@ -116,13 +102,13 @@ import static com.sjn.taggingplayer.utils.MediaIDHelper.MEDIA_ID_ROOT;
  *
  * @see <a href="README.md">README.md</a> for more details.
  */
-public class MusicService extends MediaBrowserServiceCompat implements
-        PlaybackManager.PlaybackServiceCallback, LocalMediaSource.PermissionRequiredCallback {
+public class MusicService extends MediaBrowserServiceCompat
+        implements LocalMediaSource.PermissionRequiredCallback,
+        PlaybackManager.PlaybackServiceCallback,
+        Player.PlayerCallback {
 
     private static final String TAG = LogHelper.makeLogTag(MusicService.class);
 
-    // Extra on MediaSession that contains the Cast device name currently connected to
-    public static final String EXTRA_CONNECTED_CAST = "com.sjn.taggingplayer.CAST_NAME";
     // The action of the incoming Intent indicating that it contains a command
     // to be executed (see {@link #onStartCommand})
     public static final String ACTION_CMD = "com.sjn.taggingplayer.ACTION_CMD";
@@ -138,20 +124,15 @@ public class MusicService extends MediaBrowserServiceCompat implements
     // Delay stopSelf by using a handler.
     private static final int STOP_DELAY = 30000;
 
-    private MusicProvider mMusicProvider;
-    private PlaybackManager mPlaybackManager;
-
-    private MediaSessionCompat mSession;
-    private MediaNotificationManager mMediaNotificationManager;
-    private Bundle mSessionExtras;
     private final DelayedStopHandler mDelayedStopHandler = new DelayedStopHandler(this);
-    private MediaRouter mMediaRouter;
-    private PackageValidator mPackageValidator;
-    private SessionManager mCastSessionManager;
-    private SessionManagerListener<CastSession> mCastSessionManagerListener;
 
-    private boolean mIsConnectedToCar;
-    private BroadcastReceiver mCarConnectionReceiver;
+    private PackageValidator mPackageValidator;
+    private MediaNotificationManager mMediaNotificationManager;
+
+    private Player mPlayer;
+    private CarPlayer mCarPlayer;
+    private CastPlayer mCastPlayer;
+    private MusicProvider mMusicProvider;
 
     /*
      * (non-Javadoc)
@@ -162,87 +143,28 @@ public class MusicService extends MediaBrowserServiceCompat implements
         super.onCreate();
         JodaTimeAndroid.init(this);
         LogHelper.d(TAG, "onCreate");
-
-        mMusicProvider = new MusicProvider(new LocalMediaSource(this, this));
-
+        mPackageValidator = new PackageValidator(this);
+        mMusicProvider = new MusicProvider(this, new LocalMediaSource(this, this));
         // To make the app more responsive, fetch and cache catalog information now.
         // This can help improve the response time in the method
         // {@link #onLoadChildren(String, Result<List<MediaItem>>) onLoadChildren()}.
-        mMusicProvider.retrieveMediaAsync(null /* Callback */);
-
-        mPackageValidator = new PackageValidator(this);
-
-        QueueManager queueManager = new QueueManager(mMusicProvider, getResources(),
-                new QueueManager.MetadataUpdateListener() {
+        mMusicProvider.retrieveMediaAsync(
+                new MusicProvider.Callback() {
                     @Override
-                    public void onMetadataChanged(MediaMetadataCompat metadata) {
-                        mSession.setMetadata(metadata);
+                    public void onMusicCatalogReady(boolean success) {
+                        mPlayer = new Player(MusicService.this, MusicService.this);
+                        setSessionToken(mPlayer.initialize(MusicService.this, mMusicProvider));
+                        mCarPlayer = new CarPlayer(MusicService.this);
+                        mCastPlayer = new CastPlayer(MusicService.this, mPlayer.getSessionManageListener());
+                        try {
+                            mMediaNotificationManager = new MediaNotificationManager(MusicService.this);
+                        } catch (RemoteException e) {
+                            throw new IllegalStateException("Could not create a MediaNotificationManager", e);
+                        }
+                        mCarPlayer.registerCarConnectionReceiver();
                     }
-
-                    @Override
-                    public void onMetadataRetrieveError() {
-                        mPlaybackManager.updatePlaybackState(
-                                getString(R.string.error_no_metadata));
-                    }
-
-                    @Override
-                    public void onCurrentQueueIndexUpdated(int queueIndex) {
-                        mPlaybackManager.handlePlayRequest();
-                    }
-
-                    @Override
-                    public void onQueueUpdated(String title,
-                                               List<MediaSessionCompat.QueueItem> newQueue) {
-                        mSession.setQueue(newQueue);
-                        mSession.setQueueTitle(title);
-                    }
-                });
-
-        LocalPlayback playback = new LocalPlayback(this, mMusicProvider);
-        mPlaybackManager = new PlaybackManager(this, getResources(), mMusicProvider, queueManager,
-                playback);
-
-        // Start a new MediaSession
-        mSession = new MediaSessionCompat(this, "MusicService");
-        setSessionToken(mSession.getSessionToken());
-        mSession.setCallback(mPlaybackManager.getMediaSessionCallback());
-        mSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-                MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-
-        Context context = getApplicationContext();
-        Intent intent = new Intent(context, NowPlayingActivity.class);
-        PendingIntent pi = PendingIntent.getActivity(context, 99 /*request code*/,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        mSession.setSessionActivity(pi);
-
-        mSessionExtras = new Bundle();
-        CarHelper.setSlotReservationFlags(mSessionExtras, true, true, true);
-        WearHelper.setSlotReservationFlags(mSessionExtras, true, true);
-        WearHelper.setUseBackgroundFromTheme(mSessionExtras, true);
-        mSession.setExtras(mSessionExtras);
-
-        mPlaybackManager.updatePlaybackState(null);
-
-        try {
-            mMediaNotificationManager = new MediaNotificationManager(this);
-        } catch (RemoteException e) {
-            throw new IllegalStateException("Could not create a MediaNotificationManager", e);
-        }
-
-        if (!TvHelper.isTvUiMode(this)) {
-            try {
-                mCastSessionManager = CastContext.getSharedInstance(this).getSessionManager();
-                mCastSessionManagerListener = new CastSessionManagerListener();
-                mCastSessionManager.addSessionManagerListener(mCastSessionManagerListener,
-                        CastSession.class);
-            } catch (RuntimeException e) {
-                e.printStackTrace();
-            }
-        }
-
-        mMediaRouter = MediaRouter.getInstance(getApplicationContext());
-
-        registerCarConnectionReceiver();
+                }
+        );
     }
 
     /**
@@ -257,13 +179,17 @@ public class MusicService extends MediaBrowserServiceCompat implements
             String command = startIntent.getStringExtra(CMD_NAME);
             if (ACTION_CMD.equals(action)) {
                 if (CMD_PAUSE.equals(command)) {
-                    mPlaybackManager.handlePauseRequest();
+                    mPlayer.pause();
                 } else if (CMD_STOP_CASTING.equals(command)) {
-                    CastContext.getSharedInstance(this).getSessionManager().endCurrentSession(true);
+                    if (mPlayer != null) {
+                        mCastPlayer.stop();
+                    }
                 }
             } else {
                 // Try to handle the intent as a media button event wrapped by MediaButtonReceiver
-                MediaButtonReceiver.handleIntent(mSession, startIntent);
+                if (mPlayer != null) {
+                    mPlayer.handleIntent(startIntent);
+                }
             }
         }
         // Reset the delay handler to enqueue a message to stop the service if
@@ -281,18 +207,22 @@ public class MusicService extends MediaBrowserServiceCompat implements
     @Override
     public void onDestroy() {
         LogHelper.d(TAG, "onDestroy");
-        unregisterCarConnectionReceiver();
-        // Service is being killed, so make sure we release our resources
-        mPlaybackManager.handleStopRequest(null);
-        mMediaNotificationManager.stopNotification();
-
-        if (mCastSessionManager != null) {
-            mCastSessionManager.removeSessionManagerListener(mCastSessionManagerListener,
-                    CastSession.class);
+        if (mCarPlayer != null) {
+            mCarPlayer.unregisterCarConnectionReceiver();
         }
-
-        mDelayedStopHandler.removeCallbacksAndMessages(null);
-        mSession.release();
+        // Service is being killed, so make sure we release our resources
+        if (mPlayer != null) {
+            mPlayer.stop();
+        }
+        if (mMediaNotificationManager != null) {
+            mMediaNotificationManager.stopNotification();
+        }
+        if (mCastPlayer != null) {
+            mCastPlayer.finish();
+        }
+        if (mDelayedStopHandler != null) {
+            mDelayedStopHandler.removeCallbacksAndMessages(null);
+        }
     }
 
     @Override
@@ -337,17 +267,21 @@ public class MusicService extends MediaBrowserServiceCompat implements
             result.sendResult(new ArrayList<MediaItem>());
         } else if (mMusicProvider.isInitialized()) {
             // if music library is ready, return immediately
-            result.sendResult(mMusicProvider.getChildren(parentMediaId, getResources()));
+            result.sendResult(mMusicProvider.getChildren(parentMediaId, getResources(), null, 1000, null));
         } else {
             // otherwise, only return results when the music library is retrieved
             result.detach();
             mMusicProvider.retrieveMediaAsync(new MusicProvider.Callback() {
                 @Override
                 public void onMusicCatalogReady(boolean success) {
-                    result.sendResult(mMusicProvider.getChildren(parentMediaId, getResources()));
+                    result.sendResult(mMusicProvider.getChildren(parentMediaId, getResources(), null, 1000, null));
                 }
             });
         }
+    }
+
+    @Override
+    public void onPermissionRequired() {
     }
 
     /**
@@ -355,7 +289,7 @@ public class MusicService extends MediaBrowserServiceCompat implements
      */
     @Override
     public void onPlaybackStart() {
-        mSession.setActive(true);
+        mPlayer.setActive(true);
 
         mDelayedStopHandler.removeCallbacksAndMessages(null);
 
@@ -371,7 +305,7 @@ public class MusicService extends MediaBrowserServiceCompat implements
      */
     @Override
     public void onPlaybackStop() {
-        mSession.setActive(false);
+        mPlayer.setActive(false);
         // Reset the delayed stop handler, so after STOP_DELAY it will be executed again,
         // potentially stopping the service.
         mDelayedStopHandler.removeCallbacksAndMessages(null);
@@ -386,33 +320,12 @@ public class MusicService extends MediaBrowserServiceCompat implements
 
     @Override
     public void onPlaybackStateUpdated(PlaybackStateCompat newState) {
-        mSession.setPlaybackState(newState);
-    }
-
-    private void registerCarConnectionReceiver() {
-        IntentFilter filter = new IntentFilter(CarHelper.ACTION_MEDIA_STATUS);
-        mCarConnectionReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String connectionEvent = intent.getStringExtra(CarHelper.MEDIA_CONNECTION_STATUS);
-                mIsConnectedToCar = CarHelper.MEDIA_CONNECTED.equals(connectionEvent);
-                LogHelper.i(TAG, "Connection event to Android Auto: ", connectionEvent,
-                        " isConnectedToCar=", mIsConnectedToCar);
-            }
-        };
-        registerReceiver(mCarConnectionReceiver, filter);
-    }
-
-    private void unregisterCarConnectionReceiver() {
-        unregisterReceiver(mCarConnectionReceiver);
+        mPlayer.setPlaybackState(newState);
     }
 
     @Override
-    public void onPermissionRequired() {
-        Intent intent = new Intent(this, RequestPermissionActivity.class);
-        intent.putExtra(RequestPermissionActivity.KEY_PERMISSIONS, LocalMediaSource.PERMISSIONS);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+    public Playback requestPlayback(Playback.Type type) {
+        return type.createInstance(mMusicProvider, this);
     }
 
     /**
@@ -428,76 +341,11 @@ public class MusicService extends MediaBrowserServiceCompat implements
         @Override
         public void handleMessage(Message msg) {
             MusicService service = mWeakReference.get();
-            if (service != null && service.mPlaybackManager.getPlayback() != null) {
-                if (service.mPlaybackManager.getPlayback().isPlaying()) {
-                    LogHelper.d(TAG, "Ignoring delayed stop since the media player is in use.");
-                    return;
-                }
+            if (service != null && !service.mPlayer.isPlaying()) {
                 LogHelper.d(TAG, "Stopping service with delay handler.");
                 service.stopSelf();
             }
         }
     }
 
-    /**
-     * Session Manager Listener responsible for switching the Playback instances
-     * depending on whether it is connected to a remote player.
-     */
-    private class CastSessionManagerListener implements SessionManagerListener<CastSession> {
-
-        @Override
-        public void onSessionEnded(CastSession session, int error) {
-            LogHelper.d(TAG, "onSessionEnded");
-            mSessionExtras.remove(EXTRA_CONNECTED_CAST);
-            mSession.setExtras(mSessionExtras);
-            Playback playback = new LocalPlayback(MusicService.this, mMusicProvider);
-            mMediaRouter.setMediaSessionCompat(null);
-            mPlaybackManager.switchToPlayback(playback, false);
-        }
-
-        @Override
-        public void onSessionResumed(CastSession session, boolean wasSuspended) {
-        }
-
-        @Override
-        public void onSessionStarted(CastSession session, String sessionId) {
-            // In case we are casting, send the device name as an extra on MediaSession metadata.
-            mSessionExtras.putString(EXTRA_CONNECTED_CAST,
-                    session.getCastDevice().getFriendlyName());
-            mSession.setExtras(mSessionExtras);
-            // Now we can switch to CastPlayback
-            Playback playback = new CastPlayback(mMusicProvider, MusicService.this);
-            mMediaRouter.setMediaSessionCompat(mSession);
-            mPlaybackManager.switchToPlayback(playback, true);
-        }
-
-        @Override
-        public void onSessionStarting(CastSession session) {
-        }
-
-        @Override
-        public void onSessionStartFailed(CastSession session, int error) {
-        }
-
-        @Override
-        public void onSessionEnding(CastSession session) {
-            // This is our final chance to update the underlying stream position
-            // In onSessionEnded(), the underlying CastPlayback#mRemoteMediaClient
-            // is disconnected and hence we update our local value of stream position
-            // to the latest position.
-            mPlaybackManager.getPlayback().updateLastKnownStreamPosition();
-        }
-
-        @Override
-        public void onSessionResuming(CastSession session, String sessionId) {
-        }
-
-        @Override
-        public void onSessionResumeFailed(CastSession session, int error) {
-        }
-
-        @Override
-        public void onSessionSuspended(CastSession session, int reason) {
-        }
-    }
 }

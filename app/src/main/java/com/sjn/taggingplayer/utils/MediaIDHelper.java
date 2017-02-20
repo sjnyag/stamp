@@ -35,41 +35,50 @@ public class MediaIDHelper {
     public static final String MEDIA_ID_ROOT = "__ROOT__";
     public static final String MEDIA_ID_MUSICS_BY_GENRE = "__BY_GENRE__";
     public static final String MEDIA_ID_MUSICS_BY_SEARCH = "__BY_SEARCH__";
+    public static final String MEDIA_ID_MUSICS_BY_ARTIST = "__BY_ARTIST__";
+    public static final String MEDIA_ID_MUSICS_BY_ALBUM = "__BY_ALBUM__";
+    public static final String MEDIA_ID_MUSICS_BY_ALL = "__BY_ALL__";
+    public static final String MEDIA_ID_MUSICS_BY_QUEUE = "__BY_QUEUE__";
+    public static final String MEDIA_ID_MUSICS_BY_TAG = "__BY_TAG__";
+    public static final String MEDIA_ID_MUSICS_BY_PLAYLIST = "__BY_PLAYLIST__";
+    public static final String MEDIA_ID_MUSICS_BY_PLAYLIST_LIST = "__BY_PLAYLIST__";
+    public static final String MEDIA_ID_MUSICS_BY_NEW = "__BY_NEW__";
+    public static final String MEDIA_ID_MUSICS_BY_TOP_SONG = "__BY_TOP_SONG__";
 
     private static final char CATEGORY_SEPARATOR = '/';
     private static final char LEAF_SEPARATOR = '|';
 
     /**
      * Create a String value that represents a playable or a browsable media.
-     *
+     * <p>
      * Encode the media browseable categories, if any, and the unique music ID, if any,
      * into a single String mediaID.
-     *
+     * <p>
      * MediaIDs are of the form <categoryType>/<categoryValue>|<musicUniqueId>, to make it easy
      * to find the category (like genre) that a music was selected from, so we
      * can correctly build the playing queue. This is specially useful when
      * one music can appear in more than one list, like "by genre -> genre_1"
      * and "by artist -> artist_1".
-
-     * @param musicID Unique music ID for playable items, or null for browseable items.
+     *
+     * @param musicID    Unique music ID for playable items, or null for browseable items.
      * @param categories hierarchy of categories representing this item's browsing parents
      * @return a hierarchy-aware media ID
      */
     public static String createMediaID(String musicID, String... categories) {
         StringBuilder sb = new StringBuilder();
         if (categories != null) {
-            for (int i=0; i < categories.length; i++) {
+            for (int i = 0; i < categories.length; i++) {
                 if (!isValidCategory(categories[i])) {
                     throw new IllegalArgumentException("Invalid category: " + categories[0]);
                 }
-                sb.append(categories[i]);
+                sb.append(escape(categories[i]));
                 if (i < categories.length - 1) {
                     sb.append(CATEGORY_SEPARATOR);
                 }
             }
         }
         if (musicID != null) {
-            sb.append(LEAF_SEPARATOR).append(musicID);
+            sb.append(LEAF_SEPARATOR).append(escape(musicID));
         }
         return sb.toString();
     }
@@ -77,8 +86,8 @@ public class MediaIDHelper {
     private static boolean isValidCategory(String category) {
         return category == null ||
                 (
-                    category.indexOf(CATEGORY_SEPARATOR) < 0 &&
-                    category.indexOf(LEAF_SEPARATOR) < 0
+                        category.indexOf(CATEGORY_SEPARATOR) < 0 &&
+                                category.indexOf(LEAF_SEPARATOR) < 0
                 );
     }
 
@@ -94,7 +103,7 @@ public class MediaIDHelper {
     public static String extractMusicIDFromMediaID(@NonNull String mediaID) {
         int pos = mediaID.indexOf(LEAF_SEPARATOR);
         if (pos >= 0) {
-            return mediaID.substring(pos+1);
+            return mediaID.substring(pos + 1);
         }
         return null;
     }
@@ -107,7 +116,9 @@ public class MediaIDHelper {
      *
      * @param mediaID that contains a category and categoryValue.
      */
-    public static @NonNull String[] getHierarchy(@NonNull String mediaID) {
+    public static
+    @NonNull
+    String[] getHierarchy(@NonNull String mediaID) {
         int pos = mediaID.indexOf(LEAF_SEPARATOR);
         if (pos >= 0) {
             mediaID = mediaID.substring(0, pos);
@@ -135,14 +146,14 @@ public class MediaIDHelper {
         if (hierarchy.length <= 1) {
             return MEDIA_ID_ROOT;
         }
-        String[] parentHierarchy = Arrays.copyOf(hierarchy, hierarchy.length-1);
+        String[] parentHierarchy = Arrays.copyOf(hierarchy, hierarchy.length - 1);
         return createMediaID(null, parentHierarchy);
     }
 
     /**
      * Determine if media item is playing (matches the currently playing media item).
      *
-     * @param context for retrieving the {@link MediaControllerCompat}
+     * @param context   for retrieving the {@link MediaControllerCompat}
      * @param mediaItem to compare to currently playing {@link MediaBrowserCompat.MediaItem}
      * @return boolean indicating whether media item matches currently playing media item
      */
@@ -163,5 +174,27 @@ public class MediaIDHelper {
             }
         }
         return false;
+    }
+
+
+    public static boolean isTrack(@NonNull String mediaID) {
+        return !isBrowseable(mediaID);
+    }
+
+
+    public static String unescape(String musicID) {
+        if (musicID == null) {
+            return null;
+        }
+        //TODO remove underscore
+        return musicID.replaceAll("__／__", "/").replaceAll("__｜__", "|");
+    }
+
+    public static String escape(String musicID) {
+        if (musicID == null) {
+            return null;
+        }
+        //TODO remove underscore
+        return musicID.replaceAll("/", "__／__").replaceAll("\\|", "__｜__");
     }
 }

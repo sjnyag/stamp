@@ -15,8 +15,12 @@
  */
 package com.sjn.taggingplayer.utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -30,11 +34,27 @@ public class BitmapHelper {
     // Max read limit that we allow our input stream to mark/reset.
     private static final int MAX_READ_LIMIT_PER_IMG = 1024 * 1024;
 
+    // Resolution reasonable for carrying around as an icon (generally in
+    // MediaDescription.getIconBitmap). This should not be bigger than necessary, because
+    // the MediaDescription object should be lightweight. If you set it too high and try to
+    // serialize the MediaDescription, you may get FAILED BINDER TRANSACTION errors.
+    private static final int MAX_ART_WIDTH_ICON = 128;  // pixels
+    private static final int MAX_ART_HEIGHT_ICON = 128;  // pixels
+
+    public static void readBitmapAsync(Context context, final String url, final Target target) {
+        Picasso.with(context).load(url).into(target);
+    }
+
+    public static Bitmap createIcon(Bitmap bitmap) {
+        return BitmapHelper.scaleBitmap(bitmap,
+                MAX_ART_WIDTH_ICON, MAX_ART_HEIGHT_ICON);
+    }
+
     public static Bitmap scaleBitmap(Bitmap src, int maxWidth, int maxHeight) {
-       double scaleFactor = Math.min(
-           ((double) maxWidth)/src.getWidth(), ((double) maxHeight)/src.getHeight());
+        double scaleFactor = Math.min(
+                ((double) maxWidth) / src.getWidth(), ((double) maxHeight) / src.getHeight());
         return Bitmap.createScaledBitmap(src,
-            (int) (src.getWidth() * scaleFactor), (int) (src.getHeight() * scaleFactor), false);
+                (int) (src.getWidth() * scaleFactor), (int) (src.getHeight() * scaleFactor), false);
     }
 
     public static Bitmap scaleBitmap(int scaleFactor, InputStream is) {
@@ -57,7 +77,7 @@ public class BitmapHelper {
         int actualH = bmOptions.outHeight;
 
         // Determine how much to scale down the image
-        return Math.min(actualW/targetW, actualH/targetH);
+        return Math.min(actualW / targetW, actualH / targetH);
     }
 
     @SuppressWarnings("SameParameterValue")

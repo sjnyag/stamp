@@ -40,12 +40,12 @@ public class CarHelper {
      * Action for an intent broadcast by Android Auto when a media app is connected or
      * disconnected. A "connected" media app is the one currently attached to the "media" facet
      * on Android Auto. So, this intent is sent by AA on:
-     *
+     * <p>
      * - connection: when the phone is projecting and at the moment the app is selected from the
-     *       list of media apps
+     * list of media apps
      * - disconnection: when another media app is selected from the list of media apps or when
-     *       the phone stops projecting (when the user unplugs it, for example)
-     *
+     * the phone stops projecting (when the user unplugs it, for example)
+     * <p>
      * The actual event (connected or disconnected) will come as an Intent extra,
      * with the key MEDIA_CONNECTION_STATUS (see below).
      */
@@ -74,7 +74,7 @@ public class CarHelper {
     }
 
     public static void setSlotReservationFlags(Bundle extras, boolean reservePlayingQueueSlot,
-          boolean reserveSkipToNextSlot, boolean reserveSkipToPrevSlot) {
+                                               boolean reserveSkipToNextSlot, boolean reserveSkipToPrevSlot) {
         if (reservePlayingQueueSlot) {
             extras.putBoolean(SLOT_RESERVATION_QUEUE, true);
         } else {
@@ -94,7 +94,7 @@ public class CarHelper {
 
     /**
      * Returns true when running Android Auto or a car dock.
-     *
+     * <p>
      * A preferable way of detecting if your app is running in the context of an Android Auto
      * compatible car is by registering a BroadcastReceiver for the action
      * {@link CarHelper#ACTION_MEDIA_STATUS}. See a sample implementation in

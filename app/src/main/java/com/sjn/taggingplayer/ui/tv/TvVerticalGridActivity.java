@@ -36,8 +36,7 @@ public class TvVerticalGridActivity extends FragmentActivity
     private String mTitle;
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tv_vertical_grid);
 

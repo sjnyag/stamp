@@ -112,22 +112,22 @@ public class TvPlaybackActivity extends FragmentActivity {
      */
     private final MediaControllerCompat.Callback mMediaControllerCallback =
             new MediaControllerCompat.Callback() {
-        @Override
-        public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
-            LogHelper.d(TAG, "onPlaybackStateChanged, state=", state);
-            if (mPlaybackFragment == null || state.getState() == PlaybackStateCompat.STATE_BUFFERING) {
-                return;
-            }
-            mPlaybackFragment.updatePlaybackState(state);
-        }
+                @Override
+                public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
+                    LogHelper.d(TAG, "onPlaybackStateChanged, state=", state);
+                    if (mPlaybackFragment == null || state.getState() == PlaybackStateCompat.STATE_BUFFERING) {
+                        return;
+                    }
+                    mPlaybackFragment.updatePlaybackState(state);
+                }
 
-        @Override
-        public void onMetadataChanged(MediaMetadataCompat metadata) {
-            LogHelper.d(TAG, "onMetadataChanged, title=", metadata.getDescription().getTitle());
-            if (mPlaybackFragment == null) {
-                return;
-            }
-            mPlaybackFragment.updateMetadata(metadata);
-        }
-    };
+                @Override
+                public void onMetadataChanged(MediaMetadataCompat metadata) {
+                    LogHelper.d(TAG, "onMetadataChanged, title=", metadata.getDescription().getTitle());
+                    if (mPlaybackFragment == null) {
+                        return;
+                    }
+                    mPlaybackFragment.updateMetadata(metadata);
+                }
+            };
 }

@@ -33,8 +33,10 @@ import android.support.v17.leanback.widget.Presenter;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.view.View;
 
-import com.sjn.taggingplayer.AlbumArtCache;
 import com.sjn.taggingplayer.ui.MediaItemViewHolder;
+import com.sjn.taggingplayer.utils.BitmapHelper;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 public class CardViewHolder extends Presenter.ViewHolder {
 
@@ -43,6 +45,8 @@ public class CardViewHolder extends Presenter.ViewHolder {
 
     private final ImageCardView mCardView;
     private int mItemState;
+    //to avoid GC
+    private Target mTarget;
 
     public CardViewHolder(View view) {
         super(view);
@@ -82,7 +86,6 @@ public class CardViewHolder extends Presenter.ViewHolder {
 
     /**
      * Set the view in this holder to represent the media metadata in {@code description}
-     *
      **/
     public void setupCardView(final Context context, MediaDescriptionCompat description) {
         mCardView.setTitleText(description.getTitle());
@@ -99,20 +102,22 @@ public class CardViewHolder extends Presenter.ViewHolder {
         } else {
             // IconUri potentially has a better resolution than iconBitmap.
             String artUrl = artUri.toString();
-            AlbumArtCache cache = AlbumArtCache.getInstance();
-            if (cache.getBigImage(artUrl) != null) {
-                // So, we use it immediately if it's cached:
-                setCardImage(context, cache.getBigImage(artUrl));
-            } else {
-                // Otherwise, we use iconBitmap if available while we wait for iconURI
-                setCardImage(context, description.getIconBitmap());
-                cache.fetch(artUrl, new AlbumArtCache.FetchListener() {
-                    @Override
-                    public void onFetched(String artUrl, Bitmap bitmap, Bitmap icon) {
-                        setCardImage(context, bitmap);
-                    }
-                });
-            }
+            mTarget = new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    setCardImage(context, bitmap);
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+                    setCardImage(context, null);
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                }
+            };
+            BitmapHelper.readBitmapAsync(context, artUri.toString(), mTarget);
         }
     }
 

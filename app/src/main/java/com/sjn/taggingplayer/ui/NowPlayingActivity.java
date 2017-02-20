@@ -27,7 +27,7 @@ import com.sjn.taggingplayer.utils.LogHelper;
 /**
  * The activity for the Now Playing Card PendingIntent.
  * https://developer.android.com/training/tv/playback/now-playing.html
- *
+ * <p>
  * This activity determines which activity to launch based on the current UI mode.
  */
 public class NowPlayingActivity extends Activity {

@@ -30,7 +30,7 @@ public class NetworkHelper {
      */
     public static boolean isOnline(Context context) {
         ConnectivityManager connMgr = (ConnectivityManager)
-            context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return (networkInfo != null && networkInfo.isConnected());
     }

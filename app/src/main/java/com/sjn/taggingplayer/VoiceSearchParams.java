@@ -40,7 +40,8 @@ public final class VoiceSearchParams {
 
     /**
      * Creates a simple object describing the search criteria from the query and extras.
-     * @param query the query parameter from a voice search
+     *
+     * @param query  the query parameter from a voice search
      * @param extras the extras parameter from a voice search
      */
     public VoiceSearchParams(String query, Bundle extras) {
@@ -100,16 +101,16 @@ public final class VoiceSearchParams {
     @Override
     public String toString() {
         return "query=" + query
-            + " isAny=" + isAny
-            + " isUnstructured=" + isUnstructured
-            + " isGenreFocus=" + isGenreFocus
-            + " isArtistFocus=" + isArtistFocus
-            + " isAlbumFocus=" + isAlbumFocus
-            + " isSongFocus=" + isSongFocus
-            + " genre=" + genre
-            + " artist=" + artist
-            + " album=" + album
-            + " song=" + song;
+                + " isAny=" + isAny
+                + " isUnstructured=" + isUnstructured
+                + " isGenreFocus=" + isGenreFocus
+                + " isArtistFocus=" + isArtistFocus
+                + " isAlbumFocus=" + isAlbumFocus
+                + " isSongFocus=" + isSongFocus
+                + " genre=" + genre
+                + " artist=" + artist
+                + " album=" + album
+                + " song=" + song;
     }
 
 }

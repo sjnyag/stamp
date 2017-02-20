@@ -48,9 +48,11 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
-import com.sjn.taggingplayer.AlbumArtCache;
+import com.sjn.taggingplayer.utils.BitmapHelper;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.QueueHelper;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.List;
 
@@ -70,7 +72,7 @@ public class TvPlaybackFragment extends PlaybackOverlaySupportFragment {
     private SkipNextAction mSkipNextAction;
     private SkipPreviousAction mSkipPreviousAction;
     private PlaybackControlsRow mPlaybackControlsRow;
-    private List <MediaSessionCompat.QueueItem> mPlaylistQueue;
+    private List<MediaSessionCompat.QueueItem> mPlaylistQueue;
     private int mDuration;
     private Handler mHandler;
     private Runnable mRunnable;
@@ -81,6 +83,8 @@ public class TvPlaybackFragment extends PlaybackOverlaySupportFragment {
     private BackgroundManager mBackgroundManager;
     private ArrayObjectAdapter mListRowAdapter;
     private ListRow mListRow;
+    //to avoid GC
+    private Target mTarget;
 
     private ClassPresenterSelector mPresenterSelector;
 
@@ -250,23 +254,31 @@ public class TvPlaybackFragment extends PlaybackOverlaySupportFragment {
         mPlaybackControlsRow.setCurrentTime((int) mLastPosition);
     }
 
-    private void updateAlbumArt(Uri artUri) {
-        AlbumArtCache.getInstance().fetch(artUri.toString(), new AlbumArtCache.FetchListener() {
-                    @Override
-                    public void onFetched(String artUrl, Bitmap bitmap, Bitmap icon) {
-                        if (bitmap != null) {
-                            Drawable artDrawable = new BitmapDrawable(
-                                    TvPlaybackFragment.this.getResources(), bitmap);
-                            Drawable bgDrawable = new BitmapDrawable(
-                                    TvPlaybackFragment.this.getResources(), bitmap);
-                            mPlaybackControlsRow.setImageDrawable(artDrawable);
-                            mBackgroundManager.setDrawable(bgDrawable);
-                            mRowsAdapter.notifyArrayItemRangeChanged(
-                                    mRowsAdapter.indexOf(mPlaybackControlsRow), 1);
-                        }
-                    }
+    private void updateAlbumArt(final Uri artUri) {
+        mTarget = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                if (bitmap != null) {
+                    Drawable artDrawable = new BitmapDrawable(
+                            TvPlaybackFragment.this.getResources(), bitmap);
+                    Drawable bgDrawable = new BitmapDrawable(
+                            TvPlaybackFragment.this.getResources(), bitmap);
+                    mPlaybackControlsRow.setImageDrawable(artDrawable);
+                    mBackgroundManager.setDrawable(bgDrawable);
+                    mRowsAdapter.notifyArrayItemRangeChanged(
+                            mRowsAdapter.indexOf(mPlaybackControlsRow), 1);
                 }
-        );
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+            }
+        };
+        BitmapHelper.readBitmapAsync(getContext(), artUri.toString(), mTarget);
     }
 
     protected void updateMetadata(MediaMetadataCompat metadata) {
@@ -335,6 +347,7 @@ public class TvPlaybackFragment extends PlaybackOverlaySupportFragment {
 
     private static final class MutableMediaMetadataHolder {
         MediaMetadataCompat metadata;
+
         public MutableMediaMetadataHolder(MediaMetadataCompat metadata) {
             this.metadata = metadata;
         }

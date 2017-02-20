@@ -51,4 +51,14 @@
     <string name="no_search_results">No search results.</string>
     <string name="loading">Loading…</string>
     <string name="media_route_menu_title">Play on…</string>
+
+    <string name="media_item_label_all_song">All</string>
+    <string name="media_item_label_queue">Queue</string>
+    <string name="media_item_label_tag">Tag</string>
+    <string name="media_item_label_new">New</string>
+    <string name="media_item_label_top_song">Top Song</string>
+    <string name="media_item_label_artist">Artist</string>
+    <string name="media_item_label_album">Album</string>
+    <string name="media_item_label_genre">Genre</string>
+    <string name="media_item_label_playlist">Playlist</string>
 </resources>

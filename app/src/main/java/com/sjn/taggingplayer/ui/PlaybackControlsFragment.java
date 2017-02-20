@@ -17,7 +17,6 @@ package com.sjn.taggingplayer.ui;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -34,10 +33,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sjn.taggingplayer.AlbumArtCache;
-import com.sjn.taggingplayer.MusicService;
 import com.sjn.taggingplayer.R;
+import com.sjn.taggingplayer.media.player.CastPlayer;
 import com.sjn.taggingplayer.utils.LogHelper;
+import com.squareup.picasso.Picasso;
 
 /**
  * A class that shows the Media Queue to the user.
@@ -96,7 +95,7 @@ public class PlaybackControlsFragment extends Fragment {
                 MediaMetadataCompat metadata = controller.getMetadata();
                 if (metadata != null) {
                     intent.putExtra(MusicPlayerActivity.EXTRA_CURRENT_MEDIA_DESCRIPTION,
-                        metadata.getDescription());
+                            metadata.getDescription());
                 }
                 startActivity(intent);
             }
@@ -156,28 +155,7 @@ public class PlaybackControlsFragment extends Fragment {
         }
         if (!TextUtils.equals(artUrl, mArtUrl)) {
             mArtUrl = artUrl;
-            Bitmap art = metadata.getDescription().getIconBitmap();
-            AlbumArtCache cache = AlbumArtCache.getInstance();
-            if (art == null) {
-                art = cache.getIconImage(mArtUrl);
-            }
-            if (art != null) {
-                mAlbumArt.setImageBitmap(art);
-            } else {
-                cache.fetch(artUrl, new AlbumArtCache.FetchListener() {
-                            @Override
-                            public void onFetched(String artUrl, Bitmap bitmap, Bitmap icon) {
-                                if (icon != null) {
-                                    LogHelper.d(TAG, "album art icon of w=", icon.getWidth(),
-                                            " h=", icon.getHeight());
-                                    if (isAdded()) {
-                                        mAlbumArt.setImageBitmap(icon);
-                                    }
-                                }
-                            }
-                        }
-                );
-            }
+            Picasso.with(getActivity()).load(mArtUrl).resize(128, 128).into(mAlbumArt);
         }
     }
 
@@ -224,7 +202,7 @@ public class PlaybackControlsFragment extends Fragment {
                 .getSupportMediaController();
         String extraInfo = null;
         if (controller != null && controller.getExtras() != null) {
-            String castName = controller.getExtras().getString(MusicService.EXTRA_CONNECTED_CAST);
+            String castName = controller.getExtras().getString(CastPlayer.EXTRA_CONNECTED_CAST);
             if (castName != null) {
                 extraInfo = getResources().getString(R.string.casting_to_device, castName);
             }

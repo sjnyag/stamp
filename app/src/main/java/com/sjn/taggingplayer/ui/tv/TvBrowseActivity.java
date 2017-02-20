@@ -35,7 +35,7 @@ public class TvBrowseActivity extends FragmentActivity
         implements TvBrowseFragment.MediaFragmentListener {
 
     private static final String TAG = LogHelper.makeLogTag(TvBrowseActivity.class);
-    public static final String SAVED_MEDIA_ID="com.sjn.taggingplayer.MEDIA_ID";
+    public static final String SAVED_MEDIA_ID = "com.sjn.taggingplayer.MEDIA_ID";
     public static final String BROWSE_TITLE = "com.sjn.taggingplayer.BROWSE_TITLE";
 
     private MediaBrowserCompat mMediaBrowser;
@@ -79,7 +79,7 @@ public class TvBrowseActivity extends FragmentActivity
             mMediaBrowser.disconnect();
         }
     }
-    
+
     @Override
     public boolean onSearchRequested() {
         startActivity(new Intent(this, TvBrowseActivity.class));

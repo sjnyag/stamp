@@ -34,10 +34,10 @@ import java.util.Map;
 /**
  * Validates that the calling package is authorized to browse a
  * {@link android.service.media.MediaBrowserService}.
- *
+ * <p>
  * The list of allowed signing certificates and their corresponding package names is defined in
  * res/xml/allowed_media_browser_callers.xml.
- *
+ * <p>
  * If you add a new valid caller to allowed_media_browser_callers.xml and you don't know
  * its signature, this class will print to logcat (INFO level) a message with the proper base64
  * version of the caller certificate that has not been validated. You can copy from logcat and
@@ -48,13 +48,12 @@ public class PackageValidator {
 
     /**
      * Map allowed callers' certificate keys to the expected caller information.
-     *
      */
     private final Map<String, ArrayList<CallerInfo>> mValidCertificates;
 
     public PackageValidator(Context ctx) {
         mValidCertificates = readValidCertificates(ctx.getResources().getXml(
-            R.xml.allowed_media_browser_callers));
+                R.xml.allowed_media_browser_callers));
     }
 
     private Map<String, ArrayList<CallerInfo>> readValidCertificates(XmlResourceParser parser) {
@@ -78,8 +77,8 @@ public class PackageValidator {
                         validCertificates.put(certificate, infos);
                     }
                     LogHelper.v(TAG, "Adding allowed caller: ", info.name,
-                        " package=", info.packageName, " release=", info.release,
-                        " certificate=", certificate);
+                            " package=", info.packageName, " release=", info.release,
+                            " certificate=", certificate);
                     infos.add(info);
                 }
                 eventType = parser.next();
@@ -113,13 +112,13 @@ public class PackageValidator {
             return false;
         }
         String signature = Base64.encodeToString(
-            packageInfo.signatures[0].toByteArray(), Base64.NO_WRAP);
+                packageInfo.signatures[0].toByteArray(), Base64.NO_WRAP);
 
         // Test for known signatures:
         ArrayList<CallerInfo> validCallers = mValidCertificates.get(signature);
         if (validCallers == null) {
             LogHelper.v(TAG, "Signature for caller ", callingPackage, " is not valid: \n"
-                , signature);
+                    , signature);
             if (mValidCertificates.isEmpty()) {
                 LogHelper.w(TAG, "The list of valid certificates is empty. Either your file ",
                         "res/xml/allowed_media_browser_callers.xml is empty or there was an error ",
@@ -130,19 +129,19 @@ public class PackageValidator {
 
         // Check if the package name is valid for the certificate:
         StringBuffer expectedPackages = new StringBuffer();
-        for (CallerInfo info: validCallers) {
+        for (CallerInfo info : validCallers) {
             if (callingPackage.equals(info.packageName)) {
                 LogHelper.v(TAG, "Valid caller: ", info.name, "  package=", info.packageName,
-                    " release=", info.release);
+                        " release=", info.release);
                 return true;
             }
             expectedPackages.append(info.packageName).append(' ');
         }
 
         LogHelper.i(TAG, "Caller has a valid certificate, but its package doesn't match any ",
-            "expected package for the given certificate. Caller's package is ", callingPackage,
-            ". Expected packages as defined in res/xml/allowed_media_browser_callers.xml are (",
-            expectedPackages, "). This caller's certificate is: \n", signature);
+                "expected package for the given certificate. Caller's package is ", callingPackage,
+                ". Expected packages as defined in res/xml/allowed_media_browser_callers.xml are (",
+                expectedPackages, "). This caller's certificate is: \n", signature);
 
         return false;
     }

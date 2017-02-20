@@ -52,7 +52,7 @@ public class CardPresenter extends Presenter {
 
         // Determine description and playing state of item based on instance type
         cardViewHolder.setState(MediaItemViewHolder.STATE_NONE);
-        if (item instanceof  MediaBrowserCompat.MediaItem) {
+        if (item instanceof MediaBrowserCompat.MediaItem) {
             MediaBrowserCompat.MediaItem mediaItem = (MediaBrowserCompat.MediaItem) item;
             LogHelper.d(TAG, "onBindViewHolder MediaItem: ", mediaItem.toString());
             description = mediaItem.getDescription();

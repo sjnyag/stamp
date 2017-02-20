@@ -83,36 +83,36 @@ public class TvBrowseFragment extends BrowseSupportFragment {
     // is being shown, the current title and description and the PlaybackState.
     private final MediaControllerCompat.Callback mMediaControllerCallback =
             new MediaControllerCompat.Callback() {
-        @Override
-        public void onMetadataChanged(MediaMetadataCompat metadata) {
-            if (metadata != null) {
-                MediaControllerCompat mediaController = getActivity().getSupportMediaController();
-                long activeQueueId;
-                if (mediaController.getPlaybackState() == null) {
-                    activeQueueId = MediaSessionCompat.QueueItem.UNKNOWN_ID;
-                } else {
-                    activeQueueId = mediaController.getPlaybackState().getActiveQueueItemId();
+                @Override
+                public void onMetadataChanged(MediaMetadataCompat metadata) {
+                    if (metadata != null) {
+                        MediaControllerCompat mediaController = getActivity().getSupportMediaController();
+                        long activeQueueId;
+                        if (mediaController.getPlaybackState() == null) {
+                            activeQueueId = MediaSessionCompat.QueueItem.UNKNOWN_ID;
+                        } else {
+                            activeQueueId = mediaController.getPlaybackState().getActiveQueueItemId();
+                        }
+                        updateNowPlayingList(mediaController.getQueue(), activeQueueId);
+                        mRowsAdapter.notifyArrayItemRangeChanged(0, mRowsAdapter.size());
+                    }
                 }
-                updateNowPlayingList(mediaController.getQueue(), activeQueueId);
-                mRowsAdapter.notifyArrayItemRangeChanged(0, mRowsAdapter.size());
-            }
-        }
 
-        @Override
-        public void onQueueChanged(List<MediaSessionCompat.QueueItem> queue) {
-            // queue has changed somehow
-            MediaControllerCompat mediaController = getActivity().getSupportMediaController();
+                @Override
+                public void onQueueChanged(List<MediaSessionCompat.QueueItem> queue) {
+                    // queue has changed somehow
+                    MediaControllerCompat mediaController = getActivity().getSupportMediaController();
 
-            long activeQueueId;
-            if (mediaController.getPlaybackState() == null) {
-                activeQueueId = MediaSessionCompat.QueueItem.UNKNOWN_ID;
-            } else {
-                activeQueueId = mediaController.getPlaybackState().getActiveQueueItemId();
-            }
-            updateNowPlayingList(queue, activeQueueId);
-            mRowsAdapter.notifyArrayItemRangeChanged(0, mRowsAdapter.size());
-        }
-    };
+                    long activeQueueId;
+                    if (mediaController.getPlaybackState() == null) {
+                        activeQueueId = MediaSessionCompat.QueueItem.UNKNOWN_ID;
+                    } else {
+                        activeQueueId = mediaController.getPlaybackState().getActiveQueueItemId();
+                    }
+                    updateNowPlayingList(queue, activeQueueId);
+                    mRowsAdapter.notifyArrayItemRangeChanged(0, mRowsAdapter.size());
+                }
+            };
 
     private void updateNowPlayingList(List<MediaSessionCompat.QueueItem> queue, long activeQueueId) {
         if (mListRowAdapter != null) {
