@@ -15,15 +15,56 @@
   limitations under the License.
   -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/user_icon"
+        android:checkableBehavior="single">
         <item
-            android:id="@+id/navigation_allmusic"
-            android:checked="true"
-            android:icon="@drawable/ic_allmusic_black_24dp"
-            android:title="@string/drawer_allmusic_title"/>
+            android:id="@+id/navigation_home"
+            android:icon="@drawable/ic_account_circle"
+            android:title="@string/drawer_home_title"/>
         <item
-            android:id="@+id/navigation_playlists"
-            android:icon="@drawable/ic_playlist_music_black_24dp"
-            android:title="@string/drawer_playlists_title"/>
+            android:id="@+id/navigation_timeline"
+            android:icon="@drawable/ic_timeline"
+            android:title="@string/drawer_timeline_title"/>
+        <item
+            android:id="@+id/navigation_queue"
+            android:icon="@drawable/ic_queue_music"
+            android:title="@string/drawer_queue_title"/>
+    </group>
+    <group
+        android:id="@+id/smart_list"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_tag"
+            android:icon="@drawable/ic_filter_vintage"
+            android:title="@string/drawer_tag"/>
+        <item
+            android:id="@+id/navigation_new"
+            android:icon="@drawable/ic_timelapse"
+            android:title="@string/drawer_new"/>
+        <item
+            android:id="@+id/navigation_top_song"
+            android:icon="@drawable/ic_favorite_border"
+            android:title="@string/drawer_top_song"/>
+        <item
+            android:id="@+id/navigation_all_music"
+            android:icon="@drawable/ic_library_music"
+            android:title="@string/drawer_all_music"/>
+    </group>
+    <group
+        android:id="@+id/functions"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_ranking"
+            android:icon="@drawable/ic_star"
+            android:title="@string/drawer_ranking"/>
+        <item
+            android:id="@+id/navigation_edit_playlist"
+            android:icon="@drawable/ic_mode_edit"
+            android:title="@string/drawer_edit_playlist"/>
+        <item
+            android:id="@+id/navigation_setting"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/drawer_setting"/>
     </group>
 </menu>

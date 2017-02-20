@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sjn.taggingplayer.ui;
+package com.sjn.taggingplayer.ui.activity;
 
 import android.os.Bundle;
 
@@ -23,7 +23,7 @@ import com.sjn.taggingplayer.R;
  * Placeholder activity for features that are not implemented in this sample, but
  * are in the navigation drawer.
  */
-public class PlaceholderActivity extends BaseActivity {
+public class PlaceholderActivity extends MediaBrowserActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

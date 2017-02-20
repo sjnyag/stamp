@@ -35,6 +35,7 @@
         android:required="false"/>
 
     <application
+        android:name=".TaggingPlayerApplication"
         android:allowBackup="true"
         android:banner="@drawable/banner_tv"
         android:icon="@drawable/ic_launcher"
@@ -52,7 +53,7 @@
 
         <!-- Main activity for music browsing on phone -->
         <activity
-            android:name=".ui.MusicPlayerActivity"
+            android:name=".ui.activity.MusicPlayerActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -68,14 +69,14 @@
 
         <!-- Placeholder activity for phone UI -->
         <activity
-            android:name=".ui.PlaceholderActivity"
+            android:name=".ui.activity.PlaceholderActivity"
             android:label="@string/app_name">
         </activity>
 
         <!-- Proxy activity that opens either the NowPlaying TV or the mobile UI, depending on
         the current environment -->
         <activity
-            android:name=".ui.NowPlayingActivity"
+            android:name=".ui.activity.NowPlayingActivity"
             android:icon="@drawable/ic_launcher">
         </activity>
 
@@ -90,7 +91,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.RequestPermissionActivity"/>
+            android:name=".ui.activity.RequestPermissionActivity"/>
 
         <activity
             android:name=".ui.tv.TvVerticalGridActivity"
@@ -153,13 +154,13 @@
         <!-- A full screen activity showing controls and a seek bar for
              the current playing music -->
         <activity
-            android:name=".ui.FullScreenPlayerActivity"
+            android:name=".ui.activity.FullScreenPlayerActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.MusicPlayerActivity">
+            android:parentActivityName=".ui.activity.MusicPlayerActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.MusicPlayerActivity"/>
+                android:value=".ui.activity.MusicPlayerActivity"/>
         </activity>
 
         <!-- A receiver that will receive media buttons and send as

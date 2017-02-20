@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sjn.taggingplayer.ui;
+package com.sjn.taggingplayer.ui.activity;
 
-import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.media.MediaBrowserCompat;
 import android.text.TextUtils;
 
 import com.sjn.taggingplayer.R;
+import com.sjn.taggingplayer.ui.MediaBrowserFragment;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.PermissionHelper;
 
@@ -35,7 +38,7 @@ import static com.sjn.taggingplayer.media.source.LocalMediaSource.PERMISSIONS;
  * when it is created and connect/disconnect on start/stop. Thus, a MediaBrowser will be always
  * connected while this activity is running.
  */
-public class MusicPlayerActivity extends BaseActivity
+public class MusicPlayerActivity extends MediaBrowserActivity
         implements MediaBrowserFragment.MediaFragmentListener {
 
     private static final String TAG = LogHelper.makeLogTag(MusicPlayerActivity.class);
@@ -145,6 +148,26 @@ public class MusicPlayerActivity extends BaseActivity
         navigateToBrowser(mediaId);
     }
 
+    public void navigateToBrowser(Fragment fragment, boolean addToBackStack, long selection) {
+        navigateToBrowser(fragment, addToBackStack);
+        mDrawer.setSelection(selection);
+    }
+
+    public void navigateToBrowser(Fragment fragment, boolean addToBackStack) {
+        if (!addToBackStack) {
+            getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, fragment, FRAGMENT_TAG);
+        if (addToBackStack) {
+            // If this is not the top level media (root), we add it to the fragment back stack,
+            // so that actionbar toggle and Back will work appropriately:
+            //transaction.setCustomAnimations(R.anim.fade_out, R.anim.fade_in);
+            transaction.addToBackStack(null);
+        }
+        transaction.commit();
+    }
+
     private void navigateToBrowser(String mediaId) {
         LogHelper.d(TAG, "navigateToBrowser, mediaId=" + mediaId);
         MediaBrowserFragment fragment = getBrowseFragment();
@@ -152,17 +175,7 @@ public class MusicPlayerActivity extends BaseActivity
         if (fragment == null || !TextUtils.equals(fragment.getMediaId(), mediaId)) {
             fragment = new MediaBrowserFragment();
             fragment.setMediaId(mediaId);
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(
-                    R.animator.slide_in_from_right, R.animator.slide_out_to_left,
-                    R.animator.slide_in_from_left, R.animator.slide_out_to_right);
-            transaction.replace(R.id.container, fragment, FRAGMENT_TAG);
-            // If this is not the top level media (root), we add it to the fragment back stack,
-            // so that actionbar toggle and Back will work appropriately:
-            if (mediaId != null) {
-                transaction.addToBackStack(null);
-            }
-            transaction.commit();
+            navigateToBrowser(fragment, true);
         }
     }
 
@@ -175,7 +188,7 @@ public class MusicPlayerActivity extends BaseActivity
     }
 
     private MediaBrowserFragment getBrowseFragment() {
-        return (MediaBrowserFragment) getFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        return (MediaBrowserFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
     }
 
     @Override

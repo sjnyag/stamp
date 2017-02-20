@@ -1,4 +1,4 @@
-package com.sjn.taggingplayer.ui;
+package com.sjn.taggingplayer.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;

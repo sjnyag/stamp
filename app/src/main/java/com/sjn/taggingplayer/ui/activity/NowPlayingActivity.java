@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sjn.taggingplayer.ui;
+package com.sjn.taggingplayer.ui.activity;
 
 import android.app.Activity;
 import android.app.UiModeManager;

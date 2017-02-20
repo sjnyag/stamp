@@ -43,8 +43,6 @@
     <string name="open_content_drawer">Open the main menu</string>
     <string name="close_content_drawer">Close the main menu</string>
     <string name="placeholder_message">This is a placeholder for your application code.</string>
-    <string name="drawer_allmusic_title">All Music</string>
-    <string name="drawer_playlists_title">Playlists</string>
     <string name="now_playing">Now Playing</string>
     <string name="background_image_str">Background image for album art</string>
     <string name="search_queue_title">Search results</string>
@@ -61,4 +59,16 @@
     <string name="media_item_label_album">Album</string>
     <string name="media_item_label_genre">Genre</string>
     <string name="media_item_label_playlist">Playlist</string>
+
+    <string name="drawer_home_title">Home</string>
+    <string name="drawer_timeline_title">Timeline</string>
+    <string name="drawer_queue_title">Queue</string>
+    <string name="drawer_tag">Tag</string>
+    <string name="drawer_new">New</string>
+    <string name="drawer_top_song">Top Song</string>
+    <string name="drawer_all_music">All Music</string>
+    <string name="drawer_ranking">Ranking</string>
+    <string name="drawer_edit_playlist">Edit Playlist</string>
+    <string name="drawer_setting">Setting</string>
+    <string name="drawer_tag_mode_title">Tag Edit Mode</string>
 </resources>

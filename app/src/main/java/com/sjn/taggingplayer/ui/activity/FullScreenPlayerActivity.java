@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sjn.taggingplayer.ui;
+package com.sjn.taggingplayer.ui.activity;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -55,7 +55,7 @@ import static android.view.View.VISIBLE;
  * A full screen player that shows the current playing music with a background image
  * depicting the album art. The activity also has controls to seek/pause/play the audio.
  */
-public class FullScreenPlayerActivity extends ActionBarCastActivity {
+public class FullScreenPlayerActivity extends MediaBrowserActivity {
     private static final String TAG = LogHelper.makeLogTag(FullScreenPlayerActivity.class);
     private static final long PROGRESS_UPDATE_INTERNAL = 1000;
     private static final long PROGRESS_UPDATE_INITIAL_INTERVAL = 100;

@@ -12,7 +12,7 @@ import android.support.v7.media.MediaRouter;
 
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManagerListener;
-import com.sjn.taggingplayer.ui.NowPlayingActivity;
+import com.sjn.taggingplayer.ui.activity.NowPlayingActivity;
 import com.sjn.taggingplayer.utils.CarHelper;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.WearHelper;

@@ -35,6 +35,8 @@ import android.widget.Toast;
 
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.media.player.CastPlayer;
+import com.sjn.taggingplayer.ui.activity.FullScreenPlayerActivity;
+import com.sjn.taggingplayer.ui.activity.MusicPlayerActivity;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.squareup.picasso.Picasso;
 

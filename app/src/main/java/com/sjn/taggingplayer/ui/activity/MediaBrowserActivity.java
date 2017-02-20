@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sjn.taggingplayer.ui;
+package com.sjn.taggingplayer.ui.activity;
 
 import android.app.ActivityManager;
 import android.content.ComponentName;
@@ -30,6 +30,8 @@ import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.sjn.taggingplayer.MusicService;
 import com.sjn.taggingplayer.R;
+import com.sjn.taggingplayer.ui.MediaBrowserProvider;
+import com.sjn.taggingplayer.ui.PlaybackControlsFragment;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.NetworkHelper;
 import com.sjn.taggingplayer.utils.ResourceHelper;
@@ -37,9 +39,9 @@ import com.sjn.taggingplayer.utils.ResourceHelper;
 /**
  * Base activity for activities that need to show a playback control fragment when media is playing.
  */
-public abstract class BaseActivity extends ActionBarCastActivity implements MediaBrowserProvider {
+public abstract class MediaBrowserActivity extends ActionBarCastActivity implements MediaBrowserProvider {
 
-    private static final String TAG = LogHelper.makeLogTag(BaseActivity.class);
+    private static final String TAG = LogHelper.makeLogTag(MediaBrowserActivity.class);
 
     private MediaBrowserCompat mMediaBrowser;
     private PlaybackControlsFragment mControlsFragment;

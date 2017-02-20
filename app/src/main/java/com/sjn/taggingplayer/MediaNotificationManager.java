@@ -23,7 +23,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.RemoteException;
@@ -37,7 +36,7 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.NotificationCompat;
 
 import com.sjn.taggingplayer.media.player.CastPlayer;
-import com.sjn.taggingplayer.ui.MusicPlayerActivity;
+import com.sjn.taggingplayer.ui.activity.MusicPlayerActivity;
 import com.sjn.taggingplayer.utils.BitmapHelper;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.ResourceHelper;
