@@ -10,9 +10,6 @@ import com.sjn.taggingplayer.utils.LogHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
-
 public class CustomController {
     private static final String TAG = LogHelper.makeLogTag(CustomController.class);
 
@@ -22,12 +19,17 @@ public class CustomController {
 
     private List<RepeatStateListener> mRepeatStateListenerSet = new ArrayList<>();
 
-    @Accessors(prefix = "m")
-    @Getter
-    private ShuffleState mShuffleState = ShuffleState.getDefault();
-    @Accessors(prefix = "m")
-    @Getter
-    private RepeatState mRepeatState = RepeatState.getDefault();
+    public ShuffleState getShuffleState() {
+        return mShuffleState;
+    }
+
+    public RepeatState getRepeatState() {
+        return mRepeatState;
+    }
+
+    private ShuffleState mShuffleState;
+
+    private RepeatState mRepeatState;
 
     public interface RepeatStateListener {
         void onRepeatStateChanged(RepeatState state);
@@ -84,6 +86,11 @@ public class CustomController {
             sInstance = new CustomController();
         }
         return sInstance;
+    }
+
+    private CustomController() {
+        mShuffleState = ShuffleState.getDefault();
+        mRepeatState = RepeatState.getDefault();
     }
 
 }

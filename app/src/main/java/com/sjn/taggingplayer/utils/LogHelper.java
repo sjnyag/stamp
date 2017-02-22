@@ -44,14 +44,14 @@ public class LogHelper {
     public static void v(String tag, Object... messages) {
         // Only log VERBOSE if build type is DEBUG
         if (BuildConfig.DEBUG) {
-            log(tag, Log.VERBOSE, null, messages);
+            log(tag, Log.INFO, null, messages);
         }
     }
 
     public static void d(String tag, Object... messages) {
         // Only log DEBUG if build type is DEBUG
         if (BuildConfig.DEBUG) {
-            log(tag, Log.DEBUG, null, messages);
+            log(tag, Log.INFO, null, messages);
         }
     }
 

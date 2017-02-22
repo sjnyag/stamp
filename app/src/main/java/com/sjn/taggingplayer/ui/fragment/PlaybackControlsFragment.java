@@ -33,13 +33,14 @@ import android.widget.Toast;
 
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.media.player.CastPlayer;
+import com.sjn.taggingplayer.ui.observer.MediaControllerObserver;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.squareup.picasso.Picasso;
 
 /**
  * A class that shows the Media Queue to the user.
  */
-public class PlaybackControlsFragment extends Fragment {
+public class PlaybackControlsFragment extends Fragment implements MediaControllerObserver.Listener {
 
     private static final String TAG = LogHelper.makeLogTag(PlaybackControlsFragment.class);
 
@@ -49,26 +50,6 @@ public class PlaybackControlsFragment extends Fragment {
     private TextView mExtraInfo;
     private ImageView mAlbumArt;
     private String mArtUrl;
-    // Receive callbacks from the MediaController. Here we update our state such as which queue
-    // is being shown, the current title and description and the PlaybackState.
-    private final MediaControllerCompat.Callback mCallback = new MediaControllerCompat.Callback() {
-        @Override
-        public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
-            LogHelper.d(TAG, "Received playback state change to state ", state.getState());
-            PlaybackControlsFragment.this.onPlaybackStateChanged(state);
-        }
-
-        @Override
-        public void onMetadataChanged(MediaMetadataCompat metadata) {
-            if (metadata == null) {
-                return;
-            }
-            LogHelper.d(TAG, "Received metadata state change to mediaId=",
-                    metadata.getDescription().getMediaId(),
-                    " song=", metadata.getDescription().getTitle());
-            PlaybackControlsFragment.this.onMetadataChanged(metadata);
-        }
-    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -90,24 +71,18 @@ public class PlaybackControlsFragment extends Fragment {
     public void onStart() {
         super.onStart();
         LogHelper.d(TAG, "fragment.onStart");
-        MediaControllerCompat controller = getActivity()
-                .getSupportMediaController();
-        if (controller != null) {
-            onConnected();
-        }
+        MediaControllerObserver.getInstance().addListener(this);
+        onConnected();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         LogHelper.d(TAG, "fragment.onStop");
-        MediaControllerCompat controller = getActivity()
-                .getSupportMediaController();
-        if (controller != null) {
-            controller.unregisterCallback(mCallback);
-        }
+        MediaControllerObserver.getInstance().removeListener(this);
     }
 
+    @Override
     public void onConnected() {
         MediaControllerCompat controller = getActivity()
                 .getSupportMediaController();
@@ -115,11 +90,11 @@ public class PlaybackControlsFragment extends Fragment {
         if (controller != null) {
             onMetadataChanged(controller.getMetadata());
             onPlaybackStateChanged(controller.getPlaybackState());
-            controller.registerCallback(mCallback);
         }
     }
 
-    private void onMetadataChanged(MediaMetadataCompat metadata) {
+    @Override
+    public void onMetadataChanged(MediaMetadataCompat metadata) {
         LogHelper.d(TAG, "onMetadataChanged ", metadata);
         if (getActivity() == null) {
             LogHelper.w(TAG, "onMetadataChanged called when getActivity null," +
@@ -151,7 +126,8 @@ public class PlaybackControlsFragment extends Fragment {
         }
     }
 
-    private void onPlaybackStateChanged(PlaybackStateCompat state) {
+    @Override
+    public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
         LogHelper.d(TAG, "onPlaybackStateChanged ", state);
         if (getActivity() == null) {
             LogHelper.w(TAG, "onPlaybackStateChanged called when getActivity null," +

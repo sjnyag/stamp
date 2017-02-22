@@ -32,6 +32,7 @@ import com.sjn.taggingplayer.MusicService;
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.ui.MediaBrowserProvider;
 import com.sjn.taggingplayer.ui.fragment.PlaybackControlsFragment;
+import com.sjn.taggingplayer.ui.observer.MediaControllerObserver;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.NetworkHelper;
 import com.sjn.taggingplayer.utils.ResourceHelper;
@@ -39,7 +40,7 @@ import com.sjn.taggingplayer.utils.ResourceHelper;
 /**
  * Base activity for activities that need to show a playback control fragment when media is playing.
  */
-public abstract class MediaBrowserActivity extends ActionBarCastActivity implements MediaBrowserProvider {
+public abstract class MediaBrowserActivity extends ActionBarCastActivity implements MediaBrowserProvider, MediaControllerObserver.Listener {
 
     private static final String TAG = LogHelper.makeLogTag(MediaBrowserActivity.class);
 
@@ -91,7 +92,7 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
         super.onStop();
         LogHelper.d(TAG, "Activity onStop");
         if (getSupportMediaController() != null) {
-            getSupportMediaController().unregisterCallback(mMediaControllerCallback);
+            getSupportMediaController().unregisterCallback(MediaControllerObserver.getInstance());
         }
         mMediaBrowser.disconnect();
     }
@@ -147,7 +148,8 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
     private void connectToSession(MediaSessionCompat.Token token) throws RemoteException {
         MediaControllerCompat mediaController = new MediaControllerCompat(this, token);
         setSupportMediaController(mediaController);
-        mediaController.registerCallback(mMediaControllerCallback);
+        mediaController.registerCallback(MediaControllerObserver.getInstance());
+        MediaControllerObserver.getInstance().notifyConnected();
 
         if (shouldShowControls()) {
             showPlaybackControls();
@@ -165,30 +167,31 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
     }
 
     // Callback that ensures that we are showing the controls
-    private final MediaControllerCompat.Callback mMediaControllerCallback =
-            new MediaControllerCompat.Callback() {
-                @Override
-                public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
-                    if (shouldShowControls()) {
-                        showPlaybackControls();
-                    } else {
-                        LogHelper.d(TAG, "mediaControllerCallback.onPlaybackStateChanged: " +
-                                "hiding controls because state is ", state.getState());
-                        hidePlaybackControls();
-                    }
-                }
+    @Override
+    public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
+        if (shouldShowControls()) {
+            showPlaybackControls();
+        } else {
+            LogHelper.d(TAG, "mediaControllerCallback.onPlaybackStateChanged: " +
+                    "hiding controls because state is ", state.getState());
+            hidePlaybackControls();
+        }
+    }
 
-                @Override
-                public void onMetadataChanged(MediaMetadataCompat metadata) {
-                    if (shouldShowControls()) {
-                        showPlaybackControls();
-                    } else {
-                        LogHelper.d(TAG, "mediaControllerCallback.onMetadataChanged: " +
-                                "hiding controls because metadata is null");
-                        hidePlaybackControls();
-                    }
-                }
-            };
+    @Override
+    public void onMetadataChanged(MediaMetadataCompat metadata) {
+        if (shouldShowControls()) {
+            showPlaybackControls();
+        } else {
+            LogHelper.d(TAG, "mediaControllerCallback.onMetadataChanged: " +
+                    "hiding controls because metadata is null");
+            hidePlaybackControls();
+        }
+    }
+
+    @Override
+    public void onConnected() {
+    }
 
     private final MediaBrowserCompat.ConnectionCallback mConnectionCallback =
             new MediaBrowserCompat.ConnectionCallback() {

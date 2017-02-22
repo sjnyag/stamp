@@ -32,7 +32,7 @@ public class Player implements SessionManager.SessionListener {
 
     public void restorePreviousState(MusicProvider musicProvider) {
         UserSettingController userSettingController = new UserSettingController(mContext);
-        CustomController customController = new CustomController();
+        CustomController customController = CustomController.getInstance();
         customController.setRepeatState(mContext, userSettingController.getRepeatState());
         customController.setShuffleState(mContext, userSettingController.getShuffleState());
         mQueueManager.restorePreviousState(userSettingController.getLastMusicId(), userSettingController.getQueueIdentifyMediaId());
@@ -45,7 +45,7 @@ public class Player implements SessionManager.SessionListener {
             }
             PlaybackStateCompat state = new PlaybackStateCompat.Builder()
                     .setActions(PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_SKIP_TO_NEXT | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
-                    .setState(PlaybackStateCompat.STATE_STOPPED, 0, 1.0f)
+                    .setState(PlaybackStateCompat.STATE_PAUSED, 0, 1.0f)
                     .build();
             mSessionManager.setPlaybackState(state);
         }

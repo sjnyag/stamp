@@ -42,6 +42,7 @@ import com.sjn.taggingplayer.constant.ShuffleState;
 import com.sjn.taggingplayer.media.CustomController;
 import com.sjn.taggingplayer.media.player.CastPlayer;
 import com.sjn.taggingplayer.ui.activity.MusicPlayerActivity;
+import com.sjn.taggingplayer.ui.observer.MediaControllerObserver;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.squareup.picasso.Picasso;
 
@@ -57,7 +58,7 @@ import static android.view.View.VISIBLE;
  * A full screen player that shows the current playing music with a background image
  * depicting the album art. The activity also has controls to seek/pause/play the audio.
  */
-public class FullScreenPlayerFragment extends Fragment implements CustomController.RepeatStateListener, CustomController.ShuffleStateListener {
+public class FullScreenPlayerFragment extends Fragment implements CustomController.RepeatStateListener, CustomController.ShuffleStateListener, MediaControllerObserver.Listener {
     private static final String TAG = LogHelper.makeLogTag(FullScreenPlayerFragment.class);
     private static final long PROGRESS_UPDATE_INTERNAL = 1000;
     private static final long PROGRESS_UPDATE_INITIAL_INTERVAL = 100;
@@ -100,21 +101,19 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
     private ScheduledFuture<?> mScheduleFuture;
     private PlaybackStateCompat mLastPlaybackState;
 
-    private final MediaControllerCompat.Callback mCallback = new MediaControllerCompat.Callback() {
-        @Override
-        public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
-            LogHelper.d(TAG, "onPlaybackstate changed", state);
-            updatePlaybackState(state);
-        }
+    @Override
+    public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
+        LogHelper.d(TAG, "onPlaybackstate changed", state);
+        updatePlaybackState(state);
+    }
 
-        @Override
-        public void onMetadataChanged(MediaMetadataCompat metadata) {
-            if (metadata != null) {
-                updateMediaDescription(metadata.getDescription());
-                updateDuration(metadata);
-            }
+    @Override
+    public void onMetadataChanged(MediaMetadataCompat metadata) {
+        if (metadata != null) {
+            updateMediaDescription(metadata.getDescription());
+            updateDuration(metadata);
         }
-    };
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -197,14 +196,12 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
         });
 
         mRepeat.setImageDrawable(mNoRepeatDrawable);
-        onRepeatStateChanged(CustomController.getInstance().getRepeatState());
         mRepeat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 CustomController.getInstance().toggleRepeatState(getContext());
             }
         });
-        onShuffleStateChanged(CustomController.getInstance().getShuffleState());
         mShuffle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -238,20 +235,14 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
         if (savedInstanceState == null) {
             updateFromParams(getActivity().getIntent());
         }
-
-        MediaControllerCompat controller = getController();
-        if (controller != null) {
-            controller.registerCallback(mCallback);
-        }
         return rootView;
     }
 
-    private void onConnected() {
+    public void onConnected() {
         MediaControllerCompat controller = getController();
         if (controller == null) {
             return;
         }
-        controller.registerCallback(mCallback);
         PlaybackStateCompat state = controller.getPlaybackState();
         updatePlaybackState(state);
         MediaMetadataCompat metadata = controller.getMetadata();
@@ -300,22 +291,19 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
     public void onStart() {
         LogHelper.i(TAG, "onStart");
         super.onStart();
-        MediaControllerCompat controller = getActivity().getSupportMediaController();
-        if (controller != null) {
-            onConnected();
-        }
+        MediaControllerObserver.getInstance().addListener(this);
+        onConnected();
         CustomController.getInstance().addRepeatStateListenerSet(this);
         CustomController.getInstance().addShuffleStateListenerSet(this);
+        onRepeatStateChanged(CustomController.getInstance().getRepeatState());
+        onShuffleStateChanged(CustomController.getInstance().getShuffleState());
     }
 
     @Override
     public void onStop() {
         LogHelper.i(TAG, "onStop");
         super.onStop();
-        MediaControllerCompat controller = getController();
-        if (controller != null) {
-            controller.unregisterCallback(mCallback);
-        }
+        MediaControllerObserver.getInstance().removeListener(this);
         CustomController.getInstance().removeRepeatStateListenerSet(this);
         CustomController.getInstance().removeShuffleStateListenerSet(this);
     }

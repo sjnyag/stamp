@@ -6,6 +6,7 @@ import com.sjn.taggingplayer.constant.RepeatState;
 import com.sjn.taggingplayer.constant.ShuffleState;
 import com.sjn.taggingplayer.db.UserSetting;
 import com.sjn.taggingplayer.db.dao.UserSettingDao;
+import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.MediaIDHelper;
 import com.sjn.taggingplayer.utils.RealmHelper;
 

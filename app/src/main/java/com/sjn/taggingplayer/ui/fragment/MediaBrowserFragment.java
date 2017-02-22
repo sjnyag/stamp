@@ -41,6 +41,7 @@ import android.widget.Toast;
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.ui.MediaBrowserProvider;
 import com.sjn.taggingplayer.ui.MediaItemViewHolder;
+import com.sjn.taggingplayer.ui.observer.MediaControllerObserver;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.MediaIDHelper;
 import com.sjn.taggingplayer.utils.NetworkHelper;
@@ -56,7 +57,7 @@ import java.util.List;
  * Once connected, the fragment subscribes to get all the children.
  * All {@link MediaBrowserCompat.MediaItem}'s that can be browsed are shown in a ListView.
  */
-public class MediaBrowserFragment extends Fragment {
+public class MediaBrowserFragment extends Fragment implements MediaControllerObserver.Listener {
 
     private static final String TAG = LogHelper.makeLogTag(MediaBrowserFragment.class);
 
@@ -87,29 +88,22 @@ public class MediaBrowserFragment extends Fragment {
         }
     };
 
-    // Receive callbacks from the MediaController. Here we update our state such as which queue
-    // is being shown, the current title and description and the PlaybackState.
-    private final MediaControllerCompat.Callback mMediaControllerCallback =
-            new MediaControllerCompat.Callback() {
-                @Override
-                public void onMetadataChanged(MediaMetadataCompat metadata) {
-                    super.onMetadataChanged(metadata);
-                    if (metadata == null) {
-                        return;
-                    }
-                    LogHelper.d(TAG, "Received metadata change to media ",
-                            metadata.getDescription().getMediaId());
-                    mBrowserAdapter.notifyDataSetChanged();
-                }
+    @Override
+    public void onMetadataChanged(MediaMetadataCompat metadata) {
+        if (metadata == null) {
+            return;
+        }
+        LogHelper.d(TAG, "Received metadata change to media ",
+                metadata.getDescription().getMediaId());
+        mBrowserAdapter.notifyDataSetChanged();
+    }
 
-                @Override
-                public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
-                    super.onPlaybackStateChanged(state);
-                    LogHelper.d(TAG, "Received state change: ", state);
-                    checkForUserVisibleErrors(false);
-                    mBrowserAdapter.notifyDataSetChanged();
-                }
-            };
+    @Override
+    public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
+        LogHelper.d(TAG, "Received state change: ", state);
+        checkForUserVisibleErrors(false);
+        mBrowserAdapter.notifyDataSetChanged();
+    }
 
     private final MediaBrowserCompat.SubscriptionCallback mSubscriptionCallback =
             new MediaBrowserCompat.SubscriptionCallback() {
@@ -197,11 +191,7 @@ public class MediaBrowserFragment extends Fragment {
         if (mediaBrowser != null && mediaBrowser.isConnected() && mMediaId != null) {
             mediaBrowser.unsubscribe(mMediaId);
         }
-        MediaControllerCompat controller = ((FragmentActivity) getActivity())
-                .getSupportMediaController();
-        if (controller != null) {
-            controller.unregisterCallback(mMediaControllerCallback);
-        }
+        MediaControllerObserver.getInstance().removeListener(this);
         this.getActivity().unregisterReceiver(mConnectivityChangeReceiver);
     }
 
@@ -228,6 +218,7 @@ public class MediaBrowserFragment extends Fragment {
     // Called when the MediaBrowser is connected. This method is either called by the
     // fragment.onStart() or explicitly by the activity in the case where the connection
     // completes after the onStart()
+    @Override
     public void onConnected() {
         if (isDetached()) {
             return;
@@ -252,11 +243,7 @@ public class MediaBrowserFragment extends Fragment {
         mMediaFragmentListener.getMediaBrowser().subscribe(mMediaId, mSubscriptionCallback);
 
         // Add MediaController callback so we can redraw the list when metadata changes:
-        MediaControllerCompat controller = ((FragmentActivity) getActivity())
-                .getSupportMediaController();
-        if (controller != null) {
-            controller.registerCallback(mMediaControllerCallback);
-        }
+        MediaControllerObserver.getInstance().addListener(this);
     }
 
     private void checkForUserVisibleErrors(boolean forceError) {
