@@ -27,6 +27,8 @@ import android.support.v4.media.session.MediaSessionCompat;
 
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.constant.RepeatState;
+import com.sjn.taggingplayer.constant.ShuffleState;
+import com.sjn.taggingplayer.controller.UserSettingController;
 import com.sjn.taggingplayer.media.provider.MusicProvider;
 import com.sjn.taggingplayer.media.provider.single.QueueProvider;
 import com.sjn.taggingplayer.utils.BitmapHelper;
@@ -46,7 +48,7 @@ import java.util.List;
  * queue. Also provides methods to set the current queue based on common queries, relying on a
  * given MusicProvider to provide the actual media metadata.
  */
-public class QueueManager implements QueueProvider.QueueListener {
+public class QueueManager implements QueueProvider.QueueListener, CustomController.ShuffleStateListener {
     private static final String TAG = LogHelper.makeLogTag(QueueManager.class);
 
     private Context mContext;
@@ -55,10 +57,35 @@ public class QueueManager implements QueueProvider.QueueListener {
     private Resources mResources;
 
     // "Now playing" queue:
-    private List<MediaSessionCompat.QueueItem> mPlayingQueue;
+    private List<MediaSessionCompat.QueueItem> mOrderedQueue;
+    private List<MediaSessionCompat.QueueItem> mShuffledQueue;
     private int mCurrentIndex;
     //to avoid GC
     private Target mTarget;
+
+    @Override
+    public void onShuffleStateChanged(ShuffleState state) {
+        mShuffledQueue = new ArrayList<>(mOrderedQueue);
+        shuffleQueue(mShuffledQueue, getCurrentMusic());
+        setCurrentQueueIndex(0);
+    }
+
+    private List<MediaSessionCompat.QueueItem> getPlayingQueue() {
+        if (CustomController.getInstance().getShuffleState() == ShuffleState.SHUFFLE) {
+            return mShuffledQueue;
+        }
+        return mOrderedQueue;
+    }
+
+    private static void shuffleQueue(List<MediaSessionCompat.QueueItem> queueItemList, MediaSessionCompat.QueueItem initialQueue) {
+        if (initialQueue != null) {
+            queueItemList.remove(initialQueue);
+            Collections.shuffle(queueItemList);
+            queueItemList.add(0, initialQueue);
+        } else {
+            Collections.shuffle(queueItemList);
+        }
+    }
 
     public QueueManager(@NonNull Context context,
                         @NonNull MusicProvider musicProvider,
@@ -68,9 +95,25 @@ public class QueueManager implements QueueProvider.QueueListener {
         this.mMusicProvider = musicProvider;
         this.mListener = listener;
         this.mResources = resources;
+        CustomController.getInstance().addShuffleStateListenerSet(this);
 
-        mPlayingQueue = Collections.synchronizedList(new ArrayList<MediaSessionCompat.QueueItem>());
+        mOrderedQueue = Collections.synchronizedList(new ArrayList<MediaSessionCompat.QueueItem>());
+        mShuffledQueue = Collections.synchronizedList(new ArrayList<MediaSessionCompat.QueueItem>());
         mCurrentIndex = 0;
+    }
+
+    public void restorePreviousState(String lastMusicId, String queueIdentifyMediaId) {
+        setQueueFromMusic(queueIdentifyMediaId);
+        if (lastMusicId != null && !lastMusicId.isEmpty() && mOrderedQueue != null) {
+            for (int i = 0; i < mOrderedQueue.size(); i++) {
+                if (lastMusicId.equals(MediaIDHelper.extractMusicIDFromMediaID(mOrderedQueue.get(i).getDescription().getMediaId()))) {
+                    setCurrentQueueIndex(i);
+                    break;
+                }
+            }
+        }
+        setCurrentQueueIndex(mCurrentIndex);
+        onShuffleStateChanged(CustomController.getInstance().getShuffleState());
     }
 
     public boolean isSameBrowsingCategory(@NonNull String mediaId) {
@@ -85,24 +128,31 @@ public class QueueManager implements QueueProvider.QueueListener {
         return Arrays.equals(newBrowseHierarchy, currentBrowseHierarchy);
     }
 
-    private void setCurrentQueueIndex(int index) {
-        if (index >= 0 && index < mPlayingQueue.size()) {
+    private boolean setCurrentQueueIndex(int index) {
+        if (index >= 0 && index < getPlayingQueue().size()) {
             mCurrentIndex = index;
-            mListener.onCurrentQueueIndexUpdated(mCurrentIndex);
+            UserSettingController userSettingController = new UserSettingController(mContext);
+            userSettingController.setLastMusicId(MediaIDHelper.extractMusicIDFromMediaID(getCurrentMusic().getDescription().getMediaId()));
+            return true;
         }
+        return false;
     }
 
     public boolean setCurrentQueueItem(long queueId) {
         // set the current index on queue from the queue Id:
-        int index = QueueHelper.getMusicIndexOnQueue(mPlayingQueue, queueId);
-        setCurrentQueueIndex(index);
+        int index = QueueHelper.getMusicIndexOnQueue(getPlayingQueue(), queueId);
+        if (setCurrentQueueIndex(index)) {
+            mListener.onCurrentQueueIndexUpdated(mCurrentIndex);
+        }
         return index >= 0;
     }
 
     public boolean setCurrentQueueItem(String mediaId) {
         // set the current index on queue from the music Id:
-        int index = QueueHelper.getMusicIndexOnQueue(mPlayingQueue, mediaId);
-        setCurrentQueueIndex(index);
+        int index = QueueHelper.getMusicIndexOnQueue(getPlayingQueue(), mediaId);
+        if (setCurrentQueueIndex(index)) {
+            mListener.onCurrentQueueIndexUpdated(mCurrentIndex);
+        }
         return index >= 0;
     }
 
@@ -113,14 +163,14 @@ public class QueueManager implements QueueProvider.QueueListener {
             index = 0;
         } else if (CustomController.getInstance().getRepeatState() == RepeatState.ALL) {
             // skip forwards when in last song will cycle back to start of the queue
-            index %= mPlayingQueue.size();
+            index %= getPlayingQueue().size();
         }
-        if (!QueueHelper.isIndexPlayable(index, mPlayingQueue)) {
+        if (!QueueHelper.isIndexPlayable(index, getPlayingQueue())) {
             LogHelper.e(TAG, "Cannot increment queue index by ", amount,
-                    ". Current=", mCurrentIndex, " queue length=", mPlayingQueue.size());
+                    ". Current=", mCurrentIndex, " queue length=", getPlayingQueue().size());
             return false;
         }
-        mCurrentIndex = index;
+        setCurrentQueueIndex(index);
         return true;
     }
 
@@ -160,17 +210,17 @@ public class QueueManager implements QueueProvider.QueueListener {
     }
 
     public MediaSessionCompat.QueueItem getCurrentMusic() {
-        if (!QueueHelper.isIndexPlayable(mCurrentIndex, mPlayingQueue)) {
+        if (!QueueHelper.isIndexPlayable(mCurrentIndex, getPlayingQueue())) {
             return null;
         }
-        return mPlayingQueue.get(mCurrentIndex);
+        return getPlayingQueue().get(mCurrentIndex);
     }
 
     public int getCurrentQueueSize() {
-        if (mPlayingQueue == null) {
+        if (getPlayingQueue() == null) {
             return 0;
         }
-        return mPlayingQueue.size();
+        return getPlayingQueue().size();
     }
 
     protected void setCurrentQueue(String title, List<MediaSessionCompat.QueueItem> newQueue) {
@@ -179,12 +229,16 @@ public class QueueManager implements QueueProvider.QueueListener {
 
     protected void setCurrentQueue(String title, List<MediaSessionCompat.QueueItem> newQueue,
                                    String initialMediaId) {
-        mPlayingQueue = newQueue;
+        mOrderedQueue = newQueue;
         int index = 0;
         if (initialMediaId != null) {
-            index = QueueHelper.getMusicIndexOnQueue(mPlayingQueue, initialMediaId);
+            index = QueueHelper.getMusicIndexOnQueue(mOrderedQueue, initialMediaId);
         }
-        mCurrentIndex = Math.max(index, 0);
+        if (initialMediaId != null && !initialMediaId.startsWith(MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE)) {
+            UserSettingController userSettingController = new UserSettingController(mContext);
+            userSettingController.setQueueIdentifyMediaId(initialMediaId);
+        }
+        setCurrentQueueIndex(Math.max(index, 0));
         mListener.onQueueUpdated(title, newQueue);
     }
 
@@ -239,9 +293,9 @@ public class QueueManager implements QueueProvider.QueueListener {
     }
 
     @Override
-    public Iterable<MediaMetadataCompat> getPlayingQueue() {
+    public Iterable<MediaMetadataCompat> getPlayingQueueMetadata() {
         List<MediaMetadataCompat> queueList = new ArrayList<>();
-        for (MediaSessionCompat.QueueItem queueItem : mPlayingQueue) {
+        for (MediaSessionCompat.QueueItem queueItem : getPlayingQueue()) {
             queueList.add(
                     new MediaMetadataCompat.Builder()
                             .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, MediaIDHelper.extractMusicIDFromMediaID(queueItem.getDescription().getMediaId()))

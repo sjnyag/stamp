@@ -26,7 +26,6 @@ import android.support.v4.media.MediaBrowserCompat.MediaItem;
 import android.support.v4.media.MediaBrowserServiceCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
-import com.sjn.taggingplayer.media.CustomController;
 import com.sjn.taggingplayer.media.playback.Playback;
 import com.sjn.taggingplayer.media.playback.PlaybackManager;
 import com.sjn.taggingplayer.media.player.CarPlayer;
@@ -154,6 +153,7 @@ public class MusicService extends MediaBrowserServiceCompat
                     public void onMusicCatalogReady(boolean success) {
                         mPlayer = new Player(MusicService.this, MusicService.this);
                         setSessionToken(mPlayer.initialize(MusicService.this, mMusicProvider));
+                        mPlayer.restorePreviousState(mMusicProvider);
                         mCarPlayer = new CarPlayer(MusicService.this);
                         mCastPlayer = new CastPlayer(MusicService.this, mPlayer.getSessionManageListener());
                         try {

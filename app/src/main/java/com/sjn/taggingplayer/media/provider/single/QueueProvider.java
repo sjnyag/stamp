@@ -21,7 +21,7 @@ public class QueueProvider extends SingleListProvider {
     }
 
     public interface QueueListener {
-        Iterable<MediaMetadataCompat> getPlayingQueue();
+        Iterable<MediaMetadataCompat> getPlayingQueueMetadata();
 
         int getCurrentIndex();
 
@@ -48,7 +48,7 @@ public class QueueProvider extends SingleListProvider {
         if (mQueueListener == null) {
             return queueList;
         }
-        Iterable<MediaMetadataCompat> queue = mQueueListener.getPlayingQueue();
+        Iterable<MediaMetadataCompat> queue = mQueueListener.getPlayingQueueMetadata();
         if (queue != null) {
             queueList = Lists.newArrayList(queue);
         }

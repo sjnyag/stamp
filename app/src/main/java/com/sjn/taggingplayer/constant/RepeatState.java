@@ -27,6 +27,6 @@ public enum RepeatState implements QueueState {
     }
 
     public static RepeatState getDefault() {
-        return ONE;
+        return NONE;
     }
 }

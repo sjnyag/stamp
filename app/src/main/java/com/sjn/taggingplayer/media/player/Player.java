@@ -10,11 +10,13 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.controller.SongHistoryController;
+import com.sjn.taggingplayer.controller.UserSettingController;
 import com.sjn.taggingplayer.media.CustomController;
 import com.sjn.taggingplayer.media.QueueManager;
 import com.sjn.taggingplayer.media.playback.Playback;
 import com.sjn.taggingplayer.media.playback.PlaybackManager;
 import com.sjn.taggingplayer.media.provider.MusicProvider;
+import com.sjn.taggingplayer.utils.MediaIDHelper;
 
 import java.util.List;
 
@@ -23,9 +25,31 @@ public class Player implements SessionManager.SessionListener {
     private PlayerCallback mPlayerCallback;
     private Context mContext;
     private PlaybackManager mPlaybackManager;
+    private QueueManager mQueueManager;
     private SessionManager mSessionManager;
 
     private QueueUpdateListener mQueueUpdateListener;
+
+    public void restorePreviousState(MusicProvider musicProvider) {
+        UserSettingController userSettingController = new UserSettingController(mContext);
+        CustomController customController = new CustomController();
+        customController.setRepeatState(mContext, userSettingController.getRepeatState());
+        customController.setShuffleState(mContext, userSettingController.getShuffleState());
+        mQueueManager.restorePreviousState(userSettingController.getLastMusicId(), userSettingController.getQueueIdentifyMediaId());
+
+        if (mQueueManager.getCurrentMusic() != null && mQueueManager.getCurrentMusic().getDescription() != null) {
+            String musicId = MediaIDHelper.extractMusicIDFromMediaID(mQueueManager.getCurrentMusic().getDescription().getMediaId());
+            MediaMetadataCompat mediaMetadataCompat = musicProvider.getMusicByMusicId(musicId);
+            if (mediaMetadataCompat != null) {
+                mSessionManager.setMetadata(mediaMetadataCompat);
+            }
+            PlaybackStateCompat state = new PlaybackStateCompat.Builder()
+                    .setActions(PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_SKIP_TO_NEXT | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
+                    .setState(PlaybackStateCompat.STATE_STOPPED, 0, 1.0f)
+                    .build();
+            mSessionManager.setPlaybackState(state);
+        }
+    }
 
     public interface PlayerCallback {
         Playback requestPlayback(Playback.Type type);
@@ -38,8 +62,8 @@ public class Player implements SessionManager.SessionListener {
 
     public MediaSessionCompat.Token initialize(PlaybackManager.PlaybackServiceCallback callback, MusicProvider musicProvider) {
         Playback playback = mPlayerCallback.requestPlayback(Playback.Type.LOCAL);
-        QueueManager queueManager = initializeQueueManager(musicProvider);
-        mPlaybackManager = new PlaybackManager(callback, mContext.getResources(), musicProvider, queueManager, playback,
+        mQueueManager = initializeQueueManager(musicProvider);
+        mPlaybackManager = new PlaybackManager(callback, mContext.getResources(), musicProvider, mQueueManager, playback,
                 new SongHistoryController(mContext));
         mPlaybackManager.updatePlaybackState(null);
         mSessionManager = new SessionManager(this);

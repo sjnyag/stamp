@@ -201,14 +201,14 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
         mRepeat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CustomController.getInstance().toggleRepeatState();
+                CustomController.getInstance().toggleRepeatState(getContext());
             }
         });
         onShuffleStateChanged(CustomController.getInstance().getShuffleState());
         mShuffle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CustomController.getInstance().toggleShuffleState();
+                CustomController.getInstance().toggleShuffleState(getContext());
             }
         });
 
@@ -300,8 +300,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
     public void onStart() {
         LogHelper.i(TAG, "onStart");
         super.onStart();
-        MediaControllerCompat controller = getActivity()
-                .getSupportMediaController();
+        MediaControllerCompat controller = getActivity().getSupportMediaController();
         if (controller != null) {
             onConnected();
         }

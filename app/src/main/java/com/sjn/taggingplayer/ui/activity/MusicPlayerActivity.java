@@ -85,7 +85,6 @@ public class MusicPlayerActivity extends MediaBrowserActivity
         ((SlidingUpPanelLayout)findViewById(R.id.sliding_layout)).addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener(){
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
-
                 FullScreenPlayerFragment fullScreenPlayerFragment = (FullScreenPlayerFragment) getSupportFragmentManager()
                         .findFragmentById(R.id.fragment_full_player);
                 fullScreenPlayerFragment.onStart();

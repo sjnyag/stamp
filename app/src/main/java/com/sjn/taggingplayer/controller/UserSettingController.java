@@ -16,7 +16,7 @@ public class UserSettingController {
     private Context mContext;
     private UserSettingDao mUserSettingDao;
 
-    private UserSettingController(Context context) {
+    public UserSettingController(Context context) {
         mUserSettingDao = UserSettingDao.getInstance();
         mContext = context;
     }

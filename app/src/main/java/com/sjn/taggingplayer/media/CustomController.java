@@ -1,7 +1,10 @@
 package com.sjn.taggingplayer.media;
 
+import android.content.Context;
+
 import com.sjn.taggingplayer.constant.RepeatState;
 import com.sjn.taggingplayer.constant.ShuffleState;
+import com.sjn.taggingplayer.controller.UserSettingController;
 import com.sjn.taggingplayer.utils.LogHelper;
 
 import java.util.ArrayList;
@@ -50,26 +53,30 @@ public class CustomController {
         mRepeatStateListenerSet.add(listener);
     }
 
-    public void setRepeatState(RepeatState state) {
+    public void setRepeatState(Context context, RepeatState state) {
         mRepeatState = state;
         for (RepeatStateListener repeatStateListener : mRepeatStateListenerSet) {
             repeatStateListener.onRepeatStateChanged(state);
         }
+        UserSettingController userSettingController = new UserSettingController(context);
+        userSettingController.setRepeatState(state);
     }
 
-    public void setShuffleState(ShuffleState state) {
+    public void setShuffleState(Context context, ShuffleState state) {
         mShuffleState = state;
         for (ShuffleStateListener shuffleStateListener : mShuffleStateListenerSet) {
             shuffleStateListener.onShuffleStateChanged(state);
         }
+        UserSettingController userSettingController = new UserSettingController(context);
+        userSettingController.setShuffleState(state);
     }
 
-    public void toggleRepeatState() {
-        setRepeatState(mRepeatState.toggle());
+    public void toggleRepeatState(Context context) {
+        setRepeatState(context, mRepeatState.toggle());
     }
 
-    public void toggleShuffleState() {
-        setShuffleState(mShuffleState.toggle());
+    public void toggleShuffleState(Context context) {
+        setShuffleState(context, mShuffleState.toggle());
     }
 
     public static CustomController getInstance() {
