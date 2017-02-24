@@ -66,8 +66,8 @@ public class Player implements SessionManager.SessionListener {
         mPlaybackManager = new PlaybackManager(callback, mContext.getResources(), musicProvider, mQueueManager, playback,
                 new SongHistoryController(mContext));
         mPlaybackManager.updatePlaybackState(null);
-        mSessionManager = new SessionManager(this);
-        return mSessionManager.initialize(mContext, getMediaSessionCallback());
+        mSessionManager = SessionManager.getInstance(mContext, getMediaSessionCallback(), this);
+        return mSessionManager.getSessionToken();
 
     }
 
@@ -76,8 +76,12 @@ public class Player implements SessionManager.SessionListener {
     }
 
     public void stop() {
-        mPlaybackManager.handleStopRequest(null);
-        mSessionManager.release();
+        if (mPlaybackManager != null) {
+            mPlaybackManager.handleStopRequest(null);
+        }
+        if (mSessionManager != null) {
+            mSessionManager.release();
+        }
     }
 
     public void pause() {

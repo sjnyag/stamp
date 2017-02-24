@@ -73,6 +73,7 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            LogHelper.d(TAG, "BroadcastReceiver#onReceive ");
             // We don't care about network changes while this fragment is not associated
             // with a media ID (for example, while it is being initialized)
             if (mMediaId != null) {
@@ -100,7 +101,7 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
 
     @Override
     public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
-        LogHelper.d(TAG, "Received state change: ", state);
+        LogHelper.d(TAG, "onPlaybackStateChanged ");
         checkForUserVisibleErrors(false);
         mBrowserAdapter.notifyDataSetChanged();
     }
@@ -156,6 +157,7 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                LogHelper.d(TAG, "onItemClick ");
                 checkForUserVisibleErrors(false);
                 MediaBrowserCompat.MediaItem item = mBrowserAdapter.getItem(position);
                 mMediaFragmentListener.onMediaItemSelected(item);
@@ -220,7 +222,7 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
     // completes after the onStart()
     @Override
     public void onConnected() {
-        if (isDetached()) {
+        if (isDetached() || mMediaFragmentListener == null) {
             return;
         }
         mMediaId = getMediaId();

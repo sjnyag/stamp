@@ -23,6 +23,8 @@ public class SessionManager implements SessionManagerListener<CastSession> {
 
     private static final String TAG = LogHelper.makeLogTag(SessionManager.class);
 
+    private static SessionManager sInstance;
+
     private MediaRouter mMediaRouter;
     private MediaSessionCompat mSession;
     private Bundle mSessionExtras;
@@ -36,15 +38,29 @@ public class SessionManager implements SessionManagerListener<CastSession> {
         void onSessionEnd();
     }
 
-    public SessionManager(SessionListener sessionListener) {
+    private SessionManager(Context context, MediaSessionCompat.Callback callback, SessionListener sessionListener) {
         mSessionListener = sessionListener;
+        initialize(context, callback);
     }
 
-    public MediaSessionCompat.Token initialize(Context context, MediaSessionCompat.Callback callback) {
+    public static SessionManager getInstance(Context context, MediaSessionCompat.Callback callback, SessionListener sessionListener) {
+        if (sInstance == null) {
+            sInstance = new SessionManager(context, callback, sessionListener);
+        }
+        return sInstance;
+    }
+
+    public MediaSessionCompat.Token getSessionToken(){
+        if(mSession == null){
+            return null;
+        }
+        return mSession.getSessionToken();
+    }
+
+    private void initialize(Context context, MediaSessionCompat.Callback callback) {
         mSessionExtras = makeSessionExtras();
         mSession = makeSession(context, callback, mSessionExtras);
         mMediaRouter = MediaRouter.getInstance(context.getApplicationContext());
-        return mSession.getSessionToken();
     }
 
     public void setMetadata(MediaMetadataCompat metadata) {

@@ -36,11 +36,17 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
     }
 
     public void addListener(Listener listener) {
+        if (mListenerList.contains(listener)) {
+            return;
+        }
         mListenerList.add(listener);
     }
 
     public void removeListener(Listener listener) {
-        mListenerList.add(listener);
+        if (!mListenerList.contains(listener)) {
+            return;
+        }
+        mListenerList.remove(listener);
     }
 
     @Override
