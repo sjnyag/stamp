@@ -65,6 +65,12 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
 
     @Override
     public void onShuffleStateChanged(ShuffleState state) {
+        if (state == ShuffleState.SHUFFLE) {
+            updateShuffleQueue();
+        }
+    }
+
+    private void updateShuffleQueue() {
         mShuffledQueue = new ArrayList<>(mOrderedQueue);
         shuffleQueue(mShuffledQueue, getCurrentMusic());
         setCurrentQueueIndex(0);
@@ -230,6 +236,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
     protected void setCurrentQueue(String title, List<MediaSessionCompat.QueueItem> newQueue,
                                    String initialMediaId) {
         mOrderedQueue = newQueue;
+        onShuffleStateChanged(CustomController.getInstance().getShuffleState());
         int index = 0;
         if (initialMediaId != null) {
             index = QueueHelper.getMusicIndexOnQueue(mOrderedQueue, initialMediaId);
