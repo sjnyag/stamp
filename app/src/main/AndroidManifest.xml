@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright (C) 2014 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,25 +13,25 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<manifest package="com.sjn.taggingplayer"
-          xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.sjn.taggingplayer">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <!-- Set android.software.leanback to false, so the APK will be available to both
     TV and regular devices. -->
     <uses-feature
         android:name="android.software.leanback"
-        android:required="false"/>
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.touchscreen"
-        android:required="false"/>
+        android:required="false" />
 
     <application
         android:name=".TaggingPlayerApplication"
@@ -46,24 +45,21 @@
 
         <meta-data
             android:name="com.google.android.gms.car.application"
-            android:resource="@xml/automotive_app_desc"/>
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version"/>
+            android:resource="@xml/automotive_app_desc" />
 
         <!-- Main activity for music browsing on phone -->
         <activity
             android:name=".ui.activity.MusicPlayerActivity"
             android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
             <!-- Use this intent filter to get voice searches, like "Play The Beatles" -->
             <intent-filter>
-                <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
@@ -73,8 +69,7 @@
         the current environment -->
         <activity
             android:name=".ui.activity.NowPlayingActivity"
-            android:icon="@drawable/ic_launcher">
-        </activity>
+            android:icon="@drawable/ic_launcher"></activity>
 
         <!-- Main activity for Android TV user interface -->
         <activity
@@ -82,23 +77,22 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.UAmp.TVLeanback">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.activity.RequestPermissionActivity"/>
+        <activity android:name=".ui.activity.RequestPermissionActivity" />
 
         <activity
             android:name=".ui.tv.TvVerticalGridActivity"
             android:parentActivityName=".ui.tv.TvBrowseActivity"
-            android:theme="@style/Theme.UAmp.TVLeanback"/>
+            android:theme="@style/Theme.UAmp.TVLeanback" />
 
         <!-- Android TV UI when playing a song -->
         <activity
             android:name=".ui.tv.TvPlaybackActivity"
             android:parentActivityName=".ui.tv.TvBrowseActivity"
-            android:theme="@style/Theme.UAmp.TVLeanback"/>
+            android:theme="@style/Theme.UAmp.TVLeanback" />
 
         <!--
              (OPTIONAL) use this meta data to indicate which icon should be
@@ -107,7 +101,7 @@
         -->
         <meta-data
             android:name="com.google.android.gms.car.notification.SmallIcon"
-            android:resource="@drawable/ic_notification"/>
+            android:resource="@drawable/ic_notification" />
 
         <!--
              (OPTIONAL) use this meta data to override the theme from which Android Auto will
@@ -116,7 +110,7 @@
         -->
         <meta-data
             android:name="com.google.android.gms.car.application.theme"
-            android:resource="@style/CarTheme"/>
+            android:resource="@style/CarTheme" />
 
         <!--
              (OPTIONAL) use this meta data to override the theme from which Android Wear will
@@ -126,7 +120,7 @@
         -->
         <meta-data
             android:name="com.google.android.wearable.media.theme"
-            android:resource="@style/WearTheme"/>
+            android:resource="@style/WearTheme" />
 
         <!-- Main music service, provides media browsing and media playback services to
          consumers through MediaBrowserService and MediaSession. Consumers connect to it through
@@ -136,7 +130,7 @@
             android:exported="true"
             tools:ignore="ExportedService">
             <intent-filter>
-                <action android:name="android.media.browse.MediaBrowserService"/>
+                <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
 
@@ -145,18 +139,18 @@
         -->
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-            android:value="com.sjn.taggingplayer.CastOptionsProvider"/>
+            android:value="com.sjn.taggingplayer.CastOptionsProvider" />
 
         <!-- A full screen activity showing controls and a seek bar for
              the current playing music -->
         <activity
-            android:name=".ui.fragment.FullScreenPlayerFragment"
+            android:name=".ui.activity.FullScreenPlayerActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.activity.MusicPlayerActivity">
+            android:parentActivityName=".ui.activity.FullScreenPlayerActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.activity.MusicPlayerActivity"/>
+                android:value=".ui.activity.MusicPlayerActivity" />
         </activity>
 
         <!-- A receiver that will receive media buttons and send as
@@ -165,7 +159,7 @@
             http://developer.android.com/reference/android/support/v4/media/session/MediaButtonReceiver.html -->
         <receiver android:name="android.support.v4.media.session.MediaButtonReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON"/>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
 

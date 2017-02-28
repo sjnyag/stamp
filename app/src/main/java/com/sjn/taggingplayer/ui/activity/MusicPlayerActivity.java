@@ -24,14 +24,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.media.MediaBrowserCompat;
 import android.text.TextUtils;
-import android.view.View;
 
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.ui.fragment.FullScreenPlayerFragment;
 import com.sjn.taggingplayer.ui.fragment.MediaBrowserFragment;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.PermissionHelper;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import static com.sjn.taggingplayer.media.source.LocalMediaSource.PERMISSIONS;
 
@@ -123,7 +121,7 @@ public class MusicPlayerActivity extends MediaBrowserActivity
 
     private void startFullScreenActivityIfNeeded(Intent intent) {
         if (intent != null && intent.getBooleanExtra(EXTRA_START_FULLSCREEN, false)) {
-            Intent fullScreenIntent = new Intent(this, FullScreenPlayerFragment.class)
+            Intent fullScreenIntent = new Intent(this, FullScreenPlayerActivity.class)
                     .setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP |
                             Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     .putExtra(EXTRA_CURRENT_MEDIA_DESCRIPTION,
