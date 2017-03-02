@@ -66,7 +66,7 @@ public class Player implements SessionManager.SessionListener {
         mPlaybackManager = new PlaybackManager(callback, mContext.getResources(), musicProvider, mQueueManager, playback,
                 new SongHistoryController(mContext));
         mPlaybackManager.updatePlaybackState(null);
-        mSessionManager = SessionManager.getInstance(mContext, getMediaSessionCallback(), this);
+        mSessionManager = new SessionManager(mContext, getMediaSessionCallback(), this);
         return mSessionManager.getSessionToken();
 
     }

@@ -6,6 +6,7 @@ import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.ui.fragment.MediaBrowserFragment;
 import com.sjn.taggingplayer.ui.fragment.AllSongPagerFragment;
 import com.sjn.taggingplayer.ui.fragment.QueueFragment;
+import com.sjn.taggingplayer.ui.fragment.SettingFragment;
 import com.sjn.taggingplayer.utils.MediaIDHelper;
 
 import lombok.Getter;
@@ -71,7 +72,7 @@ public enum DrawerMenu {
     SETTING(R.id.navigation_setting, null) {
         @Override
         Fragment getFragment() {
-            return new MediaBrowserFragment();
+            return new SettingFragment();
         }
     },;
     final int mMenuId;

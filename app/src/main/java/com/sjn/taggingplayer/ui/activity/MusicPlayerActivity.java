@@ -83,10 +83,12 @@ public class MusicPlayerActivity extends MediaBrowserActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         String mediaId = getMediaId();
+        /*
         if (mediaId != null) {
             outState.putString(SAVED_MEDIA_ID, mediaId);
         }
         super.onSaveInstanceState(outState);
+        */
     }
 
     @Override

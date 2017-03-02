@@ -23,8 +23,6 @@ public class SessionManager implements SessionManagerListener<CastSession> {
 
     private static final String TAG = LogHelper.makeLogTag(SessionManager.class);
 
-    private static SessionManager sInstance;
-
     private MediaRouter mMediaRouter;
     private MediaSessionCompat mSession;
     private Bundle mSessionExtras;
@@ -38,28 +36,23 @@ public class SessionManager implements SessionManagerListener<CastSession> {
         void onSessionEnd();
     }
 
-    private SessionManager(Context context, MediaSessionCompat.Callback callback, SessionListener sessionListener) {
+    public SessionManager(Context context, MediaSessionCompat.Callback callback, SessionListener sessionListener) {
+        LogHelper.i(TAG, "constructor");
         mSessionListener = sessionListener;
         initialize(context, callback);
     }
 
-    public static SessionManager getInstance(Context context, MediaSessionCompat.Callback callback, SessionListener sessionListener) {
-        if (sInstance == null) {
-            sInstance = new SessionManager(context, callback, sessionListener);
-        }
-        return sInstance;
-    }
-
-    public MediaSessionCompat.Token getSessionToken(){
-        if(mSession == null){
+    public MediaSessionCompat.Token getSessionToken() {
+        if (mSession == null) {
             return null;
         }
         return mSession.getSessionToken();
     }
 
     private void initialize(Context context, MediaSessionCompat.Callback callback) {
+        LogHelper.i(TAG, "initialize");
         mSessionExtras = makeSessionExtras();
-        mSession = makeSession(context, callback, mSessionExtras);
+        mSession = createSession(context, callback, mSessionExtras);
         mMediaRouter = MediaRouter.getInstance(context.getApplicationContext());
     }
 
@@ -86,6 +79,7 @@ public class SessionManager implements SessionManagerListener<CastSession> {
     }
 
     public void release() {
+        LogHelper.i(TAG, "release");
         if (mSession == null) {
             return;
         }
@@ -93,6 +87,7 @@ public class SessionManager implements SessionManagerListener<CastSession> {
     }
 
     public void setActive(boolean active) {
+        LogHelper.i(TAG, "setActive");
         if (mSession == null) {
             return;
         }
@@ -100,6 +95,7 @@ public class SessionManager implements SessionManagerListener<CastSession> {
     }
 
     public void setPlaybackState(PlaybackStateCompat playbackState) {
+        LogHelper.i(TAG, "setPlaybackState");
         if (mSession == null) {
             return;
         }
@@ -114,7 +110,8 @@ public class SessionManager implements SessionManagerListener<CastSession> {
         return sessionExtras;
     }
 
-    private MediaSessionCompat makeSession(Context context, MediaSessionCompat.Callback callback, Bundle sessionExtra) {
+    private MediaSessionCompat createSession(Context context, MediaSessionCompat.Callback callback, Bundle sessionExtra) {
+        LogHelper.i(TAG, "createSession");
         // Start a new MediaSession
         MediaSessionCompat session = new MediaSessionCompat(context, "MusicService");
         session.setCallback(callback);
@@ -136,6 +133,7 @@ public class SessionManager implements SessionManagerListener<CastSession> {
      */
     @Override
     public void onSessionEnded(CastSession session, int error) {
+        LogHelper.i(TAG, "onSessionEnded error: ", error);
         if (mSessionListener == null || mSessionExtras == null || mSession == null || mMediaRouter == null) {
             return;
         }
@@ -152,6 +150,7 @@ public class SessionManager implements SessionManagerListener<CastSession> {
 
     @Override
     public void onSessionStarted(CastSession session, String sessionId) {
+        LogHelper.i(TAG, "onSessionStarted sessionId: ", sessionId);
         if (mSessionListener == null || mSessionExtras == null || mSession == null || mMediaRouter == null) {
             return;
         }
@@ -173,6 +172,7 @@ public class SessionManager implements SessionManagerListener<CastSession> {
 
     @Override
     public void onSessionEnding(CastSession session) {
+        LogHelper.i(TAG, "onSessionEnding session: ", session);
         if (mSessionListener == null) {
             return;
         }
