@@ -34,7 +34,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sjn.taggingplayer.R;
+import com.sjn.taggingplayer.media.provider.ListProvider;
 import com.sjn.taggingplayer.utils.MediaIDHelper;
+import com.sjn.taggingplayer.utils.ViewHelper;
 
 public class MediaItemViewHolder {
 
@@ -49,11 +51,13 @@ public class MediaItemViewHolder {
 
     ImageView mImageView;
     TextView mTitleView;
+    TextView mAlbumView;
     TextView mDescriptionView;
+    ImageView mAlbumArtView;
 
     // Returns a view for use in media item list.
     public static View setupListView(Activity activity, View convertView, ViewGroup parent,
-                              MediaBrowserCompat.MediaItem item) {
+                                     MediaBrowserCompat.MediaItem item) {
         if (sColorStateNotPlaying == null || sColorStatePlaying == null) {
             initializeColorStateLists(activity);
         }
@@ -68,7 +72,9 @@ public class MediaItemViewHolder {
             holder = new MediaItemViewHolder();
             holder.mImageView = (ImageView) convertView.findViewById(R.id.play_eq);
             holder.mTitleView = (TextView) convertView.findViewById(R.id.title);
+            holder.mAlbumView = (TextView) convertView.findViewById(R.id.album);
             holder.mDescriptionView = (TextView) convertView.findViewById(R.id.description);
+            holder.mAlbumArtView = (ImageView) convertView.findViewById(R.id.album_art);
             convertView.setTag(holder);
         } else {
             holder = (MediaItemViewHolder) convertView.getTag();
@@ -76,9 +82,17 @@ public class MediaItemViewHolder {
         }
 
         MediaDescriptionCompat description = item.getDescription();
-        holder.mTitleView.setText(description.getTitle());
+        if (description.getExtras() != null && description.getExtras().containsKey(ListProvider.CUSTOM_METADATA_TRACK_PREFIX)) {
+            holder.mTitleView.setText(String.valueOf(description.getExtras().getLong(ListProvider.CUSTOM_METADATA_TRACK_PREFIX)) + "回: " + description.getTitle());
+        } else {
+            holder.mTitleView.setText(description.getTitle());
+        }
+        holder.mAlbumView.setText(item.getDescription().getDescription());
         holder.mDescriptionView.setText(description.getSubtitle());
 
+        if (description.getIconUri() != null) {
+            ViewHelper.updateAlbumArt(activity, holder.mAlbumArtView, description.getIconUri().toString());
+        }
         // If the state of convertView is different, we need to adapt the view to the
         // new state.
         int state = getMediaItemState(activity, item);

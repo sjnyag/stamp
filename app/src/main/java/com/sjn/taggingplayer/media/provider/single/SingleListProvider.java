@@ -3,6 +3,7 @@ package com.sjn.taggingplayer.media.provider.single;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 
 import com.sjn.taggingplayer.media.provider.ListProvider;
@@ -84,7 +85,18 @@ abstract public class SingleListProvider extends ListProvider {
         MediaMetadataCompat copy = new MediaMetadataCompat.Builder(metadata)
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, hierarchyAwareMediaID)
                 .build();
-        return new MediaBrowserCompat.MediaItem(copy.getDescription(),
+        return new MediaBrowserCompat.MediaItem(createCustomDescription(copy),
                 MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
+    }
+
+    private MediaDescriptionCompat createCustomDescription(MediaMetadataCompat metadata) {
+        return new MediaDescriptionCompat.Builder()
+                .setMediaId(metadata.getDescription().getMediaId())
+                .setTitle(metadata.getDescription().getTitle())
+                .setSubtitle(metadata.getDescription().getSubtitle())
+                .setDescription(metadata.getDescription().getDescription())
+                .setIconBitmap(metadata.getDescription().getIconBitmap())
+                .setIconUri(metadata.getDescription().getIconUri())
+                .setExtras(metadata.getBundle()).build();
     }
 }

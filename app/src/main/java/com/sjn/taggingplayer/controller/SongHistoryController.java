@@ -15,6 +15,7 @@ import com.sjn.taggingplayer.db.dao.DeviceDao;
 import com.sjn.taggingplayer.db.dao.SongDao;
 import com.sjn.taggingplayer.db.dao.SongHistoryDao;
 import com.sjn.taggingplayer.db.dao.TotalSongHistoryDao;
+import com.sjn.taggingplayer.media.provider.ListProvider;
 import com.sjn.taggingplayer.utils.AggregateHelper;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.RealmHelper;
@@ -142,7 +143,12 @@ public class SongHistoryController {
             if (totalSongHistory.getPlayCount() == 0) {
                 break;
             }
-            trackList.add(totalSongHistory.getSong().buildMediaMetadataCompat());
+            //noinspection ResourceType
+            trackList.add(
+                    totalSongHistory.getSong().mediaMetadataCompatBuilder()
+                    .putLong(ListProvider.CUSTOM_METADATA_TRACK_PREFIX, totalSongHistory.getPlayCount())
+                    .build()
+            );
         }
         realm.close();
         return trackList;

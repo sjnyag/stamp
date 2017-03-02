@@ -12,6 +12,9 @@ import java.util.concurrent.ConcurrentMap;
 
 public abstract class ListProvider {
 
+    //noinspection ResourceType
+    public static String CUSTOM_METADATA_TRACK_PREFIX = "__PREFIX__";
+
     public enum ProviderState {
         NON_INITIALIZED, INITIALIZING, INITIALIZED
     }

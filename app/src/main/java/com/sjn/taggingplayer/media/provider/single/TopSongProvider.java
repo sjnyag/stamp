@@ -5,6 +5,8 @@ import android.support.v4.media.MediaMetadataCompat;
 
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.controller.SongHistoryController;
+import com.sjn.taggingplayer.db.TotalSongHistory;
+import com.sjn.taggingplayer.media.provider.ListProvider;
 import com.sjn.taggingplayer.utils.MediaIDHelper;
 
 import java.util.ArrayList;
@@ -30,20 +32,7 @@ public class TopSongProvider extends SingleListProvider {
     @Override
     protected List<MediaMetadataCompat> createTrackList(final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
         SongHistoryController songHistoryController = new SongHistoryController(mContext);
-        return convertLatestTrackList(songHistoryController.getTopSongList(), musicListById);
+        return songHistoryController.getTopSongList();
     }
 
-    private List<MediaMetadataCompat> convertLatestTrackList(List<MediaMetadataCompat> srcTopSongList, final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
-        List<MediaMetadataCompat> latestTrackList = new ArrayList<>();
-        if (musicListById == null) {
-            return latestTrackList;
-        }
-        for (MediaMetadataCompat track : srcTopSongList) {
-            MediaMetadataCompat latestTrack = musicListById.get(track.getDescription().getMediaId());
-            if (latestTrack != null) {
-                latestTrackList.add(latestTrack);
-            }
-        }
-        return latestTrackList;
-    }
 }

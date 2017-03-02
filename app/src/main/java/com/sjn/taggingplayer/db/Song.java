@@ -55,7 +55,7 @@ public class Song extends RealmObject {
         setDateAdded(getStringIfExists(metadata, MediaMetadata.METADATA_KEY_DATE));
     }
 
-    public MediaMetadataCompat buildMediaMetadataCompat() {
+    public MediaMetadataCompat.Builder mediaMetadataCompatBuilder(){
         //noinspection ResourceType
         return new MediaMetadataCompat.Builder()
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mMediaId)
@@ -68,8 +68,11 @@ public class Song extends RealmObject {
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE, mTitle)
                 .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, mTrackNumber)
                 .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, mTrackNumber)
-                .putString(MediaMetadataCompat.METADATA_KEY_DATE, mDateAdded)
-                .build();
+                .putString(MediaMetadataCompat.METADATA_KEY_DATE, mDateAdded);
+    }
+
+    public MediaMetadataCompat buildMediaMetadataCompat() {
+        return mediaMetadataCompatBuilder().build();
     }
 
     String getStringIfExists(MediaMetadataCompat metadata, String key) {
