@@ -32,6 +32,11 @@
     <color name="background_gradient_end">#DDDDDD</color>
     <color name="default_background">#0096a6</color>
 
+    <color name="toggle_off_stroke">#B2B2B2</color>
+    <color name="toggle_on_stroke">#24C48E</color>
+    <color name="toggle_focused_solid">#2224C48E</color>
+    <color name="toggle_on_solid">#6624C48E</color>
+
     <color name="color_1">#E62E25</color>
     <color name="color_2">#EC7526</color>
     <color name="color_3">#FFFA2A</color>

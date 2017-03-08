@@ -33,7 +33,7 @@ import android.support.v17.leanback.widget.Presenter;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.view.View;
 
-import com.sjn.taggingplayer.ui.MediaItemViewHolder;
+import com.sjn.taggingplayer.ui.holder.MediaItemViewHolder;
 import com.sjn.taggingplayer.utils.BitmapHelper;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;

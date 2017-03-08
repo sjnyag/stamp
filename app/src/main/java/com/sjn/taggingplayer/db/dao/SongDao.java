@@ -24,6 +24,14 @@ public class SongDao extends BaseDao {
         return song;
     }
 
+    public Song findByTitleArtist(Realm realm, String title, String artis) {
+        return realm.where(Song.class).equalTo("mTitle", title).equalTo("mArtist", artis).findFirst();
+    }
+
+    public Song findByMusicId(Realm realm, String musicId) {
+        return realm.where(Song.class).equalTo("mMediaId", musicId).findFirst();
+    }
+
     public Song newStandalone() {
         return new Song();
     }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sjn.taggingplayer.ui;
+package com.sjn.taggingplayer.ui.holder;
 
 import android.app.Activity;
 import android.content.Context;
@@ -66,33 +66,17 @@ public class MediaItemViewHolder {
 
         Integer cachedState = STATE_INVALID;
 
-        if (convertView == null) {
-            convertView = LayoutInflater.from(activity)
-                    .inflate(R.layout.media_list_item, parent, false);
-            holder = new MediaItemViewHolder();
-            holder.mImageView = (ImageView) convertView.findViewById(R.id.play_eq);
-            holder.mTitleView = (TextView) convertView.findViewById(R.id.title);
-            holder.mAlbumView = (TextView) convertView.findViewById(R.id.album);
-            holder.mDescriptionView = (TextView) convertView.findViewById(R.id.description);
-            holder.mAlbumArtView = (ImageView) convertView.findViewById(R.id.album_art);
+        //TODO: unit test
+        if (convertView == null || !convertView.getTag().getClass().toString().equals(convertView.getTag(R.id.media_item_view_holder_type))) {
+            holder = new TaggingMediaItemViewHolder();
+            convertView = holder.initializeConvertView(activity, parent);
             convertView.setTag(holder);
+            convertView.setTag(R.id.media_item_view_holder_type, holder.getClass().toString());
         } else {
             holder = (MediaItemViewHolder) convertView.getTag();
             cachedState = (Integer) convertView.getTag(R.id.tag_mediaitem_state_cache);
         }
-
-        MediaDescriptionCompat description = item.getDescription();
-        if (description.getExtras() != null && description.getExtras().containsKey(ListProvider.CUSTOM_METADATA_TRACK_PREFIX)) {
-            holder.mTitleView.setText(String.valueOf(description.getExtras().getLong(ListProvider.CUSTOM_METADATA_TRACK_PREFIX)) + "回: " + description.getTitle());
-        } else {
-            holder.mTitleView.setText(description.getTitle());
-        }
-        holder.mAlbumView.setText(item.getDescription().getDescription());
-        holder.mDescriptionView.setText(description.getSubtitle());
-
-        if (description.getIconUri() != null) {
-            ViewHelper.updateAlbumArt(activity, holder.mAlbumArtView, description.getIconUri().toString());
-        }
+        holder.setUpView(activity, item);
         // If the state of convertView is different, we need to adapt the view to the
         // new state.
         int state = getMediaItemState(activity, item);
@@ -108,6 +92,32 @@ public class MediaItemViewHolder {
         }
 
         return convertView;
+    }
+
+    protected View initializeConvertView(Activity activity, ViewGroup parent) {
+        View convertView = LayoutInflater.from(activity)
+                .inflate(R.layout.list_item_media, parent, false);
+        this.mImageView = (ImageView) convertView.findViewById(R.id.play_eq);
+        this.mTitleView = (TextView) convertView.findViewById(R.id.title);
+        this.mAlbumView = (TextView) convertView.findViewById(R.id.album);
+        this.mDescriptionView = (TextView) convertView.findViewById(R.id.description);
+        this.mAlbumArtView = (ImageView) convertView.findViewById(R.id.album_art);
+        return convertView;
+    }
+
+    protected void setUpView(Activity activity, MediaBrowserCompat.MediaItem item) {
+        MediaDescriptionCompat description = item.getDescription();
+        if (description.getExtras() != null && description.getExtras().containsKey(ListProvider.CUSTOM_METADATA_TRACK_PREFIX)) {
+            this.mTitleView.setText(String.valueOf(description.getExtras().getLong(ListProvider.CUSTOM_METADATA_TRACK_PREFIX)) + "回: " + description.getTitle());
+        } else {
+            this.mTitleView.setText(description.getTitle());
+        }
+        this.mAlbumView.setText(item.getDescription().getDescription());
+        this.mDescriptionView.setText(description.getSubtitle());
+
+        if (description.getIconUri() != null) {
+            ViewHelper.updateAlbumArt(activity, this.mAlbumArtView, description.getIconUri().toString());
+        }
     }
 
     private static void initializeColorStateLists(Context ctx) {

@@ -40,7 +40,7 @@ import android.widget.Toast;
 
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.ui.MediaBrowserProvider;
-import com.sjn.taggingplayer.ui.MediaItemViewHolder;
+import com.sjn.taggingplayer.ui.holder.MediaItemViewHolder;
 import com.sjn.taggingplayer.ui.observer.MediaControllerObserver;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.MediaIDHelper;
@@ -297,7 +297,7 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
     private static class BrowseAdapter extends ArrayAdapter<MediaBrowserCompat.MediaItem> {
 
         public BrowseAdapter(Activity context) {
-            super(context, R.layout.media_list_item, new ArrayList<MediaBrowserCompat.MediaItem>());
+            super(context, R.layout.list_item_media, new ArrayList<MediaBrowserCompat.MediaItem>());
         }
 
         @Override

@@ -24,7 +24,7 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.view.ViewGroup;
 
 import com.sjn.taggingplayer.R;
-import com.sjn.taggingplayer.ui.MediaItemViewHolder;
+import com.sjn.taggingplayer.ui.holder.MediaItemViewHolder;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.QueueHelper;
 

@@ -23,6 +23,9 @@ import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.text.TextUtils;
 
+import com.sjn.taggingplayer.constant.CategoryType;
+import com.sjn.taggingplayer.media.provider.ProviderType;
+
 import java.util.Arrays;
 
 /**
@@ -196,5 +199,13 @@ public class MediaIDHelper {
         }
         //TODO remove underscore
         return musicID.replaceAll("/", "__／__").replaceAll("\\|", "__｜__");
+    }
+
+    public static CategoryType getCategoryType(String mediaId) {
+        String[] hierarchy = getHierarchy(mediaId);
+        if (hierarchy.length <= 1) {
+            return null;
+        }
+        return ProviderType.of(hierarchy[0]).getCategoryType();
     }
 }

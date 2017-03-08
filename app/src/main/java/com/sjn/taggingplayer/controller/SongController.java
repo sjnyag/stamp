@@ -1,11 +1,24 @@
 package com.sjn.taggingplayer.controller;
 
 import android.content.Context;
+import android.support.v4.media.MediaMetadataCompat;
 
+import com.sjn.taggingplayer.constant.CategoryType;
+import com.sjn.taggingplayer.db.CategoryTag;
+import com.sjn.taggingplayer.db.Song;
+import com.sjn.taggingplayer.db.SongTag;
 import com.sjn.taggingplayer.db.dao.CategoryTagDao;
 import com.sjn.taggingplayer.db.dao.SongDao;
 import com.sjn.taggingplayer.db.dao.SongTagDao;
+import com.sjn.taggingplayer.media.provider.ProviderType;
 import com.sjn.taggingplayer.utils.LogHelper;
+import com.sjn.taggingplayer.utils.MediaIDHelper;
+import com.sjn.taggingplayer.utils.RealmHelper;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import io.realm.Realm;
 
 public class SongController {
 
@@ -21,25 +34,27 @@ public class SongController {
         mSongTagDao = SongTagDao.getInstance();
         mCategoryTagDao = CategoryTagDao.getInstance();
     }
-/*TODO:
+
     public void registerTagList(List<String> tagNameList, String mediaId) {
         if (MediaIDHelper.isTrack(mediaId)) {
-            registerSongTagList(tagNameList, MediaObserver.getInstance().findTrackByMediaId(mediaId));
+            //TODO:
+            //registerSongTagList(tagNameList, MediaObserver.getInstance().findTrackByMediaId(mediaId));
         } else {
-            String[] hierarchy = QueueHelper.parseMediaId(mediaId);
+            String[] hierarchy = MediaIDHelper.getHierarchy(mediaId);
             if (hierarchy.length <= 1) {
                 return;
             }
             registerCategoryTagList(tagNameList, ProviderType.of(hierarchy[0]).getCategoryType(), hierarchy[1]);
         }
-        TagController.getInstance().notifyTagChange();
+        TagController tagController = new TagController(mContext);
+        tagController.notifyTagChange();
     }
 
     public List<String> findTagsByMediaId(String mediaId) {
         if (MediaIDHelper.isTrack(mediaId)) {
             return findSongTagList(mediaId);
         } else {
-            String[] hierarchy = QueueHelper.parseMediaId(mediaId);
+            String[] hierarchy = MediaIDHelper.getHierarchy(mediaId);
             if (hierarchy.length <= 1) {
                 return new ArrayList<>();
             }
@@ -51,13 +66,14 @@ public class SongController {
         if (MediaIDHelper.isTrack(mediaId)) {
             removeSongTag(tagName, mediaId);
         } else {
-            String[] hierarchy = QueueHelper.parseMediaId(mediaId);
+            String[] hierarchy = MediaIDHelper.getHierarchy(mediaId);
             if (hierarchy.length <= 1) {
                 return;
             }
             removeCategoryTag(tagName, ProviderType.of(hierarchy[0]).getCategoryType(), hierarchy[1]);
         }
-        TagController.getInstance().notifyTagChange();
+        TagController tagController = new TagController(mContext);
+        tagController.notifyTagChange();
     }
 
     private void removeCategoryTag(String tagName, CategoryType categoryType, String categoryValue) {
@@ -132,6 +148,5 @@ public class SongController {
         }
         realm.close();
     }
-    */
 
 }
