@@ -24,8 +24,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sjn.taggingplayer.R;
-import com.sjn.taggingplayer.controller.MediaItemOperationHandler;
 import com.sjn.taggingplayer.controller.SongController;
+import com.sjn.taggingplayer.ui.observer.TagEditStateObserver;
 import com.sjn.taggingplayer.utils.MediaIDHelper;
 
 
@@ -35,13 +35,13 @@ public class TaggingMediaItemViewHolder extends MediaItemViewHolder {
     private View.OnClickListener mOnNewTag = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            MediaItemOperationHandler mediaItemOperationHandler = MediaItemOperationHandler.getInstance();
-            if (!mediaItemOperationHandler.isTagEditMode()) {
+            TagEditStateObserver tagEditStateObserver = TagEditStateObserver.getInstance();
+            if (!tagEditStateObserver.isTagEditMode()) {
                 return;
             }
             final String mediaId = (String) v.getTag(R.id.text_view_new_tag_media_id);
             SongController songController = new SongController(mActivity);
-            songController.registerTagList(mediaItemOperationHandler.getSelectedTagList(), mediaId);
+            songController.registerTagList(tagEditStateObserver.getSelectedTagList(), mediaId);
             mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

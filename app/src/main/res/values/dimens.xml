@@ -41,4 +41,10 @@
     <!-- Margins for full screen activity-->
     <dimen name="text_view_margin">16dp</dimen>
     <dimen name="end_text_margin">16dp</dimen>
+
+
+    <item name="x_scale_factor" format="float" type="dimen">2.3</item>
+    <item name="y_scale_factor" format="float" type="dimen">2.3</item>
+    <dimen name="top_fragment_height">200dip</dimen>
+    <dimen name="top_fragment_margin">10dip</dimen>
 </resources>

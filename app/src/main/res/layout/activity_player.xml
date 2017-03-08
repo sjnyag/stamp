@@ -46,6 +46,12 @@
                 android:layout_height="match_parent"
                 android:layout_below="@+id/toolbar_container"/>
 
+
+            <com.github.pedrovgs.DraggablePanel
+                android:id="@+id/draggable_panel"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"/>
+
         </RelativeLayout>
 
         <LinearLayout

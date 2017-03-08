@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright (C) 2014 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,10 +14,15 @@
   limitations under the License.
   -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto" >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-            android:id="@+id/media_route_menu_item"
-            android:title="@string/media_route_menu_title"
-            app:actionProviderClass="android.support.v7.app.MediaRouteActionProvider"
-            app:showAsAction="always"/>
+        android:id="@+id/tag_edit"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="@string/menu_tag_edit"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/media_route_menu_item"
+        android:title="@string/media_route_menu_title"
+        app:actionProviderClass="android.support.v7.app.MediaRouteActionProvider"
+        app:showAsAction="always" />
 </menu>

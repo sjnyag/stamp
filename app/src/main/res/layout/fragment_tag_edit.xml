@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tag_edit"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentBottom="true"
+    android:background="#CCFFEB3B"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingTop="20dp">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/tag_input_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="8dp"
+        android:layout_toStartOf="@+id/tag_register">
+
+        <EditText
+            android:id="@+id/tag_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="New Tag Name"
+            android:maxLines="1" />
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/tag_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/tag_input_layout"
+        android:layout_marginStart="40dp"
+        android:background="@color/colorPrimary"
+        android:text="register"
+        android:textColor="@android:color/white" />
+
+</RelativeLayout>
