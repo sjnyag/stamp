@@ -50,7 +50,7 @@ public class MediaRetrieveHelper {
     };
 
     private static final String MUSIC_SELECTION = MediaStore.Audio.Media.IS_MUSIC + " != 0";
-    private static final int DISK_CACHE_SIZE = 1024 * 1024 * 10; // 10MB
+    private static final int DISK_CACHE_SIZE = 1024 * 1024 * 1; // 1MB
     private static final String CACHE_KEY = "media_source";
 
     private static final Type CACHE_TYPE = new TypeToken<List<MediaCursorContainer>>() {

@@ -58,6 +58,7 @@ public class MusicPlayerActivity extends MediaBrowserActivity
             "com.sjn.taggingplayer.CURRENT_MEDIA_DESCRIPTION";
 
     private Bundle mVoiceSearchParams;
+    private Bundle mSavedInstanceState;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,8 +75,21 @@ public class MusicPlayerActivity extends MediaBrowserActivity
             intent.putExtra(RequestPermissionActivity.KEY_PERMISSIONS, PERMISSIONS);
             startActivity(intent);
         }
+        mSavedInstanceState = savedInstanceState;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        initializeFromParams(mSavedInstanceState, getIntent());
+
+        if (!PermissionHelper.hasPermission(this, PERMISSIONS)) {
+            Intent intent = new Intent(this, RequestPermissionActivity.class);
+            intent.putExtra(RequestPermissionActivity.KEY_PERMISSIONS, PERMISSIONS);
+            startActivity(intent);
+        }
         // Only check if a full screen player is needed on the first time:
-        if (savedInstanceState == null) {
+        if (mSavedInstanceState == null) {
             startFullScreenActivityIfNeeded(getIntent());
         }
     }
@@ -83,12 +97,10 @@ public class MusicPlayerActivity extends MediaBrowserActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         String mediaId = getMediaId();
-        /*
         if (mediaId != null) {
             outState.putString(SAVED_MEDIA_ID, mediaId);
         }
         super.onSaveInstanceState(outState);
-        */
     }
 
     @Override
