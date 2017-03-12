@@ -11,10 +11,23 @@ import com.github.pedrovgs.DraggablePanel;
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.ui.fragment.TagEditFragment;
 import com.sjn.taggingplayer.ui.fragment.TagListFragment;
+import com.sjn.taggingplayer.utils.LogHelper;
 
 import java.io.Serializable;
 
+
 public class DraggablePanelManager {
+
+    private static final String TAG = LogHelper.makeLogTag(DraggablePanelManager.class);
+
+    /**
+     * Enum created to represent the DraggablePanel and DraggableView different states.
+     *
+     * @author Pedro Vicente Gómez Sánchez.
+     */
+    private enum DraggableState implements Serializable {
+        MINIMIZED, MAXIMIZED, CLOSED_AT_LEFT, CLOSED_AT_RIGHT;
+    }
 
     private static final String DRAGGABLE_PANEL_STATE = "draggable_panel_state";
     private static final int DELAY_MILLIS = 50;
@@ -27,13 +40,27 @@ public class DraggablePanelManager {
         mDraggablePanel = draggablePanel;
     }
 
-    /**
-     * Enum created to represent the DraggablePanel and DraggableView different states.
-     *
-     * @author Pedro Vicente Gómez Sánchez.
-     */
-    private enum DraggableState implements Serializable {
-        MINIMIZED, MAXIMIZED, CLOSED_AT_LEFT, CLOSED_AT_RIGHT;
+    public void toggle() {
+        LogHelper.e(TAG, getDraggableState());
+        if (mDraggablePanel.getVisibility() != View.VISIBLE) {
+            mDraggablePanel.setVisibility(View.VISIBLE);
+        }
+        switch (getDraggableState()) {
+            case MAXIMIZED:
+                updateDraggablePanelStateDelayed(DraggableState.MINIMIZED);
+                break;
+            case MINIMIZED:
+                updateDraggablePanelStateDelayed(DraggableState.MAXIMIZED);
+                break;
+            case CLOSED_AT_LEFT:
+                updateDraggablePanelStateDelayed(DraggableState.MAXIMIZED);
+                break;
+            case CLOSED_AT_RIGHT:
+                updateDraggablePanelStateDelayed(DraggableState.MAXIMIZED);
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -50,6 +77,40 @@ public class DraggablePanelManager {
             return;
         }
         updateDraggablePanelStateDelayed(draggableState);
+    }
+
+    /**
+     * Keep a reference of the last DraggablePanelState.
+     *
+     * @param outState Bundle used to store the DraggablePanelState.
+     */
+    public void saveDraggableState(Bundle outState) {
+        outState.putSerializable(DRAGGABLE_PANEL_STATE, getDraggableState());
+    }
+
+    /**
+     * Initialize the DraggablePanel with top and bottom Fragments and apply all the configuration.
+     */
+    public void initializeDraggablePanel() {
+        mDraggablePanel.setFragmentManager(mActivity.getSupportFragmentManager());
+        mDraggablePanel.setTopFragment(new TagListFragment());
+        mDraggablePanel.setBottomFragment(new TagEditFragment());
+        TypedValue typedValue = new TypedValue();
+        mActivity.getResources().getValue(R.dimen.x_scale_factor, typedValue, true);
+        float xScaleFactor = typedValue.getFloat();
+        typedValue = new TypedValue();
+        mActivity.getResources().getValue(R.dimen.y_scale_factor, typedValue, true);
+        float yScaleFactor = typedValue.getFloat();
+        mDraggablePanel.setXScaleFactor(xScaleFactor);
+        mDraggablePanel.setYScaleFactor(yScaleFactor);
+        mDraggablePanel.setTopViewHeight(
+                mActivity.getResources().getDimensionPixelSize(R.dimen.top_fragment_height));
+        mDraggablePanel.setTopFragmentMarginRight(
+                mActivity.getResources().getDimensionPixelSize(R.dimen.top_fragment_margin));
+        mDraggablePanel.setTopFragmentMarginBottom(
+                mActivity.getResources().getDimensionPixelSize(R.dimen.top_fragment_margin));
+        mDraggablePanel.initializeView();
+        mDraggablePanel.setVisibility(View.GONE);
     }
 
     /**
@@ -102,12 +163,7 @@ public class DraggablePanelManager {
         }
     }
 
-    /**
-     * Keep a reference of the last DraggablePanelState.
-     *
-     * @param outState Bundle used to store the DraggablePanelState.
-     */
-    public void saveDraggableState(Bundle outState) {
+    private DraggableState getDraggableState() {
         DraggableState draggableState = null;
         if (mDraggablePanel.isMaximized()) {
             draggableState = DraggableState.MAXIMIZED;
@@ -118,30 +174,6 @@ public class DraggablePanelManager {
         } else if (mDraggablePanel.isClosedAtRight()) {
             draggableState = DraggableState.CLOSED_AT_RIGHT;
         }
-        outState.putSerializable(DRAGGABLE_PANEL_STATE, draggableState);
-    }
-
-    /**
-     * Initialize the DraggablePanel with top and bottom Fragments and apply all the configuration.
-     */
-    public void initializeDraggablePanel() {
-        mDraggablePanel.setFragmentManager(mActivity.getSupportFragmentManager());
-        mDraggablePanel.setTopFragment(new TagListFragment());
-        mDraggablePanel.setBottomFragment(new TagEditFragment());
-        TypedValue typedValue = new TypedValue();
-        mActivity.getResources().getValue(R.dimen.x_scale_factor, typedValue, true);
-        float xScaleFactor = typedValue.getFloat();
-        typedValue = new TypedValue();
-        mActivity.getResources().getValue(R.dimen.y_scale_factor, typedValue, true);
-        float yScaleFactor = typedValue.getFloat();
-        mDraggablePanel.setXScaleFactor(xScaleFactor);
-        mDraggablePanel.setYScaleFactor(yScaleFactor);
-        mDraggablePanel.setTopViewHeight(
-                mActivity.getResources().getDimensionPixelSize(R.dimen.top_fragment_height));
-        mDraggablePanel.setTopFragmentMarginRight(
-                mActivity.getResources().getDimensionPixelSize(R.dimen.top_fragment_margin));
-        mDraggablePanel.setTopFragmentMarginBottom(
-                mActivity.getResources().getDimensionPixelSize(R.dimen.top_fragment_margin));
-        mDraggablePanel.initializeView();
+        return draggableState;
     }
 }

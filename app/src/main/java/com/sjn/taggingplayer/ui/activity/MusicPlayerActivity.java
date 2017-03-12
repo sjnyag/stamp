@@ -121,6 +121,7 @@ public class MusicPlayerActivity extends MediaBrowserActivity
     public boolean onOptionsItemSelected(int itemId) {
         switch (itemId) {
             case R.id.tag_edit:
+                mDraggablePanelManager.toggle();
                 return true;
         }
 
