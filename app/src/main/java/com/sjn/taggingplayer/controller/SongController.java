@@ -13,6 +13,7 @@ import com.sjn.taggingplayer.db.dao.SongTagDao;
 import com.sjn.taggingplayer.media.provider.ProviderType;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.MediaIDHelper;
+import com.sjn.taggingplayer.utils.MediaRetrieveHelper;
 import com.sjn.taggingplayer.utils.RealmHelper;
 
 import java.util.ArrayList;
@@ -37,8 +38,7 @@ public class SongController {
 
     public void registerTagList(List<String> tagNameList, String mediaId) {
         if (MediaIDHelper.isTrack(mediaId)) {
-            //TODO:
-            //registerSongTagList(tagNameList, MediaObserver.getInstance().findTrackByMediaId(mediaId));
+            registerSongTagList(tagNameList, MediaRetrieveHelper.findByMusicId(mContext, Long.valueOf(MediaIDHelper.extractMusicIDFromMediaID(mediaId))));
         } else {
             String[] hierarchy = MediaIDHelper.getHierarchy(mediaId);
             if (hierarchy.length <= 1) {
@@ -138,6 +138,9 @@ public class SongController {
     }
 
     private void registerSongTagList(List<String> tagNameList, MediaMetadataCompat track) {
+        if (track == null) {
+            return;
+        }
         Song song = SongDao.getInstance().newStandalone();
         song.parseMetadata(track);
         Realm realm = RealmHelper.getRealmInstance(mContext);

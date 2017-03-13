@@ -44,10 +44,11 @@ public class DraggablePanelManager {
         LogHelper.e(TAG, getDraggableState());
         if (mDraggablePanel.getVisibility() != View.VISIBLE) {
             mDraggablePanel.setVisibility(View.VISIBLE);
+            return;
         }
         switch (getDraggableState()) {
             case MAXIMIZED:
-                updateDraggablePanelStateDelayed(DraggableState.MINIMIZED);
+                updateDraggablePanelStateDelayed(DraggableState.CLOSED_AT_RIGHT);
                 break;
             case MINIMIZED:
                 updateDraggablePanelStateDelayed(DraggableState.MAXIMIZED);

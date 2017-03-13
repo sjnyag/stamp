@@ -49,7 +49,7 @@ public class MediaRetrieveHelper {
             MediaStore.Audio.Media.DATE_MODIFIED,
     };
 
-    private static final String MUSIC_SELECTION = MediaStore.Audio.Media.IS_MUSIC + " != 0";
+    private static final String ALL_MUSIC_SELECTION = MediaStore.Audio.Media.IS_MUSIC + " != 0";
     private static final int DISK_CACHE_SIZE = 1024 * 1024 * 1; // 1MB
     private static final String CACHE_KEY = "media_source";
 
@@ -63,6 +63,19 @@ public class MediaRetrieveHelper {
                 return mediaCursorContainer.buildMediaMetadataCompat();
             }
         }).iterator();
+    }
+
+    public static MediaMetadataCompat findByMusicId(Context context, long musicId) {
+        MediaMetadataCompat metadata = null;
+        //TODO
+        Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, musicId);
+        Cursor mediaCursor = context.getContentResolver().query(uri, MEDIA_PROJECTION, ALL_MUSIC_SELECTION, null, null);
+        if (mediaCursor != null && mediaCursor.moveToFirst()) {
+            metadata = parseCursor(mediaCursor, null).buildMediaMetadataCompat();
+            mediaCursor.close();
+        }
+        return metadata;
+
     }
 
     public static boolean initCache(Context context) {
@@ -92,7 +105,7 @@ public class MediaRetrieveHelper {
         SparseArray<String> genreMap = createGenreMap(context, false);
         Uri uri = hasStoragePermission ? MediaStore.Audio.Media.EXTERNAL_CONTENT_URI : MediaStore.Audio.Media.INTERNAL_CONTENT_URI;
         Cursor mediaCursor = context.getContentResolver().query(
-                uri, MEDIA_PROJECTION, MUSIC_SELECTION, null, null);
+                uri, MEDIA_PROJECTION, ALL_MUSIC_SELECTION, null, null);
         if (mediaCursor != null && mediaCursor.moveToFirst()) {
             do {
                 mediaList.add(parseCursor(mediaCursor, genreMap));

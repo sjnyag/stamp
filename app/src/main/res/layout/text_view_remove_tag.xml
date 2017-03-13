@@ -10,7 +10,6 @@
     android:paddingStart="12dp"
     android:paddingTop="6dp"
     android:paddingBottom="6dp"
-    android:singleLine="true"
     android:textAppearance="?android:attr/textAppearanceSmall"
     android:textColor="?android:attr/textColorPrimary"
     android:background="@drawable/button_remove_tag"

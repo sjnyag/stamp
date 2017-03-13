@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright (C) 2014 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:sothree="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -38,19 +36,20 @@
 
             <include
                 android:id="@+id/toolbar_container"
-                layout="@layout/include_toolbar"/>
+                layout="@layout/include_toolbar" />
 
             <FrameLayout
                 android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/toolbar_container"/>
+                android:layout_below="@+id/toolbar_container" />
 
 
             <com.github.pedrovgs.DraggablePanel
                 android:id="@+id/draggable_panel"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"/>
+                android:layout_height="fill_parent"
+                android:layout_below="@+id/toolbar_container" />
 
         </RelativeLayout>
 
@@ -76,7 +75,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    tools:layout="@layout/fragment_playback_controls"/>
+                    tools:layout="@layout/fragment_playback_controls" />
 
             </android.support.v7.widget.CardView>
 
@@ -85,7 +84,7 @@
                 android:name="com.sjn.taggingplayer.ui.fragment.FullScreenPlayerFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:layout="@layout/fragment_full_player"/>
+                tools:layout="@layout/fragment_full_player" />
 
         </LinearLayout>
 

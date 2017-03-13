@@ -17,6 +17,7 @@ package com.sjn.taggingplayer.ui.holder;
 
 import android.app.Activity;
 import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.MediaDescriptionCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +26,10 @@ import android.widget.TextView;
 
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.controller.SongController;
+import com.sjn.taggingplayer.media.provider.ListProvider;
 import com.sjn.taggingplayer.ui.observer.TagEditStateObserver;
 import com.sjn.taggingplayer.utils.MediaIDHelper;
+import com.sjn.taggingplayer.utils.ViewHelper;
 
 
 public class TaggingMediaItemViewHolder extends MediaItemViewHolder {
@@ -36,9 +39,6 @@ public class TaggingMediaItemViewHolder extends MediaItemViewHolder {
         @Override
         public void onClick(View v) {
             TagEditStateObserver tagEditStateObserver = TagEditStateObserver.getInstance();
-            if (!tagEditStateObserver.isTagEditMode()) {
-                return;
-            }
             final String mediaId = (String) v.getTag(R.id.text_view_new_tag_media_id);
             SongController songController = new SongController(mActivity);
             songController.registerTagList(tagEditStateObserver.getSelectedTagList(), mediaId);
@@ -85,7 +85,26 @@ public class TaggingMediaItemViewHolder extends MediaItemViewHolder {
 
     @Override
     protected void setUpView(Activity activity, MediaBrowserCompat.MediaItem item) {
-        super.setUpView(activity, item);
+        MediaDescriptionCompat description = item.getDescription();
+        if (description.getExtras() != null && description.getExtras().containsKey(ListProvider.CUSTOM_METADATA_TRACK_PREFIX)) {
+            this.mTitleView.setText(String.valueOf(description.getExtras().getLong(ListProvider.CUSTOM_METADATA_TRACK_PREFIX)) + "回: " + description.getTitle());
+        } else {
+            this.mTitleView.setText(description.getTitle());
+        }
+        if (description.getDescription() == null || description.getDescription().length() == 0) {
+            this.mAlbumView.setVisibility(View.GONE);
+        } else {
+            this.mAlbumView.setText(description.getDescription());
+        }
+        if (description.getSubtitle() == null || description.getSubtitle().length() == 0) {
+            this.mDescriptionView.setVisibility(View.GONE);
+        } else {
+            this.mDescriptionView.setText(description.getSubtitle());
+        }
+
+        if (description.getIconUri() != null) {
+            ViewHelper.updateAlbumArt(activity, this.mAlbumArtView, description.getIconUri().toString());
+        }
         updateTagList(item.getMediaId());
     }
 
