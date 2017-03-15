@@ -236,10 +236,12 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
     protected void setCurrentQueue(String title, List<MediaSessionCompat.QueueItem> newQueue,
                                    String initialMediaId) {
         mOrderedQueue = newQueue;
-        onShuffleStateChanged(CustomController.getInstance().getShuffleState());
+        if (CustomController.getInstance().getShuffleState() == ShuffleState.SHUFFLE) {
+            updateShuffleQueue();
+        }
         int index = 0;
         if (initialMediaId != null) {
-            index = QueueHelper.getMusicIndexOnQueue(mOrderedQueue, initialMediaId);
+            index = QueueHelper.getMusicIndexOnQueue(getPlayingQueue(), initialMediaId);
         }
         if (initialMediaId != null && !initialMediaId.startsWith(MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE)) {
             UserSettingController userSettingController = new UserSettingController(mContext);

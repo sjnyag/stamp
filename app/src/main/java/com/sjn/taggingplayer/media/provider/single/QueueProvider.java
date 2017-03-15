@@ -52,7 +52,7 @@ public class QueueProvider extends SingleListProvider {
         if (queue != null) {
             queueList = Lists.newArrayList(queue);
         }
-        queueList = sortCurrentSongTop(queueList);
+        //queueList = sortCurrentSongTop(queueList);
         return queueList;
     }
 
