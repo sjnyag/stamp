@@ -2,6 +2,7 @@ package com.sjn.taggingplayer.db.dao;
 
 import com.sjn.taggingplayer.constant.CategoryType;
 import com.sjn.taggingplayer.db.CategoryTag;
+import com.sjn.taggingplayer.db.SongTag;
 
 import java.util.List;
 
@@ -33,6 +34,12 @@ public class CategoryTagDao extends BaseDao {
     public void remove(Realm realm, String name, CategoryType categoryType, String categoryValue) {
         realm.beginTransaction();
         realm.where(CategoryTag.class).equalTo("mName", name).equalTo("mType", categoryType.getValue()).equalTo("mValue", categoryValue).findAll().deleteAllFromRealm();
+        realm.commitTransaction();
+    }
+
+    public void remove(Realm realm, final String name) {
+        realm.beginTransaction();
+        realm.where(CategoryTag.class).equalTo("mName", name).findAll().deleteAllFromRealm();
         realm.commitTransaction();
     }
 

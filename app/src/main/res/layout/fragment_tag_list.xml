@@ -1,28 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:animation_wrap_layout="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_alignParentBottom="true"
-    android:background="#CCFFEB3B"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
-    android:paddingTop="20dp">
+    app:cardBackgroundColor="#cc8d6e63"
+    app:cardElevation="8dp">
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:fillViewport="true">
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="20dp">
 
-        <com.sjn.taggingplayer.ui.custom.WrapLayout
-            android:id="@+id/selected_tag_list_layout"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:wrapLayoutMarginHeight="4dp"
-            app:wrapLayoutMarginWidth="4dp" />
-    </ScrollView>
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:fillViewport="true">
 
-</RelativeLayout>
+            <com.github.sjnyag.AnimationWrapLayout
+                android:id="@+id/selected_tag_list_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                animation_wrap_layout:each_margin_height="4dp"
+                animation_wrap_layout:each_margin_width="4dp" />
+        </ScrollView>
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

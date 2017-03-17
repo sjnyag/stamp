@@ -8,9 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.sjnyag.AnimationWrapLayout;
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.ui.custom.ToggleTextView;
-import com.sjn.taggingplayer.ui.custom.WrapLayout;
 import com.sjn.taggingplayer.ui.observer.TagEditStateObserver;
 import com.sjn.taggingplayer.utils.LogHelper;
 
@@ -19,12 +19,12 @@ import java.util.List;
 public class TagListFragment extends Fragment implements TagEditStateObserver.Listener {
 
     private static final String TAG = LogHelper.makeLogTag(TagListFragment.class);
-    private WrapLayout mTagListLayout;
+    private AnimationWrapLayout mTagListLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tag_list, container, false);
-        mTagListLayout = (WrapLayout) rootView.findViewById(R.id.selected_tag_list_layout);
+        mTagListLayout = (AnimationWrapLayout) rootView.findViewById(R.id.selected_tag_list_layout);
         return rootView;
     }
 

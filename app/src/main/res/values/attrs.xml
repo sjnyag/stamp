@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <declare-styleable name="WrapLayout">
-        <attr name="wrapLayoutMarginHeight" format="dimension"/>
-        <attr name="wrapLayoutMarginWidth" format="dimension"/>
-    </declare-styleable>
-</resources>

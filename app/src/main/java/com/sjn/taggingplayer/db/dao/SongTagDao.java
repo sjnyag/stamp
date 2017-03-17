@@ -20,7 +20,7 @@ public class SongTagDao extends BaseDao {
     }
 
     public List<SongTag> findAll(Realm realm) {
-        return realm.where(SongTag.class).findAll();
+        return realm.where(SongTag.class).findAll().sort("mName");
     }
 
     public void saveOrAdd(Realm realm, final SongTag rawSongTag, final Song rawSong) {
@@ -54,9 +54,16 @@ public class SongTagDao extends BaseDao {
         });
     }
 
-    public void save(Realm realm, String name) {
+    public void remove(Realm realm, final String name) {
+        realm.beginTransaction();
+        realm.where(SongTag.class).equalTo("mName", name).findAll().deleteAllFromRealm();
+        realm.commitTransaction();
+    }
+
+    public boolean save(Realm realm, String name) {
+        boolean result = false;
         if (name == null || name.isEmpty()) {
-            return;
+            return false;
         }
         realm.beginTransaction();
         SongTag songTag = realm.where(SongTag.class).equalTo("mName", name).findFirst();
@@ -64,8 +71,10 @@ public class SongTagDao extends BaseDao {
             songTag = realm.createObject(SongTag.class);
             songTag.setId(getAutoIncrementId(realm, SongTag.class));
             songTag.setName(name);
+            result = true;
         }
         realm.commitTransaction();
+        return result;
     }
 
     public SongTag newStandalone() {

@@ -36,6 +36,14 @@ public class TagController {
         mListenerSet.remove(listener);
     }
 
+    public void remove(String tag) {
+        Realm realm = RealmHelper.getRealmInstance(mContext);
+        mSongTagDao.remove(realm, tag);
+        mCategoryTagDao.remove(realm, tag);
+        realm.close();
+        notifyTagChange();
+    }
+
     public interface Listener {
         void onTagChange();
     }
@@ -62,11 +70,12 @@ public class TagController {
         return tagList;
     }
 
-    public void register(String name) {
+    public boolean register(String name) {
         Realm realm = RealmHelper.getRealmInstance(mContext);
-        mSongTagDao.save(realm, name);
+        boolean result = mSongTagDao.save(realm, name);
         realm.close();
         notifyTagChange();
+        return result;
     }
 
     public ConcurrentMap<String, List<MediaMetadataCompat>> getAllSongList(final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
