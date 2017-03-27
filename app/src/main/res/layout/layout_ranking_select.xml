@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/layout_term_select_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="対象期間"
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="?android:attr/textColorPrimary"/>
+
+    <include
+        android:id="@+id/layout_term_select"
+        layout="@layout/layout_term_select"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_term_select_label"
+        android:layout_marginTop="24sp"/>
+
+    <TextView
+        android:id="@+id/song_num_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_term_select"
+        android:layout_marginTop="48sp"
+        android:text="対象数"
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="?android:attr/textColorPrimary"/>
+
+    <Spinner
+        android:id="@+id/song_num_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/song_num_label"
+        android:layout_marginTop="24sp"
+        android:textAlignment="center"
+        android:textColor="?android:attr/textColorPrimary"/>
+
+</RelativeLayout>

@@ -7,6 +7,8 @@ import com.sjn.taggingplayer.constant.RecordType;
 import com.sjn.taggingplayer.db.Artist;
 import com.sjn.taggingplayer.db.DailySongHistory;
 import com.sjn.taggingplayer.db.Device;
+import com.sjn.taggingplayer.db.RankedArtist;
+import com.sjn.taggingplayer.db.RankedSong;
 import com.sjn.taggingplayer.db.Song;
 import com.sjn.taggingplayer.db.SongHistory;
 import com.sjn.taggingplayer.db.TotalSongHistory;
@@ -16,15 +18,17 @@ import com.sjn.taggingplayer.db.dao.SongDao;
 import com.sjn.taggingplayer.db.dao.SongHistoryDao;
 import com.sjn.taggingplayer.db.dao.TotalSongHistoryDao;
 import com.sjn.taggingplayer.media.provider.ListProvider;
-import com.sjn.taggingplayer.utils.AggregateHelper;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.RealmHelper;
 
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.realm.Realm;
 
@@ -49,22 +53,22 @@ public class SongHistoryController {
     }
 
     public void onPlay(MediaMetadataCompat track, DateTime dateTime) {
-        LogHelper.i(TAG, "insertPLAY", track.getDescription().getTitle());
+        LogHelper.i(TAG, "insertPLAY ", track.getDescription().getTitle());
         registerHistory(track, RecordType.PLAY, dateTime);
     }
 
     public void onSkip(MediaMetadataCompat track, DateTime dateTime) {
-        LogHelper.i(TAG, "insertSKIP", track.getDescription().getTitle());
+        LogHelper.i(TAG, "insertSKIP ", track.getDescription().getTitle());
         registerHistory(track, RecordType.SKIP, dateTime);
     }
 
     public void onStart(MediaMetadataCompat track, DateTime dateTime) {
-        LogHelper.i(TAG, "insertSTART", track.getDescription().getTitle());
+        LogHelper.i(TAG, "insertSTART ", track.getDescription().getTitle());
         registerHistory(track, RecordType.START, dateTime);
     }
 
     public void onComplete(MediaMetadataCompat track, DateTime dateTime) {
-        LogHelper.i(TAG, "insertComplete", track.getDescription().getTitle());
+        LogHelper.i(TAG, "insertComplete ", track.getDescription().getTitle());
         registerHistory(track, RecordType.COMPLETE, dateTime);
     }
 
@@ -106,35 +110,6 @@ public class SongHistoryController {
         return songHistory;
     }
 
-
-    public List<String> getRecentSongRanking(Date date, int threshold) {
-        return AggregateHelper.sortAndSublist(getRecentSongRanking(date), threshold);
-    }
-
-    public Artist getTopArtistTotal() {
-        return AggregateHelper.getMostPlayedArtist(getTotalSongRanking());
-    }
-
-    public MediaMetadataCompat getTopSongTotal() {
-        Song song = AggregateHelper.getMostPlayedSong(getTotalSongRanking());
-        if (song == null) {
-            return null;
-        }
-        return song.buildMediaMetadataCompat();
-    }
-
-    public Artist getTopArtistRecent(Date date) {
-        return AggregateHelper.getMostPlayedArtist(getRecentSongRanking(date));
-    }
-
-    public MediaMetadataCompat getTopSongRecent(Date date) {
-        Song song = AggregateHelper.getMostPlayedSong(getRecentSongRanking(date));
-        if (song == null) {
-            return null;
-        }
-        return song.buildMediaMetadataCompat();
-    }
-
     public List<MediaMetadataCompat> getTopSongList() {
         Realm realm = RealmHelper.getRealmInstance(mContext);
         List<MediaMetadataCompat> trackList = new ArrayList<>();
@@ -146,25 +121,52 @@ public class SongHistoryController {
             //noinspection ResourceType
             trackList.add(
                     totalSongHistory.getSong().mediaMetadataCompatBuilder()
-                    .putLong(ListProvider.CUSTOM_METADATA_TRACK_PREFIX, totalSongHistory.getPlayCount())
-                    .build()
+                            .putLong(ListProvider.CUSTOM_METADATA_TRACK_PREFIX, totalSongHistory.getPlayCount())
+                            .build()
             );
         }
         realm.close();
         return trackList;
     }
 
-    public List<DailySongHistory> getTotalSongRanking() {
+    public List<RankedSong> getRankedSongList() {
         Realm realm = RealmHelper.getRealmInstance(mContext);
-        List<DailySongHistory> dailySongHistoryList = mDailySongHistoryDao.findAll(realm);
+        List<RankedSong> rankedSongList = new ArrayList<>();
+        List<TotalSongHistory> historyList = mTotalSongHistoryDao.getOrderedList(realm);
+        for (TotalSongHistory totalSongHistory : historyList) {
+            if (totalSongHistory.getPlayCount() == 0) {
+                break;
+            }
+            rankedSongList.add(new RankedSong(totalSongHistory.getPlayCount(), realm.copyFromRealm(totalSongHistory.getSong())));
+        }
         realm.close();
-        return dailySongHistoryList;
+        return rankedSongList;
     }
 
-    public List<DailySongHistory> getRecentSongRanking(Date date) {
+    public List<RankedArtist> getRankedArtistList() {
         Realm realm = RealmHelper.getRealmInstance(mContext);
-        List<DailySongHistory> dailySongHistoryList = mDailySongHistoryDao.findByDate(RealmHelper.getRealmInstance(mContext), date);
+        List<TotalSongHistory> historyList = mTotalSongHistoryDao.getOrderedList(realm);
+        Map<String, Integer> artistMap = new HashMap<>();
+        for (TotalSongHistory totalSongHistory : historyList) {
+            if (totalSongHistory.getPlayCount() == 0) {
+                break;
+            }
+            String artist = totalSongHistory.getSong().getArtist();
+            int count = artistMap.containsKey(artist) ? artistMap.get(artist) + totalSongHistory.getPlayCount() : totalSongHistory.getPlayCount();
+            artistMap.put(artist, count);
+        }
         realm.close();
-        return dailySongHistoryList;
+        List<RankedArtist> rankedArtistList = new ArrayList<>();
+        for (Map.Entry<String, Integer> e : artistMap.entrySet()) {
+            rankedArtistList.add(new RankedArtist(e.getValue(), new Artist(e.getKey(), "")));
+        }
+        Collections.sort(rankedArtistList, new Comparator<RankedArtist>() {
+            @Override
+            public int compare(RankedArtist t1, RankedArtist t2) {
+                return t2.getPlayCount() - t1.getPlayCount();
+            }
+        });
+        return rankedArtistList;
     }
+
 }

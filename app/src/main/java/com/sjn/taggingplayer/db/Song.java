@@ -1,9 +1,13 @@
 package com.sjn.taggingplayer.db;
 
+import android.content.res.Resources;
 import android.media.MediaMetadata;
 import android.support.v4.media.MediaMetadataCompat;
 
+import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.media.source.MusicProviderSource;
+
+import java.util.Locale;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -19,7 +23,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Song extends RealmObject {
+public class Song extends RealmObject implements Tweetable {
 
     @PrimaryKey
     public long mId;
@@ -87,5 +91,10 @@ public class Song extends RealmObject {
             return metadata.getLong(key);
         }
         return null;
+    }
+
+    @Override
+    public String tweet(Resources resources) {
+        return resources.getString(R.string.tweet_song, mTitle, mArtist);
     }
 }

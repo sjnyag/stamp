@@ -6,6 +6,7 @@ import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.ui.fragment.MediaBrowserFragment;
 import com.sjn.taggingplayer.ui.fragment.AllSongPagerFragment;
 import com.sjn.taggingplayer.ui.fragment.QueueFragment;
+import com.sjn.taggingplayer.ui.fragment.RankingPagerFragment;
 import com.sjn.taggingplayer.ui.fragment.SettingFragment;
 import com.sjn.taggingplayer.utils.MediaIDHelper;
 
@@ -60,7 +61,7 @@ public enum DrawerMenu {
     RANKING(R.id.navigation_ranking, null) {
         @Override
         Fragment getFragment() {
-            return new MediaBrowserFragment();
+            return new RankingPagerFragment();
         }
     },
     EDIT_PLAYLIST(R.id.navigation_edit_playlist, null) {
