@@ -20,8 +20,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.media.MediaBrowserCompat;
 import android.text.TextUtils;
 
@@ -77,6 +75,7 @@ public class MusicPlayerActivity extends MediaBrowserActivity
         );
         initializeToolbar();
         mDraggablePanelManager.initializeDraggablePanel();
+        navigateToBrowser(new FullScreenPlayerFragment(), false);
 
         if (!PermissionHelper.hasPermission(this, PERMISSIONS)) {
             Intent intent = new Intent(this, RequestPermissionActivity.class);
@@ -96,10 +95,6 @@ public class MusicPlayerActivity extends MediaBrowserActivity
             Intent intent = new Intent(this, RequestPermissionActivity.class);
             intent.putExtra(RequestPermissionActivity.KEY_PERMISSIONS, PERMISSIONS);
             startActivity(intent);
-        }
-        // Only check if a full screen player is needed on the first time:
-        if (mSavedInstanceState == null) {
-            startFullScreenIfNeeded(getIntent());
         }
     }
 
@@ -157,13 +152,12 @@ public class MusicPlayerActivity extends MediaBrowserActivity
     protected void onNewIntent(Intent intent) {
         LogHelper.d(TAG, "onNewIntent, intent=" + intent);
         mNewIntent = intent;
-        startFullScreenIfNeeded(intent);
     }
 
     private void startFullScreenIfNeeded(Intent intent) {
         if (intent != null && intent.getBooleanExtra(EXTRA_START_FULLSCREEN, false)) {
             SlidingUpPanelLayout slidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-            if(slidingUpPanelLayout == null){
+            if (slidingUpPanelLayout == null) {
                 return;
             }
             slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
@@ -187,30 +181,14 @@ public class MusicPlayerActivity extends MediaBrowserActivity
             }
         }
         navigateToBrowser(mediaId);
-    }
-
-    public void navigateToBrowser(Fragment fragment, boolean addToBackStack, long selection) {
-        navigateToBrowser(fragment, addToBackStack);
-        mDrawer.setSelection(selection);
-    }
-
-    public void navigateToBrowser(Fragment fragment, boolean addToBackStack) {
-        if (!addToBackStack) {
-            getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, fragment, FRAGMENT_TAG);
-        if (addToBackStack) {
-            // If this is not the top level media (root), we add it to the fragment back stack,
-            // so that actionbar toggle and Back will work appropriately:
-            //transaction.setCustomAnimations(R.anim.fade_out, R.anim.fade_in);
-            transaction.addToBackStack(null);
-        }
-        transaction.commit();
+        startFullScreenIfNeeded(intent);
     }
 
     private void navigateToBrowser(String mediaId) {
         LogHelper.d(TAG, "navigateToBrowser, mediaId=" + mediaId);
+        if (mediaId == null) {
+            return;
+        }
         MediaBrowserFragment fragment = getBrowseFragment();
 
         if (fragment == null || !TextUtils.equals(fragment.getMediaId(), mediaId)) {

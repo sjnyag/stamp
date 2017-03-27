@@ -1,1 +1,1 @@
-include ':app', ':animationwraplayout'
+include ':app'
