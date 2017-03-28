@@ -48,7 +48,7 @@ public class RankingFragment extends Fragment {
             @Override
             public List<Tweetable> getRankingTweet(@NonNull Context context, TermSelectLayout.Term term) {
                 List<Tweetable> tweetableList = new ArrayList<>();
-                for (Tweetable tweetable : new SongHistoryController(context).getRankedSongList()) {
+                for (Tweetable tweetable : new SongHistoryController(context).getRankedSongList(term)) {
                     tweetableList.add(tweetable);
                 }
                 return tweetableList;
@@ -56,7 +56,7 @@ public class RankingFragment extends Fragment {
 
             @Override
             public ArrayAdapter getAdapter(@NonNull Context context, TermSelectLayout.Term term) {
-                return new SongRankingAdapter(context, new SongHistoryController(context).getRankedSongList());
+                return new SongRankingAdapter(context, new SongHistoryController(context).getRankedSongList(term));
             }
         },
 
@@ -64,7 +64,7 @@ public class RankingFragment extends Fragment {
             @Override
             public List<Tweetable> getRankingTweet(@NonNull Context context, TermSelectLayout.Term term) {
                 List<Tweetable> tweetableList = new ArrayList<>();
-                for (Tweetable tweetable : new SongHistoryController(context).getRankedArtistList()) {
+                for (Tweetable tweetable : new SongHistoryController(context).getRankedArtistList(term)) {
                     tweetableList.add(tweetable);
                 }
                 return tweetableList;
@@ -72,7 +72,7 @@ public class RankingFragment extends Fragment {
 
             @Override
             public ArrayAdapter getAdapter(@NonNull Context context, TermSelectLayout.Term term) {
-                return new ArtistRankingAdapter(context, new SongHistoryController(context).getRankedArtistList());
+                return new ArtistRankingAdapter(context, new SongHistoryController(context).getRankedArtistList(term));
             }
         },;
 

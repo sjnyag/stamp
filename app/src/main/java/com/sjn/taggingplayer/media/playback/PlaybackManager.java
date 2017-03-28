@@ -296,22 +296,22 @@ public class PlaybackManager implements Playback.Callback, MediaLogger.Listener 
 
     @Override
     public void onSongStart(@NonNull MediaMetadataCompat metadata) {
-        mSongHistoryController.onStart(metadata, TimeHelper.getJapanNow());
+        mSongHistoryController.onStart(metadata, TimeHelper.getJapanNow().toDate());
     }
 
     @Override
     public void onSongPlay(@NonNull MediaMetadataCompat metadata) {
-        mSongHistoryController.onPlay(metadata, TimeHelper.getJapanNow());
+        mSongHistoryController.onPlay(metadata, TimeHelper.getJapanNow().toDate());
     }
 
     @Override
     public void onSongSkip(@NonNull MediaMetadataCompat metadata) {
-        mSongHistoryController.onSkip(metadata, TimeHelper.getJapanNow());
+        mSongHistoryController.onSkip(metadata, TimeHelper.getJapanNow().toDate());
     }
 
     @Override
     public void onSongComplete(@NonNull MediaMetadataCompat metadata) {
-        mSongHistoryController.onComplete(metadata, TimeHelper.getJapanNow());
+        mSongHistoryController.onComplete(metadata, TimeHelper.getJapanNow().toDate());
     }
 
     private class MediaSessionCallback extends MediaSessionCompat.Callback {

@@ -40,6 +40,25 @@ public class Song extends RealmObject implements Tweetable {
     public String mDateAdded;
     public RealmList<SongTag> mSongTagList;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Song)) return false;
+
+        Song song = (Song) o;
+
+        if (mArtist != null ? !mArtist.equals(song.mArtist) : song.mArtist != null) return false;
+        return mTitle != null ? mTitle.equals(song.mTitle) : song.mTitle == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = mArtist != null ? mArtist.hashCode() : 0;
+        result = 31 * result + (mTitle != null ? mTitle.hashCode() : 0);
+        return result;
+    }
+
     public void parseMetadata(MediaMetadataCompat metadata) {
         setMediaId(metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID));
         //noinspection ResourceType

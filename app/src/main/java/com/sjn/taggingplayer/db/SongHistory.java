@@ -2,7 +2,7 @@ package com.sjn.taggingplayer.db;
 
 import com.sjn.taggingplayer.constant.RecordType;
 
-import org.joda.time.DateTime;
+import java.util.Date;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -22,7 +22,7 @@ public class SongHistory extends RealmObject {
     @PrimaryKey
     public long mId;
     private Song mSong;
-    public String mRecordedAt;
+    public Date mRecordedAt;
     public String mRecordType;
     public Device mDevice;
     public float mLatitude;
@@ -30,9 +30,9 @@ public class SongHistory extends RealmObject {
     public float mAccuracy;
     public float mAltitude;
 
-    public void setValues(Song song, RecordType recordType, Device device, DateTime dateTime) {
+    public void setValues(Song song, RecordType recordType, Device device, Date date) {
         setSong(song);
-        setRecordedAt(dateTime.toString());
+        setRecordedAt(date);
         setRecordType(recordType);
         setDevice(device);
     }
