@@ -118,17 +118,22 @@ public class SongHistoryController {
         realm.close();
         return trackList;
     }
+
     public List<RankedSong> getRankedSongList(TermSelectLayout.Term term) {
-        return getRankedSongList(term.from() == null ? null : term.from().toDate(), term.to() == null ? null : term.to().toDate());
+        return getRankedSongList(
+                term.from() == null ? null : term.from().toDateTimeAtStartOfDay().toDate(),
+                term.to() == null ? null : term.to().toDateTimeAtStartOfDay().plusDays(1).toDate());
     }
 
     public List<RankedArtist> getRankedArtistList(TermSelectLayout.Term term) {
-        return getRankedArtistList(term.from() == null ? null : term.from().toDate(), term.to() == null ? null : term.to().toDate());
+        return getRankedArtistList(
+                term.from() == null ? null : term.from().toDateTimeAtStartOfDay().toDate(),
+                term.to() == null ? null : term.to().toDateTimeAtStartOfDay().plusDays(1).toDate());
     }
 
     public List<RankedSong> getRankedSongList(Date from, Date to) {
         Realm realm = RealmHelper.getRealmInstance(mContext);
-        List<SongHistory> historyList = mSongHistoryDao.where(realm, from, to);
+        List<SongHistory> historyList = mSongHistoryDao.where(realm, from, to, RecordType.PLAY.getValue());
         Map<Song, Integer> songMap = new HashMap<>();
         for (SongHistory songHistory : historyList) {
             Song song = realm.copyFromRealm(songHistory.getSong());
@@ -151,7 +156,7 @@ public class SongHistoryController {
 
     public List<RankedArtist> getRankedArtistList(Date from, Date to) {
         Realm realm = RealmHelper.getRealmInstance(mContext);
-        List<SongHistory> historyList = mSongHistoryDao.where(realm, from, to);
+        List<SongHistory> historyList = mSongHistoryDao.where(realm, from, to, RecordType.PLAY.getValue());
         Map<String, Integer> artistMap = new HashMap<>();
         for (SongHistory songHistory : historyList) {
             String artist = songHistory.getSong().getArtist();

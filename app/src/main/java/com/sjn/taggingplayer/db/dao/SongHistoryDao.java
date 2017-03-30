@@ -19,8 +19,8 @@ public class SongHistoryDao extends BaseDao {
         return sInstance;
     }
 
-    public List<SongHistory> where(Realm realm, Date from, Date to) {
-        RealmQuery query = realm.where(SongHistory.class);
+    public List<SongHistory> where(Realm realm, Date from, Date to, String recordType) {
+        RealmQuery query = realm.where(SongHistory.class).equalTo("mRecordType", recordType);
         if(from != null){
             query.greaterThanOrEqualTo("mRecordedAt", from);
         }
