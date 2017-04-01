@@ -112,7 +112,11 @@ public abstract class ActionBarCastActivity extends DrawerActivity {
      */
     private void showFtu() {
         Menu menu = mToolbar.getMenu();
-        View view = menu.findItem(R.id.media_route_menu_item).getActionView();
+        MenuItem menuItem = menu.findItem(R.id.media_route_menu_item);
+        if(menuItem == null){
+            return;
+        }
+        View view = menuItem.getActionView();
         if (mMediaRouteMenuItem != null && view != null && view instanceof MediaRouteButton) {
             IntroductoryOverlay overlay = new IntroductoryOverlay.Builder(this, mMediaRouteMenuItem)
                     .setTitleText(R.string.touch_to_cast)

@@ -28,6 +28,7 @@ import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.ui.DraggablePanelManager;
 import com.sjn.taggingplayer.ui.fragment.FullScreenPlayerFragment;
 import com.sjn.taggingplayer.ui.fragment.MediaBrowserFragment;
+import com.sjn.taggingplayer.ui.fragment.TimelineFragment;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.PermissionHelper;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -75,7 +76,7 @@ public class MusicPlayerActivity extends MediaBrowserActivity
         );
         initializeToolbar();
         mDraggablePanelManager.initializeDraggablePanel();
-        navigateToBrowser(new FullScreenPlayerFragment(), false);
+        navigateToBrowser(new TimelineFragment(), false);
 
         if (!PermissionHelper.hasPermission(this, PERMISSIONS)) {
             Intent intent = new Intent(this, RequestPermissionActivity.class);

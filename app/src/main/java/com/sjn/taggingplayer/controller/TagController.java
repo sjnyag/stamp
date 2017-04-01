@@ -13,8 +13,10 @@ import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.RealmHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -79,63 +81,112 @@ public class TagController {
     }
 
     public ConcurrentMap<String, List<MediaMetadataCompat>> getAllSongList(final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
-        ConcurrentMap<String, List<MediaMetadataCompat>> playlistMap = new ConcurrentHashMap<>();
+        ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> songTagMap = new ConcurrentHashMap<>();
         Realm realm = RealmHelper.getRealmInstance();
         for (SongTag songTag : mSongTagDao.findAll(realm)) {
-            List<MediaMetadataCompat> trackList = findTrackListBySongTag(realm, songTag, musicListById);
-            if (trackList != null && !trackList.isEmpty()) {
-                playlistMap.put(songTag.getName(), trackList);
-            }
+            put(songTagMap, songTag.getName(), createTrackMap(songTag));
         }
-        for (CategoryTag categoryTag : mCategoryTagDao.findAllTagGroupByName(realm)) {
-            if (!playlistMap.containsKey(categoryTag.getName())) {
-                List<MediaMetadataCompat> trackList = findTrackListByCategoryTagName(realm, categoryTag.getName(), musicListById);
-                if (trackList != null && !trackList.isEmpty()) {
-                    playlistMap.put(categoryTag.getName(), trackList);
-                }
-            }
+        ConcurrentMap<String, ConcurrentMap<CategoryType, List<String>>> tagQueryMap = new ConcurrentHashMap<>();
+        for (CategoryTag categoryTag : mCategoryTagDao.findAll(realm)) {
+            put(tagQueryMap, categoryTag);
         }
         realm.close();
-        return playlistMap;
+
+        ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> categoryTagMap = searchMusic(musicListById, tagQueryMap);
+        merge(songTagMap, categoryTagMap);
+
+        ConcurrentMap<String, List<MediaMetadataCompat>> tagSongMap = new ConcurrentHashMap<>();
+        for (Map.Entry<String, ConcurrentMap<String, MediaMetadataCompat>> entry : songTagMap.entrySet()) {
+            tagSongMap.put(entry.getKey(), new ArrayList<>(entry.getValue().values()));
+        }
+        return tagSongMap;
     }
 
-    private List<MediaMetadataCompat> findTrackListBySongTag(Realm realm, SongTag songTag, final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
-        ConcurrentMap<String, MediaMetadataCompat> trackMap = new ConcurrentHashMap<>();
-        for (Song song : songTag.getSongList()) {
-            song.buildMediaMetadataCompat();
-            trackMap.put(song.getMediaId(), song.buildMediaMetadataCompat());
-        }
-        for (MediaMetadataCompat track : findTrackListByCategoryTagName(realm, songTag.getName(), musicListById)) {
-            trackMap.put(track.getDescription().getMediaId(), track);
-        }
-        return new ArrayList<>(trackMap.values());
-    }
-
-    private List<MediaMetadataCompat> findTrackListByCategoryTagName(Realm realm, String tagName, final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
-        List<MediaMetadataCompat> trackList = new ArrayList<>();
-        for (CategoryTag categoryTag : mCategoryTagDao.findCategoryTagList(realm, tagName)) {
-            CategoryType categoryType = CategoryType.of(categoryTag.getType());
-            if (categoryType != null) {
-                List<MediaMetadataCompat> tempTrackList = searchMusic(musicListById, categoryType.getKey(), categoryTag.getValue());
-                if (tempTrackList != null && !tempTrackList.isEmpty()) {
-                    trackList.addAll(tempTrackList);
-                }
+    private void merge(ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> songTagMap, ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> categoryTagMap) {
+        for(String tag : categoryTagMap.keySet()){
+            if(songTagMap.containsKey(tag)){
+                songTagMap.get(tag).putAll(categoryTagMap.get(tag));
+            }else{
+                songTagMap.put(tag, categoryTagMap.get(tag));
             }
         }
-        return trackList;
     }
 
-    private List<MediaMetadataCompat> searchMusic(final ConcurrentMap<String, MediaMetadataCompat> musicListById, String metadataField, String query) {
-        ArrayList<MediaMetadataCompat> result = new ArrayList<>();
-        if (musicListById == null) {
+    private ConcurrentMap<String, MediaMetadataCompat> createTrackMap(SongTag songTag) {
+        ConcurrentMap<String, MediaMetadataCompat> trackMap = new ConcurrentHashMap<>();
+        for (Song song : songTag.getSongList()) {
+            trackMap.put(song.getMediaId(), song.buildMediaMetadataCompat());
+        }
+        return trackMap;
+    }
+
+    private ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> searchMusic(final ConcurrentMap<String, MediaMetadataCompat> musicListById, ConcurrentMap<String, ConcurrentMap<CategoryType, List<String>>> queryMap) {
+        ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> result = new ConcurrentHashMap<>();
+        if (musicListById == null || queryMap == null) {
             return result;
         }
-        query = query.toLowerCase(Locale.US);
         for (MediaMetadataCompat track : musicListById.values()) {
-            if (track.getString(metadataField).toLowerCase(Locale.US).contains(query)) {
-                result.add(track);
+            for (Map.Entry<String, ConcurrentMap<CategoryType, List<String>>> entry1 : queryMap.entrySet()) {
+                for (Map.Entry<CategoryType, List<String>> entry : entry1.getValue().entrySet()) {
+                    if (entry.getValue().contains(track.getString(entry.getKey().getKey()).toLowerCase(Locale.US))) {
+                        put(result, entry1.getKey(), track);
+                    }
+                }
             }
         }
         return result;
+    }
+
+    private void put(ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> tagMap, String tagName, MediaMetadataCompat track) {
+        if (tagMap == null) {
+            return;
+        }
+        if (tagMap.containsKey(tagName) && !tagMap.get(tagName).isEmpty()) {
+            tagMap.get(tagName).put(track.getDescription().getMediaId(), track);
+        } else {
+            ConcurrentMap<String, MediaMetadataCompat> trackMap = new ConcurrentHashMap<>();
+            trackMap.put(track.getDescription().getMediaId(), track);
+            tagMap.put(tagName, trackMap);
+        }
+    }
+
+    private void put(ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> tagMap, String tagName, ConcurrentMap<String, MediaMetadataCompat> trackMap) {
+        if (tagMap == null || trackMap == null) {
+            return;
+        }
+        if (tagMap.containsKey(tagName)) {
+            tagMap.get(tagName).putAll(trackMap);
+        } else {
+            tagMap.put(tagName, trackMap);
+        }
+    }
+
+    private void put(ConcurrentMap<String, ConcurrentMap<CategoryType, List<String>>> tagQueryMap, CategoryTag categoryTag) {
+        if (tagQueryMap == null || categoryTag == null) {
+            return;
+        }
+        if (tagQueryMap.containsKey(categoryTag.getName())) {
+            putQuery(tagQueryMap.get(categoryTag.getName()), categoryTag);
+        } else {
+            ConcurrentMap<CategoryType, List<String>> queryMap = new ConcurrentHashMap<>();
+            putQuery(queryMap, categoryTag);
+            tagQueryMap.put(categoryTag.getName(), queryMap);
+        }
+    }
+
+    private void putQuery(ConcurrentMap<CategoryType, List<String>> queryMap, CategoryTag categoryTag) {
+        if (queryMap == null || categoryTag == null) {
+            return;
+        }
+        CategoryType categoryType = CategoryType.of(categoryTag.getType());
+        if (categoryType == null) {
+            return;
+        }
+        String query = categoryTag.getValue().toLowerCase(Locale.US);
+        if (queryMap.containsKey(categoryType) && !queryMap.get(categoryType).isEmpty()) {
+            queryMap.get(categoryType).add(query);
+        } else {
+            queryMap.put(categoryType, new ArrayList<>(Collections.singletonList(query)));
+        }
     }
 }

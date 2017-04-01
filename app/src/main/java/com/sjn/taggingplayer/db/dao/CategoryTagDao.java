@@ -20,7 +20,7 @@ public class CategoryTagDao extends BaseDao {
     }
 
     public List<CategoryTag> findAllTagGroupByName(Realm realm) {
-        return realm.where(CategoryTag.class).findAll().distinct("mName");
+        return realm.where(CategoryTag.class).distinct("mName");
     }
 
     public List<CategoryTag> findCategoryTagList(Realm realm, CategoryType categoryType, String categoryValue) {
@@ -29,6 +29,10 @@ public class CategoryTagDao extends BaseDao {
 
     public List<CategoryTag> findCategoryTagList(Realm realm, String tagName) {
         return realm.where(CategoryTag.class).equalTo("mName", tagName).findAll();
+    }
+
+    public List<CategoryTag> findAll(Realm realm) {
+        return realm.where(CategoryTag.class).findAll();
     }
 
     public void remove(Realm realm, String name, CategoryType categoryType, String categoryValue) {

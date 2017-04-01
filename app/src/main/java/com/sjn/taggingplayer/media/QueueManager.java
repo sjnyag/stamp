@@ -195,7 +195,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
     }
 
     public void setQueueFromMusic(String mediaId) {
-        LogHelper.d(TAG, "setQueueFromMusic", mediaId);
+        LogHelper.d(TAG, "setQueueFromMusic ", mediaId);
 
         // The mediaId used here is not the unique musicId. This one comes from the
         // MediaBrowser, and is actually a "hierarchy-aware mediaID": a concatenation of
@@ -252,6 +252,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
     }
 
     public void updateMetadata() {
+        LogHelper.d(TAG, "updateMetadata");
         MediaSessionCompat.QueueItem currentMusic = getCurrentMusic();
         if (currentMusic == null) {
             mListener.onMetadataRetrieveError();

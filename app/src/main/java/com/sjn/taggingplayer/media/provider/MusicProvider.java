@@ -91,6 +91,7 @@ public class MusicProvider implements MusicProviderSource.OnListChangeListener {
     }
 
     public List<MediaMetadataCompat> getMusicsHierarchy(String categoryType, String categoryValue) {
+        LogHelper.d(TAG, "getMusicsHierarchy");
         ListProvider listProvider = mListProviderMap.get(ProviderType.of(categoryType));
         if (listProvider == null) {
             return null;

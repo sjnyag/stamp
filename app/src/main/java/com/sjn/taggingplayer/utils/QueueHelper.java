@@ -146,6 +146,7 @@ public class QueueHelper {
     private static List<MediaSessionCompat.QueueItem> convertToQueue(
             Iterable<MediaMetadataCompat> tracks, String... categories) {
         List<MediaSessionCompat.QueueItem> queue = new ArrayList<>();
+        LogHelper.d(TAG, "convertToQueue Start");
         int count = 0;
         for (MediaMetadataCompat track : tracks) {
 
@@ -164,6 +165,7 @@ public class QueueHelper {
                     trackCopy.getDescription(), count++);
             queue.add(item);
         }
+        LogHelper.d(TAG, "convertToQueue End");
         return queue;
 
     }
