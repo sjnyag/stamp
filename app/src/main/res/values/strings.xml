@@ -94,4 +94,9 @@
     <string name="tweet_ranked">位(%1$d回) : %2$s</string>
     <string name="tweet_each_rank">%1$d%2$s\n</string>
     <string name="tweet_ranking">再生回数ランキング(%1$s)\n%2$s</string>
+
+    <string name="no_more_data">これ以上の履歴はありません</string>
+    <string name="no_more_data_by_error">読み込みに失敗しました</string>
+    <string name="album_art">album art</string>
+    <string name="menu_timeline_upward">最上部へ</string>
 </resources>

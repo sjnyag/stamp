@@ -69,16 +69,16 @@ public class SongHistoryController {
     }
 
     private void registerHistory(MediaMetadataCompat track, RecordType recordType, Date date) {
-        SongHistory songHistory = createSongHistory(createSong(track), createDevice(), recordType, date);
-        Realm realm = RealmHelper.getRealmInstance(mContext);
-        mSongHistoryDao.save(realm, songHistory);
-        mTotalSongHistoryDao.saveOrIncrement(realm, createTotalSongHistory(songHistory));
+        Song song = createSong(track);
+        Realm realm = RealmHelper.getRealmInstance();
+        int playCount = mTotalSongHistoryDao.saveOrIncrement(realm, createTotalSongHistory(song, recordType));
+        mSongHistoryDao.save(realm, createSongHistory(song, createDevice(), recordType, date, playCount));
         realm.close();
     }
 
-    private TotalSongHistory createTotalSongHistory(SongHistory songHistory) {
+    private TotalSongHistory createTotalSongHistory(Song song, RecordType recordType) {
         TotalSongHistory totalSongHistory = mTotalSongHistoryDao.newStandalone();
-        totalSongHistory.parseSongQueue(songHistory);
+        totalSongHistory.parseSongQueue(song, recordType);
         return totalSongHistory;
     }
 
@@ -94,14 +94,14 @@ public class SongHistoryController {
         return song;
     }
 
-    private SongHistory createSongHistory(Song song, Device device, RecordType recordType, Date date) {
+    private SongHistory createSongHistory(Song song, Device device, RecordType recordType, Date date, int count) {
         SongHistory songHistory = mSongHistoryDao.newStandalone();
-        songHistory.setValues(song, recordType, device, date);
+        songHistory.setValues(song, recordType, device, date, count);
         return songHistory;
     }
 
     public List<MediaMetadataCompat> getTopSongList() {
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         List<MediaMetadataCompat> trackList = new ArrayList<>();
         List<TotalSongHistory> historyList = mTotalSongHistoryDao.getOrderedList(realm);
         for (TotalSongHistory totalSongHistory : historyList) {
@@ -119,6 +119,10 @@ public class SongHistoryController {
         return trackList;
     }
 
+    public List<SongHistory> getManagedTimeline(Realm realm) {
+        return mSongHistoryDao.timeline(realm, RecordType.PLAY.getValue());
+    }
+
     public List<RankedSong> getRankedSongList(TermSelectLayout.Term term) {
         return getRankedSongList(
                 term.from() == null ? null : term.from().toDateTimeAtStartOfDay().toDate(),
@@ -132,7 +136,7 @@ public class SongHistoryController {
     }
 
     public List<RankedSong> getRankedSongList(Date from, Date to) {
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         List<SongHistory> historyList = mSongHistoryDao.where(realm, from, to, RecordType.PLAY.getValue());
         Map<Song, Integer> songMap = new HashMap<>();
         for (SongHistory songHistory : historyList) {
@@ -155,7 +159,7 @@ public class SongHistoryController {
     }
 
     public List<RankedArtist> getRankedArtistList(Date from, Date to) {
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         List<SongHistory> historyList = mSongHistoryDao.where(realm, from, to, RecordType.PLAY.getValue());
         Map<String, Integer> artistMap = new HashMap<>();
         for (SongHistory songHistory : historyList) {

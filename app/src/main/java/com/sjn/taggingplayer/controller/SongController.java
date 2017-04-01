@@ -77,7 +77,7 @@ public class SongController {
     }
 
     private void removeCategoryTag(String tagName, CategoryType categoryType, String categoryValue) {
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         mCategoryTagDao.remove(realm, tagName, categoryType, categoryValue);
         realm.close();
     }
@@ -85,7 +85,7 @@ public class SongController {
     private void removeSongTag(String tagName, String mediaId) {
         //TODO: cache
         String musicId = MediaIDHelper.extractMusicIDFromMediaID(mediaId);
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         Song song = mSongDao.findByMusicId(realm, musicId);
         if (song != null) {
             for (SongTag songTag : song.getSongTagList()) {
@@ -103,7 +103,7 @@ public class SongController {
 
     private List<String> findCategoryTagList(CategoryType categoryType, String categoryValue) {
         List<String> tagList = new ArrayList<>();
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         for (CategoryTag categoryTag : mCategoryTagDao.findCategoryTagList(realm, categoryType, categoryValue)) {
             tagList.add(categoryTag.getName());
         }
@@ -115,7 +115,7 @@ public class SongController {
         //TODO: cache
         String musicId = MediaIDHelper.extractMusicIDFromMediaID(mediaId);
         List<String> tagList = new ArrayList<>();
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         Song song = mSongDao.findByMusicId(realm, musicId);
         if (song != null) {
             for (SongTag songTag : song.getSongTagList()) {
@@ -130,7 +130,7 @@ public class SongController {
         if (categoryType == null) {
             return;
         }
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         for (String tagName : tagNameList) {
             mCategoryTagDao.save(realm, tagName, categoryType, categoryValue);
         }
@@ -143,7 +143,7 @@ public class SongController {
         }
         Song song = SongDao.getInstance().newStandalone();
         song.parseMetadata(track);
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         for (String tagName : tagNameList) {
             SongTag songTag = mSongTagDao.newStandalone();
             songTag.setName(tagName);

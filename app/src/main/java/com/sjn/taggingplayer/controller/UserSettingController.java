@@ -23,7 +23,7 @@ public class UserSettingController {
     }
 
     public ShuffleState getShuffleState() {
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         UserSetting userSetting = mUserSettingDao.getUserSetting(realm);
         ShuffleState shuffleState = userSetting == null || userSetting.getShuffleState() == null ? ShuffleState.getDefault() : userSetting.getShuffleState();
         realm.close();
@@ -31,7 +31,7 @@ public class UserSettingController {
     }
 
     public RepeatState getRepeatState() {
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         UserSetting userSetting = mUserSettingDao.getUserSetting(realm);
         RepeatState repeatState = userSetting == null || userSetting.getRepeatState() == null ? RepeatState.getDefault() : userSetting.getRepeatState();
         realm.close();
@@ -39,7 +39,7 @@ public class UserSettingController {
     }
 
     public String getQueueIdentifyMediaId() {
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         UserSetting userSetting = mUserSettingDao.getUserSetting(realm);
         String queueIdentifyMediaId = userSetting == null || userSetting.getQueueIdentifyMediaId() == null ? MediaIDHelper.MEDIA_ID_MUSICS_BY_ALL : userSetting.getQueueIdentifyMediaId();
         realm.close();
@@ -47,7 +47,7 @@ public class UserSettingController {
     }
 
     public String getLastMusicId() {
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         UserSetting userSetting = mUserSettingDao.getUserSetting(realm);
         String lastMusicId = userSetting == null ? null : userSetting.getLastMusicId();
         realm.close();
@@ -55,25 +55,25 @@ public class UserSettingController {
     }
 
     public void setShuffleState(ShuffleState shuffleState) {
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         mUserSettingDao.updateShuffleState(realm, shuffleState);
         realm.close();
     }
 
     public void setRepeatState(RepeatState repeatState) {
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         mUserSettingDao.updateRepeatState(realm, repeatState);
         realm.close();
     }
 
     public void setQueueIdentifyMediaId(String queueIdentifyMediaId) {
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         mUserSettingDao.updateQueueIdentifyMediaId(realm, queueIdentifyMediaId);
         realm.close();
     }
 
     public void setLastMusicId(String lastMediaId) {
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         mUserSettingDao.updateLastMusicId(realm, lastMediaId);
         realm.close();
     }

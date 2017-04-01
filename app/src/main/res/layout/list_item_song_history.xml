@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   Copyright (C) 2014 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,11 +14,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/media_item_height"
-                android:background="#303030">
+                android:layout_height="110dp"
+                android:background="@drawable/big_card"
+                android:padding="16dp">
 
     <ImageView
         android:id="@+id/album_art"
@@ -31,66 +34,62 @@
         android:scaleType="centerCrop"
         tools:src="@mipmap/ic_launcher"/>
 
-    <LinearLayout
-        android:id="@+id/media_info"
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignBottom="@+id/album_art"
-        android:layout_alignTop="@+id/album_art"
+        android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/album_art"
-        android:layout_toStartOf="@+id/play_eq"
-        android:orientation="vertical">
+        android:layout_toEndOf="@+id/album_art">
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@+id/count"
             android:ellipsize="end"
-            android:gravity="center_vertical"
             android:maxLines="1"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="?android:attr/textColorPrimary"
             tools:text="The Best Music EVAH1111 FOREVER YOUNG I'M AWESOME!!!11^H^H"/>
 
         <TextView
-            android:id="@+id/description"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:id="@+id/artist"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/title"
+            android:layout_below="@+id/title"
             android:ellipsize="end"
-            android:gravity="center_vertical"
             android:maxLines="1"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?android:attr/textColorSecondary"
             tools:text="John Doe, his brothers, his sisters, his pets and his more than amazing band"/>
 
         <TextView
-            android:id="@+id/album"
+            android:id="@+id/count"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/title"
+            android:drawableStart="@drawable/ic_play_arrow"
             android:ellipsize="end"
-            android:gravity="center_vertical"
+            android:gravity="start|center_vertical"
+            android:maxLines="1"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="18sp"
+            tools:text="10"/>
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/artist"
+            android:ellipsize="end"
             android:maxLines="1"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?android:attr/textColorSecondary"
-            tools:text="album title"/>
+            tools:text="1900/01/01"/>
 
-    </LinearLayout>
-
-
-    <ImageView
-        android:id="@+id/play_eq"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/media_item_icon_margin_end"
-        android:layout_marginStart="@dimen/media_item_icon_margin_start"
-        android:contentDescription="@string/play_item"
-        android:src="@drawable/ic_play_arrow_black_36dp"
-        android:tint="@color/media_item_icon_not_playing"
-        android:tintMode="src_in"/>
+    </RelativeLayout>
 </RelativeLayout>

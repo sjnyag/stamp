@@ -37,7 +37,7 @@ public class TagController {
     }
 
     public void remove(String tag) {
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         mSongTagDao.remove(realm, tag);
         mCategoryTagDao.remove(realm, tag);
         realm.close();
@@ -62,7 +62,7 @@ public class TagController {
 
     public List<String> findAll() {
         List<String> tagList = new ArrayList<>();
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         for (SongTag songTag : mSongTagDao.findAll(realm)) {
             tagList.add(songTag.getName());
         }
@@ -71,7 +71,7 @@ public class TagController {
     }
 
     public boolean register(String name) {
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         boolean result = mSongTagDao.save(realm, name);
         realm.close();
         notifyTagChange();
@@ -80,7 +80,7 @@ public class TagController {
 
     public ConcurrentMap<String, List<MediaMetadataCompat>> getAllSongList(final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
         ConcurrentMap<String, List<MediaMetadataCompat>> playlistMap = new ConcurrentHashMap<>();
-        Realm realm = RealmHelper.getRealmInstance(mContext);
+        Realm realm = RealmHelper.getRealmInstance();
         for (SongTag songTag : mSongTagDao.findAll(realm)) {
             List<MediaMetadataCompat> trackList = findTrackListBySongTag(realm, songTag, musicListById);
             if (trackList != null && !trackList.isEmpty()) {

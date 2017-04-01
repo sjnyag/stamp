@@ -1,5 +1,7 @@
 package com.sjn.taggingplayer.db;
 
+import com.sjn.taggingplayer.constant.RecordType;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import lombok.AllArgsConstructor;
@@ -43,16 +45,16 @@ public class TotalSongHistory extends RealmObject {
         mSkipCount += skipCount;
     }
 
-    public void parseSongQueue(SongHistory songHistory) {
-        switch (songHistory.getRecordType()) {
+    public void parseSongQueue(Song song, RecordType recordType) {
+        switch (recordType) {
             case PLAY:
-                setValues(songHistory.getSong(), 1, 0);
+                setValues(song, 1, 0);
                 break;
             case SKIP:
-                setValues(songHistory.getSong(), 0, 1);
+                setValues(song, 0, 1);
                 break;
             default:
-                setValues(songHistory.getSong(), 0, 0);
+                setValues(song, 0, 0);
                 break;
         }
     }

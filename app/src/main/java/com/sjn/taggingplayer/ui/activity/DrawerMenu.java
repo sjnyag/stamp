@@ -3,11 +3,12 @@ package com.sjn.taggingplayer.ui.activity;
 import android.support.v4.app.Fragment;
 
 import com.sjn.taggingplayer.R;
-import com.sjn.taggingplayer.ui.fragment.MediaBrowserFragment;
 import com.sjn.taggingplayer.ui.fragment.AllSongPagerFragment;
+import com.sjn.taggingplayer.ui.fragment.MediaBrowserFragment;
 import com.sjn.taggingplayer.ui.fragment.QueueFragment;
 import com.sjn.taggingplayer.ui.fragment.RankingPagerFragment;
 import com.sjn.taggingplayer.ui.fragment.SettingFragment;
+import com.sjn.taggingplayer.ui.fragment.TimelineFragment;
 import com.sjn.taggingplayer.utils.MediaIDHelper;
 
 import lombok.Getter;
@@ -25,7 +26,7 @@ public enum DrawerMenu {
     TIMELINE(R.id.navigation_timeline, MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE) {
         @Override
         Fragment getFragment() {
-            return new MediaBrowserFragment();
+            return new TimelineFragment();
         }
     },
     QUEUE(R.id.navigation_queue, MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE) {

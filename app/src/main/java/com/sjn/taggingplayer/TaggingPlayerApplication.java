@@ -20,6 +20,8 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 
+import com.sjn.taggingplayer.utils.RealmHelper;
+
 import net.danlew.android.joda.JodaTimeAndroid;
 
 public class TaggingPlayerApplication extends MultiDexApplication {
@@ -35,6 +37,7 @@ public class TaggingPlayerApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
 //        Firebase.setAndroidContext(this);
+        RealmHelper.init(this);
         JodaTimeAndroid.init(this);
     }
 

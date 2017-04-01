@@ -18,4 +18,13 @@ public class DialogFacade {
                 .backgroundColorRes(R.color.material_blue_grey_800)
                 .theme(Theme.DARK);
     }
+
+    public static MaterialDialog.Builder createLetsPlayMusicDialog(final Context context) {
+        return new MaterialDialog.Builder(context)
+                .title("まだ音楽の再生履歴がありません")
+                .positiveText("OK")
+                .contentColorRes(android.R.color.white)
+                .backgroundColorRes(R.color.material_blue_grey_800)
+                .theme(Theme.DARK);
+    }
 }

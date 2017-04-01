@@ -7,6 +7,7 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmQuery;
+import io.realm.Sort;
 
 public class SongHistoryDao extends BaseDao {
 
@@ -19,12 +20,16 @@ public class SongHistoryDao extends BaseDao {
         return sInstance;
     }
 
+    public List<SongHistory> timeline(Realm realm, String recordType) {
+        return realm.where(SongHistory.class).equalTo("mRecordType", recordType).findAllSorted("mRecordedAt", Sort.DESCENDING);
+    }
+
     public List<SongHistory> where(Realm realm, Date from, Date to, String recordType) {
-        RealmQuery query = realm.where(SongHistory.class).equalTo("mRecordType", recordType);
-        if(from != null){
+        RealmQuery<SongHistory> query = realm.where(SongHistory.class).equalTo("mRecordType", recordType);
+        if (from != null) {
             query.greaterThanOrEqualTo("mRecordedAt", from);
         }
-        if(to != null){
+        if (to != null) {
             query.lessThanOrEqualTo("mRecordedAt", to);
         }
         return query.findAll();
@@ -37,7 +42,7 @@ public class SongHistoryDao extends BaseDao {
                 songHistory.setId(getAutoIncrementId(realm, SongHistory.class));
                 songHistory.setDevice(DeviceDao.getInstance().findOrCreate(realm, songHistory.getDevice()));
                 songHistory.setSong(SongDao.getInstance().findOrCreate(realm, songHistory.getSong()));
-                realm.copyToRealm(songHistory);
+                realm.insert(songHistory);
             }
         });
     }

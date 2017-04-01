@@ -23,23 +23,24 @@ public class TotalSongHistoryDao extends BaseDao {
         return realm.where(TotalSongHistory.class).greaterThanOrEqualTo("mPlayCount", 1).findAll().sort("mPlayCount", Sort.DESCENDING);
     }
 
-    public void saveOrIncrement(Realm realm, final TotalSongHistory rawTotalSongHistory) {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                TotalSongHistory totalSongHistory = realm.where(TotalSongHistory.class)
-                        .equalTo("mSong.mMediaId", rawTotalSongHistory.getSong().getMediaId())
-                        .findFirst();
-                if (totalSongHistory == null) {
-                    rawTotalSongHistory.setId(getAutoIncrementId(realm, TotalSongHistory.class));
-                    rawTotalSongHistory.setSong(SongDao.getInstance().findOrCreate(realm, rawTotalSongHistory.getSong()));
-                    realm.copyToRealm(rawTotalSongHistory);
-                } else {
-                    totalSongHistory.incrementPlayCount(rawTotalSongHistory.getPlayCount());
-                    totalSongHistory.incrementSkipCount(rawTotalSongHistory.getSkipCount());
-                }
-            }
-        });
+    public int saveOrIncrement(Realm realm, final TotalSongHistory rawTotalSongHistory) {
+        int playCount = 0;
+        realm.beginTransaction();
+        TotalSongHistory totalSongHistory = realm.where(TotalSongHistory.class)
+                .equalTo("mSong.mMediaId", rawTotalSongHistory.getSong().getMediaId())
+                .findFirst();
+        if (totalSongHistory == null) {
+            rawTotalSongHistory.setId(getAutoIncrementId(realm, TotalSongHistory.class));
+            rawTotalSongHistory.setSong(SongDao.getInstance().findOrCreate(realm, rawTotalSongHistory.getSong()));
+            realm.insert(rawTotalSongHistory);
+            playCount = rawTotalSongHistory.getPlayCount();
+        } else {
+            totalSongHistory.incrementPlayCount(rawTotalSongHistory.getPlayCount());
+            totalSongHistory.incrementSkipCount(rawTotalSongHistory.getSkipCount());
+            playCount = totalSongHistory.getPlayCount();
+        }
+        realm.commitTransaction();
+        return playCount;
     }
 
     public void save(Realm realm, final long songQueueId, final int playCount, final int skipCount) {

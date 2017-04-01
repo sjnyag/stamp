@@ -38,6 +38,10 @@ public class TimeHelper {
         return ISODateTimeFormat.dateTime().parseDateTime(rfc3339);
     }
 
+    public static DateTime toDateTime(Date date) {
+        return new DateTime(date);
+    }
+
     public static int getJapanMonth() {
         return getJapanNow().getMonthOfYear();
     }

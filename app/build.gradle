@@ -101,6 +101,7 @@ dependencies {
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
     compile 'com.github.vajro:MaterialDesignLibrary:1.6'
     compile 'com.github.pedrovgs:draggablepanel:1.9'
+    compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.anupcowkur:reservoir:2.1'
     compile 'com.sothree.slidinguppanel:library:3.3.0'
     compile 'net.danlew:android.joda:2.6.0'
