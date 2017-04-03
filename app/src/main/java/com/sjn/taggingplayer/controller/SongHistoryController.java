@@ -30,6 +30,8 @@ import java.util.Map;
 
 import io.realm.Realm;
 
+import static com.sjn.taggingplayer.utils.MediaRetrieveHelper.findAlbumArtByArtist;
+
 public class SongHistoryController {
 
     private static final String TAG = LogHelper.makeLogTag(SongHistoryController.class);
@@ -170,7 +172,7 @@ public class SongHistoryController {
         realm.close();
         List<RankedArtist> rankedArtistList = new ArrayList<>();
         for (Map.Entry<String, Integer> e : artistMap.entrySet()) {
-            rankedArtistList.add(new RankedArtist(e.getValue(), new Artist(e.getKey(), "")));
+            rankedArtistList.add(new RankedArtist(e.getValue(), new Artist(e.getKey(), findAlbumArtByArtist(mContext, e.getKey()))));
         }
         Collections.sort(rankedArtistList, new Comparator<RankedArtist>() {
             @Override

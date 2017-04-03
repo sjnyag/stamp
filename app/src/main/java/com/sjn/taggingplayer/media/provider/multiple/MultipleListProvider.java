@@ -2,6 +2,7 @@ package com.sjn.taggingplayer.media.provider.multiple;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -92,7 +93,7 @@ abstract public class MultipleListProvider extends ListProvider {
             for (; mLastMediaKeyList.size() - startSize < size && mLastMediaKeySeek < keyList.size(); mLastMediaKeySeek++) {
                 String key = keyList.get(mLastMediaKeySeek);
                 if (matchFilter(filter, key)) {
-                    mLastMediaKeyList.add(createBrowsableMediaItemForKey(key));
+                    mLastMediaKeyList.add(createBrowsableMediaItemForKey(key, findIconUri(key, state, musicListById)));
                 }
             }
             LogHelper.d(TAG, "getListItems", ", mediaId: ", mediaId, ", filter: ", filter, ", comparator: ", comparator, ", mLastMediaKeyList.size: ", mLastMediaKeyList.size());
@@ -151,6 +152,18 @@ abstract public class MultipleListProvider extends ListProvider {
                 MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
     }
 
+    protected Uri findIconUri(String key, ProviderState state, final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
+        List<MediaMetadataCompat> metadataList = getListByKey(key, state, musicListById);
+
+        for (final MediaMetadataCompat metadata : metadataList) {
+            if (metadata.getDescription().getIconUri() == null) {
+                continue;
+            }
+            return metadata.getDescription().getIconUri();
+        }
+        return null;
+    }
+
     final protected List<String> getKeys(ProviderState state, ConcurrentMap<String, MediaMetadataCompat> musicListById) {
         if (state != ProviderState.INITIALIZED) {
             return Collections.emptyList();
@@ -167,10 +180,11 @@ abstract public class MultipleListProvider extends ListProvider {
                 metadata.getDescription().getMediaId(), getProviderMediaId(), category);
     }
 
-    final protected MediaBrowserCompat.MediaItem createBrowsableMediaItemForKey(String key) {
+    final protected MediaBrowserCompat.MediaItem createBrowsableMediaItemForKey(String key, Uri iconUrl) {
         MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
                 .setMediaId(MediaIDHelper.createMediaID(null, getProviderMediaId(), key))
                 .setTitle(MediaIDHelper.unescape(key))
+                .setIconUri(iconUrl)
                 /*
                 .setSubtitle(resources.getString(
                         R.string.browse_musics_by_genre_subtitle, genre))

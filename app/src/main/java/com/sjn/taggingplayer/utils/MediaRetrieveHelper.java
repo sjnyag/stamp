@@ -50,7 +50,7 @@ public class MediaRetrieveHelper {
     };
 
     private static final String ALL_MUSIC_SELECTION = MediaStore.Audio.Media.IS_MUSIC + " != 0";
-    private static final int DISK_CACHE_SIZE = 1024 * 1024 * 1; // 1MB
+    private static final int DISK_CACHE_SIZE = 1024 * 1024; // 1MB
     private static final String CACHE_KEY = "media_source";
 
     private static final Type CACHE_TYPE = new TypeToken<List<MediaCursorContainer>>() {
@@ -75,7 +75,20 @@ public class MediaRetrieveHelper {
             mediaCursor.close();
         }
         return metadata;
+    }
 
+    public static String findAlbumArtByArtist(Context context, String artist) {
+        //TODO
+        Uri uri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
+        Cursor mediaCursor = context.getContentResolver().query(uri, new String[]{MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},
+                MediaStore.Audio.Albums.ARTIST + "=?",
+                new String[]{artist}, null);
+        if (mediaCursor != null && mediaCursor.moveToFirst()) {
+            Long albumId = mediaCursor.getLong(mediaCursor.getColumnIndex(MediaStore.Audio.Albums._ID));
+            mediaCursor.close();
+            return makeAlbumArtUri(albumId).toString();
+        }
+        return "";
     }
 
     public static boolean initCache(Context context) {
