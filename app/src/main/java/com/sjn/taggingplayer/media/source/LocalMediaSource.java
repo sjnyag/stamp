@@ -16,14 +16,13 @@
 
 package com.sjn.taggingplayer.media.source;
 
-import android.Manifest;
 import android.content.Context;
 import android.support.v4.media.MediaMetadataCompat;
 
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.MediaRetrieveHelper;
-import com.sjn.taggingplayer.utils.PermissionHelper;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,10 +41,6 @@ public class LocalMediaSource implements MusicProviderSource {
     private final PermissionRequiredCallback mCallback;
     private OnListChangeListener mOnListChangeListeners;
 
-    public static final String[] PERMISSIONS = new String[]{
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE};
-
     public LocalMediaSource(Context context, PermissionRequiredCallback callback) {
         mContext = context;
         mCallback = callback;
@@ -53,17 +48,17 @@ public class LocalMediaSource implements MusicProviderSource {
 
     @Override
     public Iterator<MediaMetadataCompat> iterator() {
-        boolean hasStoragePermission = PermissionHelper.hasPermission(mContext, PERMISSIONS);
-        if (!hasStoragePermission) {
+        if (!MediaRetrieveHelper.hasPermission(mContext)) {
             mCallback.onPermissionRequired();
+            return Collections.<MediaMetadataCompat>emptyList().iterator();
         }
         MediaRetrieveHelper.initCache(mContext);
         List<MediaRetrieveHelper.MediaCursorContainer> list = MediaRetrieveHelper.readCache();
         LogHelper.i(TAG, "Read " + list.size() + "songs from cache");
         if (list.size() == 0) {
-            list = MediaRetrieveHelper.retrieveAllMedia(mContext, hasStoragePermission);
+            list = MediaRetrieveHelper.retrieveAllMedia(mContext);
         }
-        MediaRetrieveHelper.retrieveAndUpdateCache(mContext, hasStoragePermission, mOnListChangeListeners);
+        MediaRetrieveHelper.retrieveAndUpdateCache(mContext, mOnListChangeListeners);
         return MediaRetrieveHelper.createIterator(list);
     }
 

@@ -262,7 +262,8 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
                 currentMusic.getDescription().getMediaId());
         MediaMetadataCompat metadata = mMusicProvider.getMusicByMusicId(musicId);
         if (metadata == null) {
-            throw new IllegalArgumentException("Invalid musicId " + musicId);
+            return;
+            //throw new IllegalArgumentException("Invalid musicId " + musicId);
         }
 
         mListener.onMetadataChanged(metadata);

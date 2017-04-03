@@ -30,10 +30,9 @@ import com.sjn.taggingplayer.ui.fragment.FullScreenPlayerFragment;
 import com.sjn.taggingplayer.ui.fragment.MediaBrowserFragment;
 import com.sjn.taggingplayer.ui.fragment.TimelineFragment;
 import com.sjn.taggingplayer.utils.LogHelper;
+import com.sjn.taggingplayer.utils.MediaRetrieveHelper;
 import com.sjn.taggingplayer.utils.PermissionHelper;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-
-import static com.sjn.taggingplayer.media.source.LocalMediaSource.PERMISSIONS;
 
 /**
  * Main activity for the music player.
@@ -78,9 +77,9 @@ public class MusicPlayerActivity extends MediaBrowserActivity
         mDraggablePanelManager.initializeDraggablePanel();
         navigateToBrowser(new TimelineFragment(), false);
 
-        if (!PermissionHelper.hasPermission(this, PERMISSIONS)) {
+        if (!PermissionHelper.hasPermission(this, MediaRetrieveHelper.PERMISSIONS)) {
             Intent intent = new Intent(this, RequestPermissionActivity.class);
-            intent.putExtra(RequestPermissionActivity.KEY_PERMISSIONS, PERMISSIONS);
+            intent.putExtra(RequestPermissionActivity.KEY_PERMISSIONS, MediaRetrieveHelper.PERMISSIONS);
             startActivity(intent);
         }
         mSavedInstanceState = savedInstanceState;
@@ -91,12 +90,6 @@ public class MusicPlayerActivity extends MediaBrowserActivity
         super.onResume();
         initializeFromParams(mSavedInstanceState, mNewIntent == null ? getIntent() : mNewIntent);
         mNewIntent = null;
-
-        if (!PermissionHelper.hasPermission(this, PERMISSIONS)) {
-            Intent intent = new Intent(this, RequestPermissionActivity.class);
-            intent.putExtra(RequestPermissionActivity.KEY_PERMISSIONS, PERMISSIONS);
-            startActivity(intent);
-        }
     }
 
     @Override
