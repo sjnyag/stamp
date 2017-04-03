@@ -15,12 +15,19 @@
   limitations under the License.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="110dp"
-                android:background="@drawable/big_card"
-                android:padding="16dp">
+<com.sjn.taggingplayer.ui.custom.LabelRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                     xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                     xmlns:tools="http://schemas.android.com/tools"
+                                                     android:layout_width="match_parent"
+                                                     android:layout_height="110dp"
+                                                     android:background="@drawable/big_card"
+                                                     android:padding="16dp"
+                                                     app:label_backgroundColor="#C2185B"
+                                                     app:label_distance="20dp"
+                                                     app:label_height="20dp"
+                                                     app:label_orientation="RIGHT_TOP"
+                                                     app:label_text="HD"
+                                                     app:label_textSize="12sp">
 
     <ImageView
         android:id="@+id/album_art"
@@ -92,4 +99,4 @@
             tools:text="1900/01/01"/>
 
     </RelativeLayout>
-</RelativeLayout>
+</com.sjn.taggingplayer.ui.custom.LabelRelativeLayout>
