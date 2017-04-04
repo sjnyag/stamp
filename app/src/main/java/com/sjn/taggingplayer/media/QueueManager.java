@@ -35,6 +35,7 @@ import com.sjn.taggingplayer.utils.BitmapHelper;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.MediaIDHelper;
 import com.sjn.taggingplayer.utils.QueueHelper;
+import com.sjn.taggingplayer.utils.ViewHelper;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -260,7 +261,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
         }
         final String musicId = MediaIDHelper.extractMusicIDFromMediaID(
                 currentMusic.getDescription().getMediaId());
-        MediaMetadataCompat metadata = mMusicProvider.getMusicByMusicId(musicId);
+        final MediaMetadataCompat metadata = mMusicProvider.getMusicByMusicId(musicId);
         if (metadata == null) {
             return;
             //throw new IllegalArgumentException("Invalid musicId " + musicId);
@@ -293,6 +294,20 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
 
                 @Override
                 public void onBitmapFailed(Drawable errorDrawable) {
+                    Bitmap bitmap = ViewHelper.toBitmap(ViewHelper.createTextDrawable(metadata.getDescription().getTitle().toString()),128,128);
+                    Bitmap icon = BitmapHelper.createIcon(bitmap);
+                    mMusicProvider.updateMusicArt(musicId, bitmap, icon);
+
+                    // If we are still playing the same music, notify the listeners:
+                    MediaSessionCompat.QueueItem currentMusic = getCurrentMusic();
+                    if (currentMusic == null) {
+                        return;
+                    }
+                    String currentPlayingId = MediaIDHelper.extractMusicIDFromMediaID(
+                            currentMusic.getDescription().getMediaId());
+                    if (musicId.equals(currentPlayingId)) {
+                        mListener.onMetadataChanged(mMusicProvider.getMusicByMusicId(currentPlayingId));
+                    }
                 }
 
                 @Override

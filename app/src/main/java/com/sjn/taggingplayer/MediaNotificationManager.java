@@ -40,6 +40,7 @@ import com.sjn.taggingplayer.ui.activity.MusicPlayerActivity;
 import com.sjn.taggingplayer.utils.BitmapHelper;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.ResourceHelper;
+import com.sjn.taggingplayer.utils.ViewHelper;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -380,6 +381,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
 
             @Override
             public void onBitmapFailed(Drawable errorDrawable) {
+                builder.setLargeIcon(ViewHelper.toBitmap(ViewHelper.createTextDrawable(mMetadata.getDescription().getTitle().toString()),128,128));
             }
 
             @Override

@@ -103,7 +103,7 @@ public class TaggingMediaItemViewHolder extends MediaItemViewHolder {
         }
 
         if (description.getIconUri() != null) {
-            ViewHelper.updateAlbumArt(activity, this.mAlbumArtView, description.getIconUri().toString());
+            ViewHelper.updateAlbumArt(activity, this.mAlbumArtView, description.getIconUri().toString(), description.getTitle().toString());
         }
         updateTagList(item.getMediaId());
     }

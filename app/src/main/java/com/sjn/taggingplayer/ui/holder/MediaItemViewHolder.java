@@ -116,7 +116,7 @@ public class MediaItemViewHolder {
         this.mDescriptionView.setText(description.getSubtitle());
 
         if (description.getIconUri() != null) {
-            ViewHelper.updateAlbumArt(activity, this.mAlbumArtView, description.getIconUri().toString());
+            ViewHelper.updateAlbumArt(activity, this.mAlbumArtView, description.getIconUri().toString(), description.getTitle().toString());
         }
     }
 

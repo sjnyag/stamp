@@ -47,7 +47,7 @@ public class RankedArtistItemViewHolder {
     private void dynamicUpdate(Activity activity, RankedArtist rankedArtist, int position) {
         mArtistView.setText(String.format(Locale.JAPANESE, "%d. %s", position + 1, rankedArtist.getArtist().getName()));
         mCountView.setText(String.format(Locale.JAPANESE, "%d", rankedArtist.getPlayCount()));
-        ViewHelper.updateAlbumArt(activity, mAlbumArtView, rankedArtist.getArtist().getAlbumArtUri());
+        ViewHelper.updateAlbumArt(activity, mAlbumArtView, rankedArtist.getArtist().getAlbumArtUri(), rankedArtist.getArtist().getName());
     }
 
 }

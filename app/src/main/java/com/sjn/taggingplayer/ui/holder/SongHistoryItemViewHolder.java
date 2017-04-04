@@ -66,7 +66,7 @@ public class SongHistoryItemViewHolder {
         mDateView.setText(getDateText(songHistory.getRecordedAt()));
         mCountView.setText(String.format(Locale.JAPANESE, "%d", songHistory.getCount()));
         mConvertView.setLabelText(String.format(Locale.JAPANESE, "%d", songHistory.getCount()));
-        ViewHelper.updateAlbumArt(activity, mAlbumArtView, songHistory.getSong().getAlbumArtUri());
+        ViewHelper.updateAlbumArt(activity, mAlbumArtView, songHistory.getSong().getAlbumArtUri(), songHistory.getSong().getTitle());
         ViewHelper.setDrawableLayerColor(activity, mConvertView, songHistory.getColor(), R.drawable.big_card, R.id.card_white);
     }
 

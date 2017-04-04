@@ -2,7 +2,12 @@ package com.sjn.taggingplayer.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -11,8 +16,13 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.sjn.taggingplayer.R;
+import com.sjn.taggingplayer.ui.custom.TextDrawable;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 public class ViewHelper {
 
@@ -58,23 +68,30 @@ public class ViewHelper {
         }
     }
 
-    public static void updateAlbumArt(final Activity activity, final ImageView view, final String artUrl) {
+    public static void updateAlbumArt(final Activity activity, final ImageView view, final String artUrl, final String text) {
+        updateAlbumArt(activity, view, artUrl, text, 128, 128);
+    }
+
+
+    public static void updateAlbumArt(final Activity activity, final ImageView view, final String artUrl, final String text, final int targetWidth, final int targetHeight) {
         view.setTag(artUrl);
         if (artUrl == null || artUrl.isEmpty()) {
-            view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));
+            //view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));
+            view.setImageDrawable(createTextDrawable(text));
             return;
         }
-        Picasso.with(activity).load(artUrl).resize(128, 128).into(view, new Callback() {
+        Picasso.with(activity).load(artUrl).resize(targetWidth, targetHeight).into(view, new Callback() {
             @Override
             public void onSuccess() {
                 if (!artUrl.equals(view.getTag())) {
-                    updateAlbumArt(activity, view, (String) view.getTag());
+                    updateAlbumArt(activity, view, (String) view.getTag(), text);
                 }
             }
 
             @Override
             public void onError() {
-                view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));
+                view.setImageDrawable(createTextDrawable(text));
+                //view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));
             }
         });
     }
@@ -84,4 +101,88 @@ public class ViewHelper {
         shape.findDrawableByLayerId(layerId).mutate().setColorFilter(color, PorterDuff.Mode.SRC_IN);
         view.setBackground(shape);
     }
+
+    public static TextDrawable createTextDrawable(String text) {
+        ColorGenerator generator = ColorGenerator.MATERIAL; // or use DEFAULT
+        return TextDrawable.builder()
+                .beginConfig()
+                .useFont(Typeface.DEFAULT)
+                .bold()
+                .toUpperCase()
+                .endConfig()
+                .rect()
+                .build(String.valueOf(text.charAt(0)), generator.getColor(text));
+    }
+
+    public static Bitmap toBitmap(Drawable drawable, int width, int height) {
+
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            return bitmapDrawable.getBitmap();
+        }
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.draw(canvas);
+        return bitmap;
+    }
+    public static class ColorGenerator {
+
+        public static ColorGenerator DEFAULT;
+
+        public static ColorGenerator MATERIAL;
+
+        static {
+            DEFAULT = create(Arrays.asList(
+                    0xfff16364,
+                    0xfff58559,
+                    0xfff9a43e,
+                    0xffe4c62e,
+                    0xff67bf74,
+                    0xff59a2be,
+                    0xff2093cd,
+                    0xffad62a7,
+                    0xff805781
+            ));
+            MATERIAL = create(Arrays.asList(
+                    0xffe57373,
+                    0xfff06292,
+                    0xffba68c8,
+                    0xff9575cd,
+                    0xff7986cb,
+                    0xff64b5f6,
+                    0xff4fc3f7,
+                    0xff4dd0e1,
+                    0xff4db6ac,
+                    0xff81c784,
+                    0xffaed581,
+                    0xffff8a65,
+                    0xffd4e157,
+                    0xffffd54f,
+                    0xffffb74d,
+                    0xffa1887f,
+                    0xff90a4ae
+            ));
+        }
+
+        private final List<Integer> mColors;
+        private final Random mRandom;
+
+        public static ColorGenerator create(List<Integer> colorList) {
+            return new ColorGenerator(colorList);
+        }
+
+        private ColorGenerator(List<Integer> colorList) {
+            mColors = colorList;
+            mRandom = new Random(System.currentTimeMillis());
+        }
+
+        public int getRandomColor() {
+            return mColors.get(mRandom.nextInt(mColors.size()));
+        }
+
+        public int getColor(Object key) {
+            return mColors.get(Math.abs(key.hashCode()) % mColors.size());
+        }
+    }
+
 }

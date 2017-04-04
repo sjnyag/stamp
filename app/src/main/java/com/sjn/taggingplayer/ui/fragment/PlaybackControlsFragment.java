@@ -35,7 +35,8 @@ import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.media.player.CastPlayer;
 import com.sjn.taggingplayer.ui.observer.MediaControllerObserver;
 import com.sjn.taggingplayer.utils.LogHelper;
-import com.squareup.picasso.Picasso;
+
+import static com.sjn.taggingplayer.utils.ViewHelper.updateAlbumArt;
 
 /**
  * A class that shows the Media Queue to the user.
@@ -113,7 +114,7 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
         }
         if (!TextUtils.equals(artUrl, mArtUrl)) {
             mArtUrl = artUrl;
-            Picasso.with(getActivity()).load(mArtUrl).resize(128, 128).into(mAlbumArt);
+            updateAlbumArt(getActivity(), mAlbumArt, mArtUrl, metadata.getDescription().getTitle().toString());
         }
     }
 

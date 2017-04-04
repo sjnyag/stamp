@@ -50,7 +50,7 @@ public class RankedSongItemViewHolder {
         mTitleView.setText(String.format(Locale.JAPANESE, "%d. %s", position + 1, rankedSong.getSong().getTitle()));
         mArtistView.setText(rankedSong.getSong().getArtist());
         mCountView.setText(String.format(Locale.JAPANESE, "%d", rankedSong.getPlayCount()));
-        ViewHelper.updateAlbumArt(activity, mAlbumArtView, rankedSong.getSong().getAlbumArtUri());
+        ViewHelper.updateAlbumArt(activity, mAlbumArtView, rankedSong.getSong().getAlbumArtUri(), rankedSong.getSong().getTitle());
     }
 
 }

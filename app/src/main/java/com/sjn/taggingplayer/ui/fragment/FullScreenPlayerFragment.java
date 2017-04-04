@@ -44,7 +44,6 @@ import com.sjn.taggingplayer.media.player.CastPlayer;
 import com.sjn.taggingplayer.ui.activity.MusicPlayerActivity;
 import com.sjn.taggingplayer.ui.observer.MediaControllerObserver;
 import com.sjn.taggingplayer.utils.LogHelper;
-import com.squareup.picasso.Picasso;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -53,6 +52,7 @@ import java.util.concurrent.TimeUnit;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
+import static com.sjn.taggingplayer.utils.ViewHelper.updateAlbumArt;
 
 /**
  * A full screen player that shows the current playing music with a background image
@@ -361,7 +361,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
             return;
         }
         mCurrentArtUrl = description.getIconUri().toString();
-        Picasso.with(getActivity()).load(mCurrentArtUrl).resize(800, 800).into(mBackgroundImage);
+        updateAlbumArt(getActivity(), mBackgroundImage, mCurrentArtUrl, description.getTitle().toString(), 800, 800);
     }
 
     private void updateMediaDescription(MediaDescriptionCompat description) {
