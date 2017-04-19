@@ -16,6 +16,10 @@
   -->
 <resources>
     <color name="tv_branding">#ffff5722</color>
+    <color name="color_primary">#2C2C2C</color>
+    <color name="color_primary_dark">#1D1D1D</color>
+    <color name="color_accent">#ff4081</color>
+    <color name="list_item_background">#424242</color>
     <color name="tv_branding_dark">#ffbf360c</color>
     <color name="tv_branding_accent">#00B8D4</color>
     <color name="bt_accent">#00B8D4</color>

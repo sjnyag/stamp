@@ -58,6 +58,7 @@ public class TimelineFragment extends Fragment implements SwipeRefreshLayout.OnR
         mListView = (StickyListHeadersListView) rootView.findViewById(R.id.timeline_list);
         mListView.setAdapter(mAdapter);
         mListView.setOnScrollListener(this);
+        mListView.setDivider(null);
 
         mRealm = RealmHelper.getRealmInstance();
         mAllSongHistoryList = mSongHistoryController.getManagedTimeline(mRealm);

@@ -15,45 +15,49 @@
   limitations under the License.
   -->
 
-<com.sjn.taggingplayer.ui.custom.LabelRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                     xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                     xmlns:tools="http://schemas.android.com/tools"
-                                                     android:layout_width="match_parent"
-                                                     android:layout_height="110dp"
-                                                     android:background="@drawable/big_card"
-                                                     android:padding="16dp"
-                                                     app:label_backgroundColor="#C2185B"
-                                                     app:label_distance="20dp"
-                                                     app:label_height="20dp"
-                                                     app:label_orientation="RIGHT_TOP"
-                                                     app:label_text="HD"
-                                                     app:label_textSize="12sp">
 
-    <ImageView
-        android:id="@+id/album_art"
-        android:layout_width="@dimen/album_art_size"
-        android:layout_height="@dimen/album_art_size"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/media_item_icon_margin_end"
-        android:layout_marginStart="@dimen/media_item_icon_margin_start"
-        android:contentDescription="@string/album_art"
-        android:scaleType="centerCrop"
-        tools:src="@mipmap/ic_launcher"/>
+<com.sjn.taggingplayer.ui.custom.LabelCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:animateLayoutChanges="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:cardCornerRadius="4dp"
+    app:cardUseCompatPadding="true"
+    app:contentPadding="8dp"
+    app:label_backgroundColor="#C2185B"
+    app:label_distance="20dp"
+    app:label_height="20dp"
+    app:label_orientation="RIGHT_TOP"
+    app:label_text="HD"
+    app:label_textSize="12sp">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/album_art">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true">
+
+        <com.sjn.taggingplayer.ui.custom.RoundImageView
+            android:id="@+id/album_art"
+            android:layout_width="@dimen/album_art_size"
+            android:layout_height="@dimen/album_art_size"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/media_item_icon_margin_end"
+            android:contentDescription="@string/album_art"
+            android:scaleType="centerCrop"
+            tools:src="@mipmap/ic_launcher"/>
 
         <TextView
             android:id="@+id/title"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_toStartOf="@+id/count"
+            android:layout_toEndOf="@+id/album_art"
             android:ellipsize="end"
             android:maxLines="1"
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -84,14 +88,15 @@
             android:maxLines="1"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="18sp"
+            android:visibility="gone"
             tools:text="10"/>
 
         <TextView
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:layout_below="@+id/artist"
             android:ellipsize="end"
             android:maxLines="1"
             android:textAppearance="?android:attr/textAppearanceSmall"
@@ -99,4 +104,4 @@
             tools:text="1900/01/01"/>
 
     </RelativeLayout>
-</com.sjn.taggingplayer.ui.custom.LabelRelativeLayout>
+</com.sjn.taggingplayer.ui.custom.LabelCardView>

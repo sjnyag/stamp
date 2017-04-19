@@ -19,7 +19,6 @@ public class DeviceDao extends BaseDao {
         Device device = realm.where(Device.class).equalTo("mModel", rawDevice.getModel()).equalTo("mOs", rawDevice.getOs()).findFirst();
         if (device == null) {
             device = realm.copyToRealm(rawDevice);
-            device.setId(getAutoIncrementId(realm, Device.class));
         }
         return device;
     }

@@ -32,9 +32,8 @@
     <!-- media browser listview -->
     <dimen name="album_art_size">64dp</dimen>
     <dimen name="media_item_height">80dp</dimen>
-    <dimen name="media_item_icon_margin_start">16dp</dimen>
-    <dimen name="media_item_icon_margin_end">16dp</dimen>
-    <dimen name="media_item_text_margin_start">60dp</dimen>
+    <dimen name="media_item_icon_margin_start">8dp</dimen>
+    <dimen name="media_item_icon_margin_end">8dp</dimen>
     <!-- Margins for the ShowcaseView button -->
     <dimen name="button_margin">50dp</dimen>
 

@@ -11,15 +11,15 @@
                 <item name="android:windowAllowReturnTransitionOverlap">true</item>
                 <item name="android:windowAllowEnterTransitionOverlap">false</item>
                 <item name="android:windowContentTransitions">true</item>
-                <item name="colorPrimary">#4e342e</item>
-                <item name="colorPrimaryDark">#3e2723</item>
-                <item name="colorAccent">#ff4081</item>
+                <item name="colorPrimary">@color/color_primary</item>
+                <item name="colorPrimaryDark">@color/color_primary_dark</item>
+                <item name="colorAccent">@color/color_accent</item>
         </style>
 
         <style name="UAmpAppTheme" parent="Theme.AppCompat.NoActionBar">
-                <item name="colorPrimary">#4e342e</item>
-                <item name="colorPrimaryDark">#3e2723</item>
-                <item name="colorAccent">#ff4081</item>
+                <item name="colorPrimary">@color/color_primary</item>
+                <item name="colorPrimaryDark">@color/color_primary_dark</item>
+                <item name="colorAccent">@color/color_accent</item>
                 <item name="alertDialogTheme">@style/Theme.AppCompat.Dialog.Alert</item>
                 <item name="android:statusBarColor">@android:color/transparent</item>
                 <item name="android:windowDrawsSystemBarBackgrounds">true</item>

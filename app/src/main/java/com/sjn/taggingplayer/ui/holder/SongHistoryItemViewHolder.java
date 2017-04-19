@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.db.SongHistory;
+import com.sjn.taggingplayer.ui.custom.LabelCardView;
 import com.sjn.taggingplayer.ui.custom.LabelRelativeLayout;
 import com.sjn.taggingplayer.utils.TimeHelper;
 import com.sjn.taggingplayer.utils.ViewHelper;
@@ -27,7 +28,7 @@ public class SongHistoryItemViewHolder {
     private TextView mArtistView;
     private TextView mDateView;
     private TextView mCountView;
-    private LabelRelativeLayout mConvertView;
+    private LabelCardView mConvertView;
 
     public static View setupView(final Activity activity, View convertView, ViewGroup parent, final SongHistory songHistory) {
         SongHistoryItemViewHolder holder;
@@ -49,7 +50,7 @@ public class SongHistoryItemViewHolder {
     }
 
     private SongHistoryItemViewHolder(View convertView) {
-        mConvertView = (LabelRelativeLayout) convertView;
+        mConvertView = (LabelCardView) convertView;
         mAlbumArtView = (ImageView) convertView.findViewById(R.id.album_art);
         mTitleView = (TextView) convertView.findViewById(R.id.title);
         mArtistView = (TextView) convertView.findViewById(R.id.artist);
@@ -67,7 +68,7 @@ public class SongHistoryItemViewHolder {
         mCountView.setText(String.format(Locale.JAPANESE, "%d", songHistory.getCount()));
         mConvertView.setLabelText(String.format(Locale.JAPANESE, "%d", songHistory.getCount()));
         ViewHelper.updateAlbumArt(activity, mAlbumArtView, songHistory.getSong().getAlbumArtUri(), songHistory.getSong().getTitle());
-        ViewHelper.setDrawableLayerColor(activity, mConvertView, songHistory.getColor(), R.drawable.big_card, R.id.card_white);
+        //ViewHelper.setDrawableLayerColor(activity, mConvertView, songHistory.getColor(), R.drawable.big_card, R.id.card_white);
     }
 
     private String getDateText(Date date) {
