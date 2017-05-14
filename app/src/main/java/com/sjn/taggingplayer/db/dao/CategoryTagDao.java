@@ -2,7 +2,6 @@ package com.sjn.taggingplayer.db.dao;
 
 import com.sjn.taggingplayer.constant.CategoryType;
 import com.sjn.taggingplayer.db.CategoryTag;
-import com.sjn.taggingplayer.db.SongTag;
 
 import java.util.List;
 

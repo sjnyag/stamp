@@ -10,6 +10,10 @@ import java.util.Date;
 
 public class TimeHelper {
 
+    public static Date toDateOnly(Date date) {
+        return toDateTime(date).withTimeAtStartOfDay().toDate();
+    }
+
     public static LocalDate parse(String date) {
         return ISODateTimeFormat.localDateParser().parseLocalDate(date);
     }

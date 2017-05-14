@@ -3,7 +3,7 @@
 
     <item android:state_pressed="true">
         <shape>
-            <corners android:radius="8dp" />
+            <corners android:radius="8dp"/>
             <solid android:color="@color/toggle_focused_solid"/>
             <stroke
                 android:width="2dp"
@@ -13,7 +13,7 @@
 
     <item android:state_focused="true">
         <shape>
-            <corners android:radius="8dp" />
+            <corners android:radius="8dp"/>
             <solid android:color="@color/toggle_focused_solid"/>
             <stroke
                 android:width="2dp"
@@ -23,7 +23,7 @@
 
     <item>
         <shape>
-            <corners android:radius="8dp" />
+            <corners android:radius="8dp"/>
             <solid android:color="@color/toggle_on_solid"/>
             <stroke
                 android:width="2dp"

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -7,13 +7,32 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar_container">
 
-        <se.emilsjolander.stickylistheaders.StickyListHeadersListView
-            android:id="@+id/timeline_list"
+        <!-- This FrameLayout is still mandatory ONLY IF sticky header is enabled. This
+             layout will help to receive the inflated layout at runtime and to display the
+             Refresh circle AND the FastScroll on the top of sticky_header_layout.
+             If you need to drag items, SwipeRefreshLayout must be disabled! -->
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/toolbar_container"/>
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <!-- NOT NEEDED ANYMORE!! This layout is generated at runtime when
+                 sticky headers are enabled. So you can safely remove it. -->
+            <!--<include layout="@layout/sticky_header_layout"/>-->
+
+        </FrameLayout>
+
     </android.support.v4.widget.SwipeRefreshLayout>
 
-</RelativeLayout>
+    <include layout="@layout/empty_view"/>
+
+    <include layout="@layout/fast_scroller"/>
+
+</FrameLayout>

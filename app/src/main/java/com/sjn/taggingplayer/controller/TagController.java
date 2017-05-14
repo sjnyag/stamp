@@ -103,10 +103,10 @@ public class TagController {
     }
 
     private void merge(ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> songTagMap, ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> categoryTagMap) {
-        for(String tag : categoryTagMap.keySet()){
-            if(songTagMap.containsKey(tag)){
+        for (String tag : categoryTagMap.keySet()) {
+            if (songTagMap.containsKey(tag)) {
                 songTagMap.get(tag).putAll(categoryTagMap.get(tag));
-            }else{
+            } else {
                 songTagMap.put(tag, categoryTagMap.get(tag));
             }
         }

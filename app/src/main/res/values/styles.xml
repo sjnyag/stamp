@@ -21,6 +21,7 @@
         <item name="colorPrimaryDark">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_accent</item>
         <item name="alertDialogTheme">@style/Theme.AppCompat.Dialog.Alert</item>
+        <item name="primaryTextSelector">@drawable/primary_text_selector_light</item>
     </style>
 
 

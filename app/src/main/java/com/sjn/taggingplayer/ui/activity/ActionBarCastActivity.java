@@ -113,7 +113,7 @@ public abstract class ActionBarCastActivity extends DrawerActivity {
     private void showFtu() {
         Menu menu = mToolbar.getMenu();
         MenuItem menuItem = menu.findItem(R.id.media_route_menu_item);
-        if(menuItem == null){
+        if (menuItem == null) {
             return;
         }
         View view = menuItem.getActionView();

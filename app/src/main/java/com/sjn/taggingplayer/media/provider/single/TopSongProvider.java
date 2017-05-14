@@ -5,11 +5,8 @@ import android.support.v4.media.MediaMetadataCompat;
 
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.controller.SongHistoryController;
-import com.sjn.taggingplayer.db.TotalSongHistory;
-import com.sjn.taggingplayer.media.provider.ListProvider;
 import com.sjn.taggingplayer.utils.MediaIDHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 

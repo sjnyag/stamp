@@ -15,10 +15,11 @@
   limitations under the License.
   -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:padding="@dimen/playback_controls_padding">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/playback_controls_padding">
+
     <ImageView
         android:id="@+id/album_art"
         tools:src="@drawable/ic_launcher"
@@ -27,6 +28,7 @@
         android:scaleType="centerCrop"
         android:contentDescription="@string/currently_playing_song"
         android:layout_alignParentStart="true"/>
+
     <LinearLayout
         android:id="@+id/content"
         android:layout_width="wrap_content"
@@ -36,6 +38,7 @@
         android:layout_toEndOf="@id/album_art"
         android:layout_toStartOf="@+id/play_pause"
         android:layout_centerVertical="true">
+
         <TextView
             android:id="@+id/title"
             tools:text="The Best Music EVAH1111 THE BEST"
@@ -46,6 +49,7 @@
             android:contentDescription="@string/currently_playing_song"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="?android:attr/textColorPrimary"/>
+
         <TextView
             android:id="@+id/artist"
             tools:text="John Doe and Band"
@@ -55,6 +59,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/currently_playing_artist"
             android:textAppearance="?android:attr/textAppearanceSmall"/>
+
         <TextView
             android:id="@+id/extra_info"
             tools:text="casting to MyCast"
@@ -66,6 +71,7 @@
             android:contentDescription="@string/currently_playing_extra_info"
             android:textAppearance="?android:attr/textAppearanceSmall"/>
     </LinearLayout>
+
     <ImageButton
         android:id="@+id/play_pause"
         android:layout_centerVertical="true"

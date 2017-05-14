@@ -68,8 +68,7 @@ public class SongTagDao extends BaseDao {
         realm.beginTransaction();
         SongTag songTag = realm.where(SongTag.class).equalTo("mName", name).findFirst();
         if (songTag == null) {
-            songTag = realm.createObject(SongTag.class);
-            songTag.setId(getAutoIncrementId(realm, SongTag.class));
+            songTag = realm.createObject(SongTag.class, getAutoIncrementId(realm, SongTag.class));
             songTag.setName(name);
             result = true;
         }

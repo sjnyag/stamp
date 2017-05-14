@@ -2,46 +2,97 @@ package com.sjn.taggingplayer.ui.fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 
+import com.google.common.collect.Iterables;
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.controller.SongHistoryController;
 import com.sjn.taggingplayer.db.SongHistory;
-import com.sjn.taggingplayer.ui.DialogFacade;
 import com.sjn.taggingplayer.ui.adapter.SongHistoryAdapter;
+import com.sjn.taggingplayer.ui.item.DateHeaderItem;
+import com.sjn.taggingplayer.ui.item.ProgressItem;
+import com.sjn.taggingplayer.ui.item.SongHistoryItem;
+import com.sjn.taggingplayer.utils.CompatibleHelper;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.RealmHelper;
+import com.sjn.taggingplayer.utils.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.davidea.fastscroller.FastScroller;
+import eu.davidea.flexibleadapter.FlexibleAdapter;
+import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager;
+import eu.davidea.flexibleadapter.helpers.ActionModeHelper;
+import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
+import eu.davidea.flexibleadapter.items.IFlexible;
+import eu.davidea.flexibleadapter.items.IHeader;
 import io.realm.Realm;
-import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
-public class TimelineFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, AbsListView.OnScrollListener {
+import static eu.davidea.flexibleadapter.SelectableAdapter.MODE_MULTI;
 
-    static final int PAGE_SIZE = 30;
-    public static final int LOAD_START_THRESHOLD = 10;
+public class TimelineFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
+        ActionMode.Callback, FastScroller.OnScrollStateChangeListener, FlexibleAdapter.OnItemLongClickListener,
+        FlexibleAdapter.EndlessScrollListener {
+
     private static final String TAG = LogHelper.makeLogTag(TimelineFragment.class);
 
-    private StickyListHeadersListView mListView;
+    @Override
+    public void onItemLongClick(int position) {
+        mActionModeHelper.onLongClick((AppCompatActivity) getActivity(), position);
+    }
+
+    private ActionModeHelper mActionModeHelper;
+    private RecyclerView mRecyclerView;
     private SongHistoryAdapter mAdapter;
     private SongHistoryController mSongHistoryController;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    protected List<SongHistory> mShowingSongHistoryList = new ArrayList<>();
     protected List<SongHistory> mAllSongHistoryList = new ArrayList<>();
-    private int mNextTimelinePage = 1;
-    private int mRequestingPage = -1;
-    private boolean mIsAllHistoryLoaded = false;
     private Realm mRealm;
+    private FloatingActionButton mFab;
+    private ProgressItem mProgressItem = new ProgressItem();
+
+
+    protected LinearLayoutManager createNewLinearLayoutManager() {
+        return new SmoothScrollLinearLayoutManager(getActivity());
+    }
+
+    public static SongHistoryItem newSimpleItem(SongHistory songHistory, IHeader header) {
+        SongHistoryItem item = new SongHistoryItem(songHistory, (DateHeaderItem) header);
+        item.setTitle(songHistory.getSong().getTitle());
+        return item;
+    }
+
+    public static DateHeaderItem newHeader(SongHistory songHistory) {
+        return new DateHeaderItem(songHistory.getRecordedAt());
+    }
+
+    private void initializeActionModeHelper() {
+        mActionModeHelper = new ActionModeHelper(mAdapter, R.menu.menu_context, this) {
+            @Override
+            public void updateContextTitle(int count) {
+                if (mActionMode != null) {//You can use the internal ActionMode instance
+                    mActionMode.setTitle(count == 1 ?
+                            getString(R.string.action_selected_one, Integer.toString(count)) :
+                            getString(R.string.action_selected_many, Integer.toString(count)));
+                }
+            }
+        }.withDefaultMode(MODE_MULTI);
+    }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
@@ -49,40 +100,82 @@ public class TimelineFragment extends Fragment implements SwipeRefreshLayout.OnR
         setHasOptionsMenu(true);
         final View rootView = inflater.inflate(R.layout.fragment_timeline, container, false);
         mSongHistoryController = new SongHistoryController(getContext());
-        mAdapter = new SongHistoryAdapter(getActivity(), mShowingSongHistoryList);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW);
 
-        mListView = (StickyListHeadersListView) rootView.findViewById(R.id.timeline_list);
-        mListView.setAdapter(mAdapter);
-        mListView.setOnScrollListener(this);
-        mListView.setDivider(null);
-
         mRealm = RealmHelper.getRealmInstance();
         mAllSongHistoryList = mSongHistoryController.getManagedTimeline(mRealm);
-        loadListIfNeed();
+        mAdapter = new SongHistoryAdapter(getItemList(0, 30), this);
+        mAdapter.setNotifyChangeOfUnfilteredItems(true)
+                .setAnimationOnScrolling(false);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        mRecyclerView.setLayoutManager(createNewLinearLayoutManager());
+        mRecyclerView.setAdapter(mAdapter);
+        //mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mAdapter.setFastScroller((FastScroller) rootView.findViewById(R.id.fast_scroller),
+                ViewHelper.getColorAccent(getActivity()), this);
+
+        mAdapter.setLongPressDragEnabled(true)
+                .setHandleDragEnabled(true)
+                .setSwipeEnabled(true)
+                .setUnlinkAllItemsOnRemoveHeaders(false)
+                .setDisplayHeadersAtStartUp(false)
+                .setStickyHeaders(true)
+                .showAllHeaders();
+        mAdapter.addUserLearnedSelection(savedInstanceState == null);
+        //mAdapter.addScrollableHeaderWithDelay(new DateHeaderItem(TimeHelper.getJapanNow().toDate()), 900L, false);
+        mAdapter.showLayoutInfo(savedInstanceState == null);
+        mAdapter.addScrollableFooter();
+
+
+        // EndlessScrollListener - OnLoadMore (v5.0.0)
+        mAdapter//.setLoadingMoreAtStartUp(true) //To call only if the list is empty
+                //.setEndlessPageSize(3) //Endless is automatically disabled if newItems < 3
+                //.setEndlessTargetCount(15) //Endless is automatically disabled if totalItems >= 15
+                //.setEndlessScrollThreshold(1); //Default=1
+                .setEndlessScrollListener(this, mProgressItem);
+
+        initializeActionModeHelper();
         return rootView;
+    }
+
+
+    @Override
+    public void onFastScrollerStateChange(boolean scrolling) {
+        if (scrolling) {
+            hideFab();
+        } else {
+            showFab();
+        }
+    }
+
+    private void hideFab() {
+        if (mFab == null) {
+            return;
+        }
+        ViewCompat.animate(mFab)
+                .scaleX(0f).scaleY(0f)
+                .alpha(0f).setDuration(100)
+                .start();
+    }
+
+    private void showFab() {
+        if (mFab == null) {
+            return;
+        }
+        ViewCompat.animate(mFab)
+                .scaleX(1f).scaleY(1f)
+                .alpha(1f).setDuration(200)
+                .setStartDelay(300L)
+                .start();
     }
 
     @Override
     public void onDestroyView() {
-        super.onPause();
+        super.onDestroyView();
         mRealm.close();
-    }
-
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-    }
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem,
-                         int visibleItemCount, int totalItemCount) {
-        if (firstVisibleItem + visibleItemCount >= totalItemCount - LOAD_START_THRESHOLD) {
-            loadListIfNeed();
-        }
-
     }
 
     @Override
@@ -95,8 +188,14 @@ public class TimelineFragment extends Fragment implements SwipeRefreshLayout.OnR
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.upward:
-                if (mListView != null) {
-                    mListView.setSelectionAfterHeaderView();
+                if (mRecyclerView != null) {
+                    mRecyclerView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mRecyclerView.scrollToPosition(calcGoToTopBufferedPosition(15));
+                            mRecyclerView.smoothScrollToPosition(0);
+                        }
+                    });
                 }
                 return false;
             default:
@@ -107,91 +206,117 @@ public class TimelineFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
-        if (mSwipeRefreshLayout == null || getActivity() == null || mSongHistoryController == null) {
+        if (mSwipeRefreshLayout == null || getActivity() == null || mSongHistoryController == null || mActionModeHelper == null) {
             return;
         }
+        mActionModeHelper.destroyActionModeIfCan();
         mAllSongHistoryList = mSongHistoryController.getManagedTimeline(mRealm);
-        resetLoadingTimeline();
-        loadListIfNeed();
+        mSwipeRefreshLayout.setRefreshing(false);
+        mAdapter.updateDataSet(getItemList(0, 30));
     }
 
-    synchronized private void loadListIfNeed() {
-        LogHelper.i(TAG, "loadListIfNeed");
-        if (mListView == null || mIsAllHistoryLoaded) {
-            return;
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        if (CompatibleHelper.hasMarshmallow()) {
+            getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.color_accent_dark, getActivity().getTheme()));
+        } else if (CompatibleHelper.hasLollipop()) {
+            //noinspection deprecation
+            getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.color_accent_dark));
         }
-        if (mRequestingPage != mNextTimelinePage) {
-            mRequestingPage = mNextTimelinePage;
-            drawTimeline(mNextTimelinePage);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_select_all:
+                mAdapter.selectAll();
+                mActionModeHelper.updateContextTitle(mAdapter.getSelectedItemCount());
+                // We consume the event
+                return true;
+
+            case R.id.action_delete:
+                // Build message before delete, for the SnackBar
+                StringBuilder message = new StringBuilder();
+                message.append(getString(R.string.action_deleted)).append(" ");
+                for (Integer pos : mAdapter.getSelectedPositions()) {
+                    message.append(extractTitleFrom(mAdapter.getItem(pos)));
+                    if (mAdapter.getSelectedItemCount() > 1)
+                        message.append(", ");
+                }
+
+                // Experimenting NEW feature
+                mAdapter.setRestoreSelectionOnUndo(true);
+                // We consume the event
+                return true;
+            default:
+                // If an item is not implemented we don't consume the event, so we finish the ActionMode
+                return false;
         }
     }
 
-    private void drawTimeline(int page) {
-        if (mAdapter == null || mListView == null || getActivity() == null || isDetached()) {
-            return;
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        if (CompatibleHelper.hasMarshmallow()) {
+            getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.color_primary_dark, getActivity().getTheme()));
+        } else if (CompatibleHelper.hasLollipop()) {
+            //noinspection deprecation
+            getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.color_primary_dark));
         }
-        mAdapter.setError(false);
-        if (mAllSongHistoryList == null || mAllSongHistoryList.isEmpty()) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                synchronized public void run() {
-                    finishLoading();
-                    mListView.setVisibility(View.GONE);
-                    DialogFacade.createLetsPlayMusicDialog(getContext()).show();
-                }
-            });
-        } else {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                synchronized public void run() {
-                    int start = (mNextTimelinePage - 1) * PAGE_SIZE;
-                    int end = mNextTimelinePage * PAGE_SIZE - 1;
-                    if (end >= mAllSongHistoryList.size()) {
-                        end = mAllSongHistoryList.size();
-                    }
-                    for (int i = start; i < end; i++) {
-                        mShowingSongHistoryList.add(mAllSongHistoryList.get(i));
-                    }
-                    mAdapter.notifyDataSetChanged();
-                    if (mNextTimelinePage * PAGE_SIZE - 1 != end) {
-                        finishLoading();
-                    }
-                }
-            });
+    }
+
+    private String extractTitleFrom(IFlexible flexibleItem) {
+        return "";
+    }
+
+    private int calcGoToTopBufferedPosition(int bufferSize) {
+        int position = calcCurrentPosition();
+        if (position > bufferSize) {
+            position = bufferSize;
         }
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            synchronized public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(false);
+        return position;
+    }
+
+    private int calcCurrentPosition() {
+        LinearLayoutManager layoutManager = ((LinearLayoutManager) mRecyclerView.getLayoutManager());
+        return layoutManager.findFirstVisibleItemPosition();
+    }
+
+    @Override
+    public void noMoreLoad(int newItemsSize) {
+        Log.d(TAG, "newItemsSize=" + newItemsSize);
+        Log.d(TAG, "Total pages loaded=" + mAdapter.getEndlessCurrentPage());
+        Log.d(TAG, "Total items loaded=" + mAdapter.getMainItemCount());
+
+    }
+
+    @Override
+    public void onLoadMore(int lastPosition, int currentPage) {
+        mAdapter.onLoadMoreComplete(getItemList(mAdapter.getMainItemCount() - mAdapter.getHeaderItems().size(), 30), 5000L);
+    }
+
+    private List<AbstractFlexibleItem> getItemList(int startPosition, int size) {
+        int end = startPosition + size;
+        if (end >= mAllSongHistoryList.size()) {
+            end = mAllSongHistoryList.size();
+        }
+        List<AbstractFlexibleItem> headerItemList = new ArrayList<>();
+        DateHeaderItem header = mAdapter == null ? null : (DateHeaderItem) Iterables.getLast(mAdapter.getHeaderItems());
+
+        for (int i = startPosition; i < mAllSongHistoryList.size(); i++) {
+            if (header == null || !header.isDateOf(mAllSongHistoryList.get(i).getRecordedAt())) {
+                if (i >= end) {
+                    break;
                 }
+                header = newHeader(mAllSongHistoryList.get(i));
             }
-        });
-        mNextTimelinePage = page + 1;
-    }
-
-    private void finishLoading() {
-        mIsAllHistoryLoaded = true;
-        mAdapter.setServerListSize(mShowingSongHistoryList.size());
-        if (getActivity() == null) {
-            return;
+            headerItemList.add(newSimpleItem(mAllSongHistoryList.get(i), header));
         }
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            synchronized public void run() {
-                mAdapter.notifyDataSetChanged();
-            }
-        });
+        return headerItemList;
     }
-
-    private void resetLoadingTimeline() {
-        mIsAllHistoryLoaded = false;
-        mShowingSongHistoryList.clear();
-        mRequestingPage = -1;
-        mNextTimelinePage = 1;
-        if (mAdapter != null) {
-            mAdapter.setServerListSize(-1);
-        }
-    }
-
 }

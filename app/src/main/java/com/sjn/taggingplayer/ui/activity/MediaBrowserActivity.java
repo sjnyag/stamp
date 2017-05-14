@@ -111,7 +111,7 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
         if (NetworkHelper.isOnline(this)) {
             getSupportFragmentManager().beginTransaction()
                     .show(mControlsFragment)
-                    .commit();
+                    .commitAllowingStateLoss();
         }
     }
 
@@ -119,7 +119,7 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
         LogHelper.d(TAG, "hidePlaybackControls");
         getSupportFragmentManager().beginTransaction()
                 .hide(mControlsFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     /**

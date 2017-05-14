@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.db.SongHistory;
 import com.sjn.taggingplayer.ui.custom.LabelCardView;
-import com.sjn.taggingplayer.ui.custom.LabelRelativeLayout;
 import com.sjn.taggingplayer.utils.TimeHelper;
 import com.sjn.taggingplayer.utils.ViewHelper;
 

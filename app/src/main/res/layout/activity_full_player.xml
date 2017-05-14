@@ -15,25 +15,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/pageView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/black"
-    android:fitsSystemWindows="true">
+                android:id="@+id/pageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/black"
+                android:fitsSystemWindows="true">
 
     <ImageView
         android:id="@+id/background_image"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:scaleType="centerCrop"
-        android:contentDescription="@string/background_image_str" />
+        android:contentDescription="@string/background_image_str"/>
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:background="@drawable/fullscreen_bg_gradient" >
+        android:background="@drawable/fullscreen_bg_gradient">
 
         <TextView
             android:id="@+id/line1"
@@ -46,7 +46,7 @@ limitations under the License.
             android:shadowColor="@android:color/black"
             android:shadowRadius="20"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/fullscreen_line_color" />
+            android:textColor="@color/fullscreen_line_color"/>
 
         <TextView
             android:id="@+id/line2"
@@ -60,7 +60,7 @@ limitations under the License.
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:shadowColor="@android:color/black"
             android:shadowRadius="20"
-            android:textColor="@color/fullscreen_secondary_line_color" />
+            android:textColor="@color/fullscreen_secondary_line_color"/>
 
         <TextView
             android:id="@+id/line3"
@@ -74,7 +74,7 @@ limitations under the License.
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:shadowColor="@android:color/black"
             android:shadowRadius="20"
-            android:textColor="@color/fullscreen_secondary_line_color" />
+            android:textColor="@color/fullscreen_secondary_line_color"/>
 
         <LinearLayout
             android:id="@+id/controllers"
@@ -96,7 +96,7 @@ limitations under the License.
                     android:layout_alignParentStart="true"
                     android:gravity="center_vertical"
                     android:maxLines="1"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/white"/>
 
                 <SeekBar
                     android:id="@+id/seekBar1"
@@ -107,7 +107,7 @@ limitations under the License.
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
                     android:layout_toStartOf="@+id/endText"
-                    android:layout_toEndOf="@+id/startText" />
+                    android:layout_toEndOf="@+id/startText"/>
 
                 <TextView
                     android:id="@+id/endText"
@@ -118,7 +118,7 @@ limitations under the License.
                     android:gravity="center_vertical"
                     android:layout_alignWithParentIfMissing="true"
                     android:maxLines="1"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/white"/>
 
             </RelativeLayout>
 
@@ -165,7 +165,7 @@ limitations under the License.
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"

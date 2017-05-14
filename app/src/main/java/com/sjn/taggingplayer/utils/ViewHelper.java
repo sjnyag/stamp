@@ -1,7 +1,9 @@
 package com.sjn.taggingplayer.utils;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.PorterDuff;
@@ -9,9 +11,11 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -25,6 +29,26 @@ import java.util.List;
 import java.util.Random;
 
 public class ViewHelper {
+    private static int colorAccent = -1;
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public static int getColorAccent(Context context) {
+        if (colorAccent < 0) {
+            int accentAttr = eu.davidea.flexibleadapter.utils.Utils.hasLollipop() ? android.R.attr.colorAccent : R.attr.colorAccent;
+            TypedArray androidAttr = context.getTheme().obtainStyledAttributes(new int[]{accentAttr});
+            colorAccent = androidAttr.getColor(0, 0xFF009688); //Default: material_deep_teal_500
+            androidAttr.recycle();
+        }
+        return colorAccent;
+    }
+
+    public static float dpToPx(Context context, float dp) {
+        return Math.round(dp * getDisplayMetrics(context).density);
+    }
+
+    public static DisplayMetrics getDisplayMetrics(Context context) {
+        return context.getResources().getDisplayMetrics();
+    }
 
     public static void setFragmentTitle(Activity activity, String title) {
         if (activity == null || !(activity instanceof AppCompatActivity)) {
@@ -104,6 +128,7 @@ public class ViewHelper {
 
     public static TextDrawable createTextDrawable(String text) {
         ColorGenerator generator = ColorGenerator.MATERIAL; // or use DEFAULT
+        String s = text == null || text.isEmpty() ? "" : String.valueOf(text.charAt(0));
         return TextDrawable.builder()
                 .beginConfig()
                 .useFont(Typeface.DEFAULT)
@@ -111,7 +136,7 @@ public class ViewHelper {
                 .toUpperCase()
                 .endConfig()
                 .rect()
-                .build(String.valueOf(text.charAt(0)), generator.getColor(text));
+                .build(s, generator.getColor(text));
     }
 
     public static Bitmap toBitmap(Drawable drawable, int width, int height) {
@@ -125,6 +150,7 @@ public class ViewHelper {
         drawable.draw(canvas);
         return bitmap;
     }
+
     public static class ColorGenerator {
 
         public static ColorGenerator DEFAULT;
@@ -181,6 +207,9 @@ public class ViewHelper {
         }
 
         public int getColor(Object key) {
+            if(key == null){
+                return mColors.get(0);
+            }
             return mColors.get(Math.abs(key.hashCode()) % mColors.size());
         }
     }

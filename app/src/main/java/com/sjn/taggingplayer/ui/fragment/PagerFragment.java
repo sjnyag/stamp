@@ -37,36 +37,11 @@ abstract class PagerFragment extends Fragment {
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         mAppBarLayout = (AppBarLayout) rootView.findViewById(R.id.appbar);
-        moveToolbar();
         return rootView;
     }
 
-    @Override
-    public void onDestroyView() {
-        if (!(getFragmentManager().findFragmentByTag(DrawerActivity.FRAGMENT_TAG) instanceof PagerFragment)) {
-            Toolbar toolbar = ((DrawerActivity) getActivity()).getToolbar();
-            ViewGroup parent = (ViewGroup) toolbar.getParent();
-            if (parent != null) {
-                parent.removeView(toolbar);
-                ((DrawerActivity) getActivity()).getToolbarContainer().addView(toolbar, 0);
-                ((DrawerActivity) getActivity()).getToolbarContainer().setVisibility(View.VISIBLE);
-            }
-        }
-        super.onDestroyView();
-    }
-
     protected void setTitle(String title) {
-        setFragmentTitle(getActivity() ,title);
-    }
-
-    private void moveToolbar() {
-        Toolbar toolbar = ((DrawerActivity) getActivity()).getToolbar();
-        ViewGroup parent = (ViewGroup) toolbar.getParent();
-        if (parent != null) {
-            parent.removeView(toolbar);
-            mAppBarLayout.addView(toolbar, 0);
-            ((DrawerActivity) getActivity()).getToolbarContainer().setVisibility(View.GONE);
-        }
+        setFragmentTitle(getActivity(), title);
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {

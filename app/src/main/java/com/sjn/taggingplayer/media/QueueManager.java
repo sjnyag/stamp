@@ -294,7 +294,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
 
                 @Override
                 public void onBitmapFailed(Drawable errorDrawable) {
-                    Bitmap bitmap = ViewHelper.toBitmap(ViewHelper.createTextDrawable(metadata.getDescription().getTitle().toString()),128,128);
+                    Bitmap bitmap = ViewHelper.toBitmap(ViewHelper.createTextDrawable(metadata.getDescription().getTitle().toString()), 128, 128);
                     Bitmap icon = BitmapHelper.createIcon(bitmap);
                     mMusicProvider.updateMusicArt(musicId, bitmap, icon);
 

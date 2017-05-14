@@ -107,7 +107,7 @@ public class SongHistoryController {
         List<MediaMetadataCompat> trackList = new ArrayList<>();
         List<TotalSongHistory> historyList = mTotalSongHistoryDao.getOrderedList(realm);
         for (TotalSongHistory totalSongHistory : historyList) {
-            if (totalSongHistory.getPlayCount() == 0) {
+            if (totalSongHistory.getPlayCount() == 0 || trackList.size() > 30) {
                 break;
             }
             //noinspection ResourceType

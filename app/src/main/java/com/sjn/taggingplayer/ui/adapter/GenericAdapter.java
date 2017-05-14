@@ -149,9 +149,9 @@ public abstract class GenericAdapter<T> extends ArrayAdapter {
         if (position >= serverListSize && serverListSize > 0 || serverListSize == 0) {
             // the ListView has reached the last row
             TextView tvLastRow = new TextView(mActivity);
-            if(mIsError) {
+            if (mIsError) {
                 tvLastRow.setText(mActivity.getResources().getString(R.string.no_more_data_by_error));
-            }else{
+            } else {
                 tvLastRow.setText(mActivity.getResources().getString(R.string.no_more_data));
             }
             tvLastRow.setGravity(Gravity.CENTER);

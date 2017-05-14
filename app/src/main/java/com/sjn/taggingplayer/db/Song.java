@@ -7,8 +7,6 @@ import android.support.v4.media.MediaMetadataCompat;
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.media.source.MusicProviderSource;
 
-import java.util.Locale;
-
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -78,7 +76,7 @@ public class Song extends RealmObject implements Tweetable {
         setDateAdded(getStringIfExists(metadata, MediaMetadata.METADATA_KEY_DATE));
     }
 
-    public MediaMetadataCompat.Builder mediaMetadataCompatBuilder(){
+    public MediaMetadataCompat.Builder mediaMetadataCompatBuilder() {
         //noinspection ResourceType
         return new MediaMetadataCompat.Builder()
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mMediaId)

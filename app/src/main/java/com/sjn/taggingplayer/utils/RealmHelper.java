@@ -8,7 +8,7 @@ import io.realm.RealmConfiguration;
 public class RealmHelper {
     private static final String TAG = LogHelper.makeLogTag(RealmHelper.class);
 
-    public static void init(Context context){
+    public static void init(Context context) {
         Realm.init(context);
         Realm.setDefaultConfiguration(buildConfig());
     }
@@ -17,7 +17,7 @@ public class RealmHelper {
         return Realm.getDefaultInstance();
     }
 
-    public static RealmConfiguration buildConfig(){
+    public static RealmConfiguration buildConfig() {
         RealmConfiguration.Builder builder = new RealmConfiguration.Builder();
         if (com.sjn.taggingplayer.BuildConfig.BUILD_TYPE.equals("debug")) {
             //builder.deleteRealmIfMigrationNeeded();

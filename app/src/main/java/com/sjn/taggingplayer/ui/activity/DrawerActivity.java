@@ -47,9 +47,6 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
     @Getter
     protected Toolbar mToolbar;
 
-    @Accessors(prefix = "m")
-    @Getter
-    private ViewGroup mToolbarContainer;
     protected Drawer mDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
     private AccountHeader mAccountHeader;
@@ -202,7 +199,6 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
     }
 
     protected void initializeToolbar() {
-        mToolbarContainer = (ViewGroup) findViewById(R.id.toolbar_container);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         if (mToolbar == null) {
             throw new IllegalStateException("Layout is required to include a Toolbar with id " +

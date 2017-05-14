@@ -381,7 +381,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
 
             @Override
             public void onBitmapFailed(Drawable errorDrawable) {
-                builder.setLargeIcon(ViewHelper.toBitmap(ViewHelper.createTextDrawable(mMetadata.getDescription().getTitle().toString()),128,128));
+                builder.setLargeIcon(ViewHelper.toBitmap(ViewHelper.createTextDrawable(mMetadata.getDescription().getTitle().toString()), 128, 128));
             }
 
             @Override

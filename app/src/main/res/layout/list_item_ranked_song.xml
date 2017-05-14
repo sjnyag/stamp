@@ -28,7 +28,7 @@
         android:layout_marginEnd="@dimen/media_item_icon_margin_end"
         android:layout_marginStart="@dimen/media_item_icon_margin_start"
         android:contentDescription="@string/play_item"
-        android:src="@drawable/ic_audiotrack"/>
+        android:src="@drawable/ic_audiotrack_dark"/>
 
     <RelativeLayout
         android:layout_width="wrap_content"

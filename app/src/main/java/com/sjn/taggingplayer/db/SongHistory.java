@@ -51,7 +51,7 @@ public class SongHistory extends RealmObject {
 
     public int getColor() {
 //        return Color.rgb(255, 255, 255 - getYellow());
-        return Color.rgb(0,0,0);
+        return Color.rgb(0, 0, 0);
     }
 
     private int getYellow() {
