@@ -41,13 +41,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.common.collect.Iterables;
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.controller.SongHistoryController;
 import com.sjn.taggingplayer.db.Song;
@@ -56,6 +52,7 @@ import com.sjn.taggingplayer.ui.MediaBrowserProvider;
 import com.sjn.taggingplayer.ui.adapter.SongHistoryAdapter;
 import com.sjn.taggingplayer.ui.holder.MediaItemViewHolder;
 import com.sjn.taggingplayer.ui.item.DateHeaderItem;
+import com.sjn.taggingplayer.ui.item.SongItem;
 import com.sjn.taggingplayer.ui.item.ProgressItem;
 import com.sjn.taggingplayer.ui.item.SongHistoryItem;
 import com.sjn.taggingplayer.ui.observer.MediaControllerObserver;
@@ -161,11 +158,8 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
         return new SmoothScrollLinearLayoutManager(getActivity());
     }
 
-    public static SongHistoryItem newSimpleItem(MediaBrowserCompat.MediaItem mediaItem, IHeader header) {
-        SongHistory songHistory = new SongHistory();
-        songHistory.setSong(new Song());
-        SongHistoryItem item = new SongHistoryItem(songHistory, (DateHeaderItem) header);
-        item.setTitle(songHistory.getSong().getTitle());
+    public static SongItem newSimpleItem(MediaBrowserCompat.MediaItem mediaItem, IHeader header) {
+        SongItem item = new SongItem(mediaItem, (DateHeaderItem) header);
         return item;
     }
 
@@ -533,26 +527,9 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
     public boolean onItemClick(int position) {
         LogHelper.d(TAG, "onItemClick ");
         checkForUserVisibleErrors(false);
-        /*TODO
-        MediaBrowserCompat.MediaItem item = mAdapter.getItem(position);
-        mMediaFragmentListener.onMediaItemSelected(item);
-        */
+        SongItem item = (SongItem)mAdapter.getItem(position);
+        mMediaFragmentListener.onMediaItemSelected(item.getMediaItem());
         return false;
-    }
-
-    // An adapter for showing the list of browsed MediaItem's
-    private static class BrowseAdapter extends ArrayAdapter<MediaBrowserCompat.MediaItem> {
-
-        public BrowseAdapter(Activity context) {
-            super(context, R.layout.list_item_media, new ArrayList<MediaBrowserCompat.MediaItem>());
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            MediaBrowserCompat.MediaItem item = getItem(position);
-            return MediaItemViewHolder.setupListView((Activity) getContext(), convertView, parent,
-                    item);
-        }
     }
 
     public interface MediaFragmentListener extends MediaBrowserProvider {
