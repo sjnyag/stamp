@@ -7,6 +7,7 @@ import com.sjn.taggingplayer.constant.RecordType;
 import java.util.Date;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,6 +26,8 @@ public class SongHistory extends RealmObject {
     public long mId;
     private Song mSong;
     public Date mRecordedAt;
+    //TODO
+    //@Index
     public String mRecordType;
     public Device mDevice;
     public int mCount;

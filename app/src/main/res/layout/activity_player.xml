@@ -27,9 +27,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="bottom"
-        sothree:umanoPanelHeight="@dimen/playback_controls_albumart_size"
+        sothree:umanoPanelHeight="64dp"
         sothree:umanoShadowHeight="8dp">
-
 
         <android.support.design.widget.CoordinatorLayout
             android:id="@+id/main_view"
@@ -50,8 +49,8 @@
                     android:id="@+id/toolbar_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:titleEnabled="false"
-                    app:layout_scrollFlags="scroll|enterAlways">
+                    app:layout_scrollFlags="scroll|enterAlways"
+                    app:titleEnabled="false">
 
                     <android.support.v7.widget.Toolbar
                         android:id="@+id/toolbar"
@@ -83,7 +82,7 @@
             android:id="@+id/dragView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#ffffff"
+            android:background="@color/background"
             android:clickable="true"
             android:focusable="false"
             android:orientation="vertical">
@@ -91,8 +90,8 @@
             <android.support.v7.widget.CardView
                 android:id="@+id/controls_container"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/playback_controls_albumart_size"
-                app:cardBackgroundColor="#ffffff"
+                android:layout_height="wrap_content"
+                android:background="@color/background"
                 app:cardElevation="8dp">
 
                 <fragment
@@ -101,6 +100,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
+                    android:background="@color/background"
                     tools:layout="@layout/fragment_playback_controls"/>
 
             </android.support.v7.widget.CardView>

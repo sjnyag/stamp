@@ -15,6 +15,10 @@ public class SongDao extends BaseDao {
         return sInstance;
     }
 
+    public Song findById(Realm realm, long id) {
+        return realm.where(Song.class).equalTo("mId", id).findFirst();
+    }
+
     public Song findOrCreate(Realm realm, Song rawSong) {
         Song song = realm.where(Song.class).equalTo("mTitle", rawSong.getTitle()).equalTo("mArtist", rawSong.getArtist()).findFirst();
         if (song == null) {

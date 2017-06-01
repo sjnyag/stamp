@@ -4,28 +4,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="?android:attr/listPreferredItemHeightLarge">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:id="@+id/front_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="@dimen/margin_bottom"
-        android:paddingTop="@dimen/margin_top">
+        android:background="#242229"
+        android:paddingBottom="12dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="12dp">
 
         <eu.davidea.flipview.FlipView
             android:id="@+id/image"
-            android:layout_width="@dimen/icon_width"
-            android:layout_height="@dimen/icon_height"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_alignParentStart="true"
             android:layout_centerInParent="true"
-            android:layout_marginStart="@dimen/margin_left"
             android:clickable="true"
             app:animationDuration="170"
             app:checked="false"
             app:enableInitialAnimation="true"
+            app:frontBackground="@drawable/square_light"
             app:frontBackgroundColor="@color/color_primary"
-            app:frontImage="@mipmap/ic_launcher"
             app:rearBackgroundColor="@color/color_accent"/>
 
         <TextView
@@ -36,6 +38,7 @@
             android:layout_toEndOf="@id/image"
             android:ellipsize="end"
             android:maxLines="1"
+            android:paddingTop="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             android:textColor="?primaryTextSelector"
             tools:text="Title"/>
@@ -44,13 +47,13 @@
             android:id="@+id/subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_alignStart="@+id/title"
-            android:layout_below="@+id/title"
-            android:layout_marginTop="2dp"
             android:layout_toStartOf="@+id/date"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:paddingBottom="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:textColor="?primaryTextSelector"
             tools:text="Subtitle"/>
 

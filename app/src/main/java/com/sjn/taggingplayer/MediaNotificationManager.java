@@ -375,7 +375,9 @@ public class MediaNotificationManager extends BroadcastReceiver {
                     // If the media is still the same, update the notification:
                     LogHelper.d(TAG, "fetchBitmapFromURLAsync: set bitmap to ", bitmapUrl);
                     builder.setLargeIcon(bitmap);
+                    LogHelper.d(TAG, "fetchBitmapFromURLAsync: finish");
                     mNotificationManager.notify(NOTIFICATION_ID, builder.build());
+                    LogHelper.d(TAG, "onBitmapLoaded: finish");
                 }
             }
 

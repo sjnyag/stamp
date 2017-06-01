@@ -28,6 +28,8 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 
 import com.sjn.taggingplayer.MusicService;
+import com.sjn.taggingplayer.controller.UserSettingController;
+import com.sjn.taggingplayer.db.UserSetting;
 import com.sjn.taggingplayer.media.provider.MusicProvider;
 import com.sjn.taggingplayer.media.source.MusicProviderSource;
 import com.sjn.taggingplayer.utils.LogHelper;
@@ -308,7 +310,7 @@ public class LocalPlayback implements Playback, AudioManager.OnAudioFocusChangeL
      */
     private void configMediaPlayerState() {
         LogHelper.d(TAG, "configMediaPlayerState. mAudioFocus=", mAudioFocus);
-        if (mAudioFocus == AUDIO_NO_FOCUS_NO_DUCK) {
+        if (mAudioFocus == AUDIO_NO_FOCUS_NO_DUCK && new UserSettingController(mContext).stopOnAudioLostFocus()) {
             // If we don't have audio focus and can't duck, we have to pause,
             if (mState == PlaybackStateCompat.STATE_PLAYING) {
                 pause();

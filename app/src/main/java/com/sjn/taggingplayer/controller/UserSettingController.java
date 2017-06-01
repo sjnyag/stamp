@@ -76,4 +76,9 @@ public class UserSettingController {
         mUserSettingDao.updateLastMusicId(realm, lastMediaId);
         realm.close();
     }
+
+    //TODO: implement
+    public boolean stopOnAudioLostFocus() {
+        return false;
+    }
 }

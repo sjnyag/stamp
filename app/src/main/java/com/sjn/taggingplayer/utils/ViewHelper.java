@@ -28,6 +28,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import eu.davidea.flipview.FlipView;
+
 public class ViewHelper {
     private static int colorAccent = -1;
 
@@ -92,8 +94,36 @@ public class ViewHelper {
         }
     }
 
+    public static void updateAlbumArt(final Activity activity, final FlipView view, final String artUrl, final String text) {
+        updateAlbumArt(activity, view, artUrl, text, 192, 192);
+    }
+
     public static void updateAlbumArt(final Activity activity, final ImageView view, final String artUrl, final String text) {
         updateAlbumArt(activity, view, artUrl, text, 128, 128);
+    }
+
+
+    public static void updateAlbumArt(final Activity activity, final FlipView flipView, final String artUrl, final String text, final int targetWidth, final int targetHeight) {
+        flipView.getFrontImageView().setTag(artUrl);
+        if (artUrl == null || artUrl.isEmpty()) {
+            //view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));
+            flipView.getChildAt(0).setBackground(createTextDrawable(text));
+            return;
+        }
+        Picasso.with(activity).load(artUrl).resize(targetWidth, targetHeight).into(flipView.getFrontImageView(), new Callback() {
+            @Override
+            public void onSuccess() {
+                if (!artUrl.equals(flipView.getFrontImageView().getTag())) {
+                    updateAlbumArt(activity, flipView.getFrontImageView(), (String) flipView.getFrontImageView().getTag(), text);
+                }
+            }
+
+            @Override
+            public void onError() {
+                flipView.getChildAt(0).setBackground(createTextDrawable(text));
+                //view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));
+            }
+        });
     }
 
 

@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.db.SongHistory;
+import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.TimeHelper;
 import com.sjn.taggingplayer.utils.ViewHelper;
 import com.squareup.picasso.Target;
@@ -97,13 +98,13 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
         Context context = holder.itemView.getContext();
 
         // Background, when bound the first time
-        if (payloads.size() == 0) {
-            Drawable drawable = DrawableUtils.getSelectableBackgroundCompat(
-                    Color.WHITE, Color.parseColor("#dddddd"), //Same color of divider
-                    DrawableUtils.getColorControlHighlight(context));
-            DrawableUtils.setBackgroundCompat(holder.itemView, drawable);
-            DrawableUtils.setBackgroundCompat(holder.frontView, drawable);
-        }
+//        if (payloads.size() == 0) {
+//            Drawable drawable = DrawableUtils.getSelectableBackgroundCompat(
+//                    Color.WHITE, Color.parseColor("#dddddd"), //Same color of divider
+//                    DrawableUtils.getColorControlHighlight(context));
+//            DrawableUtils.setBackgroundCompat(holder.itemView, drawable);
+//            DrawableUtils.setBackgroundCompat(holder.frontView, drawable);
+//        }
 
         // DemoApp: INNER ANIMATION EXAMPLE! ImageView - Handle Flip Animation
 //		if (adapter.isSelectAll() || adapter.isLastItemInActionMode()) {
@@ -123,7 +124,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
             holder.mSubtitle.setText(getSubtitle());
         }
         holder.mDate.setText(getDateText(mSongHistory.getRecordedAt()));
-        ViewHelper.updateAlbumArt((Activity) context, holder.mFlipView.getFrontImageView(), mSongHistory.getSong().getAlbumArtUri(), mSongHistory.getSong().getTitle());
+        ViewHelper.updateAlbumArt((Activity) context, holder.mFlipView, mSongHistory.getSong().getAlbumArtUri(), mSongHistory.getSong().getTitle());
     }
 
     @Override
@@ -168,7 +169,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
                 public void onClick(View v) {
                     if (mAdapter.mItemLongClickListener != null) {
                         mAdapter.mItemLongClickListener.onItemLongClick(getAdapterPosition());
-                        Toast.makeText(mContext, "ImageClick on " + mTitle.getText() + " position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(mContext, "ImageClick on " + mTitle.getText() + " position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
                         toggleActivation();
                     }
                 }
@@ -182,13 +183,13 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
 
         @Override
         public void onClick(View view) {
-            Toast.makeText(mContext, "Click on " + mTitle.getText() + " position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(mContext, "Click on " + mTitle.getText() + " position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
             super.onClick(view);
         }
 
         @Override
         public boolean onLongClick(View view) {
-            Toast.makeText(mContext, "LongClick on " + mTitle.getText() + " position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(mContext, "LongClick on " + mTitle.getText() + " position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
             return super.onLongClick(view);
         }
 

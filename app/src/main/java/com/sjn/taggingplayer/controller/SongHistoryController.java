@@ -2,6 +2,7 @@ package com.sjn.taggingplayer.controller;
 
 import android.content.Context;
 import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.util.LongSparseArray;
 
 import com.sjn.taggingplayer.constant.RecordType;
 import com.sjn.taggingplayer.db.Artist;
@@ -138,29 +139,45 @@ public class SongHistoryController {
     }
 
     public List<RankedSong> getRankedSongList(Date from, Date to) {
+        LogHelper.i(TAG, "getRankedSongList start");
         Realm realm = RealmHelper.getRealmInstance();
+        LogHelper.i(TAG, "calc historyList");
         List<SongHistory> historyList = mSongHistoryDao.where(realm, from, to, RecordType.PLAY.getValue());
-        Map<Song, Integer> songMap = new HashMap<>();
+        LongSparseArray<Integer> songCountMap = new LongSparseArray<>();
+        LogHelper.i(TAG, "put songCountMap");
         for (SongHistory songHistory : historyList) {
-            Song song = realm.copyFromRealm(songHistory.getSong());
-            int count = songMap.containsKey(song) ? songMap.get(song) + 1 : 1;
-            songMap.put(song, count);
+            long songId = songHistory.getSong().getId();
+            int count = 1 + songCountMap.get(songId, 0);
+            songCountMap.put(songId, count);
         }
-        realm.close();
+        LogHelper.i(TAG, "create rankedSongList");
         List<RankedSong> rankedSongList = new ArrayList<>();
-        for (Map.Entry<Song, Integer> e : songMap.entrySet()) {
-            rankedSongList.add(new RankedSong(e.getValue(), e.getKey()));
+        for (int i = 0; i < songCountMap.size(); i++) {
+            long key = songCountMap.keyAt(i);
+            Song song = new Song();
+            song.setId(key);
+            rankedSongList.add(new RankedSong(songCountMap.get(key), song));
         }
+        LogHelper.i(TAG, "sort rankedSongList");
         Collections.sort(rankedSongList, new Comparator<RankedSong>() {
             @Override
             public int compare(RankedSong t1, RankedSong t2) {
                 return t2.getPlayCount() - t1.getPlayCount();
             }
         });
+        if (rankedSongList.size() > 30) {
+            rankedSongList = rankedSongList.subList(0, 30);
+        }
+        for (RankedSong rankedSong : rankedSongList) {
+            rankedSong.setSong(realm.copyFromRealm(mSongDao.findById(realm, rankedSong.getSong().getId())));
+        }
+        realm.close();
+        LogHelper.i(TAG, "getRankedSongList end");
         return rankedSongList;
     }
 
     public List<RankedArtist> getRankedArtistList(Date from, Date to) {
+        LogHelper.i(TAG, "getRankedArtistList start");
         Realm realm = RealmHelper.getRealmInstance();
         List<SongHistory> historyList = mSongHistoryDao.where(realm, from, to, RecordType.PLAY.getValue());
         Map<String, Integer> artistMap = new HashMap<>();
@@ -180,6 +197,7 @@ public class SongHistoryController {
                 return t2.getPlayCount() - t1.getPlayCount();
             }
         });
+        LogHelper.i(TAG, "getRankedArtistList end");
         return rankedArtistList;
     }
 
