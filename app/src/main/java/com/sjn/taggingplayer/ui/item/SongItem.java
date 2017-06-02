@@ -104,14 +104,14 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder>
     public void bindViewHolder(final FlexibleAdapter adapter, SimpleViewHolder holder, int position, List payloads) {
         Context context = holder.itemView.getContext();
 
-        // Background, when bound the first time
-        if (payloads.size() == 0) {
-            Drawable drawable = DrawableUtils.getSelectableBackgroundCompat(
-                    Color.WHITE, Color.parseColor("#dddddd"), //Same color of divider
-                    DrawableUtils.getColorControlHighlight(context));
-            DrawableUtils.setBackgroundCompat(holder.itemView, drawable);
-            DrawableUtils.setBackgroundCompat(holder.frontView, drawable);
-        }
+//        // Background, when bound the first time
+//        if (payloads.size() == 0) {
+//            Drawable drawable = DrawableUtils.getSelectableBackgroundCompat(
+//                    Color.WHITE, Color.parseColor("#dddddd"), //Same color of divider
+//                    DrawableUtils.getColorControlHighlight(context));
+//            DrawableUtils.setBackgroundCompat(holder.itemView, drawable);
+//            DrawableUtils.setBackgroundCompat(holder.frontView, drawable);
+//        }
 
         // DemoApp: INNER ANIMATION EXAMPLE! ImageView - Handle Flip Animation
 //		if (adapter.isSelectAll() || adapter.isLastItemInActionMode()) {
@@ -131,7 +131,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder>
             holder.mSubtitle.setText(mMediaItem.getDescription().getSubtitle());
         }
         if (mMediaItem.getDescription().getIconUri() != null) {
-            ViewHelper.updateAlbumArt((Activity) context, holder.mFlipView.getFrontImageView(), mMediaItem.getDescription().getIconUri().toString(), mMediaItem.getDescription().getTitle().toString());
+            ViewHelper.updateAlbumArt((Activity) context, holder.mFlipView, mMediaItem.getDescription().getIconUri().toString(), mMediaItem.getDescription().getTitle().toString());
         }
     }
 

@@ -69,6 +69,8 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
         // this can be done, for example by sharing the session token directly.
         mMediaBrowser = new MediaBrowserCompat(this,
                 new ComponentName(this, MusicService.class), mConnectionCallback, null);
+
+        mMediaBrowser.connect();
     }
 
     @Override
@@ -83,8 +85,6 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
         }
 
         hidePlaybackControls();
-
-        mMediaBrowser.connect();
     }
 
     @Override
@@ -94,6 +94,11 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
         if (getSupportMediaController() != null) {
             getSupportMediaController().unregisterCallback(MediaControllerObserver.getInstance());
         }
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
         mMediaBrowser.disconnect();
     }
 

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  Copyright (C) 2014 The Android Open Source Project
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/background">
+
+    <TextView
+        android:id="@+id/total_play_count"
+        tools:text="合計再生回数"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_left"
+        android:layout_toEndOf="@id/image"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="?primaryTextSelector" />
+
+    <TextView
+        android:id="@+id/most_play_count"
+        tools:text="最大再生回数"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_left"
+        android:layout_toEndOf="@id/image"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="?primaryTextSelector" />
+
+    <TextView
+        android:id="@+id/total_play_time"
+        tools:text="合計再生時間"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_left"
+        android:layout_toEndOf="@id/image"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="?primaryTextSelector" />
+
+    <TextView
+        android:id="@+id/most_artist_count"
+        tools:text="一番再生したアーティスト"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_left"
+        android:layout_toEndOf="@id/image"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="?primaryTextSelector" />
+
+    <TextView
+        android:id="@+id/total_artist_count"
+        tools:text="聞いたアーティストの数"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_left"
+        android:layout_toEndOf="@id/image"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="?primaryTextSelector" />
+
+    <TextView
+        android:id="@+id/most_song_count"
+        tools:text="一番再生した曲"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_left"
+        android:layout_toEndOf="@id/image"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="?primaryTextSelector" />
+
+    <TextView
+        android:id="@+id/total_song_count"
+        tools:text="聞いた曲の数"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_left"
+        android:layout_toEndOf="@id/image"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="?primaryTextSelector" />
+
+    <TextView
+        android:id="@+id/listening_clock"
+        tools:text="リスニングクロック"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_left"
+        android:layout_toEndOf="@id/image"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="?primaryTextSelector" />
+
+    <TextView
+        android:id="@+id/listening_week"
+        tools:text="リスニングクロック"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_left"
+        android:layout_toEndOf="@id/image"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="?primaryTextSelector" />
+
+    <TextView
+        android:id="@+id/new_artist"
+        tools:text="出会ったアーティスト"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_left"
+        android:layout_toEndOf="@id/image"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="?primaryTextSelector" />
+
+    <TextView
+        android:id="@+id/new_song"
+        tools:text="出会った曲"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_left"
+        android:layout_toEndOf="@id/image"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="?primaryTextSelector" />
+
+    <TextView
+        android:id="@+id/continuous"
+        tools:text="連続再生記録"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_left"
+        android:layout_toEndOf="@id/image"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="?primaryTextSelector" />
+
+    <TextView
+        android:id="@+id/most_play_day"
+        tools:text="最も再生した日"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_left"
+        android:layout_toEndOf="@id/image"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="?primaryTextSelector" />
+
+    <TextView
+        android:id="@+id/most_repeat_song"
+        tools:text="最もリピートした曲"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_left"
+        android:layout_toEndOf="@id/image"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="?primaryTextSelector" />
+
+    <TextView
+        android:id="@+id/monthly_mvp"
+        tools:text="月間MVP"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_left"
+        android:layout_toEndOf="@id/image"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="?primaryTextSelector" />
+</RelativeLayout>
