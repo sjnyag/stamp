@@ -45,18 +45,17 @@ import io.realm.Realm;
 
 import static eu.davidea.flexibleadapter.SelectableAdapter.MODE_MULTI;
 
-public class TimelineFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,
-        ActionMode.Callback, FastScroller.OnScrollStateChangeListener, FlexibleAdapter.OnItemLongClickListener,
+public class TimelineFragment extends MediaControllerFragment implements SwipeRefreshLayout.OnRefreshListener,
+        FastScroller.OnScrollStateChangeListener, FlexibleAdapter.OnItemLongClickListener,
         FlexibleAdapter.EndlessScrollListener {
 
     private static final String TAG = LogHelper.makeLogTag(TimelineFragment.class);
 
     @Override
     public void onItemLongClick(int position) {
-        mActionModeHelper.onLongClick((AppCompatActivity) getActivity(), position);
+        mListener.startActionModeByLongClick(position);
     }
 
-    private ActionModeHelper mActionModeHelper;
     private RecyclerView mRecyclerView;
     private SongHistoryAdapter mAdapter;
     private SongHistoryController mSongHistoryController;
@@ -79,19 +78,6 @@ public class TimelineFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     public static DateHeaderItem newHeader(SongHistory songHistory) {
         return new DateHeaderItem(songHistory.getRecordedAt());
-    }
-
-    private void initializeActionModeHelper() {
-        mActionModeHelper = new ActionModeHelper(mAdapter, R.menu.menu_context, this) {
-            @Override
-            public void updateContextTitle(int count) {
-                if (mActionMode != null) {//You can use the internal ActionMode instance
-                    mActionMode.setTitle(count == 1 ?
-                            getString(R.string.action_selected_one, Integer.toString(count)) :
-                            getString(R.string.action_selected_many, Integer.toString(count)));
-                }
-            }
-        }.withDefaultMode(MODE_MULTI);
     }
 
     @Override
@@ -137,7 +123,6 @@ public class TimelineFragment extends Fragment implements SwipeRefreshLayout.OnR
                 //.setEndlessScrollThreshold(1); //Default=1
                 .setEndlessScrollListener(this, mProgressItem);
 
-        initializeActionModeHelper();
         return rootView;
     }
 
@@ -206,68 +191,13 @@ public class TimelineFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
-        if (mSwipeRefreshLayout == null || getActivity() == null || mSongHistoryController == null || mActionModeHelper == null) {
+        if (mSwipeRefreshLayout == null || getActivity() == null || mSongHistoryController == null || mListener == null) {
             return;
         }
-        mActionModeHelper.destroyActionModeIfCan();
+        mListener.destroyActionModeIfCan();
         mAllSongHistoryList = mSongHistoryController.getManagedTimeline(mRealm);
         mSwipeRefreshLayout.setRefreshing(false);
         mAdapter.updateDataSet(getItemList(0, 30));
-    }
-
-    @Override
-    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        if (CompatibleHelper.hasMarshmallow()) {
-            getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.color_accent_dark, getActivity().getTheme()));
-        } else if (CompatibleHelper.hasLollipop()) {
-            //noinspection deprecation
-            getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.color_accent_dark));
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-        return false;
-    }
-
-    @Override
-    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_select_all:
-                mAdapter.selectAll();
-                mActionModeHelper.updateContextTitle(mAdapter.getSelectedItemCount());
-                // We consume the event
-                return true;
-
-            case R.id.action_delete:
-                // Build message before delete, for the SnackBar
-                StringBuilder message = new StringBuilder();
-                message.append(getString(R.string.action_deleted)).append(" ");
-                for (Integer pos : mAdapter.getSelectedPositions()) {
-                    message.append(extractTitleFrom(mAdapter.getItem(pos)));
-                    if (mAdapter.getSelectedItemCount() > 1)
-                        message.append(", ");
-                }
-
-                // Experimenting NEW feature
-                mAdapter.setRestoreSelectionOnUndo(true);
-                // We consume the event
-                return true;
-            default:
-                // If an item is not implemented we don't consume the event, so we finish the ActionMode
-                return false;
-        }
-    }
-
-    @Override
-    public void onDestroyActionMode(ActionMode mode) {
-        if (CompatibleHelper.hasMarshmallow()) {
-            getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.color_primary_dark, getActivity().getTheme()));
-        } else if (CompatibleHelper.hasLollipop()) {
-            //noinspection deprecation
-            getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.color_primary_dark));
-        }
     }
 
     private String extractTitleFrom(IFlexible flexibleItem) {
@@ -318,5 +248,30 @@ public class TimelineFragment extends Fragment implements SwipeRefreshLayout.OnR
             headerItemList.add(newSimpleItem(mAllSongHistoryList.get(i), header));
         }
         return headerItemList;
+    }
+
+    @Override
+    public void onConnected() {
+
+    }
+
+    @Override
+    public List<AbstractFlexibleItem> getCurrentMediaItems() {
+        return null;
+    }
+
+    @Override
+    public int getMenuResourceId() {
+        return 0;
+    }
+
+    @Override
+    public String getMediaId() {
+        return null;
+    }
+
+    @Override
+    public void notifyFragmentChange() {
+
     }
 }

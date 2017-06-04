@@ -114,4 +114,5 @@
     <string name="scrollable_expandable_header_subtitle"><![CDATA[<i>When expanded, subItems will be added as headers too.</i>]]></string>
     <string name="scrollable_footer_title">Scrollable Footer Item</string>
     <string name="scrollable_footer_subtitle"><![CDATA[<i>Scrollable Footers are always displayed at the bottom of all main items.</i>]]></string>
+    <string name="action_search">Search…</string>
 </resources>

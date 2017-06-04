@@ -103,7 +103,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
 
     @Override
     public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
-        LogHelper.d(TAG, "onPlaybackstate changed", state);
+        LogHelper.i(TAG, "onPlaybackstate changed", state);
         updatePlaybackState(state);
     }
 

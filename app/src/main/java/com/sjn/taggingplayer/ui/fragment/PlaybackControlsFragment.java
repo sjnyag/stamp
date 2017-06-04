@@ -175,6 +175,9 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
         public void onClick(View v) {
             MediaControllerCompat controller = getActivity()
                     .getSupportMediaController();
+            if(controller == null){
+                return;
+            }
             PlaybackStateCompat stateObj = controller.getPlaybackState();
             final int state = stateObj == null ?
                     PlaybackStateCompat.STATE_NONE : stateObj.getState();

@@ -15,11 +15,11 @@
  */
 package com.sjn.taggingplayer.ui.activity;
 
-import android.app.Activity;
 import android.app.UiModeManager;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.sjn.taggingplayer.ui.tv.TvPlaybackActivity;
 import com.sjn.taggingplayer.utils.LogHelper;
@@ -30,7 +30,7 @@ import com.sjn.taggingplayer.utils.LogHelper;
  * <p>
  * This activity determines which activity to launch based on the current UI mode.
  */
-public class NowPlayingActivity extends Activity {
+public class NowPlayingActivity extends AppCompatActivity {
 
     private static final String TAG = LogHelper.makeLogTag(NowPlayingActivity.class);
 

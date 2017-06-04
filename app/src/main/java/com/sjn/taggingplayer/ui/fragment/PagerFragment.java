@@ -7,26 +7,32 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.sjn.taggingplayer.R;
-import com.sjn.taggingplayer.ui.activity.DrawerActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.sjn.taggingplayer.utils.ViewHelper.setFragmentTitle;
 
-abstract class PagerFragment extends Fragment {
+public abstract class PagerFragment extends Fragment {
     static final String PAGER_KIND_KEY = "PAGER_KIND";
 
     private AppBarLayout mAppBarLayout;
+    protected ViewPagerAdapter mAdapter;
     protected ViewPager mViewPager;
 
     abstract protected void setupViewPager(ViewPager viewPager);
+
+    public Fragment getCurrent() {
+        if (mAdapter == null) {
+            return null;
+        }
+        return mAdapter.getItem(mViewPager.getCurrentItem());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

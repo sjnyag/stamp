@@ -24,7 +24,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -77,7 +76,7 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
 
     @Override
     public void onBackStackChanged() {
-        updateDrawerToggle();
+        updateDrawerToggleState();
     }
 
     @Override
@@ -218,7 +217,7 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
         return 0;
     }
 
-    protected void updateDrawerToggle() {
+    private void updateDrawerToggleState() {
         if (mDrawerToggle == null) {
             return;
         }
@@ -234,7 +233,7 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
         }
     }
 
-    protected String getSelectingDrawerName() {
+    private String getSelectingDrawerName() {
         if (mDrawer != null && mDrawer.getDrawerItem(mDrawer.getCurrentSelection()) instanceof Nameable) {
             return ((Nameable) mDrawer.getDrawerItem(mDrawer.getCurrentSelection())).getName().getText(this);
         }

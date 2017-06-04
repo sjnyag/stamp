@@ -16,50 +16,33 @@
 package com.sjn.taggingplayer.ui.fragment;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.sjn.taggingplayer.R;
-import com.sjn.taggingplayer.controller.SongHistoryController;
-import com.sjn.taggingplayer.db.Song;
 import com.sjn.taggingplayer.db.SongHistory;
-import com.sjn.taggingplayer.ui.MediaBrowserProvider;
 import com.sjn.taggingplayer.ui.adapter.SongHistoryAdapter;
-import com.sjn.taggingplayer.ui.holder.MediaItemViewHolder;
 import com.sjn.taggingplayer.ui.item.DateHeaderItem;
-import com.sjn.taggingplayer.ui.item.SongItem;
 import com.sjn.taggingplayer.ui.item.ProgressItem;
-import com.sjn.taggingplayer.ui.item.SongHistoryItem;
+import com.sjn.taggingplayer.ui.item.SongItem;
 import com.sjn.taggingplayer.ui.observer.MediaControllerObserver;
-import com.sjn.taggingplayer.utils.CompatibleHelper;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.MediaIDHelper;
-import com.sjn.taggingplayer.utils.NetworkHelper;
 import com.sjn.taggingplayer.utils.ViewHelper;
 
 import java.util.ArrayList;
@@ -67,14 +50,11 @@ import java.util.List;
 
 import eu.davidea.fastscroller.FastScroller;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
+import eu.davidea.flexibleadapter.SelectableAdapter;
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager;
-import eu.davidea.flexibleadapter.helpers.ActionModeHelper;
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 import eu.davidea.flexibleadapter.items.IFlexible;
 import eu.davidea.flexibleadapter.items.IHeader;
-import io.realm.Realm;
-
-import static eu.davidea.flexibleadapter.SelectableAdapter.MODE_MULTI;
 
 /**
  * A Fragment that lists all the various browsable queues available
@@ -84,52 +64,32 @@ import static eu.davidea.flexibleadapter.SelectableAdapter.MODE_MULTI;
  * Once connected, the fragment subscribes to get all the children.
  * All {@link MediaBrowserCompat.MediaItem}'s that can be browsed are shown in a ListView.
  */
-public class MediaBrowserFragment extends Fragment implements MediaControllerObserver.Listener, SwipeRefreshLayout.OnRefreshListener,
-        ActionMode.Callback, FastScroller.OnScrollStateChangeListener, FlexibleAdapter.OnItemLongClickListener,
-        FlexibleAdapter.EndlessScrollListener,FlexibleAdapter.OnItemClickListener {
+public class MediaBrowserFragment extends MediaControllerFragment implements MediaControllerObserver.Listener, SwipeRefreshLayout.OnRefreshListener,
+        FastScroller.OnScrollStateChangeListener, FlexibleAdapter.OnItemLongClickListener,
+        FlexibleAdapter.EndlessScrollListener, FlexibleAdapter.OnItemClickListener {
 
     private static final String TAG = LogHelper.makeLogTag(MediaBrowserFragment.class);
 
     private static final String ARG_MEDIA_ID = "media_id";
-/*
-    private BrowseAdapter mBrowserAdapter;
-    private View mErrorView;
-    private TextView mErrorMessage;
-    */
+    /*
+        private BrowseAdapter mBrowserAdapter;
+        private View mErrorView;
+        private TextView mErrorMessage;
+        */
     private String mMediaId;
     private MediaFragmentListener mMediaFragmentListener;
 
-
-    private ActionModeHelper mActionModeHelper;
     private RecyclerView mRecyclerView;
-    private SongHistoryAdapter mAdapter;
-    private SongHistoryController mSongHistoryController;
+    protected SongHistoryAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    protected List<SongHistory> mAllSongHistoryList = new ArrayList<>();
-    private Realm mRealm;
-    private FloatingActionButton mFab;
+    protected List<AbstractFlexibleItem> mSongItemList = new ArrayList<>();
     private ProgressItem mProgressItem = new ProgressItem();
 
-    private final BroadcastReceiver mConnectivityChangeReceiver = new BroadcastReceiver() {
-        private boolean oldOnline = false;
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            LogHelper.d(TAG, "BroadcastReceiver#onReceive ");
-            // We don't care about network changes while this fragment is not associated
-            // with a media ID (for example, while it is being initialized)
-            if (mMediaId != null) {
-                boolean isOnline = NetworkHelper.isOnline(context);
-                if (isOnline != oldOnline) {
-                    oldOnline = isOnline;
-                    checkForUserVisibleErrors(false);
-                    if (isOnline) {
-                        mAdapter.notifyDataSetChanged();
-                    }
-                }
-            }
-        }
-    };
+    public List<AbstractFlexibleItem> getCurrentMediaItems() {
+        return mSongItemList;
+    }
+
 
     @Override
     public void onMetadataChanged(MediaMetadataCompat metadata) {
@@ -150,7 +110,7 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
 
     @Override
     public void onItemLongClick(int position) {
-        mActionModeHelper.onLongClick((AppCompatActivity) getActivity(), position);
+        mListener.startActionModeByLongClick(position);
     }
 
 
@@ -165,19 +125,6 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
 
     public static DateHeaderItem newHeader(SongHistory songHistory) {
         return new DateHeaderItem(songHistory.getRecordedAt());
-    }
-
-    private void initializeActionModeHelper() {
-        mActionModeHelper = new ActionModeHelper(mAdapter, R.menu.menu_context, this) {
-            @Override
-            public void updateContextTitle(int count) {
-                if (mActionMode != null) {//You can use the internal ActionMode instance
-                    mActionMode.setTitle(count == 1 ?
-                            getString(R.string.action_selected_one, Integer.toString(count)) :
-                            getString(R.string.action_selected_many, Integer.toString(count)));
-                }
-            }
-        }.withDefaultMode(MODE_MULTI);
     }
 
     @Override
@@ -213,74 +160,17 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
 
     @Override
     public void onRefresh() {
-        if (mSwipeRefreshLayout == null || getActivity() == null || mSongHistoryController == null || mActionModeHelper == null) {
+        if (mSwipeRefreshLayout == null || getActivity() == null) {
             return;
         }
-        mActionModeHelper.destroyActionModeIfCan();
-        mAllSongHistoryList = mSongHistoryController.getManagedTimeline(mRealm);
+        mListener.destroyActionModeIfCan();
         mSwipeRefreshLayout.setRefreshing(false);
         //mAdapter.updateDataSet(getItemList(0, 30));
-    }
-
-    @Override
-    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        if (CompatibleHelper.hasMarshmallow()) {
-            getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.color_accent_dark, getActivity().getTheme()));
-        } else if (CompatibleHelper.hasLollipop()) {
-            //noinspection deprecation
-            getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.color_accent_dark));
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-        return false;
-    }
-
-    @Override
-    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_select_all:
-                mAdapter.selectAll();
-                mActionModeHelper.updateContextTitle(mAdapter.getSelectedItemCount());
-                // We consume the event
-                return true;
-
-            case R.id.action_delete:
-                // Build message before delete, for the SnackBar
-                StringBuilder message = new StringBuilder();
-                message.append(getString(R.string.action_deleted)).append(" ");
-                for (Integer pos : mAdapter.getSelectedPositions()) {
-                    message.append(extractTitleFrom(mAdapter.getItem(pos)));
-                    if (mAdapter.getSelectedItemCount() > 1)
-                        message.append(", ");
-                }
-
-                // Experimenting NEW feature
-                mAdapter.setRestoreSelectionOnUndo(true);
-                // We consume the event
-                return true;
-            default:
-                // If an item is not implemented we don't consume the event, so we finish the ActionMode
-                return false;
-        }
-    }
-
-    @Override
-    public void onDestroyActionMode(ActionMode mode) {
-        if (CompatibleHelper.hasMarshmallow()) {
-            getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.color_primary_dark, getActivity().getTheme()));
-        } else if (CompatibleHelper.hasLollipop()) {
-            //noinspection deprecation
-            getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.color_primary_dark));
-        }
     }
 
     private String extractTitleFrom(IFlexible flexibleItem) {
         return "";
     }
-
 
     @Override
     public void noMoreLoad(int newItemsSize) {
@@ -304,9 +194,12 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
                         LogHelper.d(TAG, "fragment onChildrenLoaded, parentId=" + parentId +
                                 "  count=" + children.size());
                         checkForUserVisibleErrors(children.isEmpty());
+                        mSongItemList.clear();
                         mAdapter.clear();
                         for (MediaBrowserCompat.MediaItem item : children) {
-                            mAdapter.addItem(newSimpleItem(item, null));
+                            AbstractFlexibleItem songItem = newSimpleItem(item, null);
+                            mSongItemList.add(songItem);
+                            mAdapter.addItem(songItem);
                         }
                         mAdapter.notifyDataSetChanged();
                     } catch (Throwable t) {
@@ -339,7 +232,6 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
         mErrorView = rootView.findViewById(R.id.playback_error);
         mErrorMessage = (TextView) mErrorView.findViewById(R.id.error_message);
 */
-
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
@@ -375,7 +267,6 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
                 //.setEndlessScrollThreshold(1); //Default=1
                 .setEndlessScrollListener(this, mProgressItem);
 
-        initializeActionModeHelper();
         /*
         mBrowserAdapter = new BrowseAdapter(getActivity());
 
@@ -392,6 +283,9 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
         });
         */
 
+        if (mIsVisibleToUser) {
+            notifyFragmentChange();
+        }
         return rootView;
     }
 
@@ -408,10 +302,6 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
         if (mediaBrowser.isConnected()) {
             onConnected();
         }
-
-        // Registers BroadcastReceiver to track network connection changes.
-        this.getActivity().registerReceiver(mConnectivityChangeReceiver,
-                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
     @Override
@@ -422,7 +312,11 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
             mediaBrowser.unsubscribe(mMediaId);
         }
         MediaControllerObserver.getInstance().removeListener(this);
-        this.getActivity().unregisterReceiver(mConnectivityChangeReceiver);
+    }
+
+    @Override
+    public void notifyFragmentChange() {
+        mListener.onFragmentChange(mSwipeRefreshLayout, mRecyclerView, SelectableAdapter.MODE_IDLE);
     }
 
     @Override
@@ -443,6 +337,14 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
         Bundle args = new Bundle(1);
         args.putString(MediaBrowserFragment.ARG_MEDIA_ID, mediaId);
         setArguments(args);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.v(TAG, "onCreateOptionsMenu called!");
+        menu.clear();
+        inflater.inflate(getMenuResourceId(), menu);
+        mListener.initSearchView(menu);
     }
 
     // Called when the MediaBrowser is connected. This method is either called by the
@@ -520,6 +422,10 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
                 mMediaFragmentListener.setToolbarTitle(
                         item.getDescription().getTitle());
             }
+            @Override
+            public void onError(@NonNull String itemId) {
+                mMediaFragmentListener.setToolbarTitle(MediaIDHelper.extractBrowseCategoryValueFromMediaID(mMediaId));
+            }
         });
     }
 
@@ -527,15 +433,13 @@ public class MediaBrowserFragment extends Fragment implements MediaControllerObs
     public boolean onItemClick(int position) {
         LogHelper.d(TAG, "onItemClick ");
         checkForUserVisibleErrors(false);
-        SongItem item = (SongItem)mAdapter.getItem(position);
+        SongItem item = (SongItem) mAdapter.getItem(position);
         mMediaFragmentListener.onMediaItemSelected(item.getMediaItem());
         return false;
     }
 
-    public interface MediaFragmentListener extends MediaBrowserProvider {
-        void onMediaItemSelected(MediaBrowserCompat.MediaItem item);
-
-        void setToolbarTitle(CharSequence title);
+    public int getMenuResourceId() {
+        return R.menu.main;
     }
 
 }

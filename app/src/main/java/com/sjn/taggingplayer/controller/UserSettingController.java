@@ -81,4 +81,9 @@ public class UserSettingController {
     public boolean stopOnAudioLostFocus() {
         return false;
     }
+
+    //TODO: implement
+    public boolean stopOnLongTimeUnuse() {
+        return false;
+    }
 }

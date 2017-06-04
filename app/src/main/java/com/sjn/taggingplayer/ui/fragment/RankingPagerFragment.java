@@ -24,7 +24,6 @@ import java.util.Locale;
 public class RankingPagerFragment extends PagerFragment {
 
     private TermSelectLayout.Term mTerm;
-    private ViewPagerAdapter mAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

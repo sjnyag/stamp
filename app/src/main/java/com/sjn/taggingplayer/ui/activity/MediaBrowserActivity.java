@@ -34,7 +34,6 @@ import com.sjn.taggingplayer.ui.MediaBrowserProvider;
 import com.sjn.taggingplayer.ui.fragment.PlaybackControlsFragment;
 import com.sjn.taggingplayer.ui.observer.MediaControllerObserver;
 import com.sjn.taggingplayer.utils.LogHelper;
-import com.sjn.taggingplayer.utils.NetworkHelper;
 import com.sjn.taggingplayer.utils.ResourceHelper;
 
 /**
@@ -51,7 +50,7 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        LogHelper.d(TAG, "Activity onCreate");
+        LogHelper.i(TAG, "Activity onCreate");
 
         if (Build.VERSION.SDK_INT >= 21) {
             // Since our app icon has the same color as colorPrimary, our entry in the Recent Apps
@@ -76,7 +75,7 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
     @Override
     protected void onStart() {
         super.onStart();
-        LogHelper.d(TAG, "Activity onStart");
+        LogHelper.i(TAG, "Activity onStart");
 
         mControlsFragment = (PlaybackControlsFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_playback_controls);
@@ -90,15 +89,16 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
     @Override
     protected void onStop() {
         super.onStop();
-        LogHelper.d(TAG, "Activity onStop");
-        if (getSupportMediaController() != null) {
-            getSupportMediaController().unregisterCallback(MediaControllerObserver.getInstance());
+        LogHelper.i(TAG, "Activity onStop");
+        if (MediaControllerCompat.getMediaController(this) != null) {
+            MediaControllerCompat.getMediaController(this).unregisterCallback(MediaControllerObserver.getInstance());
         }
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
+        LogHelper.i(TAG, "Activity onDestroy");
         mMediaBrowser.disconnect();
     }
 
@@ -112,19 +112,21 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
     }
 
     protected void showPlaybackControls() {
-        LogHelper.d(TAG, "showPlaybackControls");
-        if (NetworkHelper.isOnline(this)) {
-            getSupportFragmentManager().beginTransaction()
-                    .show(mControlsFragment)
-                    .commitAllowingStateLoss();
-        }
+        LogHelper.i(TAG, "showPlaybackControls");
+        //if (NetworkHelper.isOnline(this)) {
+        getSupportFragmentManager().beginTransaction()
+                .show(mControlsFragment)
+                .commitAllowingStateLoss();
+        //}
     }
 
     protected void hidePlaybackControls() {
-        LogHelper.d(TAG, "hidePlaybackControls");
+        LogHelper.i(TAG, "hidePlaybackControls");
+        /*
         getSupportFragmentManager().beginTransaction()
                 .hide(mControlsFragment)
                 .commitAllowingStateLoss();
+                */
     }
 
     /**
@@ -134,7 +136,8 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
      * @return true if the MediaSession's state requires playback controls to be visible.
      */
     protected boolean shouldShowControls() {
-        MediaControllerCompat mediaController = getSupportMediaController();
+        LogHelper.i(TAG, "shouldShowControls");
+        MediaControllerCompat mediaController = MediaControllerCompat.getMediaController(this);
         if (mediaController == null ||
                 mediaController.getMetadata() == null ||
                 mediaController.getPlaybackState() == null) {
@@ -151,8 +154,9 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
     }
 
     private void connectToSession(MediaSessionCompat.Token token) throws RemoteException {
+        LogHelper.i(TAG, "connectToSession");
         MediaControllerCompat mediaController = new MediaControllerCompat(this, token);
-        setSupportMediaController(mediaController);
+        MediaControllerCompat.setMediaController(this, mediaController);
         mediaController.registerCallback(MediaControllerObserver.getInstance());
         MediaControllerObserver.getInstance().notifyConnected();
 
@@ -202,7 +206,7 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
             new MediaBrowserCompat.ConnectionCallback() {
                 @Override
                 public void onConnected() {
-                    LogHelper.d(TAG, "onConnected");
+                    LogHelper.i(TAG, "onConnected");
                     try {
                         connectToSession(mMediaBrowser.getSessionToken());
                     } catch (RemoteException e) {

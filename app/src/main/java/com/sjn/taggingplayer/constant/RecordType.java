@@ -6,7 +6,7 @@ import android.support.v4.content.ContextCompat;
 
 import com.sjn.taggingplayer.R;
 
-
+@SuppressWarnings({"unused"})
 public enum RecordType {
     PLAY("play", R.drawable.record_type_play),
     SKIP("skip", R.drawable.record_type_skip),

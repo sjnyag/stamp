@@ -8,16 +8,16 @@ import com.sjn.taggingplayer.TaggingPlayerApplication;
 
 abstract public class BaseActivity extends AppCompatActivity {
 
-    protected TaggingPlayerApplication mTaddolApplication;
+    protected TaggingPlayerApplication mApplication;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTaddolApplication = (TaggingPlayerApplication) this.getApplicationContext();
+        mApplication = (TaggingPlayerApplication) this.getApplicationContext();
     }
 
     protected void onResume() {
         super.onResume();
-        mTaddolApplication.setCurrentActivity(this);
+        mApplication.setCurrentActivity(this);
     }
 
     protected void onPause() {
@@ -31,9 +31,9 @@ abstract public class BaseActivity extends AppCompatActivity {
     }
 
     private void clearReferences() {
-        Activity currActivity = mTaddolApplication.getCurrentActivity();
-        if (this.equals(currActivity)) {
-            mTaddolApplication.setCurrentActivity(null);
+        Activity currentActivity = mApplication.getCurrentActivity();
+        if (this.equals(currentActivity)) {
+            mApplication.setCurrentActivity(null);
         }
     }
 }

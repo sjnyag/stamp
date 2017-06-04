@@ -3,8 +3,6 @@ package com.sjn.taggingplayer.ui.item;
 import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v7.widget.GridLayoutManager;
@@ -18,24 +16,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sjn.taggingplayer.R;
-import com.sjn.taggingplayer.utils.TimeHelper;
 import com.sjn.taggingplayer.utils.ViewHelper;
 import com.squareup.picasso.Target;
 
-import org.joda.time.DateTime;
-import org.joda.time.Minutes;
-import org.joda.time.Seconds;
-
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.items.IFilterable;
 import eu.davidea.flexibleadapter.items.ISectionable;
-import eu.davidea.flexibleadapter.utils.DrawableUtils;
 import eu.davidea.flexibleadapter.utils.Utils;
 import eu.davidea.flipview.FlipView;
 import eu.davidea.viewholders.FlexibleViewHolder;
@@ -137,21 +127,8 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder>
 
     @Override
     public boolean filter(String constraint) {
-        return getTitle() != null && getTitle().toLowerCase().trim().contains(constraint) ||
-                getSubtitle() != null && getSubtitle().toLowerCase().trim().contains(constraint);
-    }
-
-    private String getDateText(Date date) {
-        DateTime dateTime = TimeHelper.toDateTime(date).minusSeconds(20);
-        DateTime now = TimeHelper.getJapanNow();
-        Minutes minutes = Minutes.minutesBetween(dateTime, now);
-        if (minutes.isLessThan(Minutes.minutes(1))) {
-            return String.format(Locale.JAPANESE, "%d 秒前", Seconds.secondsBetween(dateTime, now).getSeconds());
-        } else if (minutes.isLessThan(Minutes.minutes(60))) {
-            return String.format(Locale.JAPANESE, "%d 分前", Minutes.minutesBetween(dateTime, now).getMinutes());
-        } else {
-            return dateTime.toString("MM/dd HH:mm", Locale.JAPAN);
-        }
+        return mMediaItem != null && mMediaItem.getDescription().getTitle() != null && mMediaItem.getDescription().getTitle().toString().toLowerCase().trim().contains(constraint) ||
+                mMediaItem != null && mMediaItem.getDescription().getSubtitle() != null && mMediaItem.getDescription().getSubtitle().toString().toLowerCase().trim().contains(constraint);
     }
 
     static final class SimpleViewHolder extends FlexibleViewHolder {

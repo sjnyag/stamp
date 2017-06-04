@@ -56,4 +56,5 @@
     <dimen name="icon_width">40dp</dimen>
     <dimen name="icon_height">40dp</dimen>
     <dimen name="margin_small">8dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

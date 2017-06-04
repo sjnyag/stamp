@@ -8,8 +8,6 @@ import com.sjn.taggingplayer.utils.MediaIDHelper;
 
 public class AllSongPagerFragment extends PagerFragment {
 
-    private ViewPagerAdapter mAdapter;
-
     @Override
     protected void setupViewPager(ViewPager viewPager) {
         mAdapter = new ViewPagerAdapter(getChildFragmentManager());

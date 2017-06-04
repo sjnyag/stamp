@@ -8,21 +8,14 @@ import android.os.Bundle;
 
 import com.sjn.taggingplayer.utils.LogHelper;
 
+@SuppressWarnings({"unused"})
 public class LocationController implements LocationListener {
 
     private static final String TAG = LogHelper.makeLogTag(LocationController.class);
-    private static LocationController sInstance;
     private Context mContext;
     private LocationManager mLocationManager;
 
-    public static LocationController getInstance(Context context) {
-        if (sInstance == null) {
-            sInstance = new LocationController(context);
-        }
-        return sInstance;
-    }
-
-    private LocationController(Context context) {
+    public LocationController(Context context) {
         mContext = context;
         mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
     }

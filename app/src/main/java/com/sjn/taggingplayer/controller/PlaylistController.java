@@ -9,6 +9,7 @@ import com.sjn.taggingplayer.utils.LocalPlaylistHelper;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
+@SuppressWarnings({"unused"})
 public class PlaylistController {
 
     private Context mContext;
