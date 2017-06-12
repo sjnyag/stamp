@@ -28,6 +28,7 @@ import com.sjn.taggingplayer.VoiceSearchParams;
 import com.sjn.taggingplayer.media.provider.MusicProvider;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.sjn.taggingplayer.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_SEARCH;
@@ -44,9 +45,15 @@ public class QueueHelper {
     public static List<MediaSessionCompat.QueueItem> getPlayingQueue(String mediaId,
                                                                      MusicProvider musicProvider) {
 
+        LogHelper.d(TAG, "getPlayingQueue mediaId: ", mediaId);
         // extract the browsing hierarchy from the media ID:
         String[] hierarchy = MediaIDHelper.getHierarchy(mediaId);
+        LogHelper.d(TAG, "getPlayingQueue hierarchy.length: ", hierarchy.length);
+        LogHelper.d(TAG, "getPlayingQueue hierarchy[0]: ", hierarchy[0]);
         if (hierarchy.length == 1) {
+            if (MediaIDHelper.isDirect(hierarchy[0])) {
+                return convertToQueue(new ArrayList<>(Collections.singletonList(musicProvider.getMusicByMusicId(MediaIDHelper.extractMusicIDFromMediaID(mediaId)))), hierarchy[0]);
+            }
             return convertToQueue(musicProvider.getMusicsHierarchy(hierarchy[0], null), hierarchy[0]);
         }
         return convertToQueue(musicProvider.getMusicsHierarchy(hierarchy[0], hierarchy[1]), hierarchy[0], hierarchy[1]);

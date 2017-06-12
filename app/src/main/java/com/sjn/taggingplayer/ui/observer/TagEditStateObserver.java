@@ -22,6 +22,7 @@ public class TagEditStateObserver {
     private List<Listener> mListenerList = Collections.synchronizedList(new ArrayList<Listener>());
 
     public void notifyAllTagChange(String tag) {
+        LogHelper.i(TAG, "notifyAllTagChange", mListenerList.size());
         if (mListenerList != null) {
             List<Listener> tempList = new ArrayList<>(mListenerList);
             for (Listener listener : tempList) {
@@ -31,6 +32,7 @@ public class TagEditStateObserver {
     }
 
     public void notifySelectedTagListChange(List<String> tagList) {
+        LogHelper.i(TAG, "notifySelectedTagListChange", mListenerList.size());
         mSelectedTagList = tagList;
         if (mListenerList != null) {
             List<Listener> tempList = new ArrayList<>(mListenerList);

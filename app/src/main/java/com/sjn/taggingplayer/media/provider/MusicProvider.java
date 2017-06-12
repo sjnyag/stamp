@@ -26,6 +26,7 @@ import android.support.v4.media.session.MediaSessionCompat;
 
 import com.sjn.taggingplayer.media.provider.single.QueueProvider;
 import com.sjn.taggingplayer.media.source.MusicProviderSource;
+import com.sjn.taggingplayer.ui.observer.MediaSourceObserver;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.MediaIDHelper;
 
@@ -48,7 +49,7 @@ import static com.sjn.taggingplayer.utils.MediaIDHelper.MEDIA_ID_ROOT;
  * Simple data provider for music tracks. The actual metadata source is delegated to a
  * MusicProviderSource defined by a constructor argument of this class.
  */
-public class MusicProvider implements MusicProviderSource.OnListChangeListener {
+public class MusicProvider implements com.sjn.taggingplayer.media.source.MediaSourceObserver.Listener {
 
     private static final String TAG = LogHelper.makeLogTag(MusicProvider.class);
 
@@ -64,7 +65,11 @@ public class MusicProvider implements MusicProviderSource.OnListChangeListener {
 
     @Override
     public void onSourceChange(final Iterator<MediaMetadataCompat> trackIterator) {
+        LogHelper.i(TAG, "onSourceChange");
         mCurrentState = ProviderState.NON_INITIALIZED;
+        for (ListProvider listProvider : mListProviderMap.values()) {
+            listProvider.reset();
+        }
         retrieveMediaAsync(null, trackIterator);
     }
 
@@ -74,7 +79,7 @@ public class MusicProvider implements MusicProviderSource.OnListChangeListener {
 
     public MusicProvider(Context context, MusicProviderSource source) {
         mSource = source;
-        mSource.setOnListChangeListener(this);
+        com.sjn.taggingplayer.media.source.MediaSourceObserver.getInstance().addListener(this);
         mMusicListById = new ConcurrentHashMap<>();
         mTitleAndArtistMap = new ConcurrentHashMap<>();
         mFavoriteTracks = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
@@ -91,7 +96,7 @@ public class MusicProvider implements MusicProviderSource.OnListChangeListener {
     }
 
     public List<MediaMetadataCompat> getMusicsHierarchy(String categoryType, String categoryValue) {
-        LogHelper.d(TAG, "getMusicsHierarchy");
+        LogHelper.d(TAG, "getMusicsHierarchy categoryType: ", categoryType, ", categoryValue: ", categoryValue);
         ListProvider listProvider = mListProviderMap.get(ProviderType.of(categoryType));
         if (listProvider == null) {
             return null;
@@ -182,7 +187,11 @@ public class MusicProvider implements MusicProviderSource.OnListChangeListener {
         if (mediaId == null) {
             return null;
         }
-        return getMusicByMusicId(MediaIDHelper.extractMusicIDFromMediaID(mediaId));
+        String musicId = MediaIDHelper.extractMusicIDFromMediaID(mediaId);
+        if (musicId == null) {
+            return null;
+        }
+        return getMusicByMusicId(musicId);
     }
 
 
@@ -246,6 +255,7 @@ public class MusicProvider implements MusicProviderSource.OnListChangeListener {
                 if (callback != null) {
                     callback.onMusicCatalogReady(current == ProviderState.INITIALIZED);
                 }
+                MediaSourceObserver.getInstance().notifyMediaListUpdated();
             }
 
             private synchronized void retrieveMedia() {

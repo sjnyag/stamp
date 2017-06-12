@@ -17,6 +17,7 @@ package com.sjn.taggingplayer.ui.activity;
 
 import android.app.SearchManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -28,11 +29,12 @@ import com.github.pedrovgs.DraggablePanel;
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.ui.DraggablePanelManager;
 import com.sjn.taggingplayer.ui.fragment.FullScreenPlayerFragment;
-import com.sjn.taggingplayer.ui.fragment.MediaBrowserFragment;
-import com.sjn.taggingplayer.ui.fragment.MediaControllerFragment;
-import com.sjn.taggingplayer.ui.fragment.PagerFragment;
-import com.sjn.taggingplayer.ui.fragment.TimelineFragment;
+import com.sjn.taggingplayer.ui.fragment.media_list.MediaBrowserListFragment;
+import com.sjn.taggingplayer.ui.fragment.media_list.PagerFragment;
+import com.sjn.taggingplayer.ui.fragment.media_list.SongListFragment;
+import com.sjn.taggingplayer.ui.fragment.media_list.TimelineFragment;
 import com.sjn.taggingplayer.utils.LogHelper;
+import com.sjn.taggingplayer.utils.MediaIDHelper;
 import com.sjn.taggingplayer.utils.MediaRetrieveHelper;
 import com.sjn.taggingplayer.utils.PermissionHelper;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -47,10 +49,9 @@ import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
  * when it is created and connect/disconnect on start/stop. Thus, a MediaBrowser will be always
  * connected while this activity is running.
  */
-public class MusicPlayerActivity extends SearchableMediaBrowserActivity
-        implements MediaBrowserFragment.MediaFragmentListener {
+public class MusicPlayerListActivity extends MediaBrowserListActivity {
 
-    private static final String TAG = LogHelper.makeLogTag(MusicPlayerActivity.class);
+    private static final String TAG = LogHelper.makeLogTag(MusicPlayerListActivity.class);
     private static final String SAVED_MEDIA_ID = "com.sjn.taggingplayer.MEDIA_ID";
 
     public static final String EXTRA_START_FULLSCREEN =
@@ -68,6 +69,7 @@ public class MusicPlayerActivity extends SearchableMediaBrowserActivity
     private Bundle mSavedInstanceState;
     private DraggablePanelManager mDraggablePanelManager;
     private Intent mNewIntent = null;
+    private Uri mReservedUri = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -94,6 +96,7 @@ public class MusicPlayerActivity extends SearchableMediaBrowserActivity
     @Override
     public void onResume() {
         super.onResume();
+        LogHelper.d(TAG, "Activity onResume");
         initializeFromParams(mSavedInstanceState, mNewIntent == null ? getIntent() : mNewIntent);
         mNewIntent = null;
     }
@@ -132,6 +135,15 @@ public class MusicPlayerActivity extends SearchableMediaBrowserActivity
     }
 
     @Override
+    public void onMediaItemSelected(String musicId) {
+        LogHelper.d(TAG, "onMediaItemSelected, musicId=" + musicId);
+        MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
+        if (controller != null) {
+            controller.getTransportControls().playFromMediaId(MediaIDHelper.createDirectMediaId(musicId), null);
+        }
+    }
+
+    @Override
     public void onMediaItemSelected(MediaBrowserCompat.MediaItem item) {
         LogHelper.d(TAG, "onMediaItemSelected, mediaId=" + item.getMediaId());
         if (item.isPlayable()) {
@@ -167,6 +179,7 @@ public class MusicPlayerActivity extends SearchableMediaBrowserActivity
     }
 
     protected void initializeFromParams(Bundle savedInstanceState, Intent intent) {
+        LogHelper.d(TAG, "initializeFromParams ", intent);
         String mediaId = null;
         // check if we were started from a "Play XYZ" voice search. If so, we save the extras
         // (which contain the query details) in a parameter, so we can reuse it later, when the
@@ -176,6 +189,15 @@ public class MusicPlayerActivity extends SearchableMediaBrowserActivity
             mVoiceSearchParams = intent.getExtras();
             LogHelper.d(TAG, "Starting from voice search query=",
                     mVoiceSearchParams.getString(SearchManager.QUERY));
+        } else if (intent.getData() != null) {
+            LogHelper.d(TAG, "Play from Intent: " + intent.getData());
+            MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
+            if (controller != null) {
+                mReservedUri = null;
+                controller.getTransportControls().playFromUri(intent.getData(), null);
+            } else {
+                mReservedUri = intent.getData();
+            }
         } else {
             if (savedInstanceState != null) {
                 // If there is a saved media ID, use it
@@ -191,31 +213,31 @@ public class MusicPlayerActivity extends SearchableMediaBrowserActivity
         if (mediaId == null) {
             return;
         }
-        MediaControllerFragment fragment = getMediaControllerFragment();
+        MediaBrowserListFragment fragment = getMediaBrowserListFragment();
 
         if (fragment == null || !TextUtils.equals(fragment.getMediaId(), mediaId)) {
-            MediaBrowserFragment newFragment = new MediaBrowserFragment();
+            SongListFragment newFragment = new SongListFragment();
             newFragment.setMediaId(mediaId);
             navigateToBrowser(newFragment, true);
         }
     }
 
     private String getMediaId() {
-        MediaControllerFragment fragment = getMediaControllerFragment();
+        MediaBrowserListFragment fragment = getMediaBrowserListFragment();
         if (fragment == null) {
             return null;
         }
         return fragment.getMediaId();
     }
 
-    private MediaControllerFragment getMediaControllerFragment() {
+    private MediaBrowserListFragment getMediaBrowserListFragment() {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-        if (fragment instanceof MediaControllerFragment) {
-            return (MediaControllerFragment) fragment;
+        if (fragment instanceof MediaBrowserListFragment) {
+            return (MediaBrowserListFragment) fragment;
         } else if (fragment instanceof PagerFragment) {
             Fragment page = ((PagerFragment) fragment).getCurrent();
-            if (page instanceof MediaControllerFragment) {
-                return (MediaControllerFragment) page;
+            if (page instanceof MediaBrowserListFragment) {
+                return (MediaBrowserListFragment) page;
             }
         }
         return null;
@@ -235,24 +257,29 @@ public class MusicPlayerActivity extends SearchableMediaBrowserActivity
             }
             mVoiceSearchParams = null;
         }
-        MediaControllerFragment mediaControllerFragment = getMediaControllerFragment();
+        MediaBrowserListFragment mediaControllerFragment = getMediaBrowserListFragment();
         if (mediaControllerFragment != null) {
             mediaControllerFragment.onConnected();
+        }
+        MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
+        if (mReservedUri != null && controller != null) {
+            controller.getTransportControls().playFromUri(mReservedUri, null);
+            mReservedUri = null;
         }
     }
 
     @Override
     public List<AbstractFlexibleItem> getCurrentMediaItems() {
-        MediaControllerFragment mediaControllerFragment = getMediaControllerFragment();
+        MediaBrowserListFragment mediaControllerFragment = getMediaBrowserListFragment();
         if (mediaControllerFragment != null) {
-            return mediaControllerFragment.getCurrentMediaItems();
+            return mediaControllerFragment.getCurrentItems();
         }
         return null;
     }
 
     @Override
     public int getMenuResourceId() {
-        MediaControllerFragment mediaControllerFragment = getMediaControllerFragment();
+        MediaBrowserListFragment mediaControllerFragment = getMediaBrowserListFragment();
         if (mediaControllerFragment != null) {
             return mediaControllerFragment.getMenuResourceId();
         }

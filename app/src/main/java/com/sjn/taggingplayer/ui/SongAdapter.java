@@ -1,4 +1,4 @@
-package com.sjn.taggingplayer.ui.adapter;
+package com.sjn.taggingplayer.ui;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -18,12 +18,12 @@ import java.util.List;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 
-public class SongHistoryAdapter extends FlexibleAdapter<AbstractFlexibleItem> {
+public class SongAdapter extends FlexibleAdapter<AbstractFlexibleItem> {
 
-    private static final String TAG = SongHistoryAdapter.class.getSimpleName();
+    private static final String TAG = SongAdapter.class.getSimpleName();
 
 
-    public SongHistoryAdapter(List<AbstractFlexibleItem> items, Object listeners) {
+    public SongAdapter(List<AbstractFlexibleItem> items, Object listeners) {
         //stableIds ? true = Items implement hashCode() so they can have stableIds!
         super(items, listeners, true);
 

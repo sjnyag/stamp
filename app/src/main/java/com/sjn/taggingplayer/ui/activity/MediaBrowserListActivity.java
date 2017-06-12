@@ -28,7 +28,7 @@ import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 
 import com.sjn.taggingplayer.R;
-import com.sjn.taggingplayer.ui.fragment.FragmentInteractionListener;
+import com.sjn.taggingplayer.ui.fragment.media_list.ListFragment;
 import com.sjn.taggingplayer.utils.CompatibleHelper;
 import com.sjn.taggingplayer.utils.LogHelper;
 
@@ -42,10 +42,10 @@ import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 /**
  * Base activity for activities that need to show a playback control fragment when media is playing.
  */
-public abstract class SearchableMediaBrowserActivity extends MediaBrowserActivity
-        implements SearchView.OnQueryTextListener, FragmentInteractionListener, ActionMode.Callback {
+public abstract class MediaBrowserListActivity extends MediaBrowserActivity
+        implements SearchView.OnQueryTextListener, ListFragment.FragmentInteractionListener, ActionMode.Callback {
 
-    private static final String TAG = LogHelper.makeLogTag(SearchableMediaBrowserActivity.class);
+    private static final String TAG = LogHelper.makeLogTag(MediaBrowserListActivity.class);
 
     private SearchView mSearchView;
     private FlexibleAdapter<AbstractFlexibleItem> mAdapter;
@@ -132,7 +132,9 @@ public abstract class SearchableMediaBrowserActivity extends MediaBrowserActivit
 
     @Override
     public void destroyActionModeIfCan() {
-        mActionModeHelper.destroyActionModeIfCan();
+        if (mActionModeHelper != null) {
+            mActionModeHelper.destroyActionModeIfCan();
+        }
     }
 
     @Override
@@ -172,7 +174,7 @@ public abstract class SearchableMediaBrowserActivity extends MediaBrowserActivit
     @Override
     public void onBackPressed() {
         // If ActionMode is active, back key closes it
-        if (mActionModeHelper.destroyActionModeIfCan()) return;
+        if (mActionModeHelper != null && mActionModeHelper.destroyActionModeIfCan()) return;
         // If SearchView is visible, back key cancels search and iconify it
         if (mSearchView != null && !mSearchView.isIconified()) {
             mSearchView.setIconified(true);
@@ -202,7 +204,9 @@ public abstract class SearchableMediaBrowserActivity extends MediaBrowserActivit
         switch (item.getItemId()) {
             case R.id.action_select_all:
                 mAdapter.selectAll();
-                mActionModeHelper.updateContextTitle(mAdapter.getSelectedItemCount());
+                if (mActionModeHelper != null) {
+                    mActionModeHelper.updateContextTitle(mAdapter.getSelectedItemCount());
+                }
                 // We consume the event
                 return true;
 

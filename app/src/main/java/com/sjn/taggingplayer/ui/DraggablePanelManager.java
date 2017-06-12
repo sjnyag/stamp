@@ -41,7 +41,7 @@ public class DraggablePanelManager {
     }
 
     public void toggle() {
-        LogHelper.e(TAG, getDraggableState());
+        LogHelper.i(TAG, getDraggableState());
         if (mDraggablePanel.getVisibility() != View.VISIBLE) {
             mDraggablePanel.setVisibility(View.VISIBLE);
             return;

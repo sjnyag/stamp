@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="com.sjn.taggingplayer">
+<manifest package="com.sjn.taggingplayer"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
@@ -60,8 +60,10 @@
 
         <!-- Main activity for music browsing on phone -->
         <activity
-            android:name=".ui.activity.MusicPlayerActivity"
-            android:label="@string/app_name">
+            android:name=".ui.activity.MusicPlayerListActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleInstance">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -80,7 +82,17 @@
         the current environment -->
         <activity
             android:name=".ui.activity.NowPlayingActivity"
-            android:icon="@drawable/ic_launcher"></activity>
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+
+                <data android:mimeType="audio/*"/>
+                <data android:mimeType="application/ogg"/>
+                <data android:mimeType="application/x-ogg"/>
+                <data android:mimeType="application/itunes"/>
+            </intent-filter>
+        </activity>
 
         <!-- Main activity for Android TV user interface -->
         <activity

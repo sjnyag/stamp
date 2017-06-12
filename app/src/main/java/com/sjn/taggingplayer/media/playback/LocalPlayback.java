@@ -29,9 +29,9 @@ import android.text.TextUtils;
 
 import com.sjn.taggingplayer.MusicService;
 import com.sjn.taggingplayer.controller.UserSettingController;
-import com.sjn.taggingplayer.db.UserSetting;
 import com.sjn.taggingplayer.media.provider.MusicProvider;
 import com.sjn.taggingplayer.media.source.MusicProviderSource;
+import com.sjn.taggingplayer.utils.DataSourceHelper;
 import com.sjn.taggingplayer.utils.LogHelper;
 
 import java.io.IOException;
@@ -176,8 +176,7 @@ public class LocalPlayback implements Playback, AudioManager.OnAudioFocusChangeL
             relaxResources(false); // release everything except MediaPlayer
             MediaMetadataCompat track = mMusicProvider.getMusicByMediaId(item.getDescription().getMediaId());
 
-            //noinspection ResourceType
-            String source = track.getString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE);
+            String source = track == null ? item.getDescription().getMediaUri().toString() : track.getString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE);
             /*
             if (source != null) {
                 source = source.replaceAll(" ", "%20"); // Escape spaces for URLs
@@ -190,7 +189,7 @@ public class LocalPlayback implements Playback, AudioManager.OnAudioFocusChangeL
                 mState = PlaybackStateCompat.STATE_BUFFERING;
 
                 mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                mMediaPlayer.setDataSource(source);
+                DataSourceHelper.setMediaPlayerDataSource(mContext, mMediaPlayer, source.toString());
 
                 // Starts preparing the media player in the background. When
                 // it's done, it will call our OnPreparedListener (that is,
@@ -310,9 +309,9 @@ public class LocalPlayback implements Playback, AudioManager.OnAudioFocusChangeL
      */
     private void configMediaPlayerState() {
         LogHelper.d(TAG, "configMediaPlayerState. mAudioFocus=", mAudioFocus);
-        if (mAudioFocus == AUDIO_NO_FOCUS_NO_DUCK && new UserSettingController(mContext).stopOnAudioLostFocus()) {
+        if (mAudioFocus == AUDIO_NO_FOCUS_NO_DUCK) {
             // If we don't have audio focus and can't duck, we have to pause,
-            if (mState == PlaybackStateCompat.STATE_PLAYING) {
+            if (mState == PlaybackStateCompat.STATE_PLAYING && new UserSettingController(mContext).stopOnAudioLostFocus()) {
                 pause();
             }
         } else {  // we have audio focus:

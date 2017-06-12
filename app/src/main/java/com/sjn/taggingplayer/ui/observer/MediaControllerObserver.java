@@ -19,6 +19,7 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
     private List<Listener> mListenerList = Collections.synchronizedList(new ArrayList<Listener>());
 
     public void notifyConnected() {
+        LogHelper.i(TAG, "notifyConnected ", mListenerList.size());
         if (mListenerList != null) {
             List<Listener> tempList = new ArrayList<>(mListenerList);
             for (Listener listener : tempList) {
@@ -36,6 +37,7 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
     }
 
     public void addListener(Listener listener) {
+        LogHelper.i(TAG, "addListener");
         if (mListenerList.contains(listener)) {
             return;
         }
@@ -43,6 +45,7 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
     }
 
     public void removeListener(Listener listener) {
+        LogHelper.i(TAG, "removeListener");
         if (!mListenerList.contains(listener)) {
             return;
         }
@@ -51,6 +54,7 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
 
     @Override
     public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
+        LogHelper.i(TAG, "onPlaybackStateChanged ", mListenerList.size());
         if (mListenerList != null) {
             for (Listener listener : mListenerList) {
                 listener.onPlaybackStateChanged(state);
@@ -60,6 +64,7 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
 
     @Override
     public void onMetadataChanged(MediaMetadataCompat metadata) {
+        LogHelper.i(TAG, "onMetadataChanged ", mListenerList.size());
         if (mListenerList != null) {
             for (Listener listener : mListenerList) {
                 listener.onMetadataChanged(metadata);

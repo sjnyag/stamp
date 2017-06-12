@@ -17,6 +17,7 @@ package com.sjn.taggingplayer.ui.activity;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -180,6 +181,8 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
     public void navigateToBrowser(Fragment fragment, boolean addToBackStack, long selection) {
         navigateToBrowser(fragment, addToBackStack);
         mDrawer.setSelection(selection);
+        AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.app_bar);
+        appBarLayout.setExpanded(true, true);
     }
 
     public void navigateToBrowser(Fragment fragment, boolean addToBackStack) {

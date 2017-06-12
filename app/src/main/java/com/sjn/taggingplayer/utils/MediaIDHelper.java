@@ -47,6 +47,7 @@ public class MediaIDHelper {
     public static final String MEDIA_ID_MUSICS_BY_PLAYLIST_LIST = "__BY_PLAYLIST__";
     public static final String MEDIA_ID_MUSICS_BY_NEW = "__BY_NEW__";
     public static final String MEDIA_ID_MUSICS_BY_TOP_SONG = "__BY_TOP_SONG__";
+    public static final String MEDIA_ID_MUSICS_BY_DIRECT = "__BY_DIRECT__";
 
     private static final char CATEGORY_SEPARATOR = '/';
     private static final char LEAF_SEPARATOR = '|';
@@ -84,6 +85,10 @@ public class MediaIDHelper {
             sb.append(LEAF_SEPARATOR).append(escape(musicID));
         }
         return sb.toString();
+    }
+
+    public static String createDirectMediaId(String musicID) {
+        return createMediaID(musicID, MEDIA_ID_MUSICS_BY_DIRECT);
     }
 
     private static boolean isValidCategory(String category) {
@@ -207,5 +212,9 @@ public class MediaIDHelper {
             return null;
         }
         return ProviderType.of(hierarchy[0]).getCategoryType();
+    }
+
+    public static boolean isDirect(String categoryType) {
+        return MEDIA_ID_MUSICS_BY_DIRECT.equals(categoryType);
     }
 }

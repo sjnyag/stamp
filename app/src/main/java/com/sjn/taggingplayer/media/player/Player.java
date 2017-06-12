@@ -63,7 +63,7 @@ public class Player implements SessionManager.SessionListener {
     public MediaSessionCompat.Token initialize(PlaybackManager.PlaybackServiceCallback callback, MusicProvider musicProvider) {
         Playback playback = mPlayerCallback.requestPlayback(Playback.Type.LOCAL);
         mQueueManager = initializeQueueManager(musicProvider);
-        mPlaybackManager = new PlaybackManager(callback, mContext.getResources(), musicProvider, mQueueManager, playback,
+        mPlaybackManager = new PlaybackManager(mContext, callback, mContext.getResources(), musicProvider, mQueueManager, playback,
                 new SongHistoryController(mContext));
         mPlaybackManager.updatePlaybackState(null);
         mSessionManager = new SessionManager(mContext, getMediaSessionCallback(), this);

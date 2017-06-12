@@ -30,7 +30,6 @@ import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.sjn.taggingplayer.MusicService;
 import com.sjn.taggingplayer.R;
-import com.sjn.taggingplayer.ui.MediaBrowserProvider;
 import com.sjn.taggingplayer.ui.fragment.PlaybackControlsFragment;
 import com.sjn.taggingplayer.ui.observer.MediaControllerObserver;
 import com.sjn.taggingplayer.utils.LogHelper;
@@ -39,7 +38,8 @@ import com.sjn.taggingplayer.utils.ResourceHelper;
 /**
  * Base activity for activities that need to show a playback control fragment when media is playing.
  */
-public abstract class MediaBrowserActivity extends ActionBarCastActivity implements MediaBrowserProvider, MediaControllerObserver.Listener {
+public abstract class MediaBrowserActivity extends ActionBarCastActivity
+        implements MediaBrowsable, MediaControllerObserver.Listener {
 
     private static final String TAG = LogHelper.makeLogTag(MediaBrowserActivity.class);
 
@@ -76,11 +76,15 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
     protected void onStart() {
         super.onStart();
         LogHelper.i(TAG, "Activity onStart");
+        MediaControllerObserver.getInstance().addListener(this);
 
         mControlsFragment = (PlaybackControlsFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_playback_controls);
         if (mControlsFragment == null) {
             throw new IllegalStateException("Missing fragment with id 'controls'. Cannot continue.");
+        }
+        if (MediaControllerCompat.getMediaController(this) != null) {
+            MediaControllerCompat.getMediaController(this).registerCallback(MediaControllerObserver.getInstance());
         }
 
         hidePlaybackControls();
@@ -90,6 +94,7 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
     protected void onStop() {
         super.onStop();
         LogHelper.i(TAG, "Activity onStop");
+        MediaControllerObserver.getInstance().removeListener(this);
         if (MediaControllerCompat.getMediaController(this) != null) {
             MediaControllerCompat.getMediaController(this).unregisterCallback(MediaControllerObserver.getInstance());
         }
@@ -102,7 +107,6 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity impleme
         mMediaBrowser.disconnect();
     }
 
-    @Override
     public MediaBrowserCompat getMediaBrowser() {
         return mMediaBrowser;
     }

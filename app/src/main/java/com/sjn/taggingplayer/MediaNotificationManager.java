@@ -36,7 +36,7 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.NotificationCompat;
 
 import com.sjn.taggingplayer.media.player.CastPlayer;
-import com.sjn.taggingplayer.ui.activity.MusicPlayerActivity;
+import com.sjn.taggingplayer.ui.activity.MusicPlayerListActivity;
 import com.sjn.taggingplayer.utils.BitmapHelper;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.ResourceHelper;
@@ -83,6 +83,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
     private boolean mStarted = false;
     //to avoid GC
     private Target mTarget;
+    private Notification mLatestNotification = null;
 
     public MediaNotificationManager(MusicService service) throws RemoteException {
         mService = service;
@@ -111,6 +112,18 @@ public class MediaNotificationManager extends BroadcastReceiver {
         mNotificationManager.cancelAll();
     }
 
+    public void startForeground() {
+        LogHelper.i(TAG, "startForeground");
+        if (mLatestNotification != null) {
+            mService.startForeground(NOTIFICATION_ID, mLatestNotification);
+        }
+    }
+
+    public void stopForeground(boolean removeNotification) {
+        LogHelper.i(TAG, "stopForeground");
+        mService.stopForeground(removeNotification);
+    }
+
     /**
      * Posts the notification and starts tracking the session to keep it
      * updated. The notification will automatically be removed if the session is
@@ -122,8 +135,8 @@ public class MediaNotificationManager extends BroadcastReceiver {
             mPlaybackState = mController.getPlaybackState();
 
             // The notification must be updated after setting started to true
-            Notification notification = createNotification();
-            if (notification != null) {
+            mLatestNotification = createNotification();
+            if (mLatestNotification != null) {
                 mController.registerCallback(mCb);
                 IntentFilter filter = new IntentFilter();
                 filter.addAction(ACTION_NEXT);
@@ -132,8 +145,8 @@ public class MediaNotificationManager extends BroadcastReceiver {
                 filter.addAction(ACTION_PREV);
                 filter.addAction(ACTION_STOP_CASTING);
                 mService.registerReceiver(this, filter);
-
-                mService.startForeground(NOTIFICATION_ID, notification);
+                LogHelper.i(TAG, "startNotification startForeground()");
+                mService.startForeground(NOTIFICATION_ID, mLatestNotification);
                 mStarted = true;
             }
         }
@@ -144,6 +157,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
      * was destroyed this has no effect.
      */
     public void stopNotification() {
+        LogHelper.i(TAG, "stopNotification");
         if (mStarted) {
             mStarted = false;
             mController.unregisterCallback(mCb);
@@ -153,6 +167,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
             } catch (IllegalArgumentException ex) {
                 // ignore if the receiver is not registered.
             }
+            LogHelper.i(TAG, "stopNotification stopForeground(true)");
             mService.stopForeground(true);
         }
     }
@@ -209,11 +224,11 @@ public class MediaNotificationManager extends BroadcastReceiver {
     }
 
     private PendingIntent createContentIntent(MediaDescriptionCompat description) {
-        Intent openUI = new Intent(mService, MusicPlayerActivity.class);
+        Intent openUI = new Intent(mService, MusicPlayerListActivity.class);
         openUI.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        openUI.putExtra(MusicPlayerActivity.EXTRA_START_FULLSCREEN, true);
+        openUI.putExtra(MusicPlayerListActivity.EXTRA_START_FULLSCREEN, true);
         if (description != null) {
-            openUI.putExtra(MusicPlayerActivity.EXTRA_CURRENT_MEDIA_DESCRIPTION, description);
+            openUI.putExtra(MusicPlayerListActivity.EXTRA_CURRENT_MEDIA_DESCRIPTION, description);
         }
         return PendingIntent.getActivity(mService, REQUEST_CODE, openUI,
                 PendingIntent.FLAG_CANCEL_CURRENT);
@@ -228,9 +243,9 @@ public class MediaNotificationManager extends BroadcastReceiver {
                     state.getState() == PlaybackStateCompat.STATE_NONE) {
                 stopNotification();
             } else {
-                Notification notification = createNotification();
-                if (notification != null) {
-                    mNotificationManager.notify(NOTIFICATION_ID, notification);
+                mLatestNotification = createNotification();
+                if (mLatestNotification != null) {
+                    mNotificationManager.notify(NOTIFICATION_ID, mLatestNotification);
                 }
             }
         }
@@ -239,9 +254,9 @@ public class MediaNotificationManager extends BroadcastReceiver {
         public void onMetadataChanged(MediaMetadataCompat metadata) {
             mMetadata = metadata;
             LogHelper.d(TAG, "Received new metadata ", metadata);
-            Notification notification = createNotification();
-            if (notification != null) {
-                mNotificationManager.notify(NOTIFICATION_ID, notification);
+            mLatestNotification = createNotification();
+            if (mLatestNotification != null) {
+                mNotificationManager.notify(NOTIFICATION_ID, mLatestNotification);
             }
         }
 
@@ -342,6 +357,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
         LogHelper.d(TAG, "updateNotificationPlaybackState. mPlaybackState=" + mPlaybackState);
         if (mPlaybackState == null || !mStarted) {
             LogHelper.d(TAG, "updateNotificationPlaybackState. cancelling notification!");
+            LogHelper.i(TAG, "setNotificationPlaybackState stopForeground(true)");
             mService.stopForeground(true);
             return;
         }

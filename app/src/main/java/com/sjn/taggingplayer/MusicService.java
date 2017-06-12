@@ -18,8 +18,6 @@ package com.sjn.taggingplayer;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.v4.media.MediaBrowserCompat.MediaItem;
@@ -39,7 +37,6 @@ import com.sjn.taggingplayer.utils.WearHelper;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -123,7 +120,9 @@ public class MusicService extends MediaBrowserServiceCompat
     // Delay stopSelf by using a handler.
     private static final int STOP_DELAY = 30000;
 
+    /*
     private final DelayedStopHandler mDelayedStopHandler = new DelayedStopHandler(this);
+    */
 
     private PackageValidator mPackageValidator;
     private MediaNotificationManager mMediaNotificationManager;
@@ -192,10 +191,12 @@ public class MusicService extends MediaBrowserServiceCompat
                 }
             }
         }
+        /*
         // Reset the delay handler to enqueue a message to stop the service if
         // nothing is playing.
         mDelayedStopHandler.removeCallbacksAndMessages(null);
         mDelayedStopHandler.sendEmptyMessageDelayed(0, STOP_DELAY);
+        */
         return START_STICKY;
     }
 
@@ -220,9 +221,11 @@ public class MusicService extends MediaBrowserServiceCompat
         if (mCastPlayer != null) {
             mCastPlayer.finish();
         }
+        /*
         if (mDelayedStopHandler != null) {
             mDelayedStopHandler.removeCallbacksAndMessages(null);
         }
+        */
     }
 
     @Override
@@ -289,14 +292,19 @@ public class MusicService extends MediaBrowserServiceCompat
      */
     @Override
     public void onPlaybackStart() {
+        LogHelper.i(TAG, "onPlaybackStart");
         mPlayer.setActive(true);
-
+        /*
         mDelayedStopHandler.removeCallbacksAndMessages(null);
-
+        */
         // The service needs to continue running even after the bound client (usually a
         // MediaController) disconnects, otherwise the music playback will stop.
         // Calling startService(Intent) will keep the service running until it is explicitly killed.
         startService(new Intent(getApplicationContext(), MusicService.class));
+        if (mMediaNotificationManager != null) {
+            LogHelper.i(TAG, "onPlaybackStart startForeground()");
+            mMediaNotificationManager.startForeground();
+        }
     }
 
 
@@ -305,12 +313,18 @@ public class MusicService extends MediaBrowserServiceCompat
      */
     @Override
     public void onPlaybackStop() {
+        LogHelper.i(TAG, "onPlaybackStop");
         mPlayer.setActive(false);
         // Reset the delayed stop handler, so after STOP_DELAY it will be executed again,
         // potentially stopping the service.
+        /*
         mDelayedStopHandler.removeCallbacksAndMessages(null);
         mDelayedStopHandler.sendEmptyMessageDelayed(0, STOP_DELAY);
-        stopForeground(true);
+        */
+        if (mMediaNotificationManager != null) {
+            LogHelper.i(TAG, "onPlaybackStop stopForeground(true)");
+            mMediaNotificationManager.stopForeground(true);
+        }
     }
 
     @Override
@@ -331,21 +345,21 @@ public class MusicService extends MediaBrowserServiceCompat
     /**
      * A simple handler that stops the service if playback is not active (playing)
      */
-    private static class DelayedStopHandler extends Handler {
-        private final WeakReference<MusicService> mWeakReference;
-
-        private DelayedStopHandler(MusicService service) {
-            mWeakReference = new WeakReference<>(service);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            MusicService service = mWeakReference.get();
-            if (service != null && !service.mPlayer.isPlaying()) {
-                LogHelper.d(TAG, "Stopping service with delay handler.");
-                service.stopSelf();
-            }
-        }
-    }
+//    private static class DelayedStopHandler extends Handler {
+//        private final WeakReference<MusicService> mWeakReference;
+//
+//        private DelayedStopHandler(MusicService service) {
+//            mWeakReference = new WeakReference<>(service);
+//        }
+//
+//        @Override
+//        public void handleMessage(Message msg) {
+//            MusicService service = mWeakReference.get();
+//            if (service != null && !service.mPlayer.isPlaying()) {
+//                LogHelper.d(TAG, "Stopping service with delay handler.");
+//                service.stopSelf();
+//            }
+//        }
+//    }
 
 }

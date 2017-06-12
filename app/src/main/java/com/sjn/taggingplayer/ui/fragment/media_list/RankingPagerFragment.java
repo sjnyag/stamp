@@ -1,4 +1,4 @@
-package com.sjn.taggingplayer.ui.fragment;
+package com.sjn.taggingplayer.ui.fragment.media_list;
 
 import android.content.res.Resources;
 import android.os.Bundle;

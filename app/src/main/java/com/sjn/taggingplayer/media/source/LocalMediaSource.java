@@ -39,7 +39,6 @@ public class LocalMediaSource implements MusicProviderSource {
 
     private final Context mContext;
     private final PermissionRequiredCallback mCallback;
-    private OnListChangeListener mOnListChangeListeners;
 
     public LocalMediaSource(Context context, PermissionRequiredCallback callback) {
         mContext = context;
@@ -58,13 +57,8 @@ public class LocalMediaSource implements MusicProviderSource {
         if (list.size() == 0) {
             list = MediaRetrieveHelper.retrieveAllMedia(mContext);
         }
-        MediaRetrieveHelper.retrieveAndUpdateCache(mContext, mOnListChangeListeners);
+        MediaRetrieveHelper.retrieveAndUpdateCache(mContext);
         return MediaRetrieveHelper.createIterator(list);
-    }
-
-    @Override
-    public void setOnListChangeListener(OnListChangeListener listener) {
-        mOnListChangeListeners = listener;
     }
 
 

@@ -16,14 +16,19 @@
 
 package com.sjn.taggingplayer.media.playback;
 
+import android.content.Context;
 import android.content.res.Resources;
+import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.text.TextUtils;
 
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.constant.RepeatState;
@@ -37,6 +42,8 @@ import com.sjn.taggingplayer.utils.MediaIDHelper;
 import com.sjn.taggingplayer.utils.TimeHelper;
 import com.sjn.taggingplayer.utils.WearHelper;
 
+import java.util.List;
+
 /**
  * Manage the interactions among the container service, the queue manager and the actual playback.
  */
@@ -46,6 +53,7 @@ public class PlaybackManager implements Playback.Callback, MediaLogger.Listener 
     // Action to thumbs up a media item
     private static final String CUSTOM_ACTION_THUMBS_UP = "com.sjn.taggingplayer.THUMBS_UP";
 
+    private Context mContext;
     private MusicProvider mMusicProvider;
     private QueueManager mQueueManager;
     private Resources mResources;
@@ -55,9 +63,10 @@ public class PlaybackManager implements Playback.Callback, MediaLogger.Listener 
     private MediaLogger mMediaLogger;
     private SongHistoryController mSongHistoryController;
 
-    public PlaybackManager(PlaybackServiceCallback serviceCallback, Resources resources,
+    public PlaybackManager(Context context, PlaybackServiceCallback serviceCallback, Resources resources,
                            MusicProvider musicProvider, QueueManager queueManager,
                            Playback playback, SongHistoryController songHistoryController) {
+        mContext = context;
         mMusicProvider = musicProvider;
         mServiceCallback = serviceCallback;
         mResources = resources;
@@ -315,6 +324,53 @@ public class PlaybackManager implements Playback.Callback, MediaLogger.Listener 
     }
 
     private class MediaSessionCallback extends MediaSessionCompat.Callback {
+
+        @Override
+        public void onPlayFromUri(Uri uri, Bundle extras) {
+
+            MediaSessionCompat.QueueItem queueItem = createQueueItemFromUri(uri);
+            if (queueItem == null) {
+                return;
+            }
+            int playBackState = mPlayback.getState();
+            if (playBackState == PlaybackStateCompat.STATE_PLAYING || playBackState == PlaybackStateCompat.STATE_STOPPED || playBackState == PlaybackStateCompat.STATE_NONE) {
+                mMediaLogger.onStart();
+            }
+            mServiceCallback.onPlaybackStart();
+            mPlayback.play(queueItem);
+        }
+
+
+        private MediaSessionCompat.QueueItem createQueueItemFromUri(Uri uri) {
+            List<String> pathSegments = uri.getPathSegments();
+            String host = uri.getHost();
+            String scheme = uri.getScheme();
+            String albumName;
+            String trackName;
+            String artistName;
+            try {
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                retriever.setDataSource(mContext, uri);
+                albumName = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+                artistName = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+                trackName = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+                retriever.release();
+            } catch (Exception e) {
+                return null;
+            }
+            if (TextUtils.isEmpty(trackName) && pathSegments != null) {
+                trackName = pathSegments.get(pathSegments.size() - 1);
+            }
+            return new MediaSessionCompat.QueueItem(new MediaDescriptionCompat.Builder()
+                    .setMediaUri(uri)
+                    .setMediaId(uri.toString())
+                    .setTitle(trackName)
+                    .setSubtitle(artistName)
+                    .setDescription("streaming from " + scheme)
+                    //.setIconUri(Uri.parse(mCoverArtUrl))
+                    .build(), 0);
+        }
+
         @Override
         public void onPlay() {
             LogHelper.d(TAG, "play");

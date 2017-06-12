@@ -41,7 +41,7 @@ import com.sjn.taggingplayer.constant.RepeatState;
 import com.sjn.taggingplayer.constant.ShuffleState;
 import com.sjn.taggingplayer.media.CustomController;
 import com.sjn.taggingplayer.media.player.CastPlayer;
-import com.sjn.taggingplayer.ui.activity.MusicPlayerActivity;
+import com.sjn.taggingplayer.ui.activity.MusicPlayerListActivity;
 import com.sjn.taggingplayer.ui.observer.MediaControllerObserver;
 import com.sjn.taggingplayer.utils.LogHelper;
 
@@ -260,7 +260,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
     private void updateFromParams(Intent intent) {
         if (intent != null) {
             MediaDescriptionCompat description = intent.getParcelableExtra(
-                    MusicPlayerActivity.EXTRA_CURRENT_MEDIA_DESCRIPTION);
+                    MusicPlayerListActivity.EXTRA_CURRENT_MEDIA_DESCRIPTION);
             if (description != null) {
                 updateMediaDescription(description);
             }

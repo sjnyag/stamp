@@ -1,19 +1,16 @@
-package com.sjn.taggingplayer.ui.fragment;
+package com.sjn.taggingplayer.ui.fragment.media_list;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
+import android.support.annotation.NonNull;
+import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +19,9 @@ import com.google.common.collect.Iterables;
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.controller.SongHistoryController;
 import com.sjn.taggingplayer.db.SongHistory;
-import com.sjn.taggingplayer.ui.adapter.SongHistoryAdapter;
+import com.sjn.taggingplayer.ui.SongAdapter;
 import com.sjn.taggingplayer.ui.item.DateHeaderItem;
-import com.sjn.taggingplayer.ui.item.ProgressItem;
 import com.sjn.taggingplayer.ui.item.SongHistoryItem;
-import com.sjn.taggingplayer.utils.CompatibleHelper;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.RealmHelper;
 import com.sjn.taggingplayer.utils.ViewHelper;
@@ -37,47 +32,110 @@ import java.util.List;
 import eu.davidea.fastscroller.FastScroller;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager;
-import eu.davidea.flexibleadapter.helpers.ActionModeHelper;
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
-import eu.davidea.flexibleadapter.items.IFlexible;
 import eu.davidea.flexibleadapter.items.IHeader;
 import io.realm.Realm;
 
-import static eu.davidea.flexibleadapter.SelectableAdapter.MODE_MULTI;
-
-public class TimelineFragment extends MediaControllerFragment implements SwipeRefreshLayout.OnRefreshListener,
-        FastScroller.OnScrollStateChangeListener, FlexibleAdapter.OnItemLongClickListener,
-        FlexibleAdapter.EndlessScrollListener {
+public class TimelineFragment extends MediaBrowserListFragment {
 
     private static final String TAG = LogHelper.makeLogTag(TimelineFragment.class);
 
+
+    private SongAdapter mAdapter;
+    private SongHistoryController mSongHistoryController;
+    protected List<SongHistory> mAllSongHistoryList = new ArrayList<>();
+    private Realm mRealm;
+
+    /**
+     * {@link ListFragment}
+     */
+    @Override
+    public int getMenuResourceId() {
+        return R.menu.timeline;
+    }
+
+    /**
+     * {@link MediaBrowserListFragment}
+     */
+    @Override
+    public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
+
+    }
+
+    @Override
+    public void onMetadataChanged(MediaMetadataCompat metadata) {
+
+    }
+
+    @Override
+    void onMediaBrowserChildrenLoaded(@NonNull String parentId, @NonNull List<MediaBrowserCompat.MediaItem> children) {
+
+    }
+
+    @Override
+    void onMediaBrowserError(@NonNull String parentId) {
+
+    }
+
+    /**
+     * {@link SwipeRefreshLayout.OnRefreshListener}
+     */
+    @Override
+    public void onRefresh() {
+        if (mSwipeRefreshLayout == null || getActivity() == null || mSongHistoryController == null || mListener == null) {
+            return;
+        }
+        mListener.destroyActionModeIfCan();
+        mAllSongHistoryList = mSongHistoryController.getManagedTimeline(mRealm);
+        mSwipeRefreshLayout.setRefreshing(false);
+        mAdapter.updateDataSet(getItemList(0, 30));
+    }
+
+    /**
+     * {@link FastScroller.OnScrollStateChangeListener}
+     */
+    @Override
+    public void onFastScrollerStateChange(boolean scrolling) {
+        if (scrolling) {
+            hideFab();
+        } else {
+            showFab();
+        }
+    }
+
+    /**
+     * {@link FlexibleAdapter.OnItemClickListener}
+     */
+    @Override
+    public boolean onItemClick(int position) {
+        LogHelper.d(TAG, "onItemClick ");
+        SongHistoryItem item = (SongHistoryItem) mAdapter.getItem(position);
+        mMediaBrowsable.onMediaItemSelected(item.getSongHistory().getSong().getMediaId());
+        return false;
+    }
+
+    /**
+     * {@link FlexibleAdapter.OnItemLongClickListener}
+     */
     @Override
     public void onItemLongClick(int position) {
         mListener.startActionModeByLongClick(position);
     }
 
-    private RecyclerView mRecyclerView;
-    private SongHistoryAdapter mAdapter;
-    private SongHistoryController mSongHistoryController;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    protected List<SongHistory> mAllSongHistoryList = new ArrayList<>();
-    private Realm mRealm;
-    private FloatingActionButton mFab;
-    private ProgressItem mProgressItem = new ProgressItem();
+    /**
+     * {@link FlexibleAdapter.EndlessScrollListener}
+     */
+    @Override
+    public void noMoreLoad(int newItemsSize) {
+        Log.d(TAG, "newItemsSize=" + newItemsSize);
+        Log.d(TAG, "Total pages loaded=" + mAdapter.getEndlessCurrentPage());
+        Log.d(TAG, "Total items loaded=" + mAdapter.getMainItemCount());
 
-
-    protected LinearLayoutManager createNewLinearLayoutManager() {
-        return new SmoothScrollLinearLayoutManager(getActivity());
     }
 
-    public static SongHistoryItem newSimpleItem(SongHistory songHistory, IHeader header) {
-        SongHistoryItem item = new SongHistoryItem(songHistory, (DateHeaderItem) header);
-        item.setTitle(songHistory.getSong().getTitle());
-        return item;
-    }
-
-    public static DateHeaderItem newHeader(SongHistory songHistory) {
-        return new DateHeaderItem(songHistory.getRecordedAt());
+    @Override
+    public void onLoadMore(int lastPosition, int currentPage) {
+        mAdapter.onLoadMoreComplete(getItemList(mAdapter.getMainItemCount() - mAdapter.getHeaderItems().size(), 30), 5000L);
     }
 
     @Override
@@ -93,11 +151,11 @@ public class TimelineFragment extends MediaControllerFragment implements SwipeRe
 
         mRealm = RealmHelper.getRealmInstance();
         mAllSongHistoryList = mSongHistoryController.getManagedTimeline(mRealm);
-        mAdapter = new SongHistoryAdapter(getItemList(0, 30), this);
+        mAdapter = new SongAdapter(getItemList(0, 30), this);
         mAdapter.setNotifyChangeOfUnfilteredItems(true)
                 .setAnimationOnScrolling(false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(createNewLinearLayoutManager());
+        mRecyclerView.setLayoutManager(new SmoothScrollLinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
         //mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter.setFastScroller((FastScroller) rootView.findViewById(R.id.fast_scroller),
@@ -122,51 +180,15 @@ public class TimelineFragment extends MediaControllerFragment implements SwipeRe
                 //.setEndlessTargetCount(15) //Endless is automatically disabled if totalItems >= 15
                 //.setEndlessScrollThreshold(1); //Default=1
                 .setEndlessScrollListener(this, mProgressItem);
+        notifyFragmentChange();
 
         return rootView;
-    }
-
-
-    @Override
-    public void onFastScrollerStateChange(boolean scrolling) {
-        if (scrolling) {
-            hideFab();
-        } else {
-            showFab();
-        }
-    }
-
-    private void hideFab() {
-        if (mFab == null) {
-            return;
-        }
-        ViewCompat.animate(mFab)
-                .scaleX(0f).scaleY(0f)
-                .alpha(0f).setDuration(100)
-                .start();
-    }
-
-    private void showFab() {
-        if (mFab == null) {
-            return;
-        }
-        ViewCompat.animate(mFab)
-                .scaleX(1f).scaleY(1f)
-                .alpha(1f).setDuration(200)
-                .setStartDelay(300L)
-                .start();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         mRealm.close();
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
-        inflater.inflate(R.menu.timeline, menu);
     }
 
     @Override
@@ -189,21 +211,6 @@ public class TimelineFragment extends MediaControllerFragment implements SwipeRe
         return false;
     }
 
-    @Override
-    public void onRefresh() {
-        if (mSwipeRefreshLayout == null || getActivity() == null || mSongHistoryController == null || mListener == null) {
-            return;
-        }
-        mListener.destroyActionModeIfCan();
-        mAllSongHistoryList = mSongHistoryController.getManagedTimeline(mRealm);
-        mSwipeRefreshLayout.setRefreshing(false);
-        mAdapter.updateDataSet(getItemList(0, 30));
-    }
-
-    private String extractTitleFrom(IFlexible flexibleItem) {
-        return "";
-    }
-
     private int calcGoToTopBufferedPosition(int bufferSize) {
         int position = calcCurrentPosition();
         if (position > bufferSize) {
@@ -217,17 +224,14 @@ public class TimelineFragment extends MediaControllerFragment implements SwipeRe
         return layoutManager.findFirstVisibleItemPosition();
     }
 
-    @Override
-    public void noMoreLoad(int newItemsSize) {
-        Log.d(TAG, "newItemsSize=" + newItemsSize);
-        Log.d(TAG, "Total pages loaded=" + mAdapter.getEndlessCurrentPage());
-        Log.d(TAG, "Total items loaded=" + mAdapter.getMainItemCount());
-
+    public static DateHeaderItem newHeader(SongHistory songHistory) {
+        return new DateHeaderItem(songHistory.getRecordedAt());
     }
 
-    @Override
-    public void onLoadMore(int lastPosition, int currentPage) {
-        mAdapter.onLoadMoreComplete(getItemList(mAdapter.getMainItemCount() - mAdapter.getHeaderItems().size(), 30), 5000L);
+    public static SongHistoryItem newSimpleItem(SongHistory songHistory, IHeader header) {
+        SongHistoryItem item = new SongHistoryItem(songHistory, (DateHeaderItem) header);
+        item.setTitle(songHistory.getSong().getTitle());
+        return item;
     }
 
     private List<AbstractFlexibleItem> getItemList(int startPosition, int size) {
@@ -248,30 +252,5 @@ public class TimelineFragment extends MediaControllerFragment implements SwipeRe
             headerItemList.add(newSimpleItem(mAllSongHistoryList.get(i), header));
         }
         return headerItemList;
-    }
-
-    @Override
-    public void onConnected() {
-
-    }
-
-    @Override
-    public List<AbstractFlexibleItem> getCurrentMediaItems() {
-        return null;
-    }
-
-    @Override
-    public int getMenuResourceId() {
-        return 0;
-    }
-
-    @Override
-    public String getMediaId() {
-        return null;
-    }
-
-    @Override
-    public void notifyFragmentChange() {
-
     }
 }

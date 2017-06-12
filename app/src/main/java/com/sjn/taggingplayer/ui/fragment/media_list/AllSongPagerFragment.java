@@ -1,4 +1,4 @@
-package com.sjn.taggingplayer.ui.fragment;
+package com.sjn.taggingplayer.ui.fragment.media_list;
 
 import android.support.v4.view.ViewPager;
 
@@ -18,10 +18,10 @@ public class AllSongPagerFragment extends PagerFragment {
         viewPager.setAdapter(mAdapter);
     }
 
-    private MediaBrowserFragment createSongFragment(String mediaId) {
-        MediaBrowserFragment mediaBrowserFragment = new MediaBrowserFragment();
-        mediaBrowserFragment.setMediaId(mediaId);
-        return mediaBrowserFragment;
+    private SongListFragment createSongFragment(String mediaId) {
+        SongListFragment songListFragment = new SongListFragment();
+        songListFragment.setMediaId(mediaId);
+        return songListFragment;
     }
 
 }

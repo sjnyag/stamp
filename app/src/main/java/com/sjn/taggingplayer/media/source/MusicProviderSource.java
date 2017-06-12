@@ -22,13 +22,7 @@ import java.util.Iterator;
 
 public interface MusicProviderSource {
 
-    public interface OnListChangeListener {
-        void onSourceChange(final Iterator<MediaMetadataCompat> trackIterator);
-    }
-
     String CUSTOM_METADATA_TRACK_SOURCE = "__SOURCE__";
 
     Iterator<MediaMetadataCompat> iterator();
-
-    void setOnListChangeListener(OnListChangeListener listener);
 }

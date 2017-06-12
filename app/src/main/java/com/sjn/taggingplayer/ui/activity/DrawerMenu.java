@@ -3,12 +3,12 @@ package com.sjn.taggingplayer.ui.activity;
 import android.support.v4.app.Fragment;
 
 import com.sjn.taggingplayer.R;
-import com.sjn.taggingplayer.ui.fragment.AllSongPagerFragment;
-import com.sjn.taggingplayer.ui.fragment.MediaBrowserFragment;
-import com.sjn.taggingplayer.ui.fragment.QueueFragment;
-import com.sjn.taggingplayer.ui.fragment.RankingPagerFragment;
+import com.sjn.taggingplayer.ui.fragment.media_list.AllSongPagerFragment;
+import com.sjn.taggingplayer.ui.fragment.media_list.SongListFragment;
+import com.sjn.taggingplayer.ui.fragment.media_list.QueueListFragment;
+import com.sjn.taggingplayer.ui.fragment.media_list.RankingPagerFragment;
 import com.sjn.taggingplayer.ui.fragment.SettingFragment;
-import com.sjn.taggingplayer.ui.fragment.TimelineFragment;
+import com.sjn.taggingplayer.ui.fragment.media_list.TimelineFragment;
 import com.sjn.taggingplayer.utils.MediaIDHelper;
 
 import lombok.Getter;
@@ -20,7 +20,7 @@ public enum DrawerMenu {
     HOME(R.id.navigation_home, null) {
         @Override
         Fragment getFragment() {
-            return new MediaBrowserFragment();
+            return new SongListFragment();
         }
     },
     TIMELINE(R.id.navigation_timeline, MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE) {
@@ -32,24 +32,24 @@ public enum DrawerMenu {
     QUEUE(R.id.navigation_queue, MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE) {
         @Override
         Fragment getFragment() {
-            return new QueueFragment();
+            return new QueueListFragment();
         }
     },
     TAG(R.id.navigation_tag, MediaIDHelper.MEDIA_ID_MUSICS_BY_TAG) {
         @Override
-        MediaBrowserFragment getFragment() {
+        SongListFragment getFragment() {
             return getDefaultFragment(mMediaId);
         }
     },
     NEW(R.id.navigation_new, MediaIDHelper.MEDIA_ID_MUSICS_BY_NEW) {
         @Override
-        MediaBrowserFragment getFragment() {
+        SongListFragment getFragment() {
             return getDefaultFragment(mMediaId);
         }
     },
     TOP_SONG(R.id.navigation_top_song, MediaIDHelper.MEDIA_ID_MUSICS_BY_TOP_SONG) {
         @Override
-        MediaBrowserFragment getFragment() {
+        SongListFragment getFragment() {
             return getDefaultFragment(mMediaId);
         }
     },
@@ -68,7 +68,7 @@ public enum DrawerMenu {
     EDIT_PLAYLIST(R.id.navigation_edit_playlist, null) {
         @Override
         Fragment getFragment() {
-            return new MediaBrowserFragment();
+            return new SongListFragment();
         }
     },
     SETTING(R.id.navigation_setting, null) {
@@ -87,10 +87,10 @@ public enum DrawerMenu {
 
     abstract Fragment getFragment();
 
-    private static MediaBrowserFragment getDefaultFragment(String mediaId) {
-        MediaBrowserFragment mediaBrowserFragment = new MediaBrowserFragment();
-        mediaBrowserFragment.setMediaId(mediaId);
-        return mediaBrowserFragment;
+    private static SongListFragment getDefaultFragment(String mediaId) {
+        SongListFragment songListFragment = new SongListFragment();
+        songListFragment.setMediaId(mediaId);
+        return songListFragment;
     }
 
     public static DrawerMenu of(long menuId) {

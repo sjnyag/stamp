@@ -15,7 +15,7 @@ import com.anupcowkur.reservoir.ReservoirPutCallback;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.gson.reflect.TypeToken;
-import com.sjn.taggingplayer.media.source.MusicProviderSource;
+import com.sjn.taggingplayer.media.source.MediaSourceObserver;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -148,8 +148,8 @@ public class MediaRetrieveHelper {
         return mediaList;
     }
 
-    public static void retrieveAndUpdateCache(Context context, MusicProviderSource.OnListChangeListener listener) {
-        new CacheUpdateAsyncTask(context, listener).execute();
+    public static void retrieveAndUpdateCache(Context context) {
+        new CacheUpdateAsyncTask(context).execute();
     }
 
     private static SparseArray<String> createGenreMap(Context context) {
@@ -241,11 +241,9 @@ public class MediaRetrieveHelper {
     private static class CacheUpdateAsyncTask extends AsyncTask<Void, Void, String> {
 
         private Context mContext;
-        private MusicProviderSource.OnListChangeListener mListener;
 
-        CacheUpdateAsyncTask(Context context, MusicProviderSource.OnListChangeListener listener) {
+        CacheUpdateAsyncTask(Context context) {
             mContext = context;
-            mListener = listener;
         }
 
         @Override
@@ -257,9 +255,7 @@ public class MediaRetrieveHelper {
         protected String doInBackground(Void... params) {
             List<MediaCursorContainer> trackList = retrieveAllMedia(mContext);
             writeCache(trackList);
-            if (mListener != null) {
-                mListener.onSourceChange(createIterator(trackList));
-            }
+            MediaSourceObserver.getInstance().notifyMediaSourceChange(createIterator(trackList));
             return null;
         }
 

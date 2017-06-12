@@ -53,12 +53,6 @@ public class RemoteJSONSource implements MusicProviderSource {
     private static final String JSON_TRACK_NUMBER = "trackNumber";
     private static final String JSON_TOTAL_TRACK_COUNT = "totalTrackCount";
     private static final String JSON_DURATION = "duration";
-    private OnListChangeListener mOnListChangeListeners;
-
-    @Override
-    public void setOnListChangeListener(OnListChangeListener listener) {
-        mOnListChangeListeners = listener;
-    }
 
     @Override
     public Iterator<MediaMetadataCompat> iterator() {

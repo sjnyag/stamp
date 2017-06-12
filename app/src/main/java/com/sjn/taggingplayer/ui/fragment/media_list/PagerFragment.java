@@ -1,4 +1,4 @@
-package com.sjn.taggingplayer.ui.fragment;
+package com.sjn.taggingplayer.ui.fragment.media_list;
 
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -50,7 +50,7 @@ public abstract class PagerFragment extends Fragment {
         setFragmentTitle(getActivity(), title);
     }
 
-    class ViewPagerAdapter extends FragmentPagerAdapter {
+    public class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 

@@ -51,6 +51,11 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
 
     /* The header of this item */
     DateHeaderItem header;
+
+    public SongHistory getSongHistory() {
+        return mSongHistory;
+    }
+
     SongHistory mSongHistory;
     //to avoid GC
     private Target mTarget;
