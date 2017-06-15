@@ -14,13 +14,13 @@
   limitations under the License.
   -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             xmlns:sothree="http://schemas.android.com/apk/res-auto"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:fitsSystemWindows="true"
-             tools:context=".ui.activity.MusicPlayerListActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".ui.activity.MusicPlayerListActivity">
 
     <com.sothree.slidinguppanel.SlidingUpPanelLayout
         android:id="@+id/sliding_layout"
@@ -32,9 +32,6 @@
 
         <android.support.design.widget.CoordinatorLayout
             android:id="@+id/main_view"
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -58,7 +55,7 @@
                         android:layout_height="match_parent"
                         android:background="?attr/colorPrimary"
                         app:layout_scrollFlags="scroll|enterAlways"
-                        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+                        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
                 </android.support.design.widget.CollapsingToolbarLayout>
 
@@ -68,7 +65,7 @@
                 android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fab"
@@ -78,13 +75,27 @@
                 android:layout_margin="@dimen/fab_margin"
                 android:clickable="true"
                 app:borderWidth="0dp"
-                app:layout_behavior="com.sjn.taggingplayer.ui.ScrollAwareFABBehavior"/>
+                app:fabSize="normal"
+                app:layout_behavior="com.sjn.taggingplayer.ui.ScrollAwareFABBehavior"
+                app:rippleColor="@color/primary" />
 
-            <com.github.pedrovgs.DraggablePanel
-                android:id="@+id/draggable_panel"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_below="@+id/toolbar_container"/>
+            <com.bowyer.app.fabtransitionlayout.BottomSheetLayout
+                android:id="@+id/bottom_sheet"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom"
+                app:ft_color="@color/primary"
+                app:ft_container_gravity="center">
+
+                <fragment
+                    android:id="@+id/fragment_tag_list"
+                    android:name="com.sjn.taggingplayer.ui.fragment.TagEditFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/background" />
+
+            </com.bowyer.app.fabtransitionlayout.BottomSheetLayout>
 
         </android.support.design.widget.CoordinatorLayout>
 
@@ -111,7 +122,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:background="@color/background"
-                    tools:layout="@layout/fragment_playback_controls"/>
+                    tools:layout="@layout/fragment_playback_controls" />
 
             </android.support.v7.widget.CardView>
 
@@ -120,7 +131,7 @@
                 android:name="com.sjn.taggingplayer.ui.fragment.FullScreenPlayerFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:layout="@layout/fragment_full_player"/>
+                tools:layout="@layout/fragment_full_player" />
 
         </LinearLayout>
 

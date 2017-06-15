@@ -2,6 +2,7 @@ package com.sjn.taggingplayer.ui.fragment.media_list;
 
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -11,7 +12,9 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.View;
 
+import com.bowyer.app.fabtransitionlayout.BottomSheetLayout;
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.ui.item.ProgressItem;
 import com.sjn.taggingplayer.utils.LogHelper;
@@ -40,6 +43,7 @@ public abstract class ListFragment extends Fragment implements
     protected ProgressItem mProgressItem = new ProgressItem();
     protected FragmentInteractionListener mListener;
     protected FloatingActionButton mFab;
+    protected BottomSheetLayout mBottomSheetLayout;
     protected boolean mIsVisibleToUser = false;
 
     abstract public int getMenuResourceId();
@@ -125,14 +129,19 @@ public abstract class ListFragment extends Fragment implements
                 .start();
     }
 
-    protected void initializeFab(int resourceId) {
+    protected void initializeFab(int resourceId, ColorStateList color, View.OnClickListener onClickListener) {
+        mBottomSheetLayout = (BottomSheetLayout) getActivity().findViewById(R.id.bottom_sheet);
         mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         mFab.setImageResource(resourceId);
+        mFab.setBackgroundTintList(color);
+        mFab.setOnClickListener(onClickListener);
         ViewCompat.animate(mFab)
                 .scaleX(1f).scaleY(1f)
                 .alpha(1f).setDuration(100)
                 .setStartDelay(300L)
                 .start();
+
+        mBottomSheetLayout.setFab(mFab);
     }
 
     public void performFabAction() {

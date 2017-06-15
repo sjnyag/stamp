@@ -7,8 +7,7 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/toolbar_container">
+        android:layout_height="match_parent">
 
         <!-- This FrameLayout is still mandatory ONLY IF sticky header is enabled. This
              layout will help to receive the inflated layout at runtime and to display the

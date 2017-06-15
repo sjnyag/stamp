@@ -15,6 +15,7 @@
  */
 package com.sjn.taggingplayer.ui.fragment.media_list;
 
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -191,6 +192,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         LogHelper.d(TAG, "fragment.onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_list, container, false);
 /*
@@ -221,7 +223,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
                 .showAllHeaders();
         mAdapter.addUserLearnedSelection(savedInstanceState == null);
         //mAdapter.addScrollableHeaderWithDelay(new DateHeaderItem(TimeHelper.getJapanNow().toDate()), 900L, false);
-        mAdapter.showLayoutInfo(savedInstanceState == null);
+        //mAdapter.showLayoutInfo(savedInstanceState == null);
         mAdapter.addScrollableFooter();
 
 
@@ -247,6 +249,12 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
             }
         });
         */
+        initializeFab(R.drawable.ic_stamp, ColorStateList.valueOf(Color.WHITE), new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBottomSheetLayout.expandFab();
+            }
+        });
         if (mIsVisibleToUser) {
             notifyFragmentChange();
         }

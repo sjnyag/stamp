@@ -75,6 +75,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
     private final PendingIntent mPlayIntent;
     private final PendingIntent mPreviousIntent;
     private final PendingIntent mNextIntent;
+    private final PendingIntent mKillIntent;
 
     private final PendingIntent mStopCastIntent;
 
@@ -106,6 +107,10 @@ public class MediaNotificationManager extends BroadcastReceiver {
         mStopCastIntent = PendingIntent.getBroadcast(mService, REQUEST_CODE,
                 new Intent(ACTION_STOP_CASTING).setPackage(pkg),
                 PendingIntent.FLAG_CANCEL_CURRENT);
+        Intent i = new Intent(mService, MusicService.class);
+        i.setAction(MusicService.ACTION_CMD);
+        i.putExtra(MusicService.CMD_NAME, MusicService.CMD_KILL);
+        mKillIntent = PendingIntent.getService(mService, REQUEST_CODE, i, PendingIntent.FLAG_CANCEL_CURRENT);
 
         // Cancel all notifications to handle the case where the Service was killed and
         // restarted by the system.
@@ -312,6 +317,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
                 .setSmallIcon(R.drawable.ic_notification)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setUsesChronometer(true)
+                .setDeleteIntent(mKillIntent)
                 .setContentIntent(createContentIntent(description))
                 .setContentTitle(description.getTitle())
                 .setContentText(description.getSubtitle());

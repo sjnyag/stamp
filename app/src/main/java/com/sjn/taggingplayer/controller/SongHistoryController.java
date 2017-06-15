@@ -2,7 +2,6 @@ package com.sjn.taggingplayer.controller;
 
 import android.content.Context;
 import android.support.v4.media.MediaMetadataCompat;
-import android.support.v4.util.LongSparseArray;
 
 import com.sjn.taggingplayer.constant.RecordType;
 import com.sjn.taggingplayer.db.Artist;
@@ -126,8 +125,8 @@ public class SongHistoryController {
         return mSongHistoryDao.timeline(realm, RecordType.PLAY.getValue());
     }
 
-    public List<RankedSong> getRankedSongList(TermSelectLayout.Term term) {
-        return getRankedSongList(
+    public List<RankedSong> getRankedSongList(Realm realm, TermSelectLayout.Term term) {
+        return getRankedSongList(realm,
                 term.from() == null ? null : term.from().toDateTimeAtStartOfDay().toDate(),
                 term.to() == null ? null : term.to().toDateTimeAtStartOfDay().plusDays(1).toDate());
     }
@@ -138,25 +137,23 @@ public class SongHistoryController {
                 term.to() == null ? null : term.to().toDateTimeAtStartOfDay().plusDays(1).toDate());
     }
 
-    public List<RankedSong> getRankedSongList(Date from, Date to) {
+    public List<RankedSong> getRankedSongList(Realm realm, Date from, Date to) {
         LogHelper.i(TAG, "getRankedSongList start");
-        Realm realm = RealmHelper.getRealmInstance();
         LogHelper.i(TAG, "calc historyList");
         List<SongHistory> historyList = mSongHistoryDao.where(realm, from, to, RecordType.PLAY.getValue());
-        LongSparseArray<Integer> songCountMap = new LongSparseArray<>();
+        Map<Song, Integer> songCountMap = new HashMap<>();
         LogHelper.i(TAG, "put songCountMap");
         for (SongHistory songHistory : historyList) {
-            long songId = songHistory.getSong().getId();
-            int count = 1 + songCountMap.get(songId, 0);
-            songCountMap.put(songId, count);
+            if (songCountMap.containsKey(songHistory.getSong())) {
+                songCountMap.put(songHistory.getSong(), songCountMap.get(songHistory.getSong()) + 1);
+            } else {
+                songCountMap.put(songHistory.getSong(), 0);
+            }
         }
         LogHelper.i(TAG, "create rankedSongList");
         List<RankedSong> rankedSongList = new ArrayList<>();
-        for (int i = 0; i < songCountMap.size(); i++) {
-            long key = songCountMap.keyAt(i);
-            Song song = new Song();
-            song.setId(key);
-            rankedSongList.add(new RankedSong(songCountMap.get(key), song));
+        for (Map.Entry<Song, Integer> entry : songCountMap.entrySet()) {
+            rankedSongList.add(new RankedSong(entry.getValue(), entry.getKey()));
         }
         LogHelper.i(TAG, "sort rankedSongList");
         Collections.sort(rankedSongList, new Comparator<RankedSong>() {
@@ -168,10 +165,6 @@ public class SongHistoryController {
         if (rankedSongList.size() > 30) {
             rankedSongList = rankedSongList.subList(0, 30);
         }
-        for (RankedSong rankedSong : rankedSongList) {
-            rankedSong.setSong(realm.copyFromRealm(mSongDao.findById(realm, rankedSong.getSong().getId())));
-        }
-        realm.close();
         LogHelper.i(TAG, "getRankedSongList end");
         return rankedSongList;
     }

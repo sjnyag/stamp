@@ -25,9 +25,7 @@ import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.text.TextUtils;
 
-import com.github.pedrovgs.DraggablePanel;
 import com.sjn.taggingplayer.R;
-import com.sjn.taggingplayer.ui.DraggablePanelManager;
 import com.sjn.taggingplayer.ui.fragment.FullScreenPlayerFragment;
 import com.sjn.taggingplayer.ui.fragment.media_list.MediaBrowserListFragment;
 import com.sjn.taggingplayer.ui.fragment.media_list.PagerFragment;
@@ -67,7 +65,6 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
 
     private Bundle mVoiceSearchParams;
     private Bundle mSavedInstanceState;
-    private DraggablePanelManager mDraggablePanelManager;
     private Intent mNewIntent = null;
     private Uri mReservedUri = null;
 
@@ -77,12 +74,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
         LogHelper.d(TAG, "Activity onCreate");
 
         setContentView(R.layout.activity_player);
-        mDraggablePanelManager = new DraggablePanelManager(
-                this,
-                (DraggablePanel) findViewById(R.id.draggable_panel)
-        );
         initializeToolbar();
-        mDraggablePanelManager.initializeDraggablePanel();
         navigateToBrowser(new TimelineFragment(), false);
 
         if (!PermissionHelper.hasPermission(this, MediaRetrieveHelper.PERMISSIONS)) {
@@ -107,24 +99,16 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
         if (mediaId != null) {
             outState.putString(SAVED_MEDIA_ID, mediaId);
         }
-        mDraggablePanelManager.saveDraggableState(outState);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        mDraggablePanelManager.recoverDraggablePanelState(savedInstanceState);
     }
 
     @Override
     public boolean onOptionsItemSelected(int itemId) {
-        switch (itemId) {
-            case R.id.tag_edit:
-                mDraggablePanelManager.toggle();
-                return true;
-        }
-
         return false;
     }
 

@@ -117,6 +117,7 @@ public class MusicService extends MediaBrowserServiceCompat
     // A value of a CMD_NAME key that indicates that the music playback should switch
     // to local playback from cast playback.
     public static final String CMD_STOP_CASTING = "CMD_STOP_CASTING";
+    public static final String CMD_KILL = "CMD_KILL";
     // Delay stopSelf by using a handler.
     private static final int STOP_DELAY = 30000;
 
@@ -173,6 +174,7 @@ public class MusicService extends MediaBrowserServiceCompat
      */
     @Override
     public int onStartCommand(Intent startIntent, int flags, int startId) {
+        LogHelper.d(TAG, "onStartCommand");
         if (startIntent != null) {
             String action = startIntent.getAction();
             String command = startIntent.getStringExtra(CMD_NAME);
@@ -182,6 +184,10 @@ public class MusicService extends MediaBrowserServiceCompat
                 } else if (CMD_STOP_CASTING.equals(command)) {
                     if (mPlayer != null) {
                         mCastPlayer.stop();
+                    }
+                } else if (CMD_KILL.equals(command)) {
+                    if (mPlayer != null) {
+                        stopSelf();
                     }
                 }
             } else {
