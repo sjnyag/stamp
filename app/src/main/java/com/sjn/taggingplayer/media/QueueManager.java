@@ -181,6 +181,10 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
         return true;
     }
 
+    public void skipTo0() {
+        setCurrentQueueIndex(0);
+    }
+
     public boolean setQueueFromSearch(String query, Bundle extras) {
         List<MediaSessionCompat.QueueItem> queue =
                 QueueHelper.getPlayingQueueFromSearch(query, extras, mMusicProvider);

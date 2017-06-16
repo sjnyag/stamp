@@ -421,7 +421,8 @@ public class PlaybackManager implements Playback.Callback, MediaLogger.Listener 
             if (mQueueManager.skipQueuePosition(1)) {
                 handlePlayRequest();
             } else {
-                handleStopRequest("Cannot skip");
+                mQueueManager.skipTo0();
+                handlePlayRequest();
             }
             mQueueManager.updateMetadata();
         }
@@ -439,7 +440,8 @@ public class PlaybackManager implements Playback.Callback, MediaLogger.Listener 
             if (mQueueManager.skipQueuePosition(-1)) {
                 handlePlayRequest();
             } else {
-                handleStopRequest("Cannot skip");
+                mQueueManager.skipTo0();
+                handlePlayRequest();
             }
             mQueueManager.updateMetadata();
         }
