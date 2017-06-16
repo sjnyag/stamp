@@ -249,17 +249,31 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
             }
         });
         */
-        initializeFab(R.drawable.ic_stamp, ColorStateList.valueOf(Color.WHITE), new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mBottomSheetLayout.expandFab();
-            }
-        });
+        initializeFab(R.drawable.ic_stamp, ColorStateList.valueOf(Color.WHITE), openTagEditFragment);
         if (mIsVisibleToUser) {
             notifyFragmentChange();
         }
         return rootView;
     }
+
+    View.OnClickListener openTagEditFragment = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            mBottomSheetLayout.expandFab();
+            mFab.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+            mFab.setImageResource(R.drawable.ic_full_cancel);
+            mFab.setOnClickListener(finishTagEdit);
+        }
+    };
+
+    View.OnClickListener finishTagEdit = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            mFab.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
+            mFab.setImageResource(R.drawable.ic_stamp);
+            mFab.setOnClickListener(openTagEditFragment);
+        }
+    };
 
     @Override
     public void onStart() {

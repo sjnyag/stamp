@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -28,7 +27,7 @@
             app:enableInitialAnimation="true"
             app:frontBackground="@drawable/square_light"
             app:frontBackgroundColor="@color/color_primary"
-            app:rearBackgroundColor="@color/color_accent"/>
+            app:rearBackgroundColor="@color/color_accent" />
 
         <TextView
             android:id="@+id/title"
@@ -36,12 +35,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_left"
             android:layout_toEndOf="@id/image"
+            android:layout_toStartOf="@+id/play_eq"
             android:ellipsize="end"
             android:maxLines="1"
             android:paddingTop="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             android:textColor="?primaryTextSelector"
-            tools:text="Title"/>
+            tools:text="Title" />
 
         <TextView
             android:id="@+id/subtitle"
@@ -55,7 +55,7 @@
             android:paddingBottom="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:textColor="?primaryTextSelector"
-            tools:text="Subtitle"/>
+            tools:text="Subtitle" />
 
         <TextView
             android:id="@+id/date"
@@ -63,13 +63,35 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
+            android:layout_toStartOf="@+id/play_eq"
             android:ellipsize="end"
             android:maxLines="1"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="?primaryTextSelector"
-            tools:text="1900/01/01"/>
+            tools:text="1900/01/01" />
 
+        <ImageView
+            android:id="@+id/play_eq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/media_item_icon_margin_end"
+            android:layout_marginStart="@dimen/media_item_icon_margin_start"
+            android:contentDescription="@string/play_item"
+            android:src="@drawable/ic_play_arrow_black_36dp"
+            android:tint="@color/media_item_icon_not_playing"
+            android:tintMode="src_in" />
 
     </RelativeLayout>
 
-</FrameLayout>
+    <com.github.sjnyag.AnimationWrapLayout
+        android:id="@+id/tag_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/front_view"
+        tools:each_margin_height="4dp"
+        tools:each_margin_width="4dp" />
+
+</RelativeLayout>

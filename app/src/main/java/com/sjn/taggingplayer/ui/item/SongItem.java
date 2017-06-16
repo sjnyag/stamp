@@ -3,8 +3,16 @@ package com.sjn.taggingplayer.ui.item;
 import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -16,6 +24,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sjn.taggingplayer.R;
+import com.sjn.taggingplayer.controller.SongController;
+import com.sjn.taggingplayer.ui.observer.TagEditStateObserver;
+import com.sjn.taggingplayer.utils.MediaIDHelper;
 import com.sjn.taggingplayer.utils.ViewHelper;
 import com.squareup.picasso.Target;
 
@@ -123,6 +134,9 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder>
         if (mMediaItem.getDescription().getIconUri() != null) {
             ViewHelper.updateAlbumArt((Activity) context, holder.mFlipView, mMediaItem.getDescription().getIconUri().toString(), mMediaItem.getDescription().getTitle().toString());
         }
+        holder.update(holder.mImageView, mMediaItem);
+
+        holder.updateTagList(mMediaItem.getMediaId());
     }
 
     @Override
@@ -133,6 +147,15 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder>
 
     static final class SimpleViewHolder extends FlexibleViewHolder {
 
+        public static final int STATE_INVALID = -1;
+        public static final int STATE_NONE = 0;
+        public static final int STATE_PLAYABLE = 1;
+        public static final int STATE_PAUSED = 2;
+        public static final int STATE_PLAYING = 3;
+
+        private static ColorStateList sColorStatePlaying;
+        private static ColorStateList sColorStateNotPlaying;
+
         FlipView mFlipView;
         TextView mTitle;
         TextView mSubtitle;
@@ -140,12 +163,75 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder>
         Context mContext;
         View frontView;
         TextView mDate;
+        ImageView mImageView;
+        ViewGroup mTagListLayout;
+        View.OnClickListener mOnNewTag = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TagEditStateObserver tagEditStateObserver = TagEditStateObserver.getInstance();
+                final String mediaId = (String) v.getTag(R.id.text_view_new_tag_media_id);
+                SongController songController = new SongController(mContext);
+                songController.registerTagList(tagEditStateObserver.getSelectedTagList(), mediaId);
+                ((Activity) mContext).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateTagList(mediaId);
+                    }
+                });
+            }
+        };
+
+        View.OnClickListener mOnRemoveTag = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String mediaId = (String) v.getTag(R.id.text_view_remove_tag_media_id);
+                final String tagName = (String) v.getTag(R.id.text_view_remove_tag_tag_name);
+                SongController songController = new SongController(mContext);
+                songController.removeTag(tagName, mediaId);
+
+                if (mContext instanceof Activity) {
+                    ((Activity) mContext).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateTagList(mediaId);
+                        }
+                    });
+                }
+            }
+        };
 
         public boolean swiped = false;
+
+        public void updateTagList(String mediaId) {
+            if (mTagListLayout != null && isTagMedia(mediaId)) {
+                mTagListLayout.removeAllViews();
+                SongController songController = new SongController(mContext);
+                for (String tagName : songController.findTagsByMediaId(mediaId)) {
+                    TextView text = (TextView) LayoutInflater.from(mContext).inflate(R.layout.text_view_remove_tag, null);
+                    text.setText("- " + tagName);
+                    text.setTag(R.id.text_view_remove_tag_tag_name, tagName);
+                    text.setTag(R.id.text_view_remove_tag_media_id, mediaId);
+                    text.setOnClickListener(mOnRemoveTag);
+                    mTagListLayout.addView(text);
+                }
+                TextView text = (TextView) LayoutInflater.from(mContext).inflate(R.layout.text_view_new_tag, null);
+                text.setTag(R.id.text_view_new_tag_media_id, mediaId);
+                text.setOnClickListener(mOnNewTag);
+                mTagListLayout.addView(text);
+            }
+        }
+
+        private boolean isTagMedia(String mediaId) {
+            return MediaIDHelper.getCategoryType(mediaId) != null || MediaIDHelper.isTrack(mediaId);
+        }
 
         SimpleViewHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter);
             this.mContext = view.getContext();
+            if (sColorStateNotPlaying == null || sColorStatePlaying == null) {
+                initializeColorStateLists(this.mContext);
+            }
+
             this.mTitle = (TextView) view.findViewById(R.id.title);
             this.mSubtitle = (TextView) view.findViewById(R.id.subtitle);
             this.mFlipView = (FlipView) view.findViewById(R.id.image);
@@ -160,10 +246,12 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder>
                 }
             });
             this.mHandleView = (ImageView) view.findViewById(R.id.row_handle);
+            this.mImageView = (ImageView) view.findViewById(R.id.play_eq);
             setDragHandleView(mHandleView);
 
             this.frontView = view.findViewById(R.id.front_view);
             this.mDate = (TextView) view.findViewById(R.id.date);
+            this.mTagListLayout = (ViewGroup) view.findViewById(R.id.tag_info);
         }
 
         @Override
@@ -226,6 +314,83 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder>
         public void onItemReleased(int position) {
             swiped = (mActionState == ItemTouchHelper.ACTION_STATE_SWIPE);
             super.onItemReleased(position);
+        }
+
+        public void update(View view, MediaBrowserCompat.MediaItem mediaItem) {
+            Integer cachedState = STATE_INVALID;
+            cachedState = (Integer) view.getTag(R.id.tag_mediaitem_state_cache);
+            int state = getMediaItemState(this.mContext, mediaItem);
+            if (cachedState == null || cachedState != state) {
+                Drawable drawable = getDrawableByState(this.mContext, state);
+                if (drawable != null) {
+                    this.mImageView.setImageDrawable(drawable);
+                    this.mImageView.setVisibility(View.VISIBLE);
+                } else {
+                    this.mImageView.setVisibility(View.GONE);
+                }
+                view.setTag(R.id.tag_mediaitem_state_cache, state);
+            }
+        }
+
+        private static void initializeColorStateLists(Context ctx) {
+            sColorStateNotPlaying = ColorStateList.valueOf(ctx.getResources().getColor(
+                    R.color.media_item_icon_not_playing));
+            sColorStatePlaying = ColorStateList.valueOf(ctx.getResources().getColor(
+                    R.color.media_item_icon_playing));
+        }
+
+        public static Drawable getDrawableByState(Context context, int state) {
+            if (sColorStateNotPlaying == null || sColorStatePlaying == null) {
+                initializeColorStateLists(context);
+            }
+
+            switch (state) {
+                case STATE_PLAYABLE:
+                    Drawable pauseDrawable = ContextCompat.getDrawable(context,
+                            R.drawable.ic_play_arrow_black_36dp);
+                    DrawableCompat.setTintList(pauseDrawable, sColorStateNotPlaying);
+                    return pauseDrawable;
+                case STATE_PLAYING:
+                    AnimationDrawable animation = (AnimationDrawable)
+                            ContextCompat.getDrawable(context, R.drawable.ic_equalizer_white_36dp);
+                    DrawableCompat.setTintList(animation, sColorStatePlaying);
+                    animation.start();
+                    return animation;
+                case STATE_PAUSED:
+                    Drawable playDrawable = ContextCompat.getDrawable(context,
+                            R.drawable.ic_equalizer1_white_36dp);
+                    DrawableCompat.setTintList(playDrawable, sColorStatePlaying);
+                    return playDrawable;
+                default:
+                    return null;
+            }
+        }
+
+        public static int getMediaItemState(Context context, MediaBrowserCompat.MediaItem mediaItem) {
+            int state = STATE_NONE;
+            // Set state to playable first, then override to playing or paused state if needed
+            if (mediaItem.isPlayable()) {
+                state = STATE_PLAYABLE;
+                if (MediaIDHelper.isMediaItemPlaying(context, mediaItem)) {
+                    state = getStateFromController(context);
+                }
+            }
+
+            return state;
+        }
+
+        public static int getStateFromController(Context context) {
+            MediaControllerCompat controller = ((FragmentActivity) context)
+                    .getSupportMediaController();
+            PlaybackStateCompat pbState = controller.getPlaybackState();
+            if (pbState == null ||
+                    pbState.getState() == PlaybackStateCompat.STATE_ERROR) {
+                return STATE_NONE;
+            } else if (pbState.getState() == PlaybackStateCompat.STATE_PLAYING) {
+                return STATE_PLAYING;
+            } else {
+                return STATE_PAUSED;
+            }
         }
     }
 

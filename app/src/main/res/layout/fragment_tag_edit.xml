@@ -15,12 +15,13 @@
         android:paddingRight="20dp"
         android:paddingTop="20dp">
 
-        <ScrollView
+        <com.sjn.taggingplayer.ui.custom.ScrollViewWithMaxHeight
             android:id="@+id/tag_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true">
+            android:layout_alignParentTop="true"
+            app:maxHeight="240">
 
             <com.github.sjnyag.AnimationWrapLayout
                 android:id="@+id/tag_list_layout"
@@ -29,7 +30,7 @@
                 android:orientation="horizontal"
                 animation_wrap_layout:each_margin_height="4dp"
                 animation_wrap_layout:each_margin_width="4dp" />
-        </ScrollView>
+        </com.sjn.taggingplayer.ui.custom.ScrollViewWithMaxHeight>
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/tag_input_layout"
