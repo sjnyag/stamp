@@ -17,7 +17,9 @@ package com.sjn.taggingplayer.ui.activity;
 
 import android.app.ActivityManager;
 import android.content.ComponentName;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -28,12 +30,20 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.holder.ImageHolder;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.sjn.taggingplayer.MusicService;
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.ui.fragment.PlaybackControlsFragment;
 import com.sjn.taggingplayer.ui.observer.MediaControllerObserver;
+import com.sjn.taggingplayer.utils.BitmapHelper;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.ResourceHelper;
+import com.sjn.taggingplayer.utils.ViewHelper;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 /**
  * Base activity for activities that need to show a playback control fragment when media is playing.
@@ -45,6 +55,8 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity
 
     private MediaBrowserCompat mMediaBrowser;
     private PlaybackControlsFragment mControlsFragment;
+    //to avoid GC
+    private Target mTarget;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -193,8 +205,10 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity
 
     @Override
     public void onMetadataChanged(MediaMetadataCompat metadata) {
+        LogHelper.d(TAG, "onMetadataChanged");
         if (shouldShowControls()) {
             showPlaybackControls();
+            updateAccountHeader(metadata);
         } else {
             LogHelper.d(TAG, "mediaControllerCallback.onMetadataChanged: " +
                     "hiding controls because metadata is null");
@@ -202,8 +216,54 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity
         }
     }
 
+
     @Override
     public void onConnected() {
+    }
+
+    private void updateAccountHeader(final MediaMetadataCompat metadata) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LogHelper.i(TAG, "updateAccountHeader");
+                if (metadata == null) {
+                    return;
+                }
+                mAccountHeader.clear();
+                mAccountHeader.addProfiles(createProfile(metadata));
+            }
+        });
+    }
+
+    private IProfile createProfile(final MediaMetadataCompat metadata) {
+        final ProfileDrawerItem profileDrawerItem = new ProfileDrawerItem();
+        if (metadata.getDescription().getTitle() != null) {
+            profileDrawerItem.withName(metadata.getDescription().getTitle().toString());
+        }
+        if (metadata.getDescription().getSubtitle() != null) {
+            profileDrawerItem.withEmail(metadata.getDescription().getSubtitle().toString());
+        }
+        if (metadata.getDescription().getIconUri() != null) {
+
+            mTarget = new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    profileDrawerItem.withIcon(bitmap);
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+                    profileDrawerItem.withIcon(R.drawable.ic_notification);
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                    profileDrawerItem.withIcon(R.drawable.ic_notification);
+                }
+            };
+            BitmapHelper.readBitmapAsync(this, metadata.getDescription().getIconUri().toString(), mTarget);
+        }
+        return profileDrawerItem;
     }
 
     private final MediaBrowserCompat.ConnectionCallback mConnectionCallback =

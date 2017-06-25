@@ -147,7 +147,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        final View rootView = inflater.inflate(R.layout.fragment_timeline, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_list, container, false);
         mSongHistoryController = new SongHistoryController(getContext());
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);

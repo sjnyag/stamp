@@ -49,7 +49,7 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
 
     protected Drawer mDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
-    private AccountHeader mAccountHeader;
+    protected AccountHeader mAccountHeader;
 
     private long mNextDrawerMenu;
     protected long mSelectingDrawerMenu;
@@ -182,7 +182,7 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
     public void navigateToBrowser(Fragment fragment, boolean addToBackStack, long selection) {
         navigateToBrowser(fragment, addToBackStack);
         mDrawer.setSelection(selection);
-        AppBarLayout appBarLayout = (AppBarLayout)findViewById(R.id.app_bar);
+        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
     }
 
@@ -297,6 +297,7 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
 
     private void createAccountHeader() {
         mAccountHeader = new AccountHeaderBuilder()
+                .withSelectionListEnabledForSingleProfile(false)
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.drawer_header).build();
     }

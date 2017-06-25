@@ -128,6 +128,9 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
     }
 
     protected void updateTitle() {
+        if (mListener == null) {
+            return;
+        }
         if (MediaIDHelper.MEDIA_ID_ROOT.equals(mMediaId)) {
             mListener.setToolbarTitle(null);
             return;
