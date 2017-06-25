@@ -47,6 +47,11 @@ public class TagListFragment extends Fragment implements TagEditStateObserver.Li
     }
 
     @Override
+    public void onStateChange(TagEditStateObserver.State state) {
+
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         TagEditStateObserver.getInstance().addListener(this);

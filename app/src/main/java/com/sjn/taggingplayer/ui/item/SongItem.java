@@ -135,7 +135,6 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder>
             ViewHelper.updateAlbumArt((Activity) context, holder.mFlipView, mMediaItem.getDescription().getIconUri().toString(), mMediaItem.getDescription().getTitle().toString());
         }
         holder.update(holder.mImageView, mMediaItem);
-
         holder.updateTagList(mMediaItem.getMediaId());
     }
 
@@ -203,21 +202,26 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder>
         public boolean swiped = false;
 
         public void updateTagList(String mediaId) {
+            if (!TagEditStateObserver.getInstance().isOpen()) {
+                mTagListLayout.setVisibility(View.GONE);
+                return;
+            }
+            mTagListLayout.setVisibility(View.VISIBLE);
             if (mTagListLayout != null && isTagMedia(mediaId)) {
                 mTagListLayout.removeAllViews();
+                TextView addView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.text_view_new_tag, null);
+                addView.setTag(R.id.text_view_new_tag_media_id, mediaId);
+                addView.setOnClickListener(mOnNewTag);
+                mTagListLayout.addView(addView);
                 SongController songController = new SongController(mContext);
                 for (String tagName : songController.findTagsByMediaId(mediaId)) {
-                    TextView text = (TextView) LayoutInflater.from(mContext).inflate(R.layout.text_view_remove_tag, null);
-                    text.setText("- " + tagName);
-                    text.setTag(R.id.text_view_remove_tag_tag_name, tagName);
-                    text.setTag(R.id.text_view_remove_tag_media_id, mediaId);
-                    text.setOnClickListener(mOnRemoveTag);
-                    mTagListLayout.addView(text);
+                    TextView textView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.text_view_remove_tag, null);
+                    textView.setText("- " + tagName);
+                    textView.setTag(R.id.text_view_remove_tag_tag_name, tagName);
+                    textView.setTag(R.id.text_view_remove_tag_media_id, mediaId);
+                    textView.setOnClickListener(mOnRemoveTag);
+                    mTagListLayout.addView(textView);
                 }
-                TextView text = (TextView) LayoutInflater.from(mContext).inflate(R.layout.text_view_new_tag, null);
-                text.setTag(R.id.text_view_new_tag_media_id, mediaId);
-                text.setOnClickListener(mOnNewTag);
-                mTagListLayout.addView(text);
             }
         }
 

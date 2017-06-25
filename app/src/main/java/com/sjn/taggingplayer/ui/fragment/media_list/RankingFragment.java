@@ -29,6 +29,7 @@ import com.sjn.taggingplayer.ui.SongAdapter;
 import com.sjn.taggingplayer.ui.custom.RankingSelectLayout;
 import com.sjn.taggingplayer.ui.custom.TermSelectLayout;
 import com.sjn.taggingplayer.ui.item.SongItem;
+import com.sjn.taggingplayer.ui.observer.TagEditStateObserver;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.RealmHelper;
 import com.sjn.taggingplayer.utils.TweetHelper;
@@ -333,5 +334,11 @@ public class RankingFragment extends MediaBrowserListFragment {
             }
         }
         return content;
+    }
+
+    @Override
+    public void onStateChange(TagEditStateObserver.State state) {
+        super.onStateChange(state);
+        mAdapter.notifyDataSetChanged();
     }
 }

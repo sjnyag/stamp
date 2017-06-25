@@ -53,8 +53,7 @@ public class CategoryTagDao extends BaseDao {
         realm.beginTransaction();
         CategoryTag categoryTag = realm.where(CategoryTag.class).equalTo("mName", name).equalTo("mType", categoryType.getValue()).equalTo("mValue", categoryValue).findFirst();
         if (categoryTag == null) {
-            categoryTag = realm.createObject(CategoryTag.class);
-            categoryTag.setId(getAutoIncrementId(realm, CategoryTag.class));
+            categoryTag = realm.createObject(CategoryTag.class, getAutoIncrementId(realm, CategoryTag.class));
             categoryTag.setName(name);
             categoryTag.setType(categoryType.getValue());
             categoryTag.setValue(categoryValue);

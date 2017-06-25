@@ -20,4 +20,5 @@
     <item type="id" name="text_view_remove_tag_tag_name"/>
     <item type="id" name="text_view_remove_tag_media_id"/>
     <item type="id" name="media_item_view_holder_type"/>
+    <item type="id" name="fab_type"/>
 </resources>

@@ -29,6 +29,7 @@ import android.view.inputmethod.EditorInfo;
 
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.ui.fragment.media_list.ListFragment;
+import com.sjn.taggingplayer.ui.observer.TagEditStateObserver;
 import com.sjn.taggingplayer.utils.CompatibleHelper;
 import com.sjn.taggingplayer.utils.LogHelper;
 
@@ -174,10 +175,16 @@ public abstract class MediaBrowserListActivity extends MediaBrowserActivity
     @Override
     public void onBackPressed() {
         // If ActionMode is active, back key closes it
-        if (mActionModeHelper != null && mActionModeHelper.destroyActionModeIfCan()) return;
+        if (mActionModeHelper != null && mActionModeHelper.destroyActionModeIfCan()) {
+            return;
+        }
         // If SearchView is visible, back key cancels search and iconify it
         if (mSearchView != null && !mSearchView.isIconified()) {
             mSearchView.setIconified(true);
+            return;
+        }
+        if (TagEditStateObserver.getInstance().isOpen()) {
+            TagEditStateObserver.getInstance().notifyStateChange(TagEditStateObserver.State.CLOSE);
             return;
         }
         super.onBackPressed();

@@ -15,7 +15,6 @@
  */
 package com.sjn.taggingplayer.ui.fragment.media_list;
 
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -33,6 +32,7 @@ import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.ui.SongAdapter;
 import com.sjn.taggingplayer.ui.item.SongItem;
 import com.sjn.taggingplayer.ui.observer.MediaSourceObserver;
+import com.sjn.taggingplayer.ui.observer.TagEditStateObserver;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.MediaRetrieveHelper;
 import com.sjn.taggingplayer.utils.ViewHelper;
@@ -224,15 +224,15 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
         mAdapter.addUserLearnedSelection(savedInstanceState == null);
         //mAdapter.addScrollableHeaderWithDelay(new DateHeaderItem(TimeHelper.getJapanNow().toDate()), 900L, false);
         //mAdapter.showLayoutInfo(savedInstanceState == null);
-        mAdapter.addScrollableFooter();
+//        mAdapter.addScrollableFooter();
 
 
         // EndlessScrollListener - OnLoadMore (v5.0.0)
-        mAdapter//.setLoadingMoreAtStartUp(true) //To call only if the list is empty
-                //.setEndlessPageSize(3) //Endless is automatically disabled if newItems < 3
-                //.setEndlessTargetCount(15) //Endless is automatically disabled if totalItems >= 15
-                //.setEndlessScrollThreshold(1); //Default=1
-                .setEndlessScrollListener(this, mProgressItem);
+//        mAdapter//.setLoadingMoreAtStartUp(true) //To call only if the list is empty
+        //.setEndlessPageSize(3) //Endless is automatically disabled if newItems < 3
+        //.setEndlessTargetCount(15) //Endless is automatically disabled if totalItems >= 15
+        //.setEndlessScrollThreshold(1); //Default=1
+//                .setEndlessScrollListener(this, mProgressItem);
 
         /*
         mBrowserAdapter = new BrowseAdapter(getActivity());
@@ -249,31 +249,12 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
             }
         });
         */
-        initializeFab(R.drawable.ic_stamp, ColorStateList.valueOf(Color.WHITE), openTagEditFragment);
+        initializeFabWithStamp();
         if (mIsVisibleToUser) {
             notifyFragmentChange();
         }
         return rootView;
     }
-
-    View.OnClickListener openTagEditFragment = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            mBottomSheetLayout.expandFab();
-            mFab.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
-            mFab.setImageResource(R.drawable.ic_full_cancel);
-            mFab.setOnClickListener(finishTagEdit);
-        }
-    };
-
-    View.OnClickListener finishTagEdit = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            mFab.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
-            mFab.setImageResource(R.drawable.ic_stamp);
-            mFab.setOnClickListener(openTagEditFragment);
-        }
-    };
 
     @Override
     public void onStart() {
@@ -285,5 +266,11 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
     public void onStop() {
         super.onStop();
         MediaSourceObserver.getInstance().removeListener(this);
+    }
+
+    @Override
+    public void onStateChange(TagEditStateObserver.State state) {
+        super.onStateChange(state);
+        mAdapter.notifyDataSetChanged();
     }
 }

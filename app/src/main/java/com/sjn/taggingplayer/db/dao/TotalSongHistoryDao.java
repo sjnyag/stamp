@@ -1,5 +1,6 @@
 package com.sjn.taggingplayer.db.dao;
 
+import com.sjn.taggingplayer.db.CategoryTag;
 import com.sjn.taggingplayer.db.SongHistory;
 import com.sjn.taggingplayer.db.TotalSongHistory;
 
@@ -54,8 +55,7 @@ public class TotalSongHistoryDao extends BaseDao {
                 .equalTo("mSong.mMediaId", songHistory.getSong().getMediaId())
                 .findFirst();
         if (totalSongHistory == null) {
-            totalSongHistory = realm.createObject(TotalSongHistory.class);
-            totalSongHistory.setId(getAutoIncrementId(realm, TotalSongHistory.class));
+            totalSongHistory = realm.createObject(TotalSongHistory.class, getAutoIncrementId(realm, TotalSongHistory.class));
             totalSongHistory.setSong(SongDao.getInstance().findOrCreate(realm, songHistory.getSong()));
         }
         totalSongHistory.setPlayCountIfOver(playCount);

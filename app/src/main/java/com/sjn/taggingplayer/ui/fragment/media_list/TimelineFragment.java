@@ -1,6 +1,5 @@
 package com.sjn.taggingplayer.ui.fragment.media_list;
 
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,6 +22,7 @@ import com.sjn.taggingplayer.db.SongHistory;
 import com.sjn.taggingplayer.ui.SongAdapter;
 import com.sjn.taggingplayer.ui.item.DateHeaderItem;
 import com.sjn.taggingplayer.ui.item.SongHistoryItem;
+import com.sjn.taggingplayer.ui.observer.TagEditStateObserver;
 import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.RealmHelper;
 import com.sjn.taggingplayer.utils.ViewHelper;
@@ -170,7 +170,7 @@ public class TimelineFragment extends MediaBrowserListFragment {
         mAdapter.addUserLearnedSelection(savedInstanceState == null);
         //mAdapter.addScrollableHeaderWithDelay(new DateHeaderItem(TimeHelper.getJapanNow().toDate()), 900L, false);
         //mAdapter.showLayoutInfo(savedInstanceState == null);
-        mAdapter.addScrollableFooter();
+//        mAdapter.addScrollableFooter();
 
 
         // EndlessScrollListener - OnLoadMore (v5.0.0)
@@ -179,11 +179,7 @@ public class TimelineFragment extends MediaBrowserListFragment {
                 //.setEndlessTargetCount(15) //Endless is automatically disabled if totalItems >= 15
                 //.setEndlessScrollThreshold(1); //Default=1
                 .setEndlessScrollListener(this, mProgressItem);
-        initializeFab(R.drawable.ic_stamp, ColorStateList.valueOf(Color.WHITE), new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
-        });
+        initializeFabWithStamp();
         notifyFragmentChange();
 
         return rootView;
@@ -256,5 +252,11 @@ public class TimelineFragment extends MediaBrowserListFragment {
             headerItemList.add(newSimpleItem(mAllSongHistoryList.get(i), header));
         }
         return headerItemList;
+    }
+
+    @Override
+    public void onStateChange(TagEditStateObserver.State state) {
+        super.onStateChange(state);
+        mAdapter.notifyDataSetChanged();
     }
 }

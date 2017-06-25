@@ -3,6 +3,7 @@ package com.sjn.taggingplayer.ui.fragment.media_list;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import android.view.View;
 import com.bowyer.app.fabtransitionlayout.BottomSheetLayout;
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.ui.item.ProgressItem;
+import com.sjn.taggingplayer.ui.observer.TagEditStateObserver;
 import com.sjn.taggingplayer.utils.LogHelper;
 
 import java.util.ArrayList;
@@ -32,7 +34,8 @@ public abstract class ListFragment extends Fragment implements
         FastScroller.OnScrollStateChangeListener,
         FlexibleAdapter.OnItemClickListener,
         FlexibleAdapter.OnItemLongClickListener,
-        FlexibleAdapter.EndlessScrollListener {
+        FlexibleAdapter.EndlessScrollListener,
+        TagEditStateObserver.Listener {
 
     private static final String TAG = LogHelper.makeLogTag(ListFragment.class);
 
@@ -45,6 +48,39 @@ public abstract class ListFragment extends Fragment implements
     protected FloatingActionButton mFab;
     protected BottomSheetLayout mBottomSheetLayout;
     protected boolean mIsVisibleToUser = false;
+
+    View.OnClickListener startTagEdit = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            TagEditStateObserver.getInstance().notifyStateChange(TagEditStateObserver.State.OPEN);
+        }
+    };
+
+    View.OnClickListener stopTagEdit = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            TagEditStateObserver.getInstance().notifyStateChange(TagEditStateObserver.State.CLOSE);
+        }
+    };
+
+    private void openTagEdit() {
+        if (!mBottomSheetLayout.isFabExpanded()) {
+            mBottomSheetLayout.expandFab();
+        }
+        mFab.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+        mFab.setImageResource(R.drawable.ic_full_cancel);
+        mFab.setOnClickListener(stopTagEdit);
+    }
+
+
+    private void closeTagEdit() {
+        if (mBottomSheetLayout.isFabExpanded()) {
+            mBottomSheetLayout.contractFab();
+        }
+        mFab.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
+        mFab.setImageResource(R.drawable.ic_stamp);
+        mFab.setOnClickListener(startTagEdit);
+    }
 
     abstract public int getMenuResourceId();
 
@@ -132,6 +168,10 @@ public abstract class ListFragment extends Fragment implements
     protected void initializeFab(int resourceId, ColorStateList color, View.OnClickListener onClickListener) {
         mBottomSheetLayout = (BottomSheetLayout) getActivity().findViewById(R.id.bottom_sheet);
         mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        if (Integer.valueOf(resourceId).equals(mFab.getTag(R.id.fab_type))) {
+            return;
+        }
+        mFab.setTag(R.id.fab_type, resourceId);
         mFab.setImageResource(resourceId);
         mFab.setBackgroundTintList(color);
         mFab.setOnClickListener(onClickListener);
@@ -144,7 +184,44 @@ public abstract class ListFragment extends Fragment implements
         mBottomSheetLayout.setFab(mFab);
     }
 
+    protected void initializeFabWithStamp() {
+        initializeFab(R.drawable.ic_stamp, ColorStateList.valueOf(Color.WHITE), startTagEdit);
+    }
+
     public void performFabAction() {
         //default implementation does nothing
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        TagEditStateObserver.getInstance().addListener(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        TagEditStateObserver.getInstance().removeListener(this);
+    }
+
+    @Override
+    public void onSelectedTagChange(List<String> selectedTagList) {
+    }
+
+    @Override
+    public void onNetTagCreated(String tag) {
+
+    }
+
+    @Override
+    public void onStateChange(TagEditStateObserver.State state) {
+        switch (state) {
+            case OPEN:
+                openTagEdit();
+                break;
+            case CLOSE:
+                closeTagEdit();
+                break;
+        }
     }
 }
