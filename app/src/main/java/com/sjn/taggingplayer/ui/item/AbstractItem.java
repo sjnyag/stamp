@@ -1,7 +1,10 @@
 package com.sjn.taggingplayer.ui.item;
 
+import android.content.Context;
+
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 import eu.davidea.viewholders.FlexibleViewHolder;
+import io.realm.Realm;
 
 /**
  * This class will benefit of the already implemented methods (getter and setters) in
@@ -78,4 +81,6 @@ public abstract class AbstractItem<VH extends FlexibleViewHolder>
                 ", title=" + title;
     }
 
+    public void delete(Context context) {
+    }
 }

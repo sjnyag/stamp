@@ -97,6 +97,9 @@ public abstract class ListFragment extends Fragment implements
 
         void setToolbarTitle(CharSequence title);
 
+        void updateContextTitle(int selectedItemCount);
+
+        void restoreSelection();
     }
 
     @Override

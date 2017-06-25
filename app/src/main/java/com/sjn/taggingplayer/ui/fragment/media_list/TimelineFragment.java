@@ -3,13 +3,14 @@ package com.sjn.taggingplayer.ui.fragment.media_list;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.controller.SongHistoryController;
 import com.sjn.taggingplayer.db.SongHistory;
 import com.sjn.taggingplayer.ui.SongAdapter;
+import com.sjn.taggingplayer.ui.item.AbstractItem;
 import com.sjn.taggingplayer.ui.item.DateHeaderItem;
 import com.sjn.taggingplayer.ui.item.SongHistoryItem;
 import com.sjn.taggingplayer.ui.observer.TagEditStateObserver;
@@ -33,11 +35,15 @@ import java.util.List;
 import eu.davidea.fastscroller.FastScroller;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager;
+import eu.davidea.flexibleadapter.helpers.UndoHelper;
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
+import eu.davidea.flexibleadapter.items.IFlexible;
 import eu.davidea.flexibleadapter.items.IHeader;
+import eu.davidea.flexibleadapter.utils.Utils;
 import io.realm.Realm;
 
-public class TimelineFragment extends MediaBrowserListFragment {
+public class TimelineFragment extends MediaBrowserListFragment implements
+        UndoHelper.OnUndoListener, FlexibleAdapter.OnItemSwipeListener {
 
     private static final String TAG = LogHelper.makeLogTag(TimelineFragment.class);
 
@@ -127,9 +133,9 @@ public class TimelineFragment extends MediaBrowserListFragment {
      */
     @Override
     public void noMoreLoad(int newItemsSize) {
-        Log.d(TAG, "newItemsSize=" + newItemsSize);
-        Log.d(TAG, "Total pages loaded=" + mAdapter.getEndlessCurrentPage());
-        Log.d(TAG, "Total items loaded=" + mAdapter.getMainItemCount());
+        LogHelper.d(TAG, "newItemsSize=" + newItemsSize);
+        LogHelper.d(TAG, "Total pages loaded=" + mAdapter.getEndlessCurrentPage());
+        LogHelper.d(TAG, "Total items loaded=" + mAdapter.getMainItemCount());
     }
 
     @Override
@@ -258,5 +264,152 @@ public class TimelineFragment extends MediaBrowserListFragment {
     public void onStateChange(TagEditStateObserver.State state) {
         super.onStateChange(state);
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onItemSwipe(final int position, int direction) {
+        LogHelper.i(TAG, "onItemSwipe position=" + position +
+                " direction=" + (direction == ItemTouchHelper.LEFT ? "LEFT" : "RIGHT"));
+
+        // Option 1 FULL_SWIPE: Direct action no Undo Action
+        // Do something based on direction when item has been swiped:
+        //   A) update item, set "read" if an email etc.
+        //   B) remove the item from the adapter;
+
+        // Option 2 FULL_SWIPE: Delayed action with Undo Action
+        // Show action button and start a new Handler:
+        //   A) on time out do something based on direction (open dialog with options);
+
+        // Create list for single position (only in onItemSwipe)
+        List<Integer> positions = new ArrayList<>(1);
+        positions.add(position);
+        // Build the message
+        IFlexible abstractItem = mAdapter.getItem(position);
+        StringBuilder message = new StringBuilder();
+        message.append(abstractItem.toString()).append(" ");
+        // Experimenting NEW feature
+        if (abstractItem.isSelectable()) {
+            mAdapter.setRestoreSelectionOnUndo(false);
+        }
+        // Perform different actions
+        // Here, option 2A) is implemented
+        if (direction == ItemTouchHelper.LEFT) {
+            message.append(getString(R.string.action_archived));
+
+            // Example of UNDO color
+            int actionTextColor;
+            if (Utils.hasMarshmallow()) {
+                actionTextColor = ContextCompat.getColor(getActivity(), R.color.material_color_orange_500);
+            } else {
+                //noinspection deprecation
+                actionTextColor = getResources().getColor(R.color.material_color_orange_500);
+            }
+
+            new UndoHelper(mAdapter, this)
+                    .withPayload(null) //You can pass any custom object (in this case Boolean is enough)
+                    .withAction(UndoHelper.ACTION_UPDATE, new UndoHelper.SimpleActionListener() {
+                        @Override
+                        public boolean onPreAction() {
+                            // Return true to avoid default immediate deletion.
+                            // Ask to the user what to do, open a custom dialog. On option chosen,
+                            // remove the item from Adapter list as usual.
+                            return true;
+                        }
+                    })
+                    .withActionTextColor(actionTextColor)
+                    .remove(positions, getActivity().findViewById(R.id.main_view), message,
+                            getString(R.string.undo), UndoHelper.UNDO_TIMEOUT);
+
+            //Here, option 1B) is implemented
+        } else if (direction == ItemTouchHelper.RIGHT) {
+            message.append(getString(R.string.action_deleted));
+            mSwipeRefreshLayout.setRefreshing(true);
+            new UndoHelper(mAdapter, this)
+                    .withPayload(null) //You can pass any custom object (in this case Boolean is enough)
+                    .withAction(UndoHelper.ACTION_REMOVE, new UndoHelper.SimpleActionListener() {
+                        @Override
+                        public void onPostAction() {
+                            // Handle ActionMode title
+                            if (mAdapter.getSelectedItemCount() == 0) {
+                                mListener.destroyActionModeIfCan();
+                            } else {
+                                mListener.updateContextTitle(mAdapter.getSelectedItemCount());
+                            }
+                        }
+                    })
+                    .remove(positions, getActivity().findViewById(R.id.main_view), message,
+                            getString(R.string.undo), UndoHelper.UNDO_TIMEOUT);
+        }
+    }
+
+    @Override
+    public void onActionStateChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+        LogHelper.i(TAG, "onActionStateChanged actionState=" + actionState);
+
+        mSwipeRefreshLayout.setEnabled(actionState == ItemTouchHelper.ACTION_STATE_IDLE);
+    }
+
+    @Override
+    public void onUndoConfirmed(int action) {
+        LogHelper.i(TAG, "onUndoConfirmed action=" + action);
+        if (action == UndoHelper.ACTION_UPDATE) {
+            //TODO: Complete click animation on swiped item
+//			final RecyclerView.ViewHolder holder = mRecyclerView.findViewHolderForLayoutPosition(mSwipedPosition);
+//			if (holder instanceof ItemTouchHelperCallback.ViewHolderCallback) {
+//				final View view = ((ItemTouchHelperCallback.ViewHolderCallback) holder).getFrontView();
+//				Animator animator = ObjectAnimator.ofFloat(view, "translationX", view.getTranslationX(), 0);
+//				animator.addListener(new SimpleAnimatorListener() {
+//					@Override
+//					public void onAnimationCancel(Animator animation) {
+//						view.setTranslationX(0);
+//					}
+//				});
+//				animator.start();
+//			}
+        } else if (action == UndoHelper.ACTION_REMOVE) {
+            // Custom action is restore deleted items
+            mAdapter.restoreDeletedItems();
+            // Disable Refreshing
+            mSwipeRefreshLayout.setRefreshing(false);
+            // Check also selection restoration
+            if (mAdapter.isRestoreWithSelection()) {
+                mListener.restoreSelection();
+            }
+        }
+
+    }
+
+    @Override
+    public void onDeleteConfirmed(int action) {
+        LogHelper.i(TAG, "onDeleteConfirmed action=" + action);
+        // Disable Refreshing
+        mSwipeRefreshLayout.setRefreshing(false);
+        // Removing items from Database. Example:
+        for (AbstractFlexibleItem adapterItem : mAdapter.getDeletedItems()) {
+            try {
+                // NEW! You can take advantage of AutoMap and differentiate logic by viewType using "switch" statement
+                switch (adapterItem.getLayoutRes()) {
+                    case R.layout.recycler_simple_item:
+                        AbstractItem subItem = (AbstractItem) adapterItem;
+                        subItem.delete(getActivity());
+                        LogHelper.i(TAG, "Confirm removed " + subItem.toString());
+                        break;
+                }
+
+            } catch (IllegalStateException e) {
+//                // AutoMap is disabled, fallback to if-else with "instanceof" statement
+//                if (adapterItem instanceof SubItem) {
+//                    // SubItem
+//                    SubItem subItem = (SubItem) adapterItem;
+//                    IExpandable expandable = mAdapter.getExpandableOf(subItem);
+//                    DatabaseService.getInstance().removeSubItem(expandable, subItem);
+//                    Log.d(TAG, "Confirm removed " + subItem.getTitle());
+//                } else if (adapterItem instanceof SimpleItem || adapterItem instanceof ExpandableItem) {
+//                    DatabaseService.getInstance().removeItem(adapterItem);
+//                    Log.d(TAG, "Confirm removed " + adapterItem);
+//                }
+//            }
+            }
+        }
     }
 }

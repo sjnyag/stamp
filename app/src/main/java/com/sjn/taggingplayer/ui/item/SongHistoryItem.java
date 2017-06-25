@@ -3,8 +3,6 @@ package com.sjn.taggingplayer.ui.item;
 import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -14,11 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sjn.taggingplayer.R;
+import com.sjn.taggingplayer.controller.SongHistoryController;
 import com.sjn.taggingplayer.db.SongHistory;
-import com.sjn.taggingplayer.utils.LogHelper;
 import com.sjn.taggingplayer.utils.TimeHelper;
 import com.sjn.taggingplayer.utils.ViewHelper;
 import com.squareup.picasso.Target;
@@ -36,7 +33,6 @@ import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.items.IFilterable;
 import eu.davidea.flexibleadapter.items.ISectionable;
-import eu.davidea.flexibleadapter.utils.DrawableUtils;
 import eu.davidea.flexibleadapter.utils.Utils;
 import eu.davidea.flipview.FlipView;
 import eu.davidea.viewholders.FlexibleViewHolder;
@@ -70,6 +66,13 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
     public SongHistoryItem(SongHistory songHistory, DateHeaderItem header) {
         this(songHistory);
         this.header = header;
+    }
+
+    @Override
+    public void delete(Context context) {
+        SongHistoryController controller = new SongHistoryController(context);
+        controller.deleteSongHistory(mSongHistory);
+
     }
 
     @Override
@@ -251,7 +254,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
 
     @Override
     public String toString() {
-        return "SongHistoryItem[" + super.toString() + "]";
+        return mSongHistory.toLabel();
     }
 
 }

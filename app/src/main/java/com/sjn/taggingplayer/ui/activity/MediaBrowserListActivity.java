@@ -29,6 +29,7 @@ import android.view.inputmethod.EditorInfo;
 
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.ui.fragment.media_list.ListFragment;
+import com.sjn.taggingplayer.ui.fragment.media_list.TimelineFragment;
 import com.sjn.taggingplayer.ui.observer.TagEditStateObserver;
 import com.sjn.taggingplayer.utils.CompatibleHelper;
 import com.sjn.taggingplayer.utils.LogHelper;
@@ -249,5 +250,15 @@ public abstract class MediaBrowserListActivity extends MediaBrowserActivity
         }
     }
 
+    @Override
+    public void updateContextTitle(int selectedItemCount) {
+        mActionModeHelper.updateContextTitle(selectedItemCount);
+    }
+
+
+    @Override
+    public void restoreSelection(){
+        mActionModeHelper.restoreSelection(this);
+    }
 
 }

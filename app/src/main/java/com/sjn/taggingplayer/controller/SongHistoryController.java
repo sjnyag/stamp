@@ -50,6 +50,12 @@ public class SongHistoryController {
         mTotalSongHistoryDao = TotalSongHistoryDao.getInstance();
     }
 
+    public void deleteSongHistory(SongHistory songHistory) {
+        Realm realm = RealmHelper.getRealmInstance();
+        mSongHistoryDao.remove(realm, songHistory.getId());
+        realm.close();
+    }
+
     public void onPlay(MediaMetadataCompat track, Date date) {
         LogHelper.i(TAG, "insertPLAY ", track.getDescription().getTitle());
         registerHistory(track, RecordType.PLAY, date);
@@ -193,5 +199,4 @@ public class SongHistoryController {
         LogHelper.i(TAG, "getRankedArtistList end");
         return rankedArtistList;
     }
-
 }

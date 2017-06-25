@@ -7,7 +7,6 @@ import com.sjn.taggingplayer.constant.RecordType;
 import java.util.Date;
 
 import io.realm.RealmObject;
-import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -62,5 +61,9 @@ public class SongHistory extends RealmObject {
             return 255;
         }
         return (int) (getCount() * 2.55);
+    }
+
+    public String toLabel() {
+        return mSong.getTitle() + "/" + mSong.getArtist() + "@" + mRecordedAt;
     }
 }
