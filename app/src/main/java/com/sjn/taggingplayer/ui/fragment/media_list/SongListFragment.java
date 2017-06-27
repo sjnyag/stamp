@@ -28,7 +28,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.sjn.taggingplayer.R;
+import com.sjn.taggingplayer.ui.DialogFacade;
 import com.sjn.taggingplayer.ui.SongAdapter;
 import com.sjn.taggingplayer.ui.item.SongItem;
 import com.sjn.taggingplayer.ui.observer.MediaSourceObserver;
@@ -121,8 +124,20 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
         if (mSwipeRefreshLayout == null || getActivity() == null) {
             return;
         }
-        mListener.destroyActionModeIfCan();
-        MediaRetrieveHelper.retrieveAndUpdateCache(getActivity());
+        DialogFacade.createRetrieveMediaDialog(getActivity(), new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                switch (which) {
+                    case NEGATIVE:
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        return;
+                    case POSITIVE:
+                        mListener.destroyActionModeIfCan();
+                        MediaRetrieveHelper.retrieveAndUpdateCache(getActivity());
+                        break;
+                }
+            }
+        }).show();
         //mAdapter.updateDataSet(getItemList(0, 30));
     }
 

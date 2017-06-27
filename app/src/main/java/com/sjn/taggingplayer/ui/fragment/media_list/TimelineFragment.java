@@ -1,5 +1,7 @@
 package com.sjn.taggingplayer.ui.fragment.media_list;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,15 +13,19 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.support.wearable.view.SimpleAnimatorListener;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.common.collect.Iterables;
 import com.sjn.taggingplayer.R;
 import com.sjn.taggingplayer.controller.SongHistoryController;
 import com.sjn.taggingplayer.db.SongHistory;
+import com.sjn.taggingplayer.ui.DialogFacade;
 import com.sjn.taggingplayer.ui.SongAdapter;
 import com.sjn.taggingplayer.ui.item.AbstractItem;
 import com.sjn.taggingplayer.ui.item.DateHeaderItem;
@@ -35,6 +41,7 @@ import java.util.List;
 import eu.davidea.fastscroller.FastScroller;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager;
+import eu.davidea.flexibleadapter.helpers.ItemTouchHelperCallback;
 import eu.davidea.flexibleadapter.helpers.UndoHelper;
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 import eu.davidea.flexibleadapter.items.IFlexible;
@@ -281,11 +288,11 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         //   A) on time out do something based on direction (open dialog with options);
 
         // Create list for single position (only in onItemSwipe)
-        List<Integer> positions = new ArrayList<>(1);
+        final List<Integer> positions = new ArrayList<>(1);
         positions.add(position);
         // Build the message
         IFlexible abstractItem = mAdapter.getItem(position);
-        StringBuilder message = new StringBuilder();
+        final StringBuilder message = new StringBuilder();
         message.append(abstractItem.toString()).append(" ");
         // Experimenting NEW feature
         if (abstractItem.isSelectable()) {
@@ -322,23 +329,47 @@ public class TimelineFragment extends MediaBrowserListFragment implements
 
             //Here, option 1B) is implemented
         } else if (direction == ItemTouchHelper.RIGHT) {
-            message.append(getString(R.string.action_deleted));
-            mSwipeRefreshLayout.setRefreshing(true);
-            new UndoHelper(mAdapter, this)
-                    .withPayload(null) //You can pass any custom object (in this case Boolean is enough)
-                    .withAction(UndoHelper.ACTION_REMOVE, new UndoHelper.SimpleActionListener() {
-                        @Override
-                        public void onPostAction() {
-                            // Handle ActionMode title
-                            if (mAdapter.getSelectedItemCount() == 0) {
-                                mListener.destroyActionModeIfCan();
-                            } else {
-                                mListener.updateContextTitle(mAdapter.getSelectedItemCount());
+            AbstractItem subItem = (AbstractItem) abstractItem;
+            DialogFacade.createHistoryDeleteDialog(getActivity(), subItem.toString(), new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    switch (which) {
+                        case NEGATIVE:
+                            final RecyclerView.ViewHolder holder = mRecyclerView.findViewHolderForLayoutPosition(position);
+                            if (holder instanceof ItemTouchHelperCallback.ViewHolderCallback) {
+                                final View view = ((ItemTouchHelperCallback.ViewHolderCallback) holder).getFrontView();
+                                Animator animator = ObjectAnimator.ofFloat(view, "translationX", view.getTranslationX(), 0);
+                                animator.addListener(new SimpleAnimatorListener() {
+                                    @Override
+                                    public void onAnimationCancel(Animator animation) {
+                                        view.setTranslationX(0);
+                                    }
+                                });
+                                animator.start();
                             }
-                        }
-                    })
-                    .remove(positions, getActivity().findViewById(R.id.main_view), message,
-                            getString(R.string.undo), UndoHelper.UNDO_TIMEOUT);
+                            return;
+                        case POSITIVE:
+                            message.append(getString(R.string.action_deleted));
+                            mSwipeRefreshLayout.setRefreshing(true);
+                            new UndoHelper(mAdapter, TimelineFragment.this)
+                                    .withPayload(null) //You can pass any custom object (in this case Boolean is enough)
+                                    .withAction(UndoHelper.ACTION_REMOVE, new UndoHelper.SimpleActionListener() {
+                                        @Override
+                                        public void onPostAction() {
+                                            // Handle ActionMode title
+                                            if (mAdapter.getSelectedItemCount() == 0) {
+                                                mListener.destroyActionModeIfCan();
+                                            } else {
+                                                mListener.updateContextTitle(mAdapter.getSelectedItemCount());
+                                            }
+                                        }
+                                    })
+                                    .remove(positions, getActivity().findViewById(R.id.main_view), message,
+                                            getString(R.string.undo), UndoHelper.UNDO_TIMEOUT);
+                            break;
+                    }
+                }
+            }).show();
         }
     }
 

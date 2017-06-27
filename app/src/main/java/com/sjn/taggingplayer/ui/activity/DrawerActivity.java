@@ -164,7 +164,6 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
             // Lastly, it will rely on the system behavior for back
             // super.onBackPressed();
         }
-        super.onBackPressed();
     }
 
     @Override
