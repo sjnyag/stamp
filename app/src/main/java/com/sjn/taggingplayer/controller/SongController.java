@@ -62,6 +62,10 @@ public class SongController {
         }
     }
 
+    public List<String> findTagsByMusicId(String musicId) {
+        return findSongTagListByMusicId(musicId);
+    }
+
     public void removeTag(String tagName, String mediaId) {
         if (MediaIDHelper.isTrack(mediaId)) {
             removeSongTag(tagName, mediaId);
@@ -114,6 +118,10 @@ public class SongController {
     private List<String> findSongTagList(String mediaId) {
         //TODO: cache
         String musicId = MediaIDHelper.extractMusicIDFromMediaID(mediaId);
+        return findSongTagListByMusicId(musicId);
+    }
+
+    private List<String> findSongTagListByMusicId(String musicId) {
         List<String> tagList = new ArrayList<>();
         Realm realm = RealmHelper.getRealmInstance();
         Song song = mSongDao.findByMusicId(realm, musicId);

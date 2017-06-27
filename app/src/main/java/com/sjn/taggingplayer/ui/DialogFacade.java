@@ -1,6 +1,7 @@
 package com.sjn.taggingplayer.ui;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v4.app.FragmentActivity;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -28,13 +29,14 @@ public class DialogFacade {
                 .backgroundColorRes(R.color.material_blue_grey_800)
                 .theme(Theme.DARK);
     }
-    public static MaterialDialog.Builder createHistoryDeleteDialog(final Context context, String history, MaterialDialog.SingleButtonCallback callback) {
+    public static MaterialDialog.Builder createHistoryDeleteDialog(final Context context, String history, MaterialDialog.SingleButtonCallback callback, DialogInterface.OnDismissListener dismissListener) {
         return new MaterialDialog.Builder(context)
                 .title("再生履歴の削除")
                 .content("再生履歴「" + history + "」を削除しますか？")
                 .positiveText("削除する")
                 .negativeText("キャンセル")
                 .onAny(callback)
+                .dismissListener(dismissListener)
                 .contentColorRes(android.R.color.white)
                 .backgroundColorRes(R.color.material_blue_grey_800)
                 .theme(Theme.DARK);

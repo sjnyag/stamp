@@ -175,6 +175,10 @@ public abstract class MediaBrowserListActivity extends MediaBrowserActivity
 
     @Override
     public void onBackPressed() {
+        if (TagEditStateObserver.getInstance().isOpen()) {
+            TagEditStateObserver.getInstance().notifyStateChange(TagEditStateObserver.State.CLOSE);
+            return;
+        }
         // If ActionMode is active, back key closes it
         if (mActionModeHelper != null && mActionModeHelper.destroyActionModeIfCan()) {
             return;
@@ -182,10 +186,6 @@ public abstract class MediaBrowserListActivity extends MediaBrowserActivity
         // If SearchView is visible, back key cancels search and iconify it
         if (mSearchView != null && !mSearchView.isIconified()) {
             mSearchView.setIconified(true);
-            return;
-        }
-        if (TagEditStateObserver.getInstance().isOpen()) {
-            TagEditStateObserver.getInstance().notifyStateChange(TagEditStateObserver.State.CLOSE);
             return;
         }
         super.onBackPressed();

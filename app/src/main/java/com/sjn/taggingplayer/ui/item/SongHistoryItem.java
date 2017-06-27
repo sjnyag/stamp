@@ -14,8 +14,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sjn.taggingplayer.R;
+import com.sjn.taggingplayer.controller.SongController;
 import com.sjn.taggingplayer.controller.SongHistoryController;
 import com.sjn.taggingplayer.db.SongHistory;
+import com.sjn.taggingplayer.ui.observer.TagEditStateObserver;
 import com.sjn.taggingplayer.utils.TimeHelper;
 import com.sjn.taggingplayer.utils.ViewHelper;
 import com.squareup.picasso.Target;
@@ -133,6 +135,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
         }
         holder.mDate.setText(getDateText(mSongHistory.getRecordedAt()));
         ViewHelper.updateAlbumArt((Activity) context, holder.mFlipView, mSongHistory.getSong().getAlbumArtUri(), mSongHistory.getSong().getTitle());
+        holder.updateTagList(mSongHistory.getSong().getMediaId());
     }
 
     @Override
@@ -163,6 +166,41 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
         Context mContext;
         View frontView;
         TextView mDate;
+        ViewGroup mTagListLayout;
+        View.OnClickListener mOnNewTag = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TagEditStateObserver tagEditStateObserver = TagEditStateObserver.getInstance();
+                final String mediaId = (String) v.getTag(R.id.text_view_new_tag_media_id);
+                SongController songController = new SongController(mContext);
+                songController.registerTagList(tagEditStateObserver.getSelectedTagList(), mediaId);
+                ((Activity) mContext).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateTagList(mediaId);
+                    }
+                });
+            }
+        };
+
+        View.OnClickListener mOnRemoveTag = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String mediaId = (String) v.getTag(R.id.text_view_remove_tag_media_id);
+                final String tagName = (String) v.getTag(R.id.text_view_remove_tag_tag_name);
+                SongController songController = new SongController(mContext);
+                songController.removeTag(tagName, mediaId);
+
+                if (mContext instanceof Activity) {
+                    ((Activity) mContext).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateTagList(mediaId);
+                        }
+                    });
+                }
+            }
+        };
 
         public boolean swiped = false;
 
@@ -187,6 +225,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
 
             this.frontView = view.findViewById(R.id.front_view);
             this.mDate = (TextView) view.findViewById(R.id.date);
+            this.mTagListLayout = (ViewGroup) view.findViewById(R.id.tag_info);
         }
 
         @Override
@@ -249,6 +288,30 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
         public void onItemReleased(int position) {
             swiped = (mActionState == ItemTouchHelper.ACTION_STATE_SWIPE);
             super.onItemReleased(position);
+        }
+
+        public void updateTagList(String mediaId) {
+            if (!TagEditStateObserver.getInstance().isOpen()) {
+                mTagListLayout.setVisibility(View.GONE);
+                return;
+            }
+            mTagListLayout.setVisibility(View.VISIBLE);
+            if (mTagListLayout != null) {
+                mTagListLayout.removeAllViews();
+                TextView addView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.text_view_new_tag, null);
+                addView.setTag(R.id.text_view_new_tag_media_id, mediaId);
+                addView.setOnClickListener(mOnNewTag);
+                mTagListLayout.addView(addView);
+                SongController songController = new SongController(mContext);
+                for (String tagName : songController.findTagsByMusicId(mediaId)) {
+                    TextView textView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.text_view_remove_tag, null);
+                    textView.setText("- " + tagName);
+                    textView.setTag(R.id.text_view_remove_tag_tag_name, tagName);
+                    textView.setTag(R.id.text_view_remove_tag_media_id, mediaId);
+                    textView.setOnClickListener(mOnRemoveTag);
+                    mTagListLayout.addView(textView);
+                }
+            }
         }
     }
 
