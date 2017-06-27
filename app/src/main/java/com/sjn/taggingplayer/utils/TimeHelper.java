@@ -2,13 +2,41 @@ package com.sjn.taggingplayer.utils;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Duration;
 import org.joda.time.LocalDate;
+import org.joda.time.Months;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.util.Date;
 
 public class TimeHelper {
+
+    public static String getDateDiff(Date before) {
+        return getDateDiff(before, getJapanNow().toDate());
+    }
+
+    public static String getDateDiff(Date before, Date after) {
+        DateTime dt1 = toDateTime(before);
+        DateTime dt2 = toDateTime(after);
+        if (dt1.isAfter(dt2)) {
+            dt1 = toDateTime(after);
+            dt2 = toDateTime(before);
+        }
+        int months = Months.monthsBetween(dt1, dt2).getMonths();
+        if (months > 12) {
+            int years = months / 12;
+            months = months - years * 12;
+            return months == 0 ? years + "年" : years + "年" + months + "ヶ月";
+        } else if (months > 0) {
+            return months + "ヶ月";
+        }
+        Duration d = new Duration(dt1, dt2);
+        if (d.getStandardDays() > 1) {
+            return ((int) d.getStandardDays()) + "日";
+        }
+        return ((int) d.getStandardHours()) + "時間";
+    }
 
     public static Date toDateOnly(Date date) {
         return toDateTime(date).withTimeAtStartOfDay().toDate();

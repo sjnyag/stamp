@@ -1,5 +1,7 @@
 package com.sjn.taggingplayer.db.dao;
 
+import com.sjn.taggingplayer.constant.RecordType;
+import com.sjn.taggingplayer.db.Song;
 import com.sjn.taggingplayer.db.SongHistory;
 
 import java.util.Date;
@@ -33,6 +35,10 @@ public class SongHistoryDao extends BaseDao {
             query.lessThanOrEqualTo("mRecordedAt", to);
         }
         return query.findAll();
+    }
+
+    public SongHistory findOldest(Realm realm, final Song song) {
+        return realm.where(SongHistory.class).equalTo("mSong.mMediaId", song.getMediaId()).equalTo("mRecordType", RecordType.PLAY.getValue()).findAllSorted("mRecordedAt", Sort.ASCENDING).first();
     }
 
     public void save(Realm realm, final SongHistory songHistory) {

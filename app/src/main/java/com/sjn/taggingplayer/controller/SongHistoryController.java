@@ -18,6 +18,7 @@ import com.sjn.taggingplayer.db.dao.TotalSongHistoryDao;
 import com.sjn.taggingplayer.media.provider.ListProvider;
 import com.sjn.taggingplayer.ui.custom.TermSelectLayout;
 import com.sjn.taggingplayer.utils.LogHelper;
+import com.sjn.taggingplayer.utils.NotificationHelper;
 import com.sjn.taggingplayer.utils.RealmHelper;
 
 import java.util.ArrayList;
@@ -81,7 +82,15 @@ public class SongHistoryController {
         Realm realm = RealmHelper.getRealmInstance();
         int playCount = mTotalSongHistoryDao.saveOrIncrement(realm, createTotalSongHistory(song, recordType));
         mSongHistoryDao.save(realm, createSongHistory(song, createDevice(), recordType, date, playCount));
+        if (recordType == RecordType.PLAY && isSendNotification(playCount)) {
+            SongHistory oldestSongHistory = mSongHistoryDao.findOldest(realm, song);
+            NotificationHelper.sendNotification(mContext, song.getTitle(), playCount, oldestSongHistory.mRecordedAt);
+        }
         realm.close();
+    }
+
+    private boolean isSendNotification(int count) {
+        return count == 10 || count == 50 || (count % 100 == 0 && count >= 100);
     }
 
     private TotalSongHistory createTotalSongHistory(Song song, RecordType recordType) {
@@ -143,7 +152,7 @@ public class SongHistoryController {
                 term.to() == null ? null : term.to().toDateTimeAtStartOfDay().plusDays(1).toDate());
     }
 
-    public List<RankedSong> getRankedSongList(Realm realm, Date from, Date to) {
+    private List<RankedSong> getRankedSongList(Realm realm, Date from, Date to) {
         LogHelper.i(TAG, "getRankedSongList start");
         LogHelper.i(TAG, "calc historyList");
         List<SongHistory> historyList = mSongHistoryDao.where(realm, from, to, RecordType.PLAY.getValue());
@@ -175,7 +184,7 @@ public class SongHistoryController {
         return rankedSongList;
     }
 
-    public List<RankedArtist> getRankedArtistList(Date from, Date to) {
+    private List<RankedArtist> getRankedArtistList(Date from, Date to) {
         LogHelper.i(TAG, "getRankedArtistList start");
         Realm realm = RealmHelper.getRealmInstance();
         List<SongHistory> historyList = mSongHistoryDao.where(realm, from, to, RecordType.PLAY.getValue());

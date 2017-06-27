@@ -140,12 +140,18 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
         mediaBrowser.getItem(mMediaId, new MediaBrowserCompat.ItemCallback() {
             @Override
             public void onItemLoaded(MediaBrowserCompat.MediaItem item) {
+                if (mListener == null) {
+                    return;
+                }
                 mListener.setToolbarTitle(
                         item.getDescription().getTitle());
             }
 
             @Override
             public void onError(@NonNull String itemId) {
+                if (mListener == null) {
+                    return;
+                }
                 mListener.setToolbarTitle(MediaIDHelper.extractBrowseCategoryValueFromMediaID(mMediaId));
             }
         });
