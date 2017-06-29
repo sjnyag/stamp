@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  Copyright (C) 2014 The Android Open Source Project
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:animation_wrap_layout="http://schemas.android.com/tools"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/list_item_background"
+                android:minHeight="@dimen/media_item_height">
+
+    <ImageView
+        android:id="@+id/album_art"
+        android:layout_width="@dimen/album_art_size"
+        android:layout_height="@dimen/album_art_size"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/media_item_icon_margin_end"
+        android:layout_marginStart="@dimen/media_item_icon_margin_start"
+        android:contentDescription="@string/play_item"
+        android:src="@drawable/ic_audiotrack_dark"/>
+
+    <LinearLayout
+        android:id="@+id/media_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/album_art"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/album_art"
+        android:layout_toStartOf="@+id/play_eq"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="?android:attr/textColorPrimary"
+            tools:text="The Best Music EVAH1111 FOREVER YOUNG I'M AWESOME!!!11^H^H"/>
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="?android:attr/textColorSecondary"
+            tools:text="John Doe, his brothers, his sisters, his pets and his more than amazing band"/>
+
+        <TextView
+            android:id="@+id/album"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="?android:attr/textColorSecondary"
+            tools:text="album title"/>
+
+        <com.github.sjnyag.AnimationWrapLayout
+            android:id="@+id/stamp_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            animation_wrap_layout:each_margin_height="4dp"
+            animation_wrap_layout:each_margin_width="4dp"/>
+
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/play_eq"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/media_item_icon_margin_end"
+        android:layout_marginStart="@dimen/media_item_icon_margin_start"
+        android:contentDescription="@string/play_item"
+        android:src="@drawable/ic_play_arrow_black_36dp"
+        android:tint="@color/media_item_icon_not_playing"
+        android:tintMode="src_in"/>
+
+</RelativeLayout>

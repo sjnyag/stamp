@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<manifest package="com.sjn.taggingplayer"
+<manifest package="com.sjn.stamp"
           xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools">
 
@@ -34,7 +34,7 @@
         android:required="false"/>
 
     <application
-        android:name=".TaggingPlayerApplication"
+        android:name=".StampApplication"
         android:allowBackup="true"
         android:banner="@drawable/banner_tv"
         android:icon="@drawable/ic_launcher"
@@ -154,7 +154,7 @@
         -->
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-            android:value="com.sjn.taggingplayer.CastOptionsProvider"/>
+            android:value="com.sjn.stamp.CastOptionsProvider"/>
 
         <!-- A receiver that will receive media buttons and send as
             intents to your MediaBrowserServiceCompat implementation.

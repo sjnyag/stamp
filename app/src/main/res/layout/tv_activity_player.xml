@@ -22,7 +22,7 @@
 
     <fragment
         android:id="@+id/main_browse_fragment"
-        android:name="com.sjn.taggingplayer.ui.tv.TvBrowseFragment"
+        android:name="com.sjn.stamp.ui.tv.TvBrowseFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MusicPlayerActivity"

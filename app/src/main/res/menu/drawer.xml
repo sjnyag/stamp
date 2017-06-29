@@ -35,9 +35,9 @@
         android:id="@+id/smart_list"
         android:checkableBehavior="single">
         <item
-            android:id="@+id/navigation_tag"
+            android:id="@+id/navigation_stamp"
             android:icon="@drawable/ic_filter_vintage"
-            android:title="@string/drawer_tag"/>
+            android:title="@string/drawer_stamp"/>
         <item
             android:id="@+id/navigation_new"
             android:icon="@drawable/ic_timelapse"

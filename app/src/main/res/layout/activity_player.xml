@@ -76,7 +76,7 @@
                 android:clickable="true"
                 app:borderWidth="0dp"
                 app:fabSize="normal"
-                app:layout_behavior="com.sjn.taggingplayer.ui.ScrollAwareFABBehavior"
+                app:layout_behavior="com.sjn.stamp.ui.ScrollAwareFABBehavior"
                 app:rippleColor="@color/primary" />
 
             <com.bowyer.app.fabtransitionlayout.BottomSheetLayout
@@ -88,8 +88,8 @@
                 app:ft_container_gravity="center">
 
                 <fragment
-                    android:id="@+id/fragment_tag_list"
-                    android:name="com.sjn.taggingplayer.ui.fragment.TagEditFragment"
+                    android:id="@+id/fragment_stamp_list"
+                    android:name="com.sjn.stamp.ui.fragment.StampEditFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
@@ -117,7 +117,7 @@
 
                 <fragment
                     android:id="@+id/fragment_playback_controls"
-                    android:name="com.sjn.taggingplayer.ui.fragment.PlaybackControlsFragment"
+                    android:name="com.sjn.stamp.ui.fragment.PlaybackControlsFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
@@ -128,7 +128,7 @@
 
             <fragment
                 android:id="@+id/fragment_full_player"
-                android:name="com.sjn.taggingplayer.ui.fragment.FullScreenPlayerFragment"
+                android:name="com.sjn.stamp.ui.fragment.FullScreenPlayerFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:layout="@layout/fragment_full_player" />

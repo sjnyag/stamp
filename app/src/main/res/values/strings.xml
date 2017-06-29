@@ -15,7 +15,7 @@
   -->
 <resources>
 
-    <string name="app_name">Tagging Player</string>
+    <string name="app_name">Stamp Music Player</string>
     <string name="favorite">Favorite</string>
     <string name="error_no_metadata">Unable to retrieve metadata.</string>
     <string name="browse_genres">Genres</string>
@@ -51,12 +51,11 @@
     <string name="loading">Loading…</string>
     <string name="media_route_menu_title">Play on…</string>
 
-    <string name="menu_tag_edit">Tag edit</string>
     <string name="menu_term_change">Term</string>
 
     <string name="media_item_label_all_song">All</string>
     <string name="media_item_label_queue">Queue</string>
-    <string name="media_item_label_tag">Tag</string>
+    <string name="media_item_label_stamp">Stamp</string>
     <string name="media_item_label_new">New</string>
     <string name="media_item_label_top_song">Top Song</string>
     <string name="media_item_label_artist">Artist</string>
@@ -67,14 +66,13 @@
     <string name="drawer_home_title">Home</string>
     <string name="drawer_timeline_title">Timeline</string>
     <string name="drawer_queue_title">Queue</string>
-    <string name="drawer_tag">Tag</string>
+    <string name="drawer_stamp">Stamp</string>
     <string name="drawer_new">New</string>
     <string name="drawer_top_song">Top Song</string>
     <string name="drawer_all_music">All Music</string>
     <string name="drawer_ranking">Ranking</string>
     <string name="drawer_edit_playlist">Edit Playlist</string>
     <string name="drawer_setting">Setting</string>
-    <string name="drawer_tag_mode_title">Tag Edit Mode</string>
 
     <string name="all_song_tab_all">all</string>
     <string name="all_song_tab_artist">artist</string>
@@ -87,7 +85,7 @@
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_ok">OK</string>
 
-    <string name="hash_tag">TaggingPlayer</string>
+    <string name="hash_tag">StampMusicPlayer</string>
     <string name="base_url">http://bit.ly/1Q4YSTc</string>
 
     <string name="tweet_song">%1$s / %2$s</string>

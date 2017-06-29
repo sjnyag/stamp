@@ -1,43 +1,35 @@
 {
   "project_info": {
-    "project_number": "90492006401",
-    "firebase_url": "https://taggingplayer-c17b7.firebaseio.com",
-    "project_id": "taggingplayer-c17b7",
-    "storage_bucket": "taggingplayer-c17b7.appspot.com"
+    "project_number": "124554187377",
+    "firebase_url": "https://stamp-eb4e9.firebaseio.com",
+    "project_id": "stamp-eb4e9",
+    "storage_bucket": "stamp-eb4e9.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:90492006401:android:baf3f78d5e38086a",
+        "mobilesdk_app_id": "1:124554187377:android:f2905de52b0943cb",
         "android_client_info": {
-          "package_name": "com.sjn.taggingplayer"
+          "package_name": "com.sjn.stamp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "90492006401-f54ahupvan17voq5eq6a25dt7lfep0ui.apps.googleusercontent.com",
+          "client_id": "124554187377-9t7id1qqt5fsqdlb9og3iq177cvu9tq9.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.sjn.taggingplayer",
+            "package_name": "com.sjn.stamp",
             "certificate_hash": "336b8f92ef37572d85d12933c00de92a971ea050"
           }
         },
         {
-          "client_id": "90492006401-lmq2kcl533r6udr1g4rpjflv88toaf4d.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.sjn.taggingplayer",
-            "certificate_hash": "27047bb5a2c0f403207ad84b5a11f38b0de9c889"
-          }
-        },
-        {
-          "client_id": "90492006401-e6clpria72539h9gu66e211t52mbto1q.apps.googleusercontent.com",
+          "client_id": "124554187377-ihoc7b778s8f035gpj17qosdejpt488b.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBHeWTHGPS97TrqYdcr9JwcE1-vwBGUMOA"
+          "current_key": "AIzaSyCI5NBb11HeWRFJGgf2STXvAln8E9kWOBU"
         }
       ],
       "services": {
@@ -48,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "90492006401-e6clpria72539h9gu66e211t52mbto1q.apps.googleusercontent.com",
+              "client_id": "124554187377-ihoc7b778s8f035gpj17qosdejpt488b.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
