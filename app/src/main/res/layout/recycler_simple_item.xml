@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+                android:background="#242229"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/front_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="12dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="12dp">
+
+        <eu.davidea.flipview.FlipView
+            android:id="@+id/image"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:clickable="true"
+            app:animationDuration="170"
+            app:checked="false"
+            app:enableInitialAnimation="true"
+            app:frontBackground="@drawable/square_light"
+            app:frontBackgroundColor="@color/color_primary"
+            app:rearBackgroundColor="@color/color_accent" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_left"
+            android:layout_toEndOf="@id/image"
+            android:layout_toStartOf="@+id/play_eq"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingTop="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:textColor="?primaryTextSelector"
+            tools:text="Title" />
+
+        <TextView
+            android:id="@+id/subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/title"
+            android:layout_toStartOf="@+id/date"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingBottom="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:textColor="?primaryTextSelector"
+            tools:text="Subtitle" />
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_toStartOf="@+id/play_eq"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="?primaryTextSelector"
+            tools:text="1900/01/01" />
+
+        <ImageView
+            android:id="@+id/play_eq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/media_item_icon_margin_end"
+            android:layout_marginStart="@dimen/media_item_icon_margin_start"
+            android:contentDescription="@string/play_item"
+            android:src="@drawable/ic_play_arrow_black_36dp"
+            android:tint="@color/media_item_icon_not_playing"
+            android:tintMode="src_in" />
+
+    </RelativeLayout>
+
+    <com.github.sjnyag.AnimationWrapLayout
+        android:id="@+id/stamp_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/front_view"
+        tools:each_margin_height="4dp"
+        tools:each_margin_width="4dp" />
+
+</RelativeLayout>

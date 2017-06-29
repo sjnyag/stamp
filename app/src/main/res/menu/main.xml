@@ -14,15 +14,18 @@
   limitations under the License.
   -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/tag_edit"
-        android:icon="@android:drawable/ic_menu_edit"
-        android:title="@string/menu_tag_edit"
-        app:showAsAction="always" />
+        android:id="@+id/action_search"
+        android:animateLayoutChanges="true"
+        android:icon="@drawable/lb_ic_in_app_search"
+        android:title="@string/action_search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="collapseActionView|ifRoom"/>
     <item
         android:id="@+id/media_route_menu_item"
         android:title="@string/media_route_menu_title"
         app:actionProviderClass="android.support.v7.app.MediaRouteActionProvider"
-        app:showAsAction="always" />
+        app:showAsAction="always"/>
 </menu>

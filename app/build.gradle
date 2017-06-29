@@ -3,25 +3,25 @@ apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'realm-android'
 apply plugin: 'com.github.triplet.play'
 
-final taggingPlayerVersionCode = hasProperty('version_code') ? property('version_code').toInteger() : 1
-final taggingPlayerVersionName = hasProperty('version_name') ? '0.1.0.' + property('version_name') : '0.1.0.0'
+final stampVersionCode = hasProperty('version_code') ? property('version_code').toInteger() : 1
+final stampVersionName = hasProperty('version_name') ? '0.1.0.' + property('version_name') : '0.1.0.0'
 
-final taggingPlayerKeystorePassword = hasProperty('keystore_password') ? property('keystore_password') : ''
-final taggingPlayerKeyAlias = hasProperty('key_alias') ? property('key_alias') : ''
-final taggingPlayerKeyPassword = hasProperty('key_password') ? property('key_password') : ''
-final taggingPlayerKeyFile = hasProperty('key_file') ? property('key_file') : 'ci/debug.jks'
-final taggingPlayerPlayAPIJson = hasProperty('play_api_json') ? property('play_api_json') : 'ci/play.json'
+final stampKeystorePassword = hasProperty('keystore_password') ? property('keystore_password') : ''
+final stampKeyAlias = hasProperty('key_alias') ? property('key_alias') : ''
+final stampKeyPassword = hasProperty('key_password') ? property('key_password') : ''
+final stampKeyFile = hasProperty('key_file') ? property('key_file') : 'ci/debug.jks'
+final stampPlayAPIJson = hasProperty('play_api_json') ? property('play_api_json') : 'ci/play.json'
 
 android {
     compileSdkVersion 25
     buildToolsVersion '25.0.2'
 
     defaultConfig {
-        applicationId "com.sjn.taggingplayer"
+        applicationId "com.sjn.stamp"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode taggingPlayerVersionCode
-        versionName taggingPlayerVersionName
+        versionCode stampVersionCode
+        versionName stampVersionName
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -42,10 +42,10 @@ android {
     }
     signingConfigs {
         src {
-            storeFile file(taggingPlayerKeyFile)
-            storePassword taggingPlayerKeystorePassword
-            keyAlias taggingPlayerKeyAlias
-            keyPassword taggingPlayerKeyPassword
+            storeFile file(stampKeyFile)
+            storePassword stampKeystorePassword
+            keyAlias stampKeyAlias
+            keyPassword stampKeyPassword
         }
     }
     buildTypes {
@@ -82,11 +82,14 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support:cardview-v7:23.4.0'
-    compile 'com.android.support:leanback-v17:23.4.0'
-    compile 'com.android.support:design:23.4.0'
-    compile 'com.android.support:mediarouter-v7:23.4.0'
+    compile('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
+        transitive = true;
+    }
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:cardview-v7:25.3.1'
+    compile 'com.android.support:leanback-v17:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:mediarouter-v7:25.3.1'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.google.android.gms:play-services-cast-framework:9.4.0'
     compile 'com.google.android.support:wearable:2.0.0'
@@ -102,23 +105,25 @@ dependencies {
     compile 'com.github.vajro:MaterialDesignLibrary:1.6'
     compile 'com.github.pedrovgs:draggablepanel:1.9'
     compile 'com.github.linger1216:labelview:v1.1.2'
-    compile 'se.emilsjolander:stickylistheaders:2.7.0'
+    compile 'eu.davidea:flexible-adapter:5.0.0-rc1'
+    compile 'eu.davidea:flipview:1.1.2'
     compile 'com.anupcowkur:reservoir:2.1'
     compile 'com.sothree.slidinguppanel:library:3.3.0'
     compile 'net.danlew:android.joda:2.6.0'
     compile 'me.relex:circleindicator:1.2.1@aar'
     compile 'com.nanohttpd:nanohttpd-webserver:2.1.1'
+    compile 'com.bowyer.app:fabtransitionlayout:0.4.0@aar'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'
     androidTestCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test:rules:0.5'
-    androidTestCompile 'com.android.support:support-annotations:23.4.0'
+    androidTestCompile 'com.android.support:support-annotations:25.3.1'
     provided 'org.projectlombok:lombok:1.12.6'
 }
 
 play {
     track = 'alpha'
-    jsonFile = file(taggingPlayerPlayAPIJson)
+    jsonFile = file(stampPlayAPIJson)
 }
 apply plugin: 'com.google.gms.google-services'

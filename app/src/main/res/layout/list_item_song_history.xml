@@ -16,7 +16,7 @@
   -->
 
 
-<com.sjn.taggingplayer.ui.custom.LabelCardView
+<com.sjn.stamp.ui.custom.LabelCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -41,7 +41,7 @@
         android:layout_height="match_parent"
         android:layout_centerVertical="true">
 
-        <com.sjn.taggingplayer.ui.custom.RoundImageView
+        <com.sjn.stamp.ui.custom.RoundImageView
             android:id="@+id/album_art"
             android:layout_width="@dimen/album_art_size"
             android:layout_height="@dimen/album_art_size"
@@ -104,4 +104,4 @@
             tools:text="1900/01/01"/>
 
     </RelativeLayout>
-</com.sjn.taggingplayer.ui.custom.LabelCardView>
+</com.sjn.stamp.ui.custom.LabelCardView>

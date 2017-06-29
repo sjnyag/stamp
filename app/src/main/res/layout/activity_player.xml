@@ -20,44 +20,90 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".ui.activity.MusicPlayerActivity">
+    tools:context=".ui.activity.MusicPlayerListActivity">
 
     <com.sothree.slidinguppanel.SlidingUpPanelLayout
         android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="bottom"
-        sothree:umanoPanelHeight="@dimen/playback_controls_albumart_size"
+        sothree:umanoPanelHeight="64dp"
         sothree:umanoShadowHeight="8dp">
 
-        <RelativeLayout
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/main_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <include
-                android:id="@+id/toolbar_container"
-                layout="@layout/include_toolbar" />
+            <!-- Toolbar -->
+            <android.support.design.widget.AppBarLayout
+                android:id="@+id/app_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-            <FrameLayout
+                <android.support.design.widget.CollapsingToolbarLayout
+                    android:id="@+id/toolbar_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_scrollFlags="scroll|enterAlways"
+                    app:titleEnabled="false">
+
+                    <android.support.v7.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?attr/colorPrimary"
+                        app:layout_scrollFlags="scroll|enterAlways"
+                        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+                </android.support.design.widget.CollapsingToolbarLayout>
+
+            </android.support.design.widget.AppBarLayout>
+
+            <RelativeLayout
                 android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/toolbar_container" />
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_margin="@dimen/fab_margin"
+                android:clickable="true"
+                app:borderWidth="0dp"
+                app:fabSize="normal"
+                app:layout_behavior="com.sjn.stamp.ui.ScrollAwareFABBehavior"
+                app:rippleColor="@color/primary" />
 
-            <com.github.pedrovgs.DraggablePanel
-                android:id="@+id/draggable_panel"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_below="@+id/toolbar_container" />
+            <com.bowyer.app.fabtransitionlayout.BottomSheetLayout
+                android:id="@+id/bottom_sheet"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom"
+                app:ft_color="@color/primary"
+                app:ft_container_gravity="center">
 
-        </RelativeLayout>
+                <fragment
+                    android:id="@+id/fragment_stamp_list"
+                    android:name="com.sjn.stamp.ui.fragment.StampEditFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/background" />
+
+            </com.bowyer.app.fabtransitionlayout.BottomSheetLayout>
+
+        </android.support.design.widget.CoordinatorLayout>
 
         <LinearLayout
             android:id="@+id/dragView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#ffffff"
+            android:background="@color/background"
             android:clickable="true"
             android:focusable="false"
             android:orientation="vertical">
@@ -65,23 +111,24 @@
             <android.support.v7.widget.CardView
                 android:id="@+id/controls_container"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/playback_controls_albumart_size"
-                app:cardBackgroundColor="#ffffff"
+                android:layout_height="wrap_content"
+                android:background="@color/background"
                 app:cardElevation="8dp">
 
                 <fragment
                     android:id="@+id/fragment_playback_controls"
-                    android:name="com.sjn.taggingplayer.ui.fragment.PlaybackControlsFragment"
+                    android:name="com.sjn.stamp.ui.fragment.PlaybackControlsFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
+                    android:background="@color/background"
                     tools:layout="@layout/fragment_playback_controls" />
 
             </android.support.v7.widget.CardView>
 
             <fragment
                 android:id="@+id/fragment_full_player"
-                android:name="com.sjn.taggingplayer.ui.fragment.FullScreenPlayerFragment"
+                android:name="com.sjn.stamp.ui.fragment.FullScreenPlayerFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:layout="@layout/fragment_full_player" />
