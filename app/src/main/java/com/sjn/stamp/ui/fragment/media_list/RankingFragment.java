@@ -15,10 +15,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+import com.sjn.stamp.R;
 import com.sjn.stamp.controller.SongHistoryController;
 import com.sjn.stamp.db.RankedArtist;
 import com.sjn.stamp.db.RankedSong;
@@ -31,9 +33,8 @@ import com.sjn.stamp.ui.item.SongItem;
 import com.sjn.stamp.ui.observer.StampEditStateObserver;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.RealmHelper;
-import com.sjn.stamp.utils.ViewHelper;
-import com.sjn.stamp.R;
 import com.sjn.stamp.utils.TweetHelper;
+import com.sjn.stamp.utils.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +53,6 @@ public class RankingFragment extends MediaBrowserListFragment {
 
     private TermSelectLayout.Term mTerm = new TermSelectLayout.Term();
     private RankKind mRankKind;
-    private SongAdapter mAdapter;
     private SongHistoryController mSongHistoryController;
     private Realm mRealm;
 
@@ -118,8 +118,10 @@ public class RankingFragment extends MediaBrowserListFragment {
     @Override
     public boolean onItemClick(int position) {
         LogHelper.d(TAG, "onItemClick ");
-        SongItem item = (SongItem) mAdapter.getItem(position);
-        mMediaBrowsable.onMediaItemSelected(item.getMediaItem().getMediaId());
+        AbstractFlexibleItem item = mAdapter.getItem(position);
+        if (item instanceof SongItem) {
+            mMediaBrowsable.onMediaItemSelected(((SongItem) item).getMediaItem().getMediaId());
+        }
         return false;
     }
 
@@ -234,6 +236,9 @@ public class RankingFragment extends MediaBrowserListFragment {
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW);
+        mEmptyView = rootView.findViewById(R.id.empty_view);
+        mFastScroller = (FastScroller) rootView.findViewById(R.id.fast_scroller);
+        mEmptyTextView = (TextView) rootView.findViewById(R.id.empty_text);
 
         mRealm = RealmHelper.getRealmInstance();
         mAdapter = new SongAdapter(new ArrayList<AbstractFlexibleItem>(), this);

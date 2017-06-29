@@ -168,7 +168,11 @@ abstract public class MultipleListProvider extends ListProvider {
         if (state != ProviderState.INITIALIZED) {
             return Collections.emptyList();
         }
-        List<String> list = Lists.newArrayList(getTrackListMap(musicListById).keySet());
+        ConcurrentMap<String, List<MediaMetadataCompat>> trackListMap = getTrackListMap(musicListById);
+        if (trackListMap == null || trackListMap.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<String> list = Lists.newArrayList(trackListMap.keySet());
         Collections.sort(list);
         return list;
     }

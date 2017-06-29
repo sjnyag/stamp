@@ -7,20 +7,20 @@ import com.sjn.stamp.constant.RecordType;
 import com.sjn.stamp.db.Artist;
 import com.sjn.stamp.db.Device;
 import com.sjn.stamp.db.RankedArtist;
-import com.sjn.stamp.db.Song;
-import com.sjn.stamp.db.dao.DeviceDao;
-import com.sjn.stamp.db.dao.SongDao;
-import com.sjn.stamp.media.provider.ListProvider;
-import com.sjn.stamp.ui.custom.TermSelectLayout;
-import com.sjn.stamp.utils.MediaRetrieveHelper;
-import com.sjn.stamp.utils.RealmHelper;
 import com.sjn.stamp.db.RankedSong;
+import com.sjn.stamp.db.Song;
 import com.sjn.stamp.db.SongHistory;
 import com.sjn.stamp.db.TotalSongHistory;
+import com.sjn.stamp.db.dao.DeviceDao;
+import com.sjn.stamp.db.dao.SongDao;
 import com.sjn.stamp.db.dao.SongHistoryDao;
 import com.sjn.stamp.db.dao.TotalSongHistoryDao;
+import com.sjn.stamp.media.provider.ListProvider;
+import com.sjn.stamp.ui.custom.TermSelectLayout;
 import com.sjn.stamp.utils.LogHelper;
+import com.sjn.stamp.utils.MediaRetrieveHelper;
 import com.sjn.stamp.utils.NotificationHelper;
+import com.sjn.stamp.utils.RealmHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -196,7 +196,12 @@ public class SongHistoryController {
         realm.close();
         List<RankedArtist> rankedArtistList = new ArrayList<>();
         for (Map.Entry<String, Integer> e : artistMap.entrySet()) {
-            rankedArtistList.add(new RankedArtist(e.getValue(), new Artist(e.getKey(), MediaRetrieveHelper.findAlbumArtByArtist(mContext, e.getKey()))));
+            rankedArtistList.add(new RankedArtist(e.getValue(), new Artist(e.getKey(), MediaRetrieveHelper.findAlbumArtByArtist(mContext, e.getKey(), new MediaRetrieveHelper.PermissionRequiredCallback() {
+                @Override
+                public void onPermissionRequired() {
+
+                }
+            }))));
         }
         Collections.sort(rankedArtistList, new Comparator<RankedArtist>() {
             @Override

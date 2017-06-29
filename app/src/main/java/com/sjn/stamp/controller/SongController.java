@@ -38,7 +38,12 @@ public class SongController {
 
     public void registerStampList(List<String> stampNameList, String mediaId) {
         if (MediaIDHelper.isTrack(mediaId)) {
-            registerSongStampList(stampNameList, MediaRetrieveHelper.findByMusicId(mContext, Long.valueOf(MediaIDHelper.extractMusicIDFromMediaID(mediaId))));
+            registerSongStampList(stampNameList, MediaRetrieveHelper.findByMusicId(mContext, Long.valueOf(MediaIDHelper.extractMusicIDFromMediaID(mediaId)), new MediaRetrieveHelper.PermissionRequiredCallback() {
+                @Override
+                public void onPermissionRequired() {
+
+                }
+            }));
         } else {
             String[] hierarchy = MediaIDHelper.getHierarchy(mediaId);
             if (hierarchy.length <= 1) {

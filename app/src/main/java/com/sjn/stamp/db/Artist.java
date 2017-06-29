@@ -1,5 +1,7 @@
 package com.sjn.stamp.db;
 
+import io.realm.annotations.Index;
+import io.realm.annotations.PrimaryKey;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +14,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 public class Artist {
+    @Index
     String mName;
     String mAlbumArtUri;
 

@@ -26,11 +26,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.sjn.stamp.MusicService;
+import com.sjn.stamp.R;
 import com.sjn.stamp.ui.DialogFacade;
 import com.sjn.stamp.ui.SongAdapter;
 import com.sjn.stamp.ui.item.SongItem;
@@ -39,7 +41,6 @@ import com.sjn.stamp.ui.observer.StampEditStateObserver;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaRetrieveHelper;
 import com.sjn.stamp.utils.ViewHelper;
-import com.sjn.stamp.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,8 +61,6 @@ import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 public class SongListFragment extends MediaBrowserListFragment implements MediaSourceObserver.Listener {
 
     private static final String TAG = LogHelper.makeLogTag(SongListFragment.class);
-
-    protected SongAdapter mAdapter;
 
     /**
      * {@link ListFragment}
@@ -114,7 +113,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
     @Override
     public void onMediaBrowserError(@NonNull String id) {
         LogHelper.e(TAG, "browse fragment subscription onError, id=" + id);
-        Toast.makeText(getActivity(), R.string.error_loading_media, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getActivity(), R.string.error_loading_media, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -134,7 +133,15 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
                         return;
                     case POSITIVE:
                         mListener.destroyActionModeIfCan();
-                        MediaRetrieveHelper.retrieveAndUpdateCache(getActivity());
+                        MediaRetrieveHelper.retrieveAndUpdateCache(getActivity(), new MediaRetrieveHelper.PermissionRequiredCallback() {
+                            @Override
+                            public void onPermissionRequired() {
+                                if (mSwipeRefreshLayout != null) {
+                                    mSwipeRefreshLayout.setRefreshing(false);
+                                }
+
+                            }
+                        });
                         break;
                 }
             }
@@ -216,6 +223,9 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
         mErrorMessage = (TextView) mErrorView.findViewById(R.id.error_message);
 */
 
+        mEmptyView = rootView.findViewById(R.id.empty_view);
+        mFastScroller = (FastScroller) rootView.findViewById(R.id.fast_scroller);
+        mEmptyTextView = (TextView) rootView.findViewById(R.id.empty_text);
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW);

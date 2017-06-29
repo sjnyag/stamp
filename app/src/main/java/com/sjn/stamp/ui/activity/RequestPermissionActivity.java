@@ -6,7 +6,10 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
 import com.sjn.stamp.utils.LogHelper;
+import com.sjn.stamp.utils.MediaRetrieveHelper;
 import com.sjn.stamp.utils.PermissionHelper;
+
+import java.util.Arrays;
 
 public class RequestPermissionActivity extends AppCompatActivity {
 
@@ -31,6 +34,14 @@ public class RequestPermissionActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (Arrays.asList(permissions).contains(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            MediaRetrieveHelper.retrieveAndUpdateCache(this, new MediaRetrieveHelper.PermissionRequiredCallback() {
+                @Override
+                public void onPermissionRequired() {
+
+                }
+            });
+        }
         if (requestCode == REQUEST_PERMISSION) {
             finish();
         }

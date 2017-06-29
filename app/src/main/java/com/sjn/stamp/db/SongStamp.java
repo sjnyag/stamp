@@ -2,6 +2,7 @@ package com.sjn.stamp.db;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +19,7 @@ public class SongStamp extends RealmObject {
 
     @PrimaryKey
     public long mId;
+    @Index
     public String mName;
     public RealmList<Song> mSongList;
 }

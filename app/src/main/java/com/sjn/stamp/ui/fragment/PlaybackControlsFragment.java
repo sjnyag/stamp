@@ -31,9 +31,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sjn.stamp.ui.observer.MediaControllerObserver;
 import com.sjn.stamp.R;
 import com.sjn.stamp.media.player.CastPlayer;
+import com.sjn.stamp.ui.observer.MediaControllerObserver;
 import com.sjn.stamp.utils.LogHelper;
 
 import static com.sjn.stamp.utils.ViewHelper.updateAlbumArt;
@@ -143,10 +143,12 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
             case PlaybackStateCompat.STATE_PAUSED:
             case PlaybackStateCompat.STATE_STOPPED:
                 enablePlay = true;
+                mPlayPause.setVisibility(View.VISIBLE);
                 break;
             case PlaybackStateCompat.STATE_ERROR:
                 LogHelper.e(TAG, "error playbackstate: ", state.getErrorMessage());
-                Toast.makeText(getActivity(), state.getErrorMessage(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), state.getErrorMessage(), Toast.LENGTH_LONG).show();
+                mPlayPause.setVisibility(View.INVISIBLE);
                 break;
         }
 
@@ -175,7 +177,7 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
         public void onClick(View v) {
             MediaControllerCompat controller = getActivity()
                     .getSupportMediaController();
-            if(controller == null){
+            if (controller == null) {
                 return;
             }
             PlaybackStateCompat stateObj = controller.getPlaybackState();

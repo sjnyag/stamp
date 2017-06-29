@@ -15,8 +15,8 @@ import com.anupcowkur.reservoir.ReservoirPutCallback;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.gson.reflect.TypeToken;
-import com.sjn.stamp.media.source.MusicProviderSource;
 import com.sjn.stamp.media.source.MediaSourceObserver;
+import com.sjn.stamp.media.source.MusicProviderSource;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -30,6 +30,10 @@ import lombok.experimental.Accessors;
 
 public class MediaRetrieveHelper {
     private static final String TAG = LogHelper.makeLogTag(MediaRetrieveHelper.class);
+
+    public interface PermissionRequiredCallback {
+        void onPermissionRequired();
+    }
 
     private static final String[] GENRE_PROJECTION = {
             MediaStore.Audio.Genres.NAME,
@@ -73,7 +77,11 @@ public class MediaRetrieveHelper {
         return PermissionHelper.hasPermission(context, MediaRetrieveHelper.PERMISSIONS);
     }
 
-    public static MediaMetadataCompat findByMusicId(Context context, long musicId) {
+    public static MediaMetadataCompat findByMusicId(Context context, long musicId, PermissionRequiredCallback callback) {
+        if (!MediaRetrieveHelper.hasPermission(context) && callback != null) {
+            callback.onPermissionRequired();
+            return null;
+        }
         MediaMetadataCompat metadata = null;
         Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, musicId);
         Cursor mediaCursor = context.getContentResolver().query(uri, MEDIA_PROJECTION, ALL_MUSIC_SELECTION, null, null);
@@ -88,7 +96,11 @@ public class MediaRetrieveHelper {
         return metadata;
     }
 
-    public static String findAlbumArtByArtist(Context context, String artist) {
+    public static String findAlbumArtByArtist(Context context, String artist, PermissionRequiredCallback callback) {
+        if (!MediaRetrieveHelper.hasPermission(context) && callback != null) {
+            callback.onPermissionRequired();
+            return null;
+        }
         Uri uri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
         Cursor mediaCursor = context.getContentResolver().query(uri, new String[]{MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},
                 MediaStore.Audio.Albums.ARTIST + "=?",
@@ -105,7 +117,7 @@ public class MediaRetrieveHelper {
         return "";
     }
 
-    public static boolean initCache(Context context) {
+    private static boolean initCache(Context context) {
         try {
             Reservoir.init(context, MediaRetrieveHelper.DISK_CACHE_SIZE);
             return true;
@@ -114,7 +126,8 @@ public class MediaRetrieveHelper {
         }
     }
 
-    public static List<MediaCursorContainer> readCache() {
+    public static List<MediaCursorContainer> readCache(Context context) {
+        initCache(context);
         try {
             if (Reservoir.contains(CACHE_KEY)) {
                 return Reservoir.get(CACHE_KEY, CACHE_TYPE);
@@ -126,20 +139,22 @@ public class MediaRetrieveHelper {
         return new ArrayList<>();
     }
 
-    public static List<MediaCursorContainer> retrieveAllMedia(Context context) {
+    public static List<MediaCursorContainer> retrieveAllMedia(Context context, PermissionRequiredCallback callback) {
+        if (!MediaRetrieveHelper.hasPermission(context) && callback != null) {
+            callback.onPermissionRequired();
+            return null;
+        }
         List<MediaCursorContainer> mediaList = new ArrayList<>();
-        SparseArray<String> genreMap = createGenreMap(context);
+        SparseArray<String> genreMap = createGenreMap(context, callback);
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Cursor mediaCursor = context.getContentResolver().query(
                 uri, MEDIA_PROJECTION, ALL_MUSIC_SELECTION, null, null);
         try {
             if (mediaCursor != null && mediaCursor.moveToFirst()) {
-                if (mediaCursor != null && mediaCursor.moveToFirst()) {
-                    do {
-                        mediaList.add(parseCursor(mediaCursor, genreMap));
-                    } while (mediaCursor.moveToNext());
-                    mediaCursor.close();
-                }
+                do {
+                    mediaList.add(parseCursor(mediaCursor, genreMap));
+                } while (mediaCursor.moveToNext());
+                mediaCursor.close();
             }
         } catch (java.lang.SecurityException e) {
             e.printStackTrace();
@@ -147,11 +162,19 @@ public class MediaRetrieveHelper {
         return mediaList;
     }
 
-    public static void retrieveAndUpdateCache(Context context) {
-        new CacheUpdateAsyncTask(context).execute();
+    public static void retrieveAndUpdateCache(Context context, PermissionRequiredCallback callback) {
+        if (!MediaRetrieveHelper.hasPermission(context) && callback != null) {
+            callback.onPermissionRequired();
+            return;
+        }
+        new CacheUpdateAsyncTask(context, callback).execute();
     }
 
-    private static SparseArray<String> createGenreMap(Context context) {
+    private static SparseArray<String> createGenreMap(Context context, PermissionRequiredCallback callback) {
+        if (!MediaRetrieveHelper.hasPermission(context) && callback != null) {
+            callback.onPermissionRequired();
+            return null;
+        }
         SparseArray<String> genreMap = new SparseArray<>();
         try {
             Cursor cursor = context.getContentResolver().query(
@@ -240,9 +263,11 @@ public class MediaRetrieveHelper {
     private static class CacheUpdateAsyncTask extends AsyncTask<Void, Void, String> {
 
         private Context mContext;
+        private PermissionRequiredCallback mCallback;
 
-        CacheUpdateAsyncTask(Context context) {
+        CacheUpdateAsyncTask(Context context, PermissionRequiredCallback callback) {
             mContext = context;
+            mCallback = callback;
         }
 
         @Override
@@ -252,7 +277,7 @@ public class MediaRetrieveHelper {
 
         @Override
         protected String doInBackground(Void... params) {
-            List<MediaCursorContainer> trackList = retrieveAllMedia(mContext);
+            List<MediaCursorContainer> trackList = retrieveAllMedia(mContext, mCallback);
             writeCache(trackList);
             MediaSourceObserver.getInstance().notifyMediaSourceChange(createIterator(trackList));
             return null;
@@ -263,7 +288,8 @@ public class MediaRetrieveHelper {
             super.onPostExecute(result);
         }
 
-        private static void writeCache(final List<MediaCursorContainer> list) {
+        private void writeCache(final List<MediaCursorContainer> list) {
+            initCache(mContext);
             Reservoir.putAsync(CACHE_KEY, list, new ReservoirPutCallback() {
                 @Override
                 public void onSuccess() {

@@ -19,8 +19,8 @@ package com.sjn.stamp.media.source;
 import android.content.Context;
 import android.support.v4.media.MediaMetadataCompat;
 
-import com.sjn.stamp.utils.MediaRetrieveHelper;
 import com.sjn.stamp.utils.LogHelper;
+import com.sjn.stamp.utils.MediaRetrieveHelper;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -31,16 +31,12 @@ import java.util.List;
  */
 public class LocalMediaSource implements MusicProviderSource {
 
-    public interface PermissionRequiredCallback {
-        void onPermissionRequired();
-    }
-
     private static final String TAG = LogHelper.makeLogTag(LocalMediaSource.class);
 
     private final Context mContext;
-    private final PermissionRequiredCallback mCallback;
+    private final MediaRetrieveHelper.PermissionRequiredCallback mCallback;
 
-    public LocalMediaSource(Context context, PermissionRequiredCallback callback) {
+    public LocalMediaSource(Context context, MediaRetrieveHelper.PermissionRequiredCallback callback) {
         mContext = context;
         mCallback = callback;
     }
@@ -51,13 +47,12 @@ public class LocalMediaSource implements MusicProviderSource {
             mCallback.onPermissionRequired();
             return Collections.<MediaMetadataCompat>emptyList().iterator();
         }
-        MediaRetrieveHelper.initCache(mContext);
-        List<MediaRetrieveHelper.MediaCursorContainer> list = MediaRetrieveHelper.readCache();
+        List<MediaRetrieveHelper.MediaCursorContainer> list = MediaRetrieveHelper.readCache(mContext);
         LogHelper.i(TAG, "Read " + list.size() + "songs from cache");
         if (list.size() == 0) {
-            list = MediaRetrieveHelper.retrieveAllMedia(mContext);
+            list = MediaRetrieveHelper.retrieveAllMedia(mContext, mCallback);
         }
-        MediaRetrieveHelper.retrieveAndUpdateCache(mContext);
+        MediaRetrieveHelper.retrieveAndUpdateCache(mContext, mCallback);
         return MediaRetrieveHelper.createIterator(list);
     }
 

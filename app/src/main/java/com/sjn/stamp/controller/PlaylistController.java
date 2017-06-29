@@ -7,6 +7,7 @@ import android.support.v4.media.MediaMetadataCompat;
 import com.sjn.stamp.utils.LocalPlaylistHelper;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 @SuppressWarnings({"unused"})
@@ -21,7 +22,12 @@ public class PlaylistController {
     }
 
     public ConcurrentMap<String, List<MediaMetadataCompat>> getAllPlaylist() {
-        return LocalPlaylistHelper.findAllPlaylist(mContentResolver);
+        try {
+            return LocalPlaylistHelper.findAllPlaylist(mContentResolver);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            return new ConcurrentHashMap<>();
+        }
     }
 
     public boolean isExistAudioId(int audioId, int playlistId) {

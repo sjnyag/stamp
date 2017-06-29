@@ -34,6 +34,7 @@ import com.sjn.stamp.media.playback.PlaybackManager;
 import com.sjn.stamp.media.player.CarPlayer;
 import com.sjn.stamp.media.player.Player;
 import com.sjn.stamp.utils.LogHelper;
+import com.sjn.stamp.utils.MediaRetrieveHelper;
 import com.sjn.stamp.utils.WearHelper;
 
 import net.danlew.android.joda.JodaTimeAndroid;
@@ -97,7 +98,7 @@ import java.util.List;
  * @see <a href="README.md">README.md</a> for more details.
  */
 public class MusicService extends MediaBrowserServiceCompat
-        implements LocalMediaSource.PermissionRequiredCallback,
+        implements MediaRetrieveHelper.PermissionRequiredCallback,
         PlaybackManager.PlaybackServiceCallback,
         Player.PlayerCallback {
 

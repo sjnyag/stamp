@@ -9,6 +9,7 @@ import com.sjn.stamp.R;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,21 +26,17 @@ public class Song extends RealmObject implements Tweetable {
 
     @PrimaryKey
     public long mId;
-    //TODO
-    //@Index
+    @Index
     public String mMediaId;
     public String mTrackSource;
-    //TODO
-    //@Index
+    @Index
     public String mAlbum;
-    //TODO
-    //@Index
+    @Index
     public String mArtist;
     public Long mDuration;
     public String mGenre;
     public String mAlbumArtUri;
-    //TODO
-    //@Index
+    @Index
     public String mTitle;
     public Long mTrackNumber;
     public Long mNumTracks;

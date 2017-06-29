@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -56,7 +57,6 @@ public class TimelineFragment extends MediaBrowserListFragment implements
 
     private static final String TAG = LogHelper.makeLogTag(TimelineFragment.class);
 
-    private SongAdapter mAdapter;
     private SongHistoryController mSongHistoryController;
     protected List<SongHistory> mAllSongHistoryList = new ArrayList<>();
     private Realm mRealm;
@@ -162,6 +162,9 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW);
+        mEmptyView = rootView.findViewById(R.id.empty_view);
+        mFastScroller = (FastScroller) rootView.findViewById(R.id.fast_scroller);
+        mEmptyTextView = (TextView) rootView.findViewById(R.id.empty_text);
 
         mRealm = RealmHelper.getRealmInstance();
         mAllSongHistoryList = mSongHistoryController.getManagedTimeline(mRealm);
