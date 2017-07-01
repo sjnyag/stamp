@@ -49,7 +49,7 @@ public abstract class ListProvider {
 
     abstract public List<MediaBrowserCompat.MediaItem> getListItems(String mediaId, Resources resources, ProviderState state,
                                                                     final ConcurrentMap<String, MediaMetadataCompat> musicListById,
-                                                                    String filter, int size, Comparator comparator);
+                                                                    String filter, Integer size, Comparator comparator);
 
     abstract public List<MediaMetadataCompat> getListByKey(String key, ProviderState state, final ConcurrentMap<String, MediaMetadataCompat> musicListById);
 

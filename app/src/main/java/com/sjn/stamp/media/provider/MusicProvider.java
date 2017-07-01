@@ -304,7 +304,7 @@ public class MusicProvider implements MediaSourceObserver.Listener {
         retrieveMediaAsync(callback, null);
     }
 
-    public List<MediaBrowserCompat.MediaItem> getChildren(String mediaId, Resources resources, String filter, int size, Comparator comparator) {
+    public List<MediaBrowserCompat.MediaItem> getChildren(String mediaId, Resources resources, String filter, Integer size, Comparator comparator) {
         List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>();
 
         if (!MediaIDHelper.isBrowseable(mediaId)) {

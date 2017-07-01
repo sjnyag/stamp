@@ -70,6 +70,7 @@ public class SongStampDao extends BaseDao {
         if (songStamp == null) {
             songStamp = realm.createObject(SongStamp.class, getAutoIncrementId(realm, SongStamp.class));
             songStamp.setName(name);
+            songStamp.setSystem(false);
             result = true;
         }
         realm.commitTransaction();

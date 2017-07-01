@@ -22,6 +22,7 @@ public class TotalSongHistory extends RealmObject {
 
     public int mPlayCount;
     public int mSkipCount;
+    public int mCompleteCount;
 
     public void setPlayCountIfOver(int playCount) {
         if (playCount <= mPlayCount) {
@@ -37,6 +38,13 @@ public class TotalSongHistory extends RealmObject {
         mSkipCount = skipCount;
     }
 
+    public void setCompleteCountIfOver(int completeCount) {
+        if (completeCount <= mCompleteCount) {
+            return;
+        }
+        mCompleteCount = completeCount;
+    }
+
     public void incrementPlayCount(int playCount) {
         mPlayCount += playCount;
     }
@@ -45,23 +53,31 @@ public class TotalSongHistory extends RealmObject {
         mSkipCount += skipCount;
     }
 
+    public void incrementCompleteCount(int completeCount) {
+        mCompleteCount += completeCount;
+    }
+
     public void parseSongQueue(Song song, RecordType recordType) {
         switch (recordType) {
             case PLAY:
-                setValues(song, 1, 0);
+                setValues(song, 1, 0, 0);
                 break;
             case SKIP:
-                setValues(song, 0, 1);
+                setValues(song, 0, 1, 0);
+                break;
+            case COMPLETE:
+                setValues(song, 0, 0, 1);
                 break;
             default:
-                setValues(song, 0, 0);
+                setValues(song, 0, 0, 0);
                 break;
         }
     }
 
-    public void setValues(Song song, int playCount, int skipCount) {
+    public void setValues(Song song, int playCount, int skipCount, int completeCount) {
         setSong(song);
         setPlayCount(playCount);
         setSkipCount(skipCount);
+        setCompleteCount(completeCount);
     }
 }

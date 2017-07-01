@@ -73,7 +73,7 @@ abstract public class MultipleListProvider extends ListProvider {
     }
 
     @Override
-    final public List<MediaBrowserCompat.MediaItem> getListItems(String mediaId, Resources resources, ProviderState state, final ConcurrentMap<String, MediaMetadataCompat> musicListById, String filter, int size, Comparator comparator) {
+    final public List<MediaBrowserCompat.MediaItem> getListItems(String mediaId, Resources resources, ProviderState state, final ConcurrentMap<String, MediaMetadataCompat> musicListById, String filter, Integer size, Comparator comparator) {
         List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>();
 
         if (MediaIDHelper.isTrack(mediaId)) {
@@ -90,7 +90,10 @@ abstract public class MultipleListProvider extends ListProvider {
                 mLastMediaKeySeek = 0;
             }
             int startSize = mLastMediaKeyList.size();
-            for (; mLastMediaKeyList.size() - startSize < size && mLastMediaKeySeek < keyList.size(); mLastMediaKeySeek++) {
+            for (; mLastMediaKeySeek < keyList.size(); mLastMediaKeySeek++) {
+                if (size != null && mLastMediaKeyList.size() - startSize < size) {
+                    break;
+                }
                 String key = keyList.get(mLastMediaKeySeek);
                 if (matchFilter(filter, key)) {
                     mLastMediaKeyList.add(createBrowsableMediaItemForKey(key, findIconUri(key, state, musicListById)));
@@ -108,7 +111,10 @@ abstract public class MultipleListProvider extends ListProvider {
             }
             List<MediaMetadataCompat> metadataList = getListByKey(mLastMediaKey, state, musicListById);
             int startSize = mLastTrackList.size();
-            for (; mLastTrackList.size() - startSize < size && mLastTrackSeek < metadataList.size(); mLastTrackSeek++) {
+            for (; mLastTrackSeek < metadataList.size(); mLastTrackSeek++) {
+                if (size != null && mLastTrackList.size() - startSize < size) {
+                    break;
+                }
                 MediaMetadataCompat track = metadataList.get(mLastTrackSeek);
                 if (matchFilter(filter, track)) {
                     mLastTrackList.add(createMediaItem(track, mLastMediaKey));

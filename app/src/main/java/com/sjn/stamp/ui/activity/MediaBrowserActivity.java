@@ -32,10 +32,10 @@ import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
-import com.sjn.stamp.ui.observer.MediaControllerObserver;
 import com.sjn.stamp.MusicService;
 import com.sjn.stamp.R;
 import com.sjn.stamp.ui.fragment.PlaybackControlsFragment;
+import com.sjn.stamp.ui.observer.MediaControllerObserver;
 import com.sjn.stamp.utils.BitmapHelper;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.ResourceHelper;
@@ -184,6 +184,7 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity
         if (mControlsFragment != null) {
             mControlsFragment.onConnected();
         }
+        onConnected();
 
         onMediaControllerConnected();
     }
@@ -216,6 +217,12 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity
 
     @Override
     public void onConnected() {
+        MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
+        LogHelper.d(TAG, "onConnected, mediaController==null? ", controller == null);
+        if (controller != null) {
+            onMetadataChanged(controller.getMetadata());
+            onPlaybackStateChanged(controller.getPlaybackState());
+        }
     }
 
     private void updateAccountHeader(final MediaMetadataCompat metadata) {

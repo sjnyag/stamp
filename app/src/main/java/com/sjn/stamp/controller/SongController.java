@@ -160,6 +160,7 @@ public class SongController {
         for (String stampName : stampNameList) {
             SongStamp songStamp = mSongStampDao.newStandalone();
             songStamp.setName(stampName);
+            songStamp.setSystem(false);
             mSongStampDao.saveOrAdd(realm, songStamp, song);
         }
         realm.close();

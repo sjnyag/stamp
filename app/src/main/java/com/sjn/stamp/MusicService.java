@@ -275,14 +275,14 @@ public class MusicService extends MediaBrowserServiceCompat
             result.sendResult(new ArrayList<MediaItem>());
         } else if (mMusicProvider.isInitialized()) {
             // if music library is ready, return immediately
-            result.sendResult(mMusicProvider.getChildren(parentMediaId, getResources(), null, 1000, null));
+            result.sendResult(mMusicProvider.getChildren(parentMediaId, getResources(), null, null, null));
         } else {
             // otherwise, only return results when the music library is retrieved
             result.detach();
             mMusicProvider.retrieveMediaAsync(new MusicProvider.Callback() {
                 @Override
                 public void onMusicCatalogReady(boolean success) {
-                    result.sendResult(mMusicProvider.getChildren(parentMediaId, getResources(), null, 1000, null));
+                    result.sendResult(mMusicProvider.getChildren(parentMediaId, getResources(), null, null, null));
                 }
             });
         }

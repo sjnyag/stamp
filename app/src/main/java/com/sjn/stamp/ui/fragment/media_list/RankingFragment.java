@@ -261,7 +261,7 @@ public class RankingFragment extends MediaBrowserListFragment {
         mAdapter.addUserLearnedSelection(savedInstanceState == null);
         //mAdapter.addScrollableHeaderWithDelay(new DateHeaderItem(TimeHelper.getJapanNow().toDate()), 900L, false);
         //mAdapter.showLayoutInfo(savedInstanceState == null);
-        mAdapter.addScrollableFooter();
+        //mAdapter.addScrollableFooter();
 
 
         // EndlessScrollListener - OnLoadMore (v5.0.0)

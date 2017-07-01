@@ -15,6 +15,7 @@
  */
 package com.sjn.stamp.ui.fragment.media_list;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,7 +28,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -35,6 +35,7 @@ import com.sjn.stamp.MusicService;
 import com.sjn.stamp.R;
 import com.sjn.stamp.ui.DialogFacade;
 import com.sjn.stamp.ui.SongAdapter;
+import com.sjn.stamp.ui.activity.RequestPermissionActivity;
 import com.sjn.stamp.ui.item.SongItem;
 import com.sjn.stamp.ui.observer.MediaSourceObserver;
 import com.sjn.stamp.ui.observer.StampEditStateObserver;
@@ -136,10 +137,9 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
                         MediaRetrieveHelper.retrieveAndUpdateCache(getActivity(), new MediaRetrieveHelper.PermissionRequiredCallback() {
                             @Override
                             public void onPermissionRequired() {
-                                if (mSwipeRefreshLayout != null) {
-                                    mSwipeRefreshLayout.setRefreshing(false);
-                                }
-
+                                Intent intent = new Intent(getContext(), RequestPermissionActivity.class);
+                                intent.putExtra(RequestPermissionActivity.KEY_PERMISSIONS, MediaRetrieveHelper.PERMISSIONS);
+                                startActivity(intent);
                             }
                         });
                         break;

@@ -21,5 +21,6 @@ public class SongStamp extends RealmObject {
     public long mId;
     @Index
     public String mName;
+    public boolean mIsSystem;
     public RealmList<Song> mSongList;
 }

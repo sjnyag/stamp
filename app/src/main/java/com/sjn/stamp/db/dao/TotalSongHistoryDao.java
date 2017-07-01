@@ -37,13 +37,14 @@ public class TotalSongHistoryDao extends BaseDao {
         } else {
             totalSongHistory.incrementPlayCount(rawTotalSongHistory.getPlayCount());
             totalSongHistory.incrementSkipCount(rawTotalSongHistory.getSkipCount());
+            totalSongHistory.incrementCompleteCount(rawTotalSongHistory.getCompleteCount());
             playCount = totalSongHistory.getPlayCount();
         }
         realm.commitTransaction();
         return playCount;
     }
 
-    public void save(Realm realm, final long songQueueId, final int playCount, final int skipCount) {
+    public void save(Realm realm, final long songQueueId, final int playCount, final int skipCount, final int completeCount) {
         realm.beginTransaction();
         SongHistory songHistory = realm.where(SongHistory.class).equalTo("mId", songQueueId).findFirst();
         if (songHistory == null) {
@@ -59,6 +60,7 @@ public class TotalSongHistoryDao extends BaseDao {
         }
         totalSongHistory.setPlayCountIfOver(playCount);
         totalSongHistory.setSkipCountIfOver(skipCount);
+        totalSongHistory.setCompleteCountIfOver(completeCount);
         realm.commitTransaction();
     }
 

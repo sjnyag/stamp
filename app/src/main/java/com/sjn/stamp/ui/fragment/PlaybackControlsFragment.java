@@ -29,7 +29,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sjn.stamp.R;
 import com.sjn.stamp.media.player.CastPlayer;
@@ -85,8 +84,7 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
 
     @Override
     public void onConnected() {
-        MediaControllerCompat controller = getActivity()
-                .getSupportMediaController();
+        MediaControllerCompat controller = MediaControllerCompat.getMediaController(getActivity());
         LogHelper.d(TAG, "onConnected, mediaController==null? ", controller == null);
         if (controller != null) {
             onMetadataChanged(controller.getMetadata());
