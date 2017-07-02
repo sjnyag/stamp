@@ -23,8 +23,23 @@
         <item name="colorAccent">@color/color_accent</item>
         <item name="alertDialogTheme">@style/Theme.AppCompat.Dialog.Alert</item>
         <item name="primaryTextSelector">@drawable/primary_text_selector_light</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
+    <style name="AppTheme.PreferenceStyle" parent="@style/PreferenceThemeOverlay">
+        <item name="android:listSeparatorTextViewStyle">@style/Preference.ListSeparator</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+    </style>
+
+    <style name="Preference.ListSeparator" parent="android:Widget.TextView">
+        <item name="android:minHeight">48dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body2</item>
+        <item name="android:textColor">?colorAccent</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+    </style>
 
     <style name="CarTheme" parent="UAmpAppTheme">
         <!-- colorPrimaryDark is currently used in Android Auto for:

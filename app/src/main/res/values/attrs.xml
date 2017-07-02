@@ -2,6 +2,6 @@
 <resources>
     <attr name="primaryTextSelector" format="reference" />
     <declare-styleable name="ScrollViewWithMaxHeight">
-        <attr name="maxHeight" format="integer" />
+        <attr name="scrollViewMaxHeight" format="integer" />
     </declare-styleable>
 </resources>

@@ -49,7 +49,7 @@
             android:layout_alignParentStart="true"
             android:layout_below="@+id/stamp_register"
             android:layout_marginTop="16dp"
-            app:maxHeight="240">
+            app:scrollViewMaxHeight="240">
 
             <com.github.sjnyag.AnimationWrapLayout
                 android:id="@+id/stamp_list_layout"

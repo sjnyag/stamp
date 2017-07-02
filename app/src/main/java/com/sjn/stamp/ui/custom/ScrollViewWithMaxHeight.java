@@ -26,7 +26,7 @@ public class ScrollViewWithMaxHeight extends ScrollView {
                 0, 0);
 
         try {
-            setMaxHeight(a.getInt(R.styleable.ScrollViewWithMaxHeight_maxHeight, 0));
+            setMaxHeight(a.getInt(R.styleable.ScrollViewWithMaxHeight_scrollViewMaxHeight, 0));
         } finally {
             a.recycle();
         }

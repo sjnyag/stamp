@@ -98,6 +98,12 @@
     <string name="album_art">album art</string>
     <string name="menu_timeline_upward">最上部へ</string>
 
+    <string name="export_backup">バックアップを作成する</string>
+    <string name="import_backup">バックアップを取り込む</string>
+    <string name="import_backup_summary">これまでのデータは失われます。</string>
+    <string name="licence">ライセンス</string>
+    <string name="version">バージョン情報</string>
+
     <string name="action_delete">Delete</string>
     <string name="action_select_all">Select All</string>
     <string name="action_selected_one">%1$s selected</string>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="backup"
+        android:title="バックアップ">
+        <Preference
+            android:key="@string/import_backup"
+            android:summary="@string/import_backup_summary"
+            android:title="@string/import_backup">
+        </Preference>
+        <Preference
+            android:key="@string/export_backup"
+            android:title="@string/export_backup"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="application_information"
+        android:title="アプリ情報">
+        <Preference
+            android:key="@string/licence"
+            android:title="@string/licence"/>
+        <Preference
+            android:key="@string/version"
+            android:summary="@string/versionName"
+            android:title="@string/version"/>
+    </PreferenceCategory>
+</PreferenceScreen>

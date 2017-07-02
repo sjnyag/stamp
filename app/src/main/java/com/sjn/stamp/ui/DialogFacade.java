@@ -8,6 +8,17 @@ import com.afollestad.materialdialogs.Theme;
 import com.sjn.stamp.R;
 
 public class DialogFacade {
+    public static MaterialDialog.Builder createRestartDialog(final Context context, MaterialDialog.SingleButtonCallback callback) {
+        return new MaterialDialog.Builder(context)
+                .title("再起動")
+                .content("バックアップを反映するために再起動します。")
+                .positiveText("OK")
+                .onAny(callback)
+                .contentColorRes(android.R.color.white)
+                .backgroundColorRes(R.color.material_blue_grey_800)
+                .theme(Theme.DARK);
+    }
+
     public static MaterialDialog.Builder createStampDeleteDialog(final Context context, String stamp, MaterialDialog.SingleButtonCallback callback) {
         return new MaterialDialog.Builder(context)
                 .title("タグの削除")
@@ -28,6 +39,7 @@ public class DialogFacade {
                 .backgroundColorRes(R.color.material_blue_grey_800)
                 .theme(Theme.DARK);
     }
+
     public static MaterialDialog.Builder createHistoryDeleteDialog(final Context context, String history, MaterialDialog.SingleButtonCallback callback, DialogInterface.OnDismissListener dismissListener) {
         return new MaterialDialog.Builder(context)
                 .title("再生履歴の削除")
@@ -40,7 +52,8 @@ public class DialogFacade {
                 .backgroundColorRes(R.color.material_blue_grey_800)
                 .theme(Theme.DARK);
     }
-    public static MaterialDialog.Builder createRetrieveMediaDialog(final Context context,  MaterialDialog.SingleButtonCallback callback) {
+
+    public static MaterialDialog.Builder createRetrieveMediaDialog(final Context context, MaterialDialog.SingleButtonCallback callback) {
         return new MaterialDialog.Builder(context)
                 .title("音楽ファイルの再ロード")
                 .content("端末内の音楽ファイルの再ロードを実施します。（ファイルの量によっては少し時間がかかります。）よろしいですか？")

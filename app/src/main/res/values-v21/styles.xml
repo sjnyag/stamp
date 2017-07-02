@@ -27,5 +27,6 @@
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="primaryTextSelector">@drawable/primary_text_selector_light</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 </resources>
