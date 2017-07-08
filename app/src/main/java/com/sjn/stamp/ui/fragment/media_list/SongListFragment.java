@@ -15,9 +15,11 @@
  */
 package com.sjn.stamp.ui.fragment.media_list;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -61,6 +63,7 @@ import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
  */
 public class SongListFragment extends MediaBrowserListFragment implements MediaSourceObserver.Listener {
 
+    private ProgressDialog mProgressDialog;
     private static final String TAG = LogHelper.makeLogTag(SongListFragment.class);
 
     /**
@@ -142,6 +145,15 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
                                 startActivity(intent);
                             }
                         });
+
+                        Handler handler = new Handler(getActivity().getMainLooper());
+                        handler.post(new Runnable() {
+                            public void run() {
+                                mProgressDialog = new ProgressDialog(getActivity());
+                                mProgressDialog.setMessage("処理中");
+                                mProgressDialog.show();
+                            }
+                        });
                         break;
                 }
             }
@@ -207,7 +219,12 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
         MediaBrowserCompat mediaBrowser = mMediaBrowsable.getMediaBrowser();
         if (mediaBrowser != null && mediaBrowser.isConnected() && mMediaId != null) {
             reloadList();
-            mSwipeRefreshLayout.setRefreshing(false);
+            if (mSwipeRefreshLayout != null) {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+            }
         }
 
     }

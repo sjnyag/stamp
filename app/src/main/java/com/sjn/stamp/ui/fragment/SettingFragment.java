@@ -1,5 +1,6 @@
 package com.sjn.stamp.ui.fragment;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.preference.Preference;
@@ -29,7 +30,11 @@ public class SettingFragment extends PreferenceFragmentCompat {
         findPreference(getString(R.string.import_backup)).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
+                ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                progressDialog.setMessage("処理中");
+                progressDialog.show();
                 RealmHelper.importBackUp(getActivity());
+                progressDialog.dismiss();
                 DialogFacade.createRestartDialog(getActivity(), new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -43,7 +48,11 @@ public class SettingFragment extends PreferenceFragmentCompat {
         findPreference(getString(R.string.export_backup)).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
+                ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                progressDialog.setMessage("処理中");
+                progressDialog.show();
                 RealmHelper.exportBackUp(getActivity());
+                progressDialog.dismiss();
                 return true;
             }
         });
