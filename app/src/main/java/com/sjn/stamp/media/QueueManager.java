@@ -52,6 +52,7 @@ import java.util.List;
 public class QueueManager implements QueueProvider.QueueListener, CustomController.ShuffleStateListener {
     private static final String TAG = LogHelper.makeLogTag(QueueManager.class);
 
+    public static final String META_DATA_KEY_BASE_MEDIA_ID = "com.sjn.stamp.media.META_DATA_KEY_BASE_MEDIA_ID";
     private Context mContext;
     private MusicProvider mMusicProvider;
     private MetadataUpdateListener mListener;
@@ -342,6 +343,10 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
             }
             if (queueItem.getDescription().getTitle() != null) {
                 builder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, queueItem.getDescription().getTitle().toString());
+            }
+            MediaSessionCompat.QueueItem current = getCurrentMusic();
+            if (current != null) {
+                builder.putString(META_DATA_KEY_BASE_MEDIA_ID, current.getDescription().getMediaId());
             }
             queueList.add(builder.build());
         }

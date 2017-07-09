@@ -5,6 +5,8 @@ import android.os.Looper;
 import android.os.Message;
 import android.view.ViewGroup;
 
+import com.sjn.stamp.ui.item.AbstractItem;
+
 import java.util.List;
 
 import eu.davidea.flexibleadapter.FlexibleAdapter;
@@ -52,26 +54,15 @@ public class SongAdapter extends FlexibleAdapter<AbstractFlexibleItem> {
      * Same Header item is enqueued for removal with a delay.
      * The view is represented by a custom Item type to better represent any dynamic content.
      */
-//    public void showLayoutInfo(boolean scrollToPosition) {
-//        if (!hasSearchText()) {
-//            final ScrollableLayoutItem item = new ScrollableLayoutItem("LAY-L");
-//            if (mRecyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
-//                item.setId("LAY-S");
-//                item.setTitle("StaggeredGridLayoutManager");
-//            } else if (mRecyclerView.getLayoutManager() instanceof GridLayoutManager) {
-//                item.setId("LAY-G");
-//                item.setTitle("GridLayoutManager");
-//            } else {
-//                item.setTitle("OtherLayoutManager");
-//            }
-//            item.setSubtitle("item.setSubtitle");
-//            // NOTE: If you have to change at runtime the LayoutManager AND add
-//            // Scrollable Headers, consider to add them in post, using a delay >= 0
-//            // otherwise scroll animations on all items will not start correctly.
-//            addScrollableHeaderWithDelay(item, 1200L, scrollToPosition);
-//            removeScrollableHeaderWithDelay(item, 4000L);
-//        }
-//    }
+    public void showLayoutInfo(AbstractItem item, boolean scrollToPosition) {
+        if (!hasSearchText()) {
+            // NOTE: If you have to change at runtime the LayoutManager AND add
+            // Scrollable Headers, consider to add them in post, using a delay >= 0
+            // otherwise scroll animations on all items will not start correctly.
+            addScrollableHeaderWithDelay(item, 1200L, scrollToPosition);
+            removeScrollableHeaderWithDelay(item, 4000L);
+        }
+    }
 
     /*
      * ANOTHER HEADER VIEW

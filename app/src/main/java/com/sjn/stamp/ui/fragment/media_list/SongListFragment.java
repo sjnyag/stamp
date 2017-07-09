@@ -179,8 +179,10 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
     @Override
     public boolean onItemClick(int position) {
         LogHelper.d(TAG, "onItemClick ");
-        SongItem item = (SongItem) mAdapter.getItem(position);
-        mMediaBrowsable.onMediaItemSelected(item.getMediaItem());
+        AbstractFlexibleItem item = mAdapter.getItem(position);
+        if (item instanceof SongItem) {
+            mMediaBrowsable.onMediaItemSelected(((SongItem) item).getMediaItem());
+        }
         return false;
     }
 

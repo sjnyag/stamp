@@ -207,11 +207,19 @@ public class MediaIDHelper {
     }
 
     public static CategoryType getCategoryType(String mediaId) {
-        String[] hierarchy = getHierarchy(mediaId);
-        if (hierarchy.length <= 1) {
+        ProviderType providerType = getProviderType(mediaId);
+        if (providerType == null) {
             return null;
         }
-        return ProviderType.of(hierarchy[0]).getCategoryType();
+        return providerType.getCategoryType();
+    }
+
+    public static ProviderType getProviderType(String mediaId) {
+        String[] hierarchy = getHierarchy(mediaId);
+        if (hierarchy.length < 1) {
+            return null;
+        }
+        return ProviderType.of(hierarchy[0]);
     }
 
     public static boolean isDirect(String categoryType) {
