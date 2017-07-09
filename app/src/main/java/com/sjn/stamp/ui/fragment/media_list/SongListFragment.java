@@ -104,7 +104,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
             mItemList.clear();
             mAdapter.clear();
             for (MediaBrowserCompat.MediaItem item : children) {
-                AbstractFlexibleItem songItem = new SongItem(item, null);
+                AbstractFlexibleItem songItem = new SongItem(item);
                 mItemList.add(songItem);
                 mAdapter.addItem(songItem);
             }

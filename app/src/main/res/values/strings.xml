@@ -86,7 +86,7 @@
     <string name="dialog_ok">OK</string>
 
     <string name="hash_tag">StampMusicPlayer</string>
-    <string name="base_url">http://bit.ly/1Q4YSTc</string>
+    <string name="base_url">https://play.google.com/store/apps/details?id=com.sjn.stamp</string>
 
     <string name="tweet_song">%1$s / %2$s</string>
     <string name="tweet_ranked">位(%1$d回) : %2$s</string>

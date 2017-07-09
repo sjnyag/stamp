@@ -46,11 +46,8 @@ import eu.davidea.viewholders.FlexibleViewHolder;
  * {@link eu.davidea.flexibleadapter.items.AbstractFlexibleItem} to benefit of the already
  * implemented methods (getter and setters).
  */
-public class SongItem extends AbstractItem<SongItem.SimpleViewHolder>
-        implements ISectionable<SongItem.SimpleViewHolder, DateHeaderItem>, IFilterable, Serializable {
+public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements IFilterable, Serializable {
 
-    /* The header of this item */
-    DateHeaderItem header;
 
     public MediaBrowserCompat.MediaItem getMediaItem() {
         return mMediaItem;
@@ -60,16 +57,11 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder>
     //to avoid GC
     private Target mTarget;
 
-    private SongItem(MediaBrowserCompat.MediaItem mediaItem) {
+    public SongItem(MediaBrowserCompat.MediaItem mediaItem) {
         super(String.valueOf(mediaItem.getMediaId()));
         setDraggable(true);
         setSwipeable(true);
         mMediaItem = mediaItem;
-    }
-
-    public SongItem(MediaBrowserCompat.MediaItem mediaItem, DateHeaderItem header) {
-        this(mediaItem);
-        this.header = header;
     }
 
     @Override
@@ -78,16 +70,6 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder>
             return "";
         }
         return mMediaItem.getDescription().getSubtitle().toString();
-    }
-
-    @Override
-    public DateHeaderItem getHeader() {
-        return header;
-    }
-
-    @Override
-    public void setHeader(DateHeaderItem header) {
-        this.header = header;
     }
 
     @Override
@@ -111,7 +93,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder>
 //                    Color.WHITE, Color.parseColor("#dddddd"), //Same color of divider
 //                    DrawableUtils.getColorControlHighlight(context));
 //            DrawableUtils.setBackgroundCompat(holder.itemView, drawable);
-//            DrawableUtils.setBackgroundCompat(holder.frontView, drawable);
+//            DrawableUtils.setBackgroundCompat(holder.mFrontView, drawable);
 //        }
 
         // DemoApp: INNER ANIMATION EXAMPLE! ImageView - Handle Flip Animation
@@ -249,9 +231,9 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder>
                     }
                 }
             });
-            this.mHandleView = (ImageView) view.findViewById(R.id.row_handle);
+            //this.mHandleView = (ImageView) view.findViewById(R.id.row_handle);
             this.mImageView = (ImageView) view.findViewById(R.id.play_eq);
-            setDragHandleView(mHandleView);
+            //setDragHandleView(mHandleView);
 
             this.frontView = view.findViewById(R.id.front_view);
             this.mDate = (TextView) view.findViewById(R.id.date);

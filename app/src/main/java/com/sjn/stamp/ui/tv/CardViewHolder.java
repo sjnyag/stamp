@@ -33,7 +33,7 @@ import android.support.v17.leanback.widget.Presenter;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.view.View;
 
-import com.sjn.stamp.ui.holder.MediaItemViewHolder;
+import com.sjn.stamp.ui.ColorState;
 import com.sjn.stamp.utils.BitmapHelper;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -51,7 +51,7 @@ public class CardViewHolder extends Presenter.ViewHolder {
     public CardViewHolder(View view) {
         super(view);
         mCardView = (ImageCardView) view;
-        mItemState = MediaItemViewHolder.STATE_NONE;
+        mItemState = ColorState.STATE_NONE;
     }
 
     public void setState(int state) {
@@ -63,7 +63,7 @@ public class CardViewHolder extends Presenter.ViewHolder {
     }
 
     public void attachView() {
-        if (mItemState == MediaItemViewHolder.STATE_PLAYING) {
+        if (mItemState == ColorState.STATE_PLAYING) {
             AnimationDrawable badgeDrawable = (AnimationDrawable) mCardView.getBadgeImage();
             if (badgeDrawable != null) {
                 badgeDrawable.start();
@@ -72,7 +72,7 @@ public class CardViewHolder extends Presenter.ViewHolder {
     }
 
     public void detachView() {
-        if (mItemState == MediaItemViewHolder.STATE_PLAYING) {
+        if (mItemState == ColorState.STATE_PLAYING) {
             AnimationDrawable badgeDrawable = (AnimationDrawable) mCardView.getBadgeImage();
             if (badgeDrawable != null) {
                 badgeDrawable.stop();
@@ -93,7 +93,7 @@ public class CardViewHolder extends Presenter.ViewHolder {
         mCardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
 
         // Based on state of item, set or unset badge
-        Drawable drawable = MediaItemViewHolder.getDrawableByState(context, mItemState);
+        Drawable drawable = ColorState.getDrawableByState(context, mItemState);
         mCardView.setBadgeImage(drawable);
 
         Uri artUri = description.getIconUri();

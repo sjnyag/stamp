@@ -25,16 +25,16 @@ import android.support.annotation.NonNull;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 
-import com.sjn.stamp.constant.ShuffleState;
-import com.sjn.stamp.controller.UserSettingController;
-import com.sjn.stamp.utils.QueueHelper;
 import com.sjn.stamp.R;
 import com.sjn.stamp.constant.RepeatState;
+import com.sjn.stamp.constant.ShuffleState;
+import com.sjn.stamp.controller.UserSettingController;
 import com.sjn.stamp.media.provider.MusicProvider;
 import com.sjn.stamp.media.provider.single.QueueProvider;
 import com.sjn.stamp.utils.BitmapHelper;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
+import com.sjn.stamp.utils.QueueHelper;
 import com.sjn.stamp.utils.ViewHelper;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -326,14 +326,24 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
     public Iterable<MediaMetadataCompat> getPlayingQueueMetadata() {
         List<MediaMetadataCompat> queueList = new ArrayList<>();
         for (MediaSessionCompat.QueueItem queueItem : getPlayingQueue()) {
-            queueList.add(
-                    new MediaMetadataCompat.Builder()
-                            .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, MediaIDHelper.extractMusicIDFromMediaID(queueItem.getDescription().getMediaId()))
-                            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, queueItem.getDescription().getDescription().toString())
-                            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, queueItem.getDescription().getSubtitle().toString())
-                            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, queueItem.getDescription().getIconUri().toString())
-                            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, queueItem.getDescription().getTitle().toString())
-                            .build());
+
+            MediaMetadataCompat.Builder builder = new MediaMetadataCompat.Builder();
+            if (queueItem.getDescription().getMediaId() != null) {
+                builder.putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, MediaIDHelper.extractMusicIDFromMediaID(queueItem.getDescription().getMediaId()));
+            }
+            if (queueItem.getDescription().getDescription() != null) {
+                builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, queueItem.getDescription().getDescription().toString());
+            }
+            if (queueItem.getDescription().getSubtitle() != null) {
+                builder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, queueItem.getDescription().getSubtitle().toString());
+            }
+            if (queueItem.getDescription().getIconUri() != null) {
+                builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, queueItem.getDescription().getIconUri().toString());
+            }
+            if (queueItem.getDescription().getTitle() != null) {
+                builder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, queueItem.getDescription().getTitle().toString());
+            }
+            queueList.add(builder.build());
         }
         return queueList;
     }

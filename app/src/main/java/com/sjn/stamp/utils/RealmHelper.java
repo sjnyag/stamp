@@ -8,8 +8,11 @@ import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
 
+import com.sjn.stamp.migration.Migration;
+
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import io.realm.Realm;
@@ -17,6 +20,8 @@ import io.realm.RealmConfiguration;
 import io.realm.internal.IOException;
 
 public class RealmHelper {
+    private static final int VERSION = 1;
+
     private static final String TAG = LogHelper.makeLogTag(RealmHelper.class);
     private static final File EXPORT_REALM_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
     private static final String EXPORT_REALM_FILE_NAME = "stamp_backup.realm";
@@ -32,7 +37,13 @@ public class RealmHelper {
 
     public static void init(Context context) {
         Realm.init(context);
-        Realm.setDefaultConfiguration(buildConfig());
+        RealmConfiguration config = buildConfig();
+        try {
+            Realm.migrateRealm(config, new Migration());
+        } catch (FileNotFoundException ignored) {
+            // If the Realm file doesn't exist, just ignore.
+        }
+        Realm.setDefaultConfiguration(config);
     }
 
     public static Realm getRealmInstance() {
@@ -44,6 +55,7 @@ public class RealmHelper {
         if (com.sjn.stamp.BuildConfig.BUILD_TYPE.equals("debug")) {
             //builder.deleteRealmIfMigrationNeeded();
         }
+        builder.schemaVersion(VERSION);
         return builder.build();
     }
 
@@ -80,6 +92,7 @@ public class RealmHelper {
         //Restore
         String restoreFilePath = EXPORT_REALM_PATH + "/" + EXPORT_REALM_FILE_NAME;
         copyBundledRealmFile(activity, restoreFilePath, IMPORT_REALM_FILE_NAME);
+        init(activity);
     }
 
     private static String copyBundledRealmFile(Activity activity, String oldFilePath, String outFileName) {

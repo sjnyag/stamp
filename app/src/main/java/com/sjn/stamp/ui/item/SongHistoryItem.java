@@ -79,7 +79,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
 
     @Override
     public String getSubtitle() {
-        return mSongHistory.getSong().getArtist();
+        return mSongHistory.getSong().getArtist().getName();
     }
 
     @Override
@@ -113,7 +113,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
 //                    Color.WHITE, Color.parseColor("#dddddd"), //Same color of divider
 //                    DrawableUtils.getColorControlHighlight(context));
 //            DrawableUtils.setBackgroundCompat(holder.itemView, drawable);
-//            DrawableUtils.setBackgroundCompat(holder.frontView, drawable);
+//            DrawableUtils.setBackgroundCompat(holder.mFrontView, drawable);
 //        }
 
         // DemoApp: INNER ANIMATION EXAMPLE! ImageView - Handle Flip Animation
@@ -220,8 +220,8 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
                     }
                 }
             });
-            this.mHandleView = (ImageView) view.findViewById(R.id.row_handle);
-            setDragHandleView(mHandleView);
+            //this.mHandleView = (ImageView) view.findViewById(R.id.row_handle);
+            //setDragHandleView(mHandleView);
 
             this.frontView = view.findViewById(R.id.front_view);
             this.mDate = (TextView) view.findViewById(R.id.date);

@@ -124,8 +124,10 @@ public class TimelineFragment extends MediaBrowserListFragment implements
     @Override
     public boolean onItemClick(int position) {
         LogHelper.d(TAG, "onItemClick ");
-        SongHistoryItem item = (SongHistoryItem) mAdapter.getItem(position);
-        mMediaBrowsable.onMediaItemSelected(item.getSongHistory().getSong().getMediaId());
+        AbstractFlexibleItem item = mAdapter.getItem(position);
+        if (item instanceof SongHistoryItem) {
+            mMediaBrowsable.onMediaItemSelected(((SongHistoryItem) item).getSongHistory().getSong().getMediaId());
+        }
         return false;
     }
 

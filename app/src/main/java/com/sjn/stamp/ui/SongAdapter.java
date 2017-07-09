@@ -3,15 +3,7 @@ package com.sjn.stamp.ui;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.ViewGroup;
-
-import com.sjn.stamp.ui.item.ScrollableFooterItem;
-import com.sjn.stamp.ui.item.ScrollableSubItem;
-import com.sjn.stamp.R;
-import com.sjn.stamp.ui.item.ScrollableExpandableItem;
-import com.sjn.stamp.ui.item.ScrollableLayoutItem;
 
 import java.util.List;
 
@@ -60,26 +52,26 @@ public class SongAdapter extends FlexibleAdapter<AbstractFlexibleItem> {
      * Same Header item is enqueued for removal with a delay.
      * The view is represented by a custom Item type to better represent any dynamic content.
      */
-    public void showLayoutInfo(boolean scrollToPosition) {
-        if (!hasSearchText()) {
-            final ScrollableLayoutItem item = new ScrollableLayoutItem("LAY-L");
-            if (mRecyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
-                item.setId("LAY-S");
-                item.setTitle("StaggeredGridLayoutManager");
-            } else if (mRecyclerView.getLayoutManager() instanceof GridLayoutManager) {
-                item.setId("LAY-G");
-                item.setTitle("GridLayoutManager");
-            } else {
-                item.setTitle("OtherLayoutManager");
-            }
-            item.setSubtitle("item.setSubtitle");
-            // NOTE: If you have to change at runtime the LayoutManager AND add
-            // Scrollable Headers, consider to add them in post, using a delay >= 0
-            // otherwise scroll animations on all items will not start correctly.
-            addScrollableHeaderWithDelay(item, 1200L, scrollToPosition);
-            removeScrollableHeaderWithDelay(item, 4000L);
-        }
-    }
+//    public void showLayoutInfo(boolean scrollToPosition) {
+//        if (!hasSearchText()) {
+//            final ScrollableLayoutItem item = new ScrollableLayoutItem("LAY-L");
+//            if (mRecyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
+//                item.setId("LAY-S");
+//                item.setTitle("StaggeredGridLayoutManager");
+//            } else if (mRecyclerView.getLayoutManager() instanceof GridLayoutManager) {
+//                item.setId("LAY-G");
+//                item.setTitle("GridLayoutManager");
+//            } else {
+//                item.setTitle("OtherLayoutManager");
+//            }
+//            item.setSubtitle("item.setSubtitle");
+//            // NOTE: If you have to change at runtime the LayoutManager AND add
+//            // Scrollable Headers, consider to add them in post, using a delay >= 0
+//            // otherwise scroll animations on all items will not start correctly.
+//            addScrollableHeaderWithDelay(item, 1200L, scrollToPosition);
+//            removeScrollableHeaderWithDelay(item, 4000L);
+//        }
+//    }
 
     /*
      * ANOTHER HEADER VIEW
@@ -102,36 +94,36 @@ public class SongAdapter extends FlexibleAdapter<AbstractFlexibleItem> {
      * This method showcases how to delay add a Footer View.
      * The view is represented by a custom Item type to better represent any dynamic content.
      */
-    public void addScrollableFooter() {
-        final ScrollableFooterItem item = new ScrollableFooterItem("SFI");
-        item.setTitle(mRecyclerView.getContext().getString(R.string.scrollable_footer_title));
-        item.setSubtitle(mRecyclerView.getContext().getString(R.string.scrollable_footer_subtitle));
-        addScrollableFooterWithDelay(item, 1000L, false);
-    }
-
-    /*
-     * Showcase for EXPANDABLE HEADER VIEW
-     */
-    public void addScrollableExpandableAsHeader() {
-        final ScrollableExpandableItem expandable = new ScrollableExpandableItem("SEHI");
-        expandable.setTitle(mRecyclerView.getContext().getString(R.string.scrollable_expandable_header_title));
-        expandable.setSubtitle(mRecyclerView.getContext().getString(R.string.scrollable_expandable_header_subtitle));
-        expandable.addSubItem(new ScrollableSubItem("SEHI_1"));
-        expandable.addSubItem(new ScrollableSubItem("SEHI_2"));
-        addScrollableHeaderWithDelay(expandable, 1500L, false);
-    }
-
-    /*
-     * Showcase for EXPANDABLE FOOTER VIEW
-     */
-    public void addScrollableExpandableAsFooter() {
-        final ScrollableExpandableItem expandable = new ScrollableExpandableItem("SEFI");
-        expandable.setTitle("aa");
-        expandable.setSubtitle("fff");
-        expandable.addSubItem(new ScrollableSubItem("SEFI_1"));
-        expandable.addSubItem(new ScrollableSubItem("SEFI_2"));
-        addScrollableFooterWithDelay(expandable, 1500L, false);
-    }
+//    public void addScrollableFooter() {
+//        final ScrollableFooterItem item = new ScrollableFooterItem("SFI");
+//        item.setTitle(mRecyclerView.getContext().getString(R.string.scrollable_footer_title));
+//        item.setSubtitle(mRecyclerView.getContext().getString(R.string.scrollable_footer_subtitle));
+//        addScrollableFooterWithDelay(item, 1000L, false);
+//    }
+//
+//    /*
+//     * Showcase for EXPANDABLE HEADER VIEW
+//     */
+//    public void addScrollableExpandableAsHeader() {
+//        final ScrollableExpandableItem expandable = new ScrollableExpandableItem("SEHI");
+//        expandable.setTitle(mRecyclerView.getContext().getString(R.string.scrollable_expandable_header_title));
+//        expandable.setSubtitle(mRecyclerView.getContext().getString(R.string.scrollable_expandable_header_subtitle));
+//        expandable.addSubItem(new ScrollableSubItem("SEHI_1"));
+//        expandable.addSubItem(new ScrollableSubItem("SEHI_2"));
+//        addScrollableHeaderWithDelay(expandable, 1500L, false);
+//    }
+//
+//    /*
+//     * Showcase for EXPANDABLE FOOTER VIEW
+//     */
+//    public void addScrollableExpandableAsFooter() {
+//        final ScrollableExpandableItem expandable = new ScrollableExpandableItem("SEFI");
+//        expandable.setTitle("aa");
+//        expandable.setSubtitle("fff");
+//        expandable.addSubItem(new ScrollableSubItem("SEFI_1"));
+//        expandable.addSubItem(new ScrollableSubItem("SEFI_2"));
+//        addScrollableFooterWithDelay(expandable, 1500L, false);
+//    }
 
     /**
      * This is a customization of the Layout that hosts the header when sticky.

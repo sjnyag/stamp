@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 
 import com.sjn.stamp.utils.QueueHelper;
 import com.sjn.stamp.R;
-import com.sjn.stamp.ui.holder.MediaItemViewHolder;
+import com.sjn.stamp.ui.ColorState;
 import com.sjn.stamp.utils.LogHelper;
 
 public class CardPresenter extends Presenter {
@@ -51,18 +51,18 @@ public class CardPresenter extends Presenter {
         final CardViewHolder cardViewHolder = (CardViewHolder) viewHolder;
 
         // Determine description and playing state of item based on instance type
-        cardViewHolder.setState(MediaItemViewHolder.STATE_NONE);
+        cardViewHolder.setState(ColorState.STATE_NONE);
         if (item instanceof MediaBrowserCompat.MediaItem) {
             MediaBrowserCompat.MediaItem mediaItem = (MediaBrowserCompat.MediaItem) item;
             LogHelper.d(TAG, "onBindViewHolder MediaItem: ", mediaItem.toString());
             description = mediaItem.getDescription();
-            cardViewHolder.setState(MediaItemViewHolder.getMediaItemState(mContext, mediaItem));
+            cardViewHolder.setState(ColorState.getMediaItemState(mContext, mediaItem));
         } else if (item instanceof MediaSessionCompat.QueueItem) {
             MediaSessionCompat.QueueItem queueItem = (MediaSessionCompat.QueueItem) item;
             LogHelper.d(TAG, "onBindViewHolder QueueItem: ", queueItem.toString());
             description = queueItem.getDescription();
             if (QueueHelper.isQueueItemPlaying(mContext, queueItem)) {
-                cardViewHolder.setState(MediaItemViewHolder.getStateFromController(mContext));
+                cardViewHolder.setState(ColorState.getStateFromController(mContext));
             }
         } else {
             throw new IllegalArgumentException("Object must be MediaItem or QueueItem, not "
@@ -76,7 +76,7 @@ public class CardPresenter extends Presenter {
     public void onUnbindViewHolder(Presenter.ViewHolder viewHolder) {
         LogHelper.d(TAG, "onUnbindViewHolder");
         final CardViewHolder cardViewHolder = (CardViewHolder) viewHolder;
-        cardViewHolder.setState(MediaItemViewHolder.STATE_NONE);
+        cardViewHolder.setState(ColorState.STATE_NONE);
         cardViewHolder.setBadgeImage(null);
     }
 

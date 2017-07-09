@@ -4,8 +4,9 @@ import android.content.res.Resources;
 import android.media.MediaMetadata;
 import android.support.v4.media.MediaMetadataCompat;
 
-import com.sjn.stamp.media.source.MusicProviderSource;
 import com.sjn.stamp.R;
+import com.sjn.stamp.db.dao.ArtistDao;
+import com.sjn.stamp.media.source.MusicProviderSource;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -31,8 +32,6 @@ public class Song extends RealmObject implements Tweetable {
     public String mTrackSource;
     @Index
     public String mAlbum;
-    @Index
-    public String mArtist;
     public Long mDuration;
     public String mGenre;
     public String mAlbumArtUri;
@@ -42,6 +41,7 @@ public class Song extends RealmObject implements Tweetable {
     public Long mNumTracks;
     public String mDateAdded;
     public RealmList<SongStamp> mSongStampList;
+    public Artist mArtist;
 
     @Override
     public boolean equals(Object o) {
@@ -50,14 +50,15 @@ public class Song extends RealmObject implements Tweetable {
 
         Song song = (Song) o;
 
-        if (mArtist != null ? !mArtist.equals(song.mArtist) : song.mArtist != null) return false;
+        if (mArtist != null ? !mArtist.getName().equals(song.mArtist.getName()) : song.mArtist != null)
+            return false;
         return mTitle != null ? mTitle.equals(song.mTitle) : song.mTitle == null;
 
     }
 
     @Override
     public int hashCode() {
-        int result = mArtist != null ? mArtist.hashCode() : 0;
+        int result = mArtist != null ? mArtist.getName().hashCode() : 0;
         result = 31 * result + (mTitle != null ? mTitle.hashCode() : 0);
         return result;
     }
@@ -67,10 +68,10 @@ public class Song extends RealmObject implements Tweetable {
         //noinspection ResourceType
         setTrackSource(metadata.getString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE));
         setAlbum(getStringIfExists(metadata, MediaMetadata.METADATA_KEY_ALBUM));
-        String artist = getStringIfExists(metadata, MediaMetadata.METADATA_KEY_ARTIST);
-        if ("<unknown>".equals(artist)) {
-            artist = "";
-        }
+        String artistName = getStringIfExists(metadata, MediaMetadata.METADATA_KEY_ARTIST);
+        Artist artist = ArtistDao.getInstance().newStandalone();
+        artist.setName(artistName);
+        artist.setAlbumArtUri(getStringIfExists(metadata, MediaMetadata.METADATA_KEY_ALBUM_ART_URI));
         setArtist(artist);
         setDuration(getLongIfExists(metadata, MediaMetadata.METADATA_KEY_DURATION));
         setGenre(getStringIfExists(metadata, MediaMetadata.METADATA_KEY_GENRE));
@@ -87,7 +88,7 @@ public class Song extends RealmObject implements Tweetable {
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mMediaId)
                 .putString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE, mTrackSource)
                 .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, mAlbum)
-                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, mArtist)
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, mArtist.getName())
                 .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, mDuration)
                 .putString(MediaMetadataCompat.METADATA_KEY_GENRE, mGenre)
                 .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, mAlbumArtUri)
@@ -117,6 +118,6 @@ public class Song extends RealmObject implements Tweetable {
 
     @Override
     public String tweet(Resources resources) {
-        return resources.getString(R.string.tweet_song, mTitle, mArtist);
+        return resources.getString(R.string.tweet_song, mTitle, mArtist.getName());
     }
 }

@@ -1,5 +1,6 @@
 package com.sjn.stamp.db;
 
+import io.realm.RealmObject;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,10 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Artist {
+public class Artist extends RealmObject {
+
+    @PrimaryKey
+    public long mId;
     @Index
     String mName;
     String mAlbumArtUri;

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#242229">
+
+    <FrameLayout
+        android:id="@+id/front_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/order"
+            android:layout_width="96dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_gravity="end"
+            android:maxLines="1"
+            android:textColor="@color/media_item_icon_not_playing"
+            android:textSize="64sp"
+            tools:text="2"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="12dp"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp"
+            android:paddingTop="12dp">
+
+            <eu.davidea.flipview.FlipView
+                android:id="@+id/image"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerInParent="true"
+                android:clickable="true"
+                app:animationDuration="170"
+                app:checked="false"
+                app:enableInitialAnimation="true"
+                app:frontBackground="@drawable/square_light"
+                app:frontBackgroundColor="@color/color_primary"
+                app:rearBackgroundColor="@color/color_accent"/>
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_left"
+                android:layout_toEndOf="@id/image"
+                android:layout_toStartOf="@+id/count"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingTop="8dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:textColor="?primaryTextSelector"
+                tools:text="Title"/>
+
+            <TextView
+                android:id="@+id/subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignStart="@+id/title"
+                android:layout_toStartOf="@+id/date"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingBottom="8dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:textColor="?primaryTextSelector"
+                tools:text="Subtitle"/>
+
+            <TextView
+                android:id="@+id/count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/media_item_icon_margin_end"
+                android:layout_marginStart="@dimen/media_item_icon_margin_start"
+                android:drawableStart="@drawable/ic_play_arrow"
+                android:ellipsize="end"
+                android:gravity="start|center_vertical"
+                android:maxLines="1"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp"
+                tools:text="10"/>
+
+        </RelativeLayout>
+
+    </FrameLayout>
+
+    <com.github.sjnyag.AnimationWrapLayout
+        android:id="@+id/stamp_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/front_view"
+        android:orientation="horizontal"
+        tools:each_margin_height="4dp"
+        tools:each_margin_width="4dp"/>
+
+</RelativeLayout>

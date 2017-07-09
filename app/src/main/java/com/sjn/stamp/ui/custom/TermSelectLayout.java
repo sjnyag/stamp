@@ -72,7 +72,7 @@ public class TermSelectLayout extends LinearLayout {
     private enum TermKind {
         TOTAL(0, "総合", GONE, GONE, GONE),
         YEARLY(1, "年間", VISIBLE, GONE, GONE),
-        MONTHLY(2, "月刊", VISIBLE, VISIBLE, GONE),
+        MONTHLY(2, "月間", VISIBLE, VISIBLE, GONE),
         DAIRY(3, "デイリー", VISIBLE, VISIBLE, VISIBLE);
 
         final public int mValue;

@@ -64,6 +64,6 @@ public class SongHistory extends RealmObject {
     }
 
     public String toLabel() {
-        return mSong.getTitle() + "/" + mSong.getArtist() + "@" + mRecordedAt;
+        return mSong.getTitle() + "/" + mSong.getArtist().getName() + "@" + mRecordedAt;
     }
 }

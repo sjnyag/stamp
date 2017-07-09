@@ -18,7 +18,6 @@ import com.sjn.stamp.db.dao.TotalSongHistoryDao;
 import com.sjn.stamp.media.provider.ListProvider;
 import com.sjn.stamp.ui.custom.TermSelectLayout;
 import com.sjn.stamp.utils.LogHelper;
-import com.sjn.stamp.utils.MediaRetrieveHelper;
 import com.sjn.stamp.utils.NotificationHelper;
 import com.sjn.stamp.utils.RealmHelper;
 
@@ -145,8 +144,8 @@ public class SongHistoryController {
                 term.to() == null ? null : term.to().toDateTimeAtStartOfDay().plusDays(1).toDate());
     }
 
-    public List<RankedArtist> getRankedArtistList(TermSelectLayout.Term term) {
-        return getRankedArtistList(
+    public List<RankedArtist> getRankedArtistList(Realm realm, TermSelectLayout.Term term) {
+        return getRankedArtistList(realm,
                 term.from() == null ? null : term.from().toDateTimeAtStartOfDay().toDate(),
                 term.to() == null ? null : term.to().toDateTimeAtStartOfDay().plusDays(1).toDate());
     }
@@ -161,7 +160,7 @@ public class SongHistoryController {
             if (songCountMap.containsKey(songHistory.getSong())) {
                 songCountMap.put(songHistory.getSong(), songCountMap.get(songHistory.getSong()) + 1);
             } else {
-                songCountMap.put(songHistory.getSong(), 0);
+                songCountMap.put(songHistory.getSong(), 1);
             }
         }
         LogHelper.i(TAG, "create rankedSongList");
@@ -183,25 +182,17 @@ public class SongHistoryController {
         return rankedSongList;
     }
 
-    private List<RankedArtist> getRankedArtistList(Date from, Date to) {
+    private List<RankedArtist> getRankedArtistList(Realm realm, Date from, Date to) {
         LogHelper.i(TAG, "getRankedArtistList start");
-        Realm realm = RealmHelper.getRealmInstance();
         List<SongHistory> historyList = mSongHistoryDao.where(realm, from, to, RecordType.PLAY.getValue());
-        Map<String, Integer> artistMap = new HashMap<>();
+        Map<Artist, ArtistCounter> artistMap = new HashMap<>();
         for (SongHistory songHistory : historyList) {
-            String artist = songHistory.getSong().getArtist();
-            int count = artistMap.containsKey(artist) ? artistMap.get(artist) + 1 : 1;
-            artistMap.put(artist, count);
+            Artist artist = songHistory.getSong().getArtist();
+            ArtistCounter.count(artistMap, artist, songHistory.getSong());
         }
-        realm.close();
         List<RankedArtist> rankedArtistList = new ArrayList<>();
-        for (Map.Entry<String, Integer> e : artistMap.entrySet()) {
-            rankedArtistList.add(new RankedArtist(e.getValue(), new Artist(e.getKey(), MediaRetrieveHelper.findAlbumArtByArtist(mContext, e.getKey(), new MediaRetrieveHelper.PermissionRequiredCallback() {
-                @Override
-                public void onPermissionRequired() {
-
-                }
-            }))));
+        for (Map.Entry<Artist, ArtistCounter> e : artistMap.entrySet()) {
+            rankedArtistList.add(new RankedArtist(e.getValue().mCount, e.getKey(), e.getValue().mSongCountMap));
         }
         Collections.sort(rankedArtistList, new Comparator<RankedArtist>() {
             @Override
@@ -209,7 +200,31 @@ public class SongHistoryController {
                 return t2.getPlayCount() - t1.getPlayCount();
             }
         });
+        if (rankedArtistList.size() > 30) {
+            rankedArtistList = rankedArtistList.subList(0, 30);
+        }
         LogHelper.i(TAG, "getRankedArtistList end");
         return rankedArtistList;
+    }
+
+    private static class ArtistCounter {
+        int mCount = 0;
+        Map<Song, Integer> mSongCountMap = new HashMap<>();
+
+        void increment(Song song) {
+            mCount++;
+            if (mSongCountMap.containsKey(song)) {
+                mSongCountMap.put(song, mSongCountMap.get(song) + 1);
+            } else {
+                mSongCountMap.put(song, 1);
+            }
+        }
+
+        public static void count(Map<Artist, ArtistCounter> artistMap, Artist artist, Song song) {
+            ArtistCounter counter = artistMap.containsKey(artist) ? artistMap.get(artist) : new ArtistCounter();
+            counter.increment(song);
+            artistMap.put(artist, counter);
+
+        }
     }
 }
