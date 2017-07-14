@@ -37,6 +37,14 @@ public class SongHistoryDao extends BaseDao {
         return query.findAll();
     }
 
+    public List<SongHistory> findPlayRecordByArtist(Realm realm, String artistName) {
+        return realm.where(SongHistory.class).equalTo("mRecordType", RecordType.PLAY.getValue()).equalTo("mSong.mArtist.mName", artistName).findAll();
+    }
+
+    public SongHistory findOldestByArtist(Realm realm, String artistName) {
+        return realm.where(SongHistory.class).equalTo("mRecordType", RecordType.PLAY.getValue()).equalTo("mSong.mArtist.mName", artistName).findAllSorted("mRecordedAt", Sort.ASCENDING).first();
+    }
+
     public SongHistory findOldest(Realm realm, final Song song) {
         return realm.where(SongHistory.class).equalTo("mSong.mMediaId", song.getMediaId()).equalTo("mRecordType", RecordType.PLAY.getValue()).findAllSorted("mRecordedAt", Sort.ASCENDING).first();
     }

@@ -257,12 +257,12 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity
 
                 @Override
                 public void onBitmapFailed(Drawable errorDrawable) {
-                    profileDrawerItem.withIcon(R.drawable.ic_notification);
+                    profileDrawerItem.withIcon(R.mipmap.ic_notification);
                 }
 
                 @Override
                 public void onPrepareLoad(Drawable placeHolderDrawable) {
-                    profileDrawerItem.withIcon(R.drawable.ic_notification);
+                    profileDrawerItem.withIcon(R.mipmap.ic_notification);
                 }
             };
             BitmapHelper.readBitmapAsync(this, metadata.getDescription().getIconUri().toString(), mTarget);

@@ -27,10 +27,10 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 
+import com.sjn.stamp.MusicService;
 import com.sjn.stamp.controller.UserSettingController;
 import com.sjn.stamp.media.provider.MusicProvider;
 import com.sjn.stamp.media.source.MusicProviderSource;
-import com.sjn.stamp.MusicService;
 import com.sjn.stamp.utils.DataSourceHelper;
 import com.sjn.stamp.utils.LogHelper;
 
@@ -41,6 +41,9 @@ import static android.media.MediaPlayer.OnErrorListener;
 import static android.media.MediaPlayer.OnPreparedListener;
 import static android.media.MediaPlayer.OnSeekCompleteListener;
 import static android.support.v4.media.session.MediaSessionCompat.QueueItem;
+import static com.sjn.stamp.utils.NotificationHelper.ACTION_CMD;
+import static com.sjn.stamp.utils.NotificationHelper.CMD_NAME;
+import static com.sjn.stamp.utils.NotificationHelper.CMD_PAUSE;
 
 /**
  * A class that implements local media playback using {@link android.media.MediaPlayer}
@@ -88,8 +91,8 @@ public class LocalPlayback implements Playback, AudioManager.OnAudioFocusChangeL
                 LogHelper.d(TAG, "Headphones disconnected.");
                 if (isPlaying()) {
                     Intent i = new Intent(context, MusicService.class);
-                    i.setAction(MusicService.ACTION_CMD);
-                    i.putExtra(MusicService.CMD_NAME, MusicService.CMD_PAUSE);
+                    i.setAction(ACTION_CMD);
+                    i.putExtra(CMD_NAME, CMD_PAUSE);
                     mContext.startService(i);
                 }
             }

@@ -35,7 +35,12 @@ public class TimeHelper {
         if (d.getStandardDays() > 1) {
             return ((int) d.getStandardDays()) + "日";
         }
-        return ((int) d.getStandardHours()) + "時間";
+        String hourMinutes = "";
+        if (d.getStandardHours() >= 1) {
+            hourMinutes += ((int) d.getStandardHours()) + "時間";
+        }
+        hourMinutes += ((int) d.getStandardMinutes()) + "分";
+        return hourMinutes;
     }
 
     public static Date toDateOnly(Date date) {

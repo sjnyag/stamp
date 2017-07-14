@@ -18,6 +18,8 @@ package com.sjn.stamp.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -41,8 +43,12 @@ public class BitmapHelper {
     private static final int MAX_ART_WIDTH_ICON = 128;  // pixels
     private static final int MAX_ART_HEIGHT_ICON = 128;  // pixels
 
-    public static void readBitmapAsync(Context context, final String url, final Target target) {
-        Picasso.with(context).load(url).into(target);
+    public static void readBitmapAsync(final Context context, final String url, final Target target) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            public void run() {
+                Picasso.with(context).load(url).into(target);
+            }
+        });
     }
 
     public static Bitmap createIcon(Bitmap bitmap) {

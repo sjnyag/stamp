@@ -25,6 +25,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationManagerCompat;
@@ -38,11 +39,16 @@ import android.support.v7.app.NotificationCompat;
 import com.sjn.stamp.media.player.CastPlayer;
 import com.sjn.stamp.ui.activity.MusicPlayerListActivity;
 import com.sjn.stamp.utils.BitmapHelper;
+import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.ResourceHelper;
 import com.sjn.stamp.utils.ViewHelper;
-import com.sjn.stamp.utils.LogHelper;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+
+import static com.sjn.stamp.utils.NotificationHelper.ACTION_CMD;
+import static com.sjn.stamp.utils.NotificationHelper.CMD_KILL;
+import static com.sjn.stamp.utils.NotificationHelper.CMD_NAME;
+import static com.sjn.stamp.utils.NotificationHelper.CMD_STOP_CASTING;
 
 /**
  * Keeps track of a notification and updates it automatically for a given
@@ -108,8 +114,8 @@ public class MediaNotificationManager extends BroadcastReceiver {
                 new Intent(ACTION_STOP_CASTING).setPackage(pkg),
                 PendingIntent.FLAG_CANCEL_CURRENT);
         Intent i = new Intent(mService, MusicService.class);
-        i.setAction(MusicService.ACTION_CMD);
-        i.putExtra(MusicService.CMD_NAME, MusicService.CMD_KILL);
+        i.setAction(ACTION_CMD);
+        i.putExtra(CMD_NAME, CMD_KILL);
         mKillIntent = PendingIntent.getService(mService, REQUEST_CODE, i, PendingIntent.FLAG_CANCEL_CURRENT);
 
         // Cancel all notifications to handle the case where the Service was killed and
@@ -196,8 +202,8 @@ public class MediaNotificationManager extends BroadcastReceiver {
                 break;
             case ACTION_STOP_CASTING:
                 Intent i = new Intent(context, MusicService.class);
-                i.setAction(MusicService.ACTION_CMD);
-                i.putExtra(MusicService.CMD_NAME, MusicService.CMD_STOP_CASTING);
+                i.setAction(ACTION_CMD);
+                i.putExtra(CMD_NAME, CMD_STOP_CASTING);
                 mService.startService(i);
                 break;
             default:
@@ -314,7 +320,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
                                 new int[]{playPauseButtonPosition, playPauseButtonPosition + 1})  // show only play/pause in compact view
                         .setMediaSession(mSessionToken))
                 .setColor(mNotificationColor)
-                .setSmallIcon(com.sjn.stamp.R.drawable.ic_notification)
+                .setSmallIcon(R.mipmap.ic_notification)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setUsesChronometer(true)
                 .setDeleteIntent(mKillIntent)
@@ -394,12 +400,9 @@ public class MediaNotificationManager extends BroadcastReceiver {
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 if (mMetadata != null && mMetadata.getDescription().getIconUri() != null &&
                         mMetadata.getDescription().getIconUri().toString().equals(bitmapUrl)) {
-                    // If the media is still the same, update the notification:
                     LogHelper.d(TAG, "fetchBitmapFromURLAsync: set bitmap to ", bitmapUrl);
-                    builder.setLargeIcon(bitmap);
-                    LogHelper.d(TAG, "fetchBitmapFromURLAsync: finish");
-                    mNotificationManager.notify(NOTIFICATION_ID, builder.build());
-                    LogHelper.d(TAG, "onBitmapLoaded: finish");
+                    // If the media is still the same, update the notification:
+                    new SetNotificationBitmapAsyncTask(builder, bitmap).execute();
                 }
             }
 
@@ -413,5 +416,24 @@ public class MediaNotificationManager extends BroadcastReceiver {
             }
         };
         BitmapHelper.readBitmapAsync(mService, bitmapUrl, mTarget);
+    }
+
+    private class SetNotificationBitmapAsyncTask extends AsyncTask<Void, Void, Void> {
+        final NotificationCompat.Builder mBuilder;
+        Bitmap mBitmap;
+
+        SetNotificationBitmapAsyncTask(final NotificationCompat.Builder builder, Bitmap bitmap) {
+            mBuilder = builder;
+            mBitmap = bitmap;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            mBuilder.setLargeIcon(mBitmap);
+            LogHelper.d(TAG, "fetchBitmapFromURLAsync: finish");
+            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+            LogHelper.d(TAG, "onBitmapLoaded: finish");
+            return null;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.sjn.stamp.controller;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v4.media.MediaMetadataCompat;
 
 import com.sjn.stamp.constant.RecordType;
@@ -80,15 +81,22 @@ public class SongHistoryController {
         Realm realm = RealmHelper.getRealmInstance();
         int playCount = mTotalSongHistoryDao.saveOrIncrement(realm, createTotalSongHistory(song, recordType));
         mSongHistoryDao.save(realm, createSongHistory(song, createDevice(), recordType, date, playCount));
-        if (recordType == RecordType.PLAY && isSendNotification(playCount)) {
-            SongHistory oldestSongHistory = mSongHistoryDao.findOldest(realm, song);
-            NotificationHelper.sendNotification(mContext, song.getTitle(), playCount, oldestSongHistory.mRecordedAt);
+        if (recordType == RecordType.PLAY) {
+            sendNotificationBySongCount(realm, song, playCount);
+            sendNotificationByArtistCount(song);
         }
         realm.close();
     }
 
-    private boolean isSendNotification(int count) {
-        return count == 10 || count == 50 || (count % 100 == 0 && count >= 100);
+    private void sendNotificationBySongCount(Realm realm, Song song, int playCount) {
+        if (NotificationHelper.isSendPlayedNotification(playCount)) {
+            SongHistory oldestSongHistory = mSongHistoryDao.findOldest(realm, song);
+            NotificationHelper.sendPlayedNotification(mContext, song.getTitle(), song.getAlbumArtUri(), playCount, oldestSongHistory.mRecordedAt);
+        }
+    }
+
+    private void sendNotificationByArtistCount(Song song) {
+        new ArtistCountAsyncTask(song.getArtist().getName()).execute();
     }
 
     private TotalSongHistory createTotalSongHistory(Song song, RecordType recordType) {
@@ -227,4 +235,33 @@ public class SongHistoryController {
 
         }
     }
+
+    private class ArtistCountAsyncTask extends AsyncTask<Void, Void, Void> {
+        String mArtistName;
+
+        ArtistCountAsyncTask(String artistName) {
+            mArtistName = artistName;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Realm realm = null;
+            try {
+                realm = RealmHelper.getRealmInstance();
+
+                List<SongHistory> historyList = mSongHistoryDao.findPlayRecordByArtist(realm, mArtistName);
+                int playCount = historyList.size();
+                if (NotificationHelper.isSendPlayedNotification(playCount)) {
+                    SongHistory oldestSongHistory = mSongHistoryDao.findOldestByArtist(realm, mArtistName);
+                    NotificationHelper.sendPlayedNotification(mContext, mArtistName, oldestSongHistory.getSong().getAlbumArtUri(), playCount, oldestSongHistory.mRecordedAt);
+                }
+            } finally {
+                if (realm != null) {
+                    realm.close();
+                }
+            }
+            return null;
+        }
+    }
+
 }

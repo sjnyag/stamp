@@ -42,6 +42,12 @@ import net.danlew.android.joda.JodaTimeAndroid;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sjn.stamp.utils.NotificationHelper.ACTION_CMD;
+import static com.sjn.stamp.utils.NotificationHelper.CMD_KILL;
+import static com.sjn.stamp.utils.NotificationHelper.CMD_NAME;
+import static com.sjn.stamp.utils.NotificationHelper.CMD_PAUSE;
+import static com.sjn.stamp.utils.NotificationHelper.CMD_STOP_CASTING;
+
 /**
  * This class provides a MediaBrowser through a service. It exposes the media library to a browsing
  * client, through the onGetRoot and onLoadChildren methods. It also creates a MediaSession and
@@ -103,20 +109,6 @@ public class MusicService extends MediaBrowserServiceCompat
         Player.PlayerCallback {
 
     private static final String TAG = LogHelper.makeLogTag(MusicService.class);
-
-    // The action of the incoming Intent indicating that it contains a command
-    // to be executed (see {@link #onStartCommand})
-    public static final String ACTION_CMD = "com.sjn.stamp.ACTION_CMD";
-    // The key in the extras of the incoming Intent indicating the command that
-    // should be executed (see {@link #onStartCommand})
-    public static final String CMD_NAME = "CMD_NAME";
-    // A value of a CMD_NAME key in the extras of the incoming Intent that
-    // indicates that the music playback should be paused (see {@link #onStartCommand})
-    public static final String CMD_PAUSE = "CMD_PAUSE";
-    // A value of a CMD_NAME key that indicates that the music playback should switch
-    // to local playback from cast playback.
-    public static final String CMD_STOP_CASTING = "CMD_STOP_CASTING";
-    public static final String CMD_KILL = "CMD_KILL";
     // Delay stopSelf by using a handler.
     private static final int STOP_DELAY = 30000;
 
