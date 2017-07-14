@@ -120,4 +120,6 @@
     <string name="scrollable_footer_subtitle"><![CDATA[<i>Scrollable Footers are always displayed at the bottom of all main items.</i>]]></string>
     <string name="action_search">Search…</string>
     <string name="undo">Undo</string>
+    <string name="dialog_confirm_import">これまでのスタンプや履歴はすべて失われ、バックアップに置き換えられます。</string>
+    <string name="dialog_confirm_export">すでにバックアップが存在する場合は上書きされます。</string>
 </resources>

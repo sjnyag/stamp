@@ -30,15 +30,26 @@ public class SettingFragment extends PreferenceFragmentCompat {
         findPreference(getString(R.string.import_backup)).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                ProgressDialog progressDialog = new ProgressDialog(getActivity());
-                progressDialog.setMessage("処理中");
-                progressDialog.show();
-                RealmHelper.importBackUp(getActivity());
-                progressDialog.dismiss();
-                DialogFacade.createRestartDialog(getActivity(), new MaterialDialog.SingleButtonCallback() {
+                DialogFacade.createConfirmDialog(getActivity(), R.string.dialog_confirm_import, new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        getActivity().recreate();
+                        switch (which) {
+                            case NEGATIVE:
+                                return;
+                            case POSITIVE:
+                                ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                                progressDialog.setMessage("処理中");
+                                progressDialog.show();
+                                RealmHelper.importBackUp(getActivity());
+                                progressDialog.dismiss();
+                                DialogFacade.createRestartDialog(getActivity(), new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        getActivity().recreate();
+                                    }
+                                }).show();
+                                return;
+                        }
                     }
                 }).show();
                 return true;
@@ -48,11 +59,23 @@ public class SettingFragment extends PreferenceFragmentCompat {
         findPreference(getString(R.string.export_backup)).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                ProgressDialog progressDialog = new ProgressDialog(getActivity());
-                progressDialog.setMessage("処理中");
-                progressDialog.show();
-                RealmHelper.exportBackUp(getActivity());
-                progressDialog.dismiss();
+
+                DialogFacade.createConfirmDialog(getActivity(), R.string.dialog_confirm_export, new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        switch (which) {
+                            case NEGATIVE:
+                                return;
+                            case POSITIVE:
+                                ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                                progressDialog.setMessage("処理中");
+                                progressDialog.show();
+                                RealmHelper.exportBackUp(getActivity());
+                                progressDialog.dismiss();
+                                return;
+                        }
+                    }
+                }).show();
                 return true;
             }
         });

@@ -8,6 +8,18 @@ import com.afollestad.materialdialogs.Theme;
 import com.sjn.stamp.R;
 
 public class DialogFacade {
+    public static MaterialDialog.Builder createConfirmDialog(final Context context, int content, MaterialDialog.SingleButtonCallback callback) {
+        return new MaterialDialog.Builder(context)
+                .title("確認")
+                .content(content)
+                .positiveText("OK")
+                .negativeText("キャンセル")
+                .onAny(callback)
+                .contentColorRes(android.R.color.white)
+                .backgroundColorRes(R.color.material_blue_grey_800)
+                .theme(Theme.DARK);
+    }
+
     public static MaterialDialog.Builder createRestartDialog(final Context context, MaterialDialog.SingleButtonCallback callback) {
         return new MaterialDialog.Builder(context)
                 .title("再起動")

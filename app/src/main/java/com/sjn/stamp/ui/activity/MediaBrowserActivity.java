@@ -31,7 +31,6 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.sjn.stamp.MusicService;
 import com.sjn.stamp.R;
 import com.sjn.stamp.ui.fragment.PlaybackControlsFragment;
@@ -233,41 +232,55 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity
                 if (metadata == null) {
                     return;
                 }
-                mAccountHeader.clear();
-                mAccountHeader.addProfiles(createProfile(metadata));
+                if (metadata.getDescription().getIconUri() != null) {
+
+                    mTarget = new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            final ProfileDrawerItem profileDrawerItem = new ProfileDrawerItem();
+                            if (metadata.getDescription().getTitle() != null) {
+                                profileDrawerItem.withName(metadata.getDescription().getTitle().toString());
+                            }
+                            if (metadata.getDescription().getSubtitle() != null) {
+                                profileDrawerItem.withEmail(metadata.getDescription().getSubtitle().toString());
+                            }
+                            profileDrawerItem.withIcon(bitmap);
+                            mAccountHeader.clear();
+                            mAccountHeader.addProfiles(profileDrawerItem);
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+                            final ProfileDrawerItem profileDrawerItem = new ProfileDrawerItem();
+                            if (metadata.getDescription().getTitle() != null) {
+                                profileDrawerItem.withName(metadata.getDescription().getTitle().toString());
+                            }
+                            if (metadata.getDescription().getSubtitle() != null) {
+                                profileDrawerItem.withEmail(metadata.getDescription().getSubtitle().toString());
+                            }
+                            profileDrawerItem.withIcon(R.mipmap.ic_notification);
+                            mAccountHeader.clear();
+                            mAccountHeader.addProfiles(profileDrawerItem);
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                            final ProfileDrawerItem profileDrawerItem = new ProfileDrawerItem();
+                            if (metadata.getDescription().getTitle() != null) {
+                                profileDrawerItem.withName(metadata.getDescription().getTitle().toString());
+                            }
+                            if (metadata.getDescription().getSubtitle() != null) {
+                                profileDrawerItem.withEmail(metadata.getDescription().getSubtitle().toString());
+                            }
+                            profileDrawerItem.withIcon(R.mipmap.ic_notification);
+                            mAccountHeader.clear();
+                            mAccountHeader.addProfiles(profileDrawerItem);
+                        }
+                    };
+                    BitmapHelper.readBitmapAsync(MediaBrowserActivity.this, metadata.getDescription().getIconUri().toString(), mTarget);
+                }
             }
         });
-    }
-
-    private IProfile createProfile(final MediaMetadataCompat metadata) {
-        final ProfileDrawerItem profileDrawerItem = new ProfileDrawerItem();
-        if (metadata.getDescription().getTitle() != null) {
-            profileDrawerItem.withName(metadata.getDescription().getTitle().toString());
-        }
-        if (metadata.getDescription().getSubtitle() != null) {
-            profileDrawerItem.withEmail(metadata.getDescription().getSubtitle().toString());
-        }
-        if (metadata.getDescription().getIconUri() != null) {
-
-            mTarget = new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    profileDrawerItem.withIcon(bitmap);
-                }
-
-                @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
-                    profileDrawerItem.withIcon(R.mipmap.ic_notification);
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                    profileDrawerItem.withIcon(R.mipmap.ic_notification);
-                }
-            };
-            BitmapHelper.readBitmapAsync(this, metadata.getDescription().getIconUri().toString(), mTarget);
-        }
-        return profileDrawerItem;
     }
 
     private final MediaBrowserCompat.ConnectionCallback mConnectionCallback =

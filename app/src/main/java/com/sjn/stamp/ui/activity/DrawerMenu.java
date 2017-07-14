@@ -103,4 +103,8 @@ public enum DrawerMenu {
     public static DrawerMenu start() {
         return TIMELINE;
     }
+
+    public static Fragment first() {
+        return ALL.getFragment();
+    }
 }

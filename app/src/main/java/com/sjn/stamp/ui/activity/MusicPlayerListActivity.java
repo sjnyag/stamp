@@ -25,16 +25,15 @@ import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.text.TextUtils;
 
+import com.sjn.stamp.R;
+import com.sjn.stamp.ui.fragment.FullScreenPlayerFragment;
 import com.sjn.stamp.ui.fragment.media_list.MediaBrowserListFragment;
 import com.sjn.stamp.ui.fragment.media_list.PagerFragment;
-import com.sjn.stamp.ui.fragment.media_list.TimelineFragment;
+import com.sjn.stamp.ui.fragment.media_list.SongListFragment;
+import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.MediaRetrieveHelper;
 import com.sjn.stamp.utils.PermissionHelper;
-import com.sjn.stamp.R;
-import com.sjn.stamp.ui.fragment.FullScreenPlayerFragment;
-import com.sjn.stamp.ui.fragment.media_list.SongListFragment;
-import com.sjn.stamp.utils.LogHelper;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.List;
@@ -75,7 +74,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
 
         setContentView(R.layout.activity_player);
         initializeToolbar();
-        navigateToBrowser(new TimelineFragment(), false);
+        navigateToBrowser(DrawerMenu.first(), false);
 
         if (!PermissionHelper.hasPermission(this, MediaRetrieveHelper.PERMISSIONS)) {
             Intent intent = new Intent(this, RequestPermissionActivity.class);

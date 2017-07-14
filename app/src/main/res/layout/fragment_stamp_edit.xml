@@ -21,14 +21,17 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
+            android:hint="New Stamp Name"
             android:layout_toStartOf="@+id/stamp_register">
 
-            <EditText
+            <android.support.design.widget.TextInputEditText
                 android:id="@+id/stamp_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="New Stamp Name"
-                android:maxLines="1"/>
+                android:layout_centerHorizontal="true"
+                android:paddingEnd="0dp"
+                android:paddingStart="8dp"/>
+
         </android.support.design.widget.TextInputLayout>
 
         <Button
