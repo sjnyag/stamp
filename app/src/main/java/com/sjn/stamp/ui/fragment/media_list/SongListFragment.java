@@ -63,7 +63,6 @@ import static com.sjn.stamp.MusicService.CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER;
 public class SongListFragment extends MediaBrowserListFragment implements MusicListObserver.Listener {
 
     private ProgressDialog mProgressDialog;
-    protected List<MediaBrowserCompat.MediaItem> mSongList = new ArrayList<>();
     private static final String TAG = LogHelper.makeLogTag(SongListFragment.class);
     private CreateListAsyncTask mAsyncTask;
     protected boolean mHasDrawTask = true;
@@ -90,9 +89,8 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
     @Override
     public void onMediaBrowserChildrenLoaded(@NonNull String parentId,
                                              @NonNull List<MediaBrowserCompat.MediaItem> children) {
-        mSongList = children;
-        mHasDrawTask = true;
-        draw();
+        mAsyncTask = new CreateListAsyncTask(this, children);
+        mAsyncTask.execute();
     }
 
     @Override
@@ -142,7 +140,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
         LogHelper.d(TAG, "onItemClick ");
         AbstractFlexibleItem item = mAdapter.getItem(position);
         if (item instanceof SongItem) {
-            mMediaBrowsable.onMediaItemSelected(((SongItem) item).getMediaItem());
+            mMediaBrowsable.onMediaItemSelected(((SongItem) item).getMediaId(), ((SongItem) item).isPlayable(), ((SongItem) item).isBrowsable());
         }
         return false;
     }
@@ -278,14 +276,18 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
         if (!mIsVisibleToUser || !mHasDrawTask) {
             return;
         }
-        if (mSongList == null || mAdapter == null) {
+        if (mAdapter == null) {
             return;
         }
-        if (mAsyncTask != null) {
-            mAsyncTask.cancel(true);
-        }
-        mAsyncTask = new CreateListAsyncTask(this);
-        mAsyncTask.execute();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            synchronized public void run() {
+                if (!isAdded()) {
+                    return;
+                }
+                mAdapter.updateDataSet(mItemList);
+            }
+        });
         mHasDrawTask = false;
         LogHelper.d(TAG, "draw END");
     }
@@ -318,27 +320,22 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
 
     private static class CreateListAsyncTask extends AsyncTask<Void, Void, Void> {
 
-        SongListFragment fragment;
+        SongListFragment mFragment;
+        protected List<MediaBrowserCompat.MediaItem> mSongList;
 
-        CreateListAsyncTask(SongListFragment fragment) {
-            this.fragment = fragment;
+        CreateListAsyncTask(SongListFragment fragment, List<MediaBrowserCompat.MediaItem> songList) {
+            this.mFragment = fragment;
+            this.mSongList = songList;
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            fragment.mItemList = createItemList(fragment.mSongList);
-            if (fragment.getActivity() == null) {
+            mFragment.mItemList = createItemList(mSongList);
+            if (mFragment.getActivity() == null) {
                 return null;
             }
-            fragment.getActivity().runOnUiThread(new Runnable() {
-                @Override
-                synchronized public void run() {
-                    if (!fragment.isAdded()) {
-                        return;
-                    }
-                    fragment.mAdapter.updateDataSet(fragment.mItemList);
-                }
-            });
+            mFragment.mHasDrawTask = true;
+            mFragment.draw();
             return null;
         }
 

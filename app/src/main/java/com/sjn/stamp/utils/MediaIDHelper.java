@@ -160,15 +160,7 @@ public class MediaIDHelper {
         return createMediaID(null, parentHierarchy);
     }
 
-    /**
-     * Determine if media item is playing (matches the currently playing media item).
-     *
-     * @param context   for retrieving the {@link MediaControllerCompat}
-     * @param mediaItem to compare to currently playing {@link MediaBrowserCompat.MediaItem}
-     * @return boolean indicating whether media item matches currently playing media item
-     */
-    public static boolean isMediaItemPlaying(Context context,
-                                             MediaBrowserCompat.MediaItem mediaItem) {
+    public static boolean isMediaItemPlaying(Context context,String mediaId) {
         // Media item is considered to be playing or paused based on the controller's current
         // media id
         MediaControllerCompat controller = ((FragmentActivity) context)
@@ -176,8 +168,7 @@ public class MediaIDHelper {
         if (controller != null && controller.getMetadata() != null) {
             String currentPlayingMediaId = controller.getMetadata().getDescription()
                     .getMediaId();
-            String itemMusicId = MediaIDHelper.extractMusicIDFromMediaID(
-                    mediaItem.getDescription().getMediaId());
+            String itemMusicId = MediaIDHelper.extractMusicIDFromMediaID(mediaId);
             if (currentPlayingMediaId != null
                     && TextUtils.equals(currentPlayingMediaId, itemMusicId)) {
                 return true;

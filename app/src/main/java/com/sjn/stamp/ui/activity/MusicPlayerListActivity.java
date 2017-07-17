@@ -140,17 +140,22 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
 
     @Override
     public void onMediaItemSelected(MediaBrowserCompat.MediaItem item) {
-        LogHelper.d(TAG, "onMediaItemSelected, mediaId=" + item.getMediaId());
-        if (item.isPlayable()) {
+        onMediaItemSelected(item.getMediaId(), item.isPlayable(), item.isBrowsable());
+    }
+
+    @Override
+    public void onMediaItemSelected(String mediaId, boolean isPlayable, boolean isBrowsable) {
+        LogHelper.d(TAG, "onMediaItemSelected, mediaId=" + mediaId);
+        if (isPlayable) {
             MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
             if (controller != null) {
-                controller.getTransportControls().playFromMediaId(item.getMediaId(), null);
+                controller.getTransportControls().playFromMediaId(mediaId, null);
             }
-        } else if (item.isBrowsable()) {
-            navigateToBrowser(item.getMediaId());
+        } else if (isBrowsable) {
+            navigateToBrowser(mediaId);
         } else {
             LogHelper.w(TAG, "Ignoring MediaItem that is neither browsable nor playable: ",
-                    "mediaId=", item.getMediaId());
+                    "mediaId=", mediaId);
         }
     }
 

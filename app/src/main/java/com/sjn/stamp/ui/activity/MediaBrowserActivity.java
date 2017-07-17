@@ -117,7 +117,7 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity
 
     @Override
     public void sendCustomAction(String action, Bundle extras, MediaBrowserCompat.CustomActionCallback callback) {
-        if (mMediaBrowser != null) {
+        if (mMediaBrowser != null && mMediaBrowser.isConnected()) {
             mMediaBrowser.sendCustomAction(action, extras, callback);
         }
     }

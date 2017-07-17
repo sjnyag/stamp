@@ -23,23 +23,16 @@ public class QueueListFragment extends SongListFragment {
     @Override
     public void onMediaBrowserChildrenLoaded(@NonNull String parentId,
                                              @NonNull List<MediaBrowserCompat.MediaItem> children) {
-        try {
-            LogHelper.d(TAG, "fragment onChildrenLoaded, parentId=" + parentId +
-                    "  count=" + children.size());
-            if (children != null && !children.isEmpty()) {
-                String baseMediaId = children.get(0).getDescription().getExtras().getString(QueueManager.META_DATA_KEY_BASE_MEDIA_ID);
-                ProviderType providerType = MediaIDHelper.getProviderType(baseMediaId);
-                if (providerType != null && baseMediaId != null) {
-                    mAdapter.showLayoutInfo(
-                            new QueueTitleItem(providerType, MediaIDHelper.extractBrowseCategoryValueFromMediaID(baseMediaId)), true);
-                }
+
+        if (children != null && !children.isEmpty()) {
+            String baseMediaId = children.get(0).getDescription().getExtras().getString(QueueManager.META_DATA_KEY_BASE_MEDIA_ID);
+            ProviderType providerType = MediaIDHelper.getProviderType(baseMediaId);
+            if (providerType != null && baseMediaId != null) {
+                mAdapter.showLayoutInfo(
+                        new QueueTitleItem(providerType, MediaIDHelper.extractBrowseCategoryValueFromMediaID(baseMediaId)), true);
             }
-            mSongList = children;
-            mHasDrawTask = true;
-            draw();
-        } catch (Throwable t) {
-            LogHelper.e(TAG, "Error on childrenloaded", t);
         }
+        super.onMediaBrowserChildrenLoaded(parentId, children);
     }
 
 }

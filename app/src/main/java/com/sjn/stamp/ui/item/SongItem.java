@@ -21,13 +21,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.sjn.stamp.R;
 import com.sjn.stamp.controller.SongController;
 import com.sjn.stamp.ui.observer.StampEditStateObserver;
 import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.ViewHelper;
-import com.sjn.stamp.R;
 import com.squareup.picasso.Target;
 
 import java.io.Serializable;
@@ -36,7 +35,6 @@ import java.util.List;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.items.IFilterable;
-import eu.davidea.flexibleadapter.items.ISectionable;
 import eu.davidea.flexibleadapter.utils.Utils;
 import eu.davidea.flipview.FlipView;
 import eu.davidea.viewholders.FlexibleViewHolder;
@@ -48,28 +46,45 @@ import eu.davidea.viewholders.FlexibleViewHolder;
  */
 public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements IFilterable, Serializable {
 
-
-    public MediaBrowserCompat.MediaItem getMediaItem() {
-        return mMediaItem;
-    }
-
-    MediaBrowserCompat.MediaItem mMediaItem;
     //to avoid GC
     private Target mTarget;
+    private String mMediaId;
+    private String mTitle;
+    private String mSubTitle;
+    private String mAlbumArt;
+    private boolean mIsPlayable;
+    private boolean mIsBrowsable;
 
-    public SongItem(MediaBrowserCompat.MediaItem mediaItem) {
-        super(String.valueOf(mediaItem.getMediaId()));
+    public SongItem(String mediaId, String title, String subTitle, String albumArt, boolean isPlayable, boolean isBrowsable) {
+        super(mediaId);
         setDraggable(true);
         setSwipeable(true);
-        mMediaItem = mediaItem;
+        mMediaId = mediaId;
+        mTitle = title;
+        mSubTitle = subTitle;
+        mAlbumArt = albumArt;
+        mIsPlayable = isPlayable;
+        mIsBrowsable = isPlayable;
+    }
+
+    public SongItem(MediaBrowserCompat.MediaItem mediaItem) {
+        super(mediaItem.getMediaId());
+        setDraggable(true);
+        setSwipeable(true);
+        mMediaId = mediaItem.getMediaId();
+        mTitle = mediaItem.getDescription().getTitle() == null ? "" : mediaItem.getDescription().getTitle().toString();
+        mSubTitle = mediaItem.getDescription().getSubtitle() == null ? "" : mediaItem.getDescription().getSubtitle().toString();
+        mAlbumArt = mediaItem.getDescription().getIconUri() == null ? "" : mediaItem.getDescription().getIconUri().toString();
+        mIsPlayable = mediaItem.isPlayable();
+        mIsBrowsable = mediaItem.isBrowsable();
     }
 
     @Override
     public String getSubtitle() {
-        if (mMediaItem.getDescription().getSubtitle() == null) {
+        if (mSubTitle == null) {
             return "";
         }
-        return mMediaItem.getDescription().getSubtitle().toString();
+        return mSubTitle;
     }
 
     @Override
@@ -110,20 +125,32 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
             Utils.highlightText(holder.mTitle, getTitle(), adapter.getSearchText());
             Utils.highlightText(holder.mSubtitle, getSubtitle(), adapter.getSearchText());
         } else {
-            holder.mTitle.setText(mMediaItem.getDescription().getTitle());
-            holder.mSubtitle.setText(mMediaItem.getDescription().getSubtitle());
+            holder.mTitle.setText(mTitle);
+            holder.mSubtitle.setText(mSubTitle);
         }
-        if (mMediaItem.getDescription().getIconUri() != null) {
-            ViewHelper.updateAlbumArt((Activity) context, holder.mFlipView, mMediaItem.getDescription().getIconUri().toString(), mMediaItem.getDescription().getTitle().toString());
+        if (mAlbumArt != null) {
+            ViewHelper.updateAlbumArt((Activity) context, holder.mFlipView, mAlbumArt, mTitle);
         }
-        holder.update(holder.mImageView, mMediaItem);
-        holder.updateStampList(mMediaItem.getMediaId());
+        holder.update(holder.mImageView, mMediaId, mIsPlayable);
+        holder.updateStampList(mMediaId);
     }
 
     @Override
     public boolean filter(String constraint) {
-        return mMediaItem != null && mMediaItem.getDescription().getTitle() != null && mMediaItem.getDescription().getTitle().toString().toLowerCase().trim().contains(constraint) ||
-                mMediaItem != null && mMediaItem.getDescription().getSubtitle() != null && mMediaItem.getDescription().getSubtitle().toString().toLowerCase().trim().contains(constraint);
+        return mTitle != null && mTitle.toLowerCase().trim().contains(constraint) ||
+                mSubTitle != null && mSubTitle.toLowerCase().trim().contains(constraint);
+    }
+
+    public String getMediaId() {
+        return mMediaId;
+    }
+
+    public boolean isPlayable() {
+        return mIsPlayable;
+    }
+
+    public boolean isBrowsable() {
+        return mIsBrowsable;
     }
 
     static final class SimpleViewHolder extends FlexibleViewHolder {
@@ -302,10 +329,10 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
             super.onItemReleased(position);
         }
 
-        public void update(View view, MediaBrowserCompat.MediaItem mediaItem) {
+        public void update(View view, String mediaId, boolean isPlayable) {
             Integer cachedState = STATE_INVALID;
             cachedState = (Integer) view.getTag(R.id.tag_mediaitem_state_cache);
-            int state = getMediaItemState(this.mContext, mediaItem);
+            int state = getMediaItemState(this.mContext, mediaId, isPlayable);
             if (cachedState == null || cachedState != state) {
                 Drawable drawable = getDrawableByState(this.mContext, state);
                 if (drawable != null) {
@@ -352,12 +379,12 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
             }
         }
 
-        public static int getMediaItemState(Context context, MediaBrowserCompat.MediaItem mediaItem) {
+        public static int getMediaItemState(Context context, String mediaId, boolean isPlayable) {
             int state = STATE_NONE;
             // Set state to playable first, then override to playing or paused state if needed
-            if (mediaItem.isPlayable()) {
+            if (isPlayable) {
                 state = STATE_PLAYABLE;
-                if (MediaIDHelper.isMediaItemPlaying(context, mediaItem)) {
+                if (MediaIDHelper.isMediaItemPlaying(context, mediaId)) {
                     state = getStateFromController(context);
                 }
             }

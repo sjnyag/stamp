@@ -122,7 +122,7 @@ public class TvVerticalGridFragment extends VerticalGridSupportFragment {
             MediaControllerCompat.TransportControls controls = controller.getTransportControls();
             MediaBrowserCompat.MediaItem mediaItem = (MediaBrowserCompat.MediaItem) item;
 
-            if (!MediaIDHelper.isMediaItemPlaying(getActivity(), mediaItem)) {
+            if (!MediaIDHelper.isMediaItemPlaying(getActivity(), mediaItem.getMediaId())) {
                 controls.playFromMediaId(mediaItem.getMediaId(), null);
             }
 

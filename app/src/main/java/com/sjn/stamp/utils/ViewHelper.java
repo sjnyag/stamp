@@ -102,6 +102,7 @@ public class ViewHelper {
 
     public static void updateAlbumArt(final Activity activity, final FlipView flipView, final String artUrl, final String text) {
         flipView.getChildAt(0).setBackgroundResource(0);
+        flipView.getFrontImageView().setVisibility(View.INVISIBLE);
         flipView.getFrontImageView().setTag(artUrl);
         if (artUrl == null || artUrl.isEmpty()) {
             //view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));
@@ -111,6 +112,7 @@ public class ViewHelper {
         Picasso.with(activity).load(artUrl).into(flipView.getFrontImageView(), new Callback() {
             @Override
             public void onSuccess() {
+                flipView.getFrontImageView().setVisibility(View.VISIBLE);
                 if (!artUrl.equals(flipView.getFrontImageView().getTag())) {
                     updateAlbumArt(activity, flipView.getFrontImageView(), (String) flipView.getFrontImageView().getTag(), text);
                 }
