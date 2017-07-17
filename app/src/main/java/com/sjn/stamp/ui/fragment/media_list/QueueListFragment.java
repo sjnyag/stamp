@@ -35,6 +35,7 @@ public class QueueListFragment extends SongListFragment {
                 }
             }
             mSongList = children;
+            mHasDrawTask = true;
             draw();
         } catch (Throwable t) {
             LogHelper.e(TAG, "Error on childrenloaded", t);

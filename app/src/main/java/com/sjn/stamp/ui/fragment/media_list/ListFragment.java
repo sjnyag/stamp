@@ -59,7 +59,7 @@ public abstract class ListFragment extends Fragment implements
     protected ProgressItem mProgressItem = new ProgressItem();
 
     protected FragmentInteractionListener mListener;
-    protected boolean mIsVisibleToUser = false;
+    protected boolean mIsVisibleToUser = true;
     protected Parcelable mListState;
 
 

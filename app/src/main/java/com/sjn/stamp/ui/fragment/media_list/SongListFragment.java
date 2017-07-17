@@ -17,6 +17,7 @@ package com.sjn.stamp.ui.fragment.media_list;
 
 import android.app.ProgressDialog;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -64,6 +65,8 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
     private ProgressDialog mProgressDialog;
     protected List<MediaBrowserCompat.MediaItem> mSongList = new ArrayList<>();
     private static final String TAG = LogHelper.makeLogTag(SongListFragment.class);
+    private CreateListAsyncTask mAsyncTask;
+    protected boolean mHasDrawTask = true;
 
     /**
      * {@link ListFragment}
@@ -78,38 +81,22 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
      */
     @Override
     public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
-        if (mAdapter == null) {
-            return;
-        }
-        LogHelper.d(TAG, "onPlaybackStateChanged ");
-        //mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onMetadataChanged(MediaMetadataCompat metadata) {
-        if (metadata == null || mAdapter == null) {
-            return;
-        }
-        LogHelper.d(TAG, "Received metadata change to media ", metadata.getDescription().getMediaId());
-        //mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onMediaBrowserChildrenLoaded(@NonNull String parentId,
                                              @NonNull List<MediaBrowserCompat.MediaItem> children) {
-        try {
-            LogHelper.d(TAG, "fragment onChildrenLoaded, parentId=" + parentId + "  count=" + children.size());
-            mSongList = children;
-            draw();
-        } catch (Throwable t) {
-            LogHelper.e(TAG, "Error on childrenloaded", t);
-        }
+        mSongList = children;
+        mHasDrawTask = true;
+        draw();
     }
 
     @Override
     public void onMediaBrowserError(@NonNull String id) {
-        LogHelper.e(TAG, "browse fragment subscription onError, id=" + id);
-        //Toast.makeText(getActivity(), R.string.error_loading_media, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -138,7 +125,10 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                                 mProgressDialog.show();
                             }
                         });
-                        break;
+                        return;
+                    default:
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        return;
                 }
             }
         }).show();
@@ -173,15 +163,10 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
      */
     @Override
     public void noMoreLoad(int newItemsSize) {
-        LogHelper.d(TAG, "newItemsSize=" + newItemsSize);
-        LogHelper.d(TAG, "Total pages loaded=" + mAdapter.getEndlessCurrentPage());
-        LogHelper.d(TAG, "Total items loaded=" + mAdapter.getMainItemCount());
-
     }
 
     @Override
     public void onLoadMore(int lastPosition, int currentPage) {
-        //mAdapter.onLoadMoreComplete(getItemList(mAdapter.getMainItemCount() - mAdapter.getHeaderItems().size(), 30), 5000L);
     }
 
     /**
@@ -214,7 +199,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                              Bundle savedInstanceState) {
         LogHelper.d(TAG, "onCreateView START" + getMediaId());
         setHasOptionsMenu(true);
-        View rootView = inflater.inflate(R.layout.fragment_list, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_list, container, false);
 
         mEmptyView = rootView.findViewById(R.id.empty_view);
         mFastScroller = (FastScroller) rootView.findViewById(R.id.fast_scroller);
@@ -241,12 +226,12 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
         mAdapter.setFastScroller((FastScroller) rootView.findViewById(R.id.fast_scroller),
                 ViewHelper.getColorAccent(getActivity()), this);
 
-        mAdapter.setLongPressDragEnabled(true)
-                .setHandleDragEnabled(true)
-                .setSwipeEnabled(true)
+        mAdapter.setLongPressDragEnabled(false)
+                .setHandleDragEnabled(false)
+                .setSwipeEnabled(false)
                 .setUnlinkAllItemsOnRemoveHeaders(false)
                 .setDisplayHeadersAtStartUp(false)
-                .setStickyHeaders(true)
+                .setStickyHeaders(false)
                 .showAllHeaders();
         mAdapter.addUserLearnedSelection(savedInstanceState == null);
         //mAdapter.addScrollableHeaderWithDelay(new DateHeaderItem(TimeHelper.getJapanNow().toDate()), 900L, false);
@@ -277,35 +262,32 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
         });
         */
         initializeFabWithStamp();
+        if (mItemList != null && mItemList.isEmpty()) {
+            mHasDrawTask = false;
+        }
         if (mIsVisibleToUser) {
             notifyFragmentChange();
         }
-        if (mItemList == null || mItemList.isEmpty()) {
-            draw();
-        }
+        draw();
         LogHelper.d(TAG, "onCreateView END");
         return rootView;
     }
 
     synchronized void draw() {
         LogHelper.d(TAG, "draw START");
+        if (!mIsVisibleToUser || !mHasDrawTask) {
+            return;
+        }
         if (mSongList == null || mAdapter == null) {
             return;
         }
-        mItemList = createItemList();
-        mAdapter.updateDataSet(mItemList);
-        LogHelper.d(TAG, "draw END");
-    }
-
-    private List<AbstractFlexibleItem> createItemList() {
-        LogHelper.d(TAG, "createItemList START");
-        List<AbstractFlexibleItem> itemList = new ArrayList<>();
-        for (MediaBrowserCompat.MediaItem item : mSongList) {
-            AbstractFlexibleItem songItem = new SongItem(item);
-            itemList.add(songItem);
+        if (mAsyncTask != null) {
+            mAsyncTask.cancel(true);
         }
-        LogHelper.d(TAG, "createItemList END");
-        return itemList;
+        mAsyncTask = new CreateListAsyncTask(this);
+        mAsyncTask.execute();
+        mHasDrawTask = false;
+        LogHelper.d(TAG, "draw END");
     }
 
     @Override
@@ -317,10 +299,60 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
     }
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        LogHelper.d(TAG, "setUserVisibleHint START");
+        super.setUserVisibleHint(isVisibleToUser);
+        if (mIsVisibleToUser && getView() != null) {
+            draw();
+        }
+        LogHelper.d(TAG, "setUserVisibleHint END");
+    }
+
+    @Override
     public void onStop() {
         LogHelper.d(TAG, "onStop START");
         super.onStop();
         MusicListObserver.getInstance().removeListener(this);
         LogHelper.d(TAG, "onStop END");
     }
+
+    private static class CreateListAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        SongListFragment fragment;
+
+        CreateListAsyncTask(SongListFragment fragment) {
+            this.fragment = fragment;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            fragment.mItemList = createItemList(fragment.mSongList);
+            if (fragment.getActivity() == null) {
+                return null;
+            }
+            fragment.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                synchronized public void run() {
+                    if (!fragment.isAdded()) {
+                        return;
+                    }
+                    fragment.mAdapter.updateDataSet(fragment.mItemList);
+                }
+            });
+            return null;
+        }
+
+        private List<AbstractFlexibleItem> createItemList(List<MediaBrowserCompat.MediaItem> songList) {
+            LogHelper.d(TAG, "createItemList START");
+            List<AbstractFlexibleItem> itemList = new ArrayList<>();
+            for (MediaBrowserCompat.MediaItem item : songList) {
+                AbstractFlexibleItem songItem = new SongItem(item);
+                itemList.add(songItem);
+            }
+            LogHelper.d(TAG, "createItemList END");
+            return itemList;
+        }
+
+    }
+
 }

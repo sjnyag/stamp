@@ -12,7 +12,6 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -142,9 +141,6 @@ public class RankingFragment extends MediaBrowserListFragment {
      */
     @Override
     public void noMoreLoad(int newItemsSize) {
-        Log.d(TAG, "newItemsSize=" + newItemsSize);
-        Log.d(TAG, "Total pages loaded=" + mAdapter.getEndlessCurrentPage());
-        Log.d(TAG, "Total items loaded=" + mAdapter.getMainItemCount());
     }
 
     @Override
