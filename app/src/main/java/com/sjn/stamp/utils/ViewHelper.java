@@ -23,6 +23,7 @@ import com.sjn.stamp.R;
 import com.sjn.stamp.ui.custom.TextDrawable;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 
 import java.util.Arrays;
 import java.util.List;
@@ -94,23 +95,20 @@ public class ViewHelper {
         }
     }
 
-    public static void updateAlbumArt(final Activity activity, final FlipView view, final String artUrl, final String text) {
-        updateAlbumArt(activity, view, artUrl, text, 192, 192);
-    }
-
     public static void updateAlbumArt(final Activity activity, final ImageView view, final String artUrl, final String text) {
         updateAlbumArt(activity, view, artUrl, text, 128, 128);
     }
 
 
-    public static void updateAlbumArt(final Activity activity, final FlipView flipView, final String artUrl, final String text, final int targetWidth, final int targetHeight) {
+    public static void updateAlbumArt(final Activity activity, final FlipView flipView, final String artUrl, final String text) {
+        flipView.getChildAt(0).setBackgroundResource(0);
         flipView.getFrontImageView().setTag(artUrl);
         if (artUrl == null || artUrl.isEmpty()) {
             //view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));
             flipView.getChildAt(0).setBackground(createTextDrawable(text));
             return;
         }
-        Picasso.with(activity).load(artUrl).resize(targetWidth, targetHeight).into(flipView.getFrontImageView(), new Callback() {
+        Picasso.with(activity).load(artUrl).into(flipView.getFrontImageView(), new Callback() {
             @Override
             public void onSuccess() {
                 if (!artUrl.equals(flipView.getFrontImageView().getTag())) {
@@ -237,7 +235,7 @@ public class ViewHelper {
         }
 
         public int getColor(Object key) {
-            if(key == null){
+            if (key == null) {
                 return mColors.get(0);
             }
             return mColors.get(Math.abs(key.hashCode()) % mColors.size());

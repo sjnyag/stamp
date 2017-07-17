@@ -1,6 +1,7 @@
 package com.sjn.stamp.ui.fragment.media_list;
 
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,14 +26,12 @@ import com.sjn.stamp.R;
 import com.sjn.stamp.controller.SongHistoryController;
 import com.sjn.stamp.db.RankedArtist;
 import com.sjn.stamp.db.RankedSong;
-import com.sjn.stamp.db.SongHistory;
 import com.sjn.stamp.db.Tweetable;
 import com.sjn.stamp.ui.SongAdapter;
 import com.sjn.stamp.ui.custom.RankingSelectLayout;
 import com.sjn.stamp.ui.custom.TermSelectLayout;
 import com.sjn.stamp.ui.item.RankedArtistItem;
 import com.sjn.stamp.ui.item.RankedSongItem;
-import com.sjn.stamp.ui.observer.StampEditStateObserver;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.RealmHelper;
@@ -57,9 +56,9 @@ public class RankingFragment extends MediaBrowserListFragment {
     private TermSelectLayout.Term mTerm = new TermSelectLayout.Term();
     private RankKind mRankKind;
     private SongHistoryController mSongHistoryController;
-    private Realm mRealm;
 
     private ProgressBar mLoading;
+    private CalculateAsyncTask mAsyncTask;
 
     /**
      * {@link ListFragment}
@@ -101,21 +100,10 @@ public class RankingFragment extends MediaBrowserListFragment {
             return;
         }
         mListener.destroyActionModeIfCan();
-        draw();
         mSwipeRefreshLayout.setRefreshing(false);
+        draw();
     }
 
-    /**
-     * {@link FastScroller.OnScrollStateChangeListener}
-     */
-    @Override
-    public void onFastScrollerStateChange(boolean scrolling) {
-        if (scrolling) {
-            hideFab();
-        } else {
-            showFab();
-        }
-    }
 
     /**
      * {@link FlexibleAdapter.OnItemClickListener}
@@ -143,6 +131,9 @@ public class RankingFragment extends MediaBrowserListFragment {
      */
     @Override
     public void onItemLongClick(int position) {
+        if (mListener == null) {
+            return;
+        }
         mListener.startActionModeByLongClick(position);
     }
 
@@ -161,155 +152,35 @@ public class RankingFragment extends MediaBrowserListFragment {
 
     }
 
-    @Getter
-    @Accessors(prefix = "m")
-    enum RankKind {
-
-        SONG {
-            @Override
-            public List<Tweetable> getRankingTweet(SongHistoryController controller, Realm realm, TermSelectLayout.Term term) {
-                List<Tweetable> tweetableList = new ArrayList<>();
-                for (Tweetable tweetable : controller.getRankedSongList(realm, term)) {
-                    tweetableList.add(tweetable);
-                }
-                return tweetableList;
-            }
-
-            @Override
-            public void updateItemList(RankingFragment fragment, final FlexibleAdapter adapter, final TermSelectLayout.Term term, final SongHistoryController songHistoryController, Realm realm, final List<AbstractFlexibleItem> itemList) {
-
-                new CalculateAsyncTask(fragment, adapter) {
-                    @Override
-                    List<AbstractFlexibleItem> createItemList(Realm realm) {
-                        itemList.clear();
-                        int order = 1;
-                        for (RankedSong rankedSong : songHistoryController.getRankedSongList(realm, term)) {
-                            itemList.add(newSimpleItem(rankedSong, order++));
-                        }
-                        return itemList;
-                    }
-                }.execute();
-            }
-
-            private RankedSongItem newSimpleItem(RankedSong rankedSong, int order) {
-                return new RankedSongItem(rankedSong.getSong().buildMediaMetadataCompat(), rankedSong.getPlayCount(), order);
-            }
-        },
-
-        ARTIST {
-            @Override
-            public List<Tweetable> getRankingTweet(SongHistoryController controller, Realm realm, TermSelectLayout.Term term) {
-                List<Tweetable> tweetableList = new ArrayList<>();
-                for (Tweetable tweetable : controller.getRankedArtistList(realm, term)) {
-                    tweetableList.add(tweetable);
-                }
-                return tweetableList;
-            }
-
-            @Override
-            public void updateItemList(RankingFragment fragment, final FlexibleAdapter adapter, final TermSelectLayout.Term term, final SongHistoryController songHistoryController, Realm realm, final List<AbstractFlexibleItem> itemList) {
-                new CalculateAsyncTask(fragment, adapter) {
-                    @Override
-                    List<AbstractFlexibleItem> createItemList(Realm realm) {
-                        itemList.clear();
-                        int order = 1;
-                        for (RankedArtist rankedArtist : songHistoryController.getRankedArtistList(realm, term)) {
-                            itemList.add(newSimpleItem(rankedArtist, order++));
-                        }
-                        return itemList;
-                    }
-                }.execute();
-            }
-
-            private RankedArtistItem newSimpleItem(RankedArtist rankedArtist, int order) {
-                return new RankedArtistItem(rankedArtist.mostPlayedSong().getTitle(), rankedArtist.getArtist().getName(), rankedArtist.getArtist().getAlbumArtUri(), rankedArtist.getPlayCount(), order);
-            }
-
-        },;
-
-        protected List<SongHistory> mAllSongHistoryList = new ArrayList<>();
-
-        public abstract List<Tweetable> getRankingTweet(SongHistoryController controller, Realm realm, TermSelectLayout.Term term);
-
-        public static RankKind of(String value) {
-            for (RankKind rankKind : RankKind.values()) {
-                if (rankKind.toString().equals(value)) return rankKind;
-            }
-            return null;
-        }
-
-        abstract class CalculateAsyncTask extends AsyncTask<Void, Void, Void> {
-
-            RankingFragment fragment;
-            FlexibleAdapter adapter;
-
-            CalculateAsyncTask(RankingFragment fragment, FlexibleAdapter adapter) {
-                this.fragment = fragment;
-                this.adapter = adapter;
-            }
-
-            abstract List<AbstractFlexibleItem> createItemList(Realm realm);
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                Realm realm = null;
-                try {
-                    realm = RealmHelper.getRealmInstance();
-                    final List<AbstractFlexibleItem> list = createItemList(realm);
-                    if (fragment.getActivity() == null) {
-                        return null;
-                    }
-                    fragment.getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        synchronized public void run() {
-                            if (!fragment.isAdded()) {
-                                return;
-                            }
-
-                            if (fragment.mLoading != null) {
-                                fragment.mLoading.setVisibility(View.INVISIBLE);
-                            }
-                            for (AbstractFlexibleItem item : list) {
-                                adapter.addItem(item);
-                            }
-                            adapter.notifyDataSetChanged();
-                        }
-                    });
-                } finally {
-                    if (realm != null) {
-                        realm.close();
-                    }
-                }
-                return null;
-            }
-
-        }
-
-        public abstract void updateItemList(RankingFragment fragment, FlexibleAdapter adapter, TermSelectLayout.Term term, SongHistoryController songHistoryController, Realm realm, List<AbstractFlexibleItem> itemList);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        mRankKind = parseArgRankKind();
         final View rootView = inflater.inflate(R.layout.fragment_ranking, container, false);
+        mRankKind = parseArgRankKind();
         mLoading = (ProgressBar) rootView.findViewById(R.id.progressBar);
         mSongHistoryController = new SongHistoryController(getContext());
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW);
         mEmptyView = rootView.findViewById(R.id.empty_view);
         mFastScroller = (FastScroller) rootView.findViewById(R.id.fast_scroller);
         mEmptyTextView = (TextView) rootView.findViewById(R.id.empty_text);
 
-        mRealm = RealmHelper.getRealmInstance();
-        mAdapter = new SongAdapter(new ArrayList<AbstractFlexibleItem>(), this);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW);
+
+        mAdapter = new SongAdapter(mItemList, this);
         mAdapter.setNotifyChangeOfUnfilteredItems(true)
                 .setAnimationOnScrolling(false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new SmoothScrollLinearLayoutManager(getActivity()));
+        if (savedInstanceState != null) {
+            mListState = savedInstanceState.getParcelable(LIST_STATE_KEY);
+        }
+        RecyclerView.LayoutManager layoutManager = new SmoothScrollLinearLayoutManager(getActivity());
+        if (mListState != null) {
+            layoutManager.onRestoreInstanceState(mListState);
+        }
+        mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
         //mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter.setFastScroller((FastScroller) rootView.findViewById(R.id.fast_scroller),
@@ -348,7 +219,7 @@ public class RankingFragment extends MediaBrowserListFragment {
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                     final TermSelectLayout.Term term = termSelectLayout.getTerm();
                                     final int songNum = termSelectLayout.getSongNum();
-                                    TweetHelper.tweet(getActivity(), getResources().getString(R.string.tweet_ranking, term.toString(), tweet(mRankKind.getRankingTweet(mSongHistoryController, mRealm, term), songNum)));
+                                    TweetHelper.tweet(getActivity(), getResources().getString(R.string.tweet_ranking, term.toString(), mRankKind.getRankingTweet(getResources(), mSongHistoryController, term, songNum)));
                                 }
                             })
                             .contentColorRes(android.R.color.white)
@@ -361,31 +232,22 @@ public class RankingFragment extends MediaBrowserListFragment {
         if (mIsVisibleToUser) {
             notifyFragmentChange();
         }
-        draw();
+        if (mItemList == null || mItemList.isEmpty()) {
+            mLoading.setVisibility(View.VISIBLE);
+            draw();
+        }
         return rootView;
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        mRealm.close();
-    }
-
-    public void draw() {
+    synchronized void draw() {
         if (mRankKind == null) {
             return;
         }
-        mAdapter.clear();
-
-        if (mLoading != null && getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                synchronized public void run() {
-                    mLoading.setVisibility(View.VISIBLE);
-                }
-            });
+        if (mAsyncTask != null) {
+            mAsyncTask.cancel(true);
         }
-        mRankKind.updateItemList(this, mAdapter, mTerm, mSongHistoryController, mRealm, mItemList);
+        mAsyncTask = new CalculateAsyncTask(this, mAdapter, mRankKind, mTerm, mSongHistoryController);
+        mAsyncTask.execute();
     }
 
     public void setTermAndReload(TermSelectLayout.Term term) {
@@ -398,21 +260,138 @@ public class RankingFragment extends MediaBrowserListFragment {
         return RankKind.of(bundle.getString(PagerFragment.PAGER_KIND_KEY));
     }
 
-    public String tweet(List<Tweetable> tweetableList, int songNum) {
-        String content = "";
-        int order = 1;
-        for (Tweetable tweetable : tweetableList) {
-            content = content + getResources().getString(R.string.tweet_each_rank, order++, tweetable.tweet(getResources()));
-            if (order > songNum) {
-                break;
-            }
+    private static class CalculateAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        RankingFragment fragment;
+        FlexibleAdapter adapter;
+        Callback mCallback;
+        TermSelectLayout.Term mTerm;
+        SongHistoryController mSongHistoryController;
+
+        CalculateAsyncTask(RankingFragment fragment, FlexibleAdapter adapter, Callback callback, TermSelectLayout.Term term, SongHistoryController songHistoryController) {
+            this.fragment = fragment;
+            this.adapter = adapter;
+            mCallback = callback;
+            mTerm = term;
+            mSongHistoryController = songHistoryController;
         }
-        return content;
+
+        interface Callback {
+            List<AbstractFlexibleItem> createItemList(Realm realm, TermSelectLayout.Term term, SongHistoryController songHistoryController);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Realm realm = null;
+            try {
+                realm = RealmHelper.getRealmInstance();
+                fragment.mItemList = mCallback.createItemList(realm, mTerm, mSongHistoryController);
+                if (fragment.getActivity() == null) {
+                    return null;
+                }
+                fragment.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    synchronized public void run() {
+                        if (!fragment.isAdded()) {
+                            return;
+                        }
+                        adapter.updateDataSet(fragment.mItemList);
+                        if (fragment.mLoading != null) {
+                            fragment.mLoading.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                });
+            } finally {
+                if (realm != null) {
+                    realm.close();
+                }
+            }
+            return null;
+        }
+
     }
 
-    @Override
-    public void onStateChange(StampEditStateObserver.State state) {
-        super.onStateChange(state);
-        mAdapter.notifyDataSetChanged();
+    @Getter
+    @Accessors(prefix = "m")
+    enum RankKind implements CalculateAsyncTask.Callback {
+
+        SONG {
+            @Override
+            public String getRankingTweet(Resources resource, SongHistoryController controller, TermSelectLayout.Term term, int songNum) {
+                List<Tweetable> tweetableList = new ArrayList<>();
+                Realm realm = RealmHelper.getRealmInstance();
+                for (Tweetable tweetable : controller.getRankedSongList(realm, term)) {
+                    tweetableList.add(tweetable);
+                }
+                String tweet = tweet(resource, tweetableList, songNum);
+                realm.close();
+                return tweet;
+            }
+
+            @Override
+            public List<AbstractFlexibleItem> createItemList(Realm realm, TermSelectLayout.Term term, SongHistoryController songHistoryController) {
+                List<AbstractFlexibleItem> itemList = new ArrayList<>();
+                int order = 1;
+                for (RankedSong rankedSong : songHistoryController.getRankedSongList(realm, term)) {
+                    itemList.add(newSimpleItem(rankedSong, order++));
+                }
+                return itemList;
+            }
+
+            private RankedSongItem newSimpleItem(RankedSong rankedSong, int order) {
+                return new RankedSongItem(rankedSong.getSong().buildMediaMetadataCompat(), rankedSong.getPlayCount(), order);
+            }
+        },
+
+        ARTIST {
+            @Override
+            public String getRankingTweet(Resources resource, SongHistoryController controller, TermSelectLayout.Term term, int songNum) {
+                List<Tweetable> tweetableList = new ArrayList<>();
+                Realm realm = RealmHelper.getRealmInstance();
+                for (Tweetable tweetable : controller.getRankedArtistList(realm, term)) {
+                    tweetableList.add(tweetable);
+                }
+                String tweet = tweet(resource, tweetableList, songNum);
+                realm.close();
+                return tweet;
+            }
+
+            @Override
+            public List<AbstractFlexibleItem> createItemList(Realm realm, TermSelectLayout.Term term, SongHistoryController songHistoryController) {
+                List<AbstractFlexibleItem> itemList = new ArrayList<>();
+                int order = 1;
+                for (RankedArtist rankedArtist : songHistoryController.getRankedArtistList(realm, term)) {
+                    itemList.add(newSimpleItem(rankedArtist, order++));
+                }
+                return itemList;
+            }
+
+            private RankedArtistItem newSimpleItem(RankedArtist rankedArtist, int order) {
+                return new RankedArtistItem(rankedArtist.mostPlayedSong().getTitle(), rankedArtist.getArtist().getName(), rankedArtist.getArtist().getAlbumArtUri(), rankedArtist.getPlayCount(), order);
+            }
+
+        },;
+
+        public abstract String getRankingTweet(Resources resources, SongHistoryController controller, TermSelectLayout.Term term, int songNum);
+
+        public static RankKind of(String value) {
+            for (RankKind rankKind : RankKind.values()) {
+                if (rankKind.toString().equals(value)) return rankKind;
+            }
+            return null;
+        }
+
+        private static String tweet(Resources resources, List<Tweetable> tweetableList, int songNum) {
+            String content = "";
+            int order = 1;
+            for (Tweetable tweetable : tweetableList) {
+                content = content + resources.getString(R.string.tweet_each_rank, order++, tweetable.tweet(resources));
+                if (order > songNum) {
+                    break;
+                }
+            }
+            return content;
+        }
     }
+
 }

@@ -32,7 +32,6 @@ import com.sjn.stamp.ui.SongAdapter;
 import com.sjn.stamp.ui.item.AbstractItem;
 import com.sjn.stamp.ui.item.DateHeaderItem;
 import com.sjn.stamp.ui.item.SongHistoryItem;
-import com.sjn.stamp.ui.observer.StampEditStateObserver;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.RealmHelper;
 import com.sjn.stamp.utils.ViewHelper;
@@ -101,22 +100,10 @@ public class TimelineFragment extends MediaBrowserListFragment implements
             return;
         }
         mListener.destroyActionModeIfCan();
-        mAllSongHistoryList = mSongHistoryController.getManagedTimeline(mRealm);
         mSwipeRefreshLayout.setRefreshing(false);
-        mAdapter.updateDataSet(getItemList(0, 30));
+        draw();
     }
 
-    /**
-     * {@link FastScroller.OnScrollStateChangeListener}
-     */
-    @Override
-    public void onFastScrollerStateChange(boolean scrolling) {
-        if (scrolling) {
-            hideFab();
-        } else {
-            showFab();
-        }
-    }
 
     /**
      * {@link FlexibleAdapter.OnItemClickListener}
@@ -136,6 +123,9 @@ public class TimelineFragment extends MediaBrowserListFragment implements
      */
     @Override
     public void onItemLongClick(int position) {
+        if (mListener == null) {
+            return;
+        }
         mListener.startActionModeByLongClick(position);
     }
 
@@ -151,7 +141,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
 
     @Override
     public void onLoadMore(int lastPosition, int currentPage) {
-        mAdapter.onLoadMoreComplete(getItemList(mAdapter.getMainItemCount() - mAdapter.getHeaderItems().size(), 30), 5000L);
+        mAdapter.onLoadMoreComplete(createItemList(mAdapter.getMainItemCount() - mAdapter.getHeaderItems().size(), 30), 5000L);
     }
 
     @Override
@@ -160,21 +150,28 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         setHasOptionsMenu(true);
         final View rootView = inflater.inflate(R.layout.fragment_list, container, false);
         mSongHistoryController = new SongHistoryController(getContext());
+        mRealm = RealmHelper.getRealmInstance();
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW);
         mEmptyView = rootView.findViewById(R.id.empty_view);
         mFastScroller = (FastScroller) rootView.findViewById(R.id.fast_scroller);
         mEmptyTextView = (TextView) rootView.findViewById(R.id.empty_text);
 
-        mRealm = RealmHelper.getRealmInstance();
-        mAllSongHistoryList = mSongHistoryController.getManagedTimeline(mRealm);
-        mAdapter = new SongAdapter(getItemList(0, 30), this);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW);
+
+        mAdapter = new SongAdapter(mItemList, this);
         mAdapter.setNotifyChangeOfUnfilteredItems(true)
                 .setAnimationOnScrolling(false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new SmoothScrollLinearLayoutManager(getActivity()));
+        if (savedInstanceState != null) {
+            mListState = savedInstanceState.getParcelable(LIST_STATE_KEY);
+        }
+        RecyclerView.LayoutManager layoutManager = new SmoothScrollLinearLayoutManager(getActivity());
+        if (mListState != null) {
+            layoutManager.onRestoreInstanceState(mListState);
+        }
+        mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
         //mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter.setFastScroller((FastScroller) rootView.findViewById(R.id.fast_scroller),
@@ -201,6 +198,9 @@ public class TimelineFragment extends MediaBrowserListFragment implements
                 .setEndlessScrollListener(this, mProgressItem);
         initializeFabWithStamp();
         notifyFragmentChange();
+        if (mItemList == null || mItemList.isEmpty()) {
+            draw();
+        }
 
         return rootView;
     }
@@ -231,6 +231,15 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         return false;
     }
 
+    synchronized void draw() {
+        if (mAllSongHistoryList == null || mAdapter == null) {
+            return;
+        }
+        mAllSongHistoryList = mSongHistoryController.getManagedTimeline(mRealm);
+        mItemList = createItemList(0, 30);
+        mAdapter.updateDataSet(mItemList);
+    }
+
     private int calcGoToTopBufferedPosition(int bufferSize) {
         int position = calcCurrentPosition();
         if (position > bufferSize) {
@@ -254,7 +263,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         return item;
     }
 
-    private List<AbstractFlexibleItem> getItemList(int startPosition, int size) {
+    private List<AbstractFlexibleItem> createItemList(int startPosition, int size) {
         int end = startPosition + size;
         if (end >= mAllSongHistoryList.size()) {
             end = mAllSongHistoryList.size();
@@ -272,12 +281,6 @@ public class TimelineFragment extends MediaBrowserListFragment implements
             headerItemList.add(newSimpleItem(mAllSongHistoryList.get(i), header));
         }
         return headerItemList;
-    }
-
-    @Override
-    public void onStateChange(StampEditStateObserver.State state) {
-        super.onStateChange(state);
-        mAdapter.notifyDataSetChanged();
     }
 
     @Override

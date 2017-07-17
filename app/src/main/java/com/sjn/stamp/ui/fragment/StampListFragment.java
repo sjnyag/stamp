@@ -47,7 +47,7 @@ public class StampListFragment extends Fragment implements StampEditStateObserve
     }
 
     @Override
-    public void onStateChange(StampEditStateObserver.State state) {
+    public void onStampStateChange(StampEditStateObserver.State state) {
 
     }
 

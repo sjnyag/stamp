@@ -32,8 +32,8 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
-import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.R;
+import com.sjn.stamp.utils.LogHelper;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -181,8 +181,6 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
     public void navigateToBrowser(Fragment fragment, boolean addToBackStack, long selection) {
         navigateToBrowser(fragment, addToBackStack);
         mDrawer.setSelection(selection);
-        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
-        appBarLayout.setExpanded(true, true);
     }
 
     public void navigateToBrowser(Fragment fragment, boolean addToBackStack) {
@@ -198,6 +196,8 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
             transaction.addToBackStack(null);
         }
         transaction.commit();
+        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        appBarLayout.setExpanded(true, true);
     }
 
     protected void initializeToolbar() {

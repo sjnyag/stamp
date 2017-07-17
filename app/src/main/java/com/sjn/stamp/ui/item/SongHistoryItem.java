@@ -74,7 +74,6 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
     public void delete(Context context) {
         SongHistoryController controller = new SongHistoryController(context);
         controller.deleteSongHistory(mSongHistory);
-
     }
 
     @Override

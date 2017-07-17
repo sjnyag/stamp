@@ -40,7 +40,6 @@
                 app:animationDuration="170"
                 app:checked="false"
                 app:enableInitialAnimation="true"
-                app:frontBackground="@drawable/square_light"
                 app:frontBackgroundColor="@color/color_primary"
                 app:rearBackgroundColor="@color/color_accent"/>
 

@@ -4,6 +4,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.media.MediaBrowserCompat;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.sjn.stamp.ui.activity.MediaBrowsable;
 import com.sjn.stamp.ui.observer.MediaControllerObserver;
@@ -44,15 +47,11 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
         if (context instanceof MediaBrowsable) {
             mMediaBrowsable = (MediaBrowsable) context;
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        LogHelper.d(TAG, "fragment.onStart");
-        MediaControllerObserver.getInstance().addListener(this);
         MediaBrowserCompat mediaBrowser = mMediaBrowsable.getMediaBrowser();
-        LogHelper.d(TAG, "fragment.onStart, mediaId=", mMediaId,
+        if (mediaBrowser == null) {
+            return;
+        }
+        LogHelper.d(TAG, "fragment.onAttach, mediaId=", mMediaId,
                 "  onConnected=" + mediaBrowser.isConnected());
         if (mediaBrowser.isConnected()) {
             onConnected();
@@ -60,19 +59,47 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        LogHelper.d(TAG, "fragment.onCreateView");
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        LogHelper.d(TAG, "fragment.onStart");
+        MediaControllerObserver.getInstance().addListener(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LogHelper.d(TAG, "fragment.onResume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LogHelper.d(TAG, "fragment.onPause");
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         LogHelper.d(TAG, "fragment.onStop");
-        MediaBrowserCompat mediaBrowser = mMediaBrowsable.getMediaBrowser();
-        if (mediaBrowser != null && mediaBrowser.isConnected() && mMediaId != null) {
-            mediaBrowser.unsubscribe(mMediaId);
-        }
         MediaControllerObserver.getInstance().removeListener(this);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        LogHelper.d(TAG, "fragment.onDetach");
+        MediaBrowserCompat mediaBrowser = mMediaBrowsable.getMediaBrowser();
+        if (mediaBrowser != null && mediaBrowser.isConnected() && mMediaId != null) {
+            mediaBrowser.unsubscribe(mMediaId);
+        }
         mMediaBrowsable = null;
     }
 
@@ -81,6 +108,7 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
     // completes after the onStart()
     @Override
     public void onConnected() {
+        LogHelper.d(TAG, "fragment.onConnected");
         if (isDetached() || mMediaBrowsable == null) {
             return;
         }
@@ -122,6 +150,7 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
     }
 
     protected void reloadList() {
+        LogHelper.d(TAG, "fragment.reloadList");
         mMediaBrowsable.getMediaBrowser().unsubscribe(mMediaId);
         mMediaBrowsable.getMediaBrowser().subscribe(mMediaId, mSubscriptionCallback);
 

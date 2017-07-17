@@ -40,7 +40,6 @@ import com.sjn.stamp.ui.SongAdapter;
 import com.sjn.stamp.ui.activity.RequestPermissionActivity;
 import com.sjn.stamp.ui.item.SongItem;
 import com.sjn.stamp.ui.observer.MediaSourceObserver;
-import com.sjn.stamp.ui.observer.StampEditStateObserver;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaRetrieveHelper;
 import com.sjn.stamp.utils.ViewHelper;
@@ -64,6 +63,7 @@ import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 public class SongListFragment extends MediaBrowserListFragment implements MediaSourceObserver.Listener {
 
     private ProgressDialog mProgressDialog;
+    protected List<MediaBrowserCompat.MediaItem> mSongList = new ArrayList<>();
     private static final String TAG = LogHelper.makeLogTag(SongListFragment.class);
 
     /**
@@ -99,16 +99,9 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
     public void onMediaBrowserChildrenLoaded(@NonNull String parentId,
                                              @NonNull List<MediaBrowserCompat.MediaItem> children) {
         try {
-            LogHelper.d(TAG, "fragment onChildrenLoaded, parentId=" + parentId +
-                    "  count=" + children.size());
-            mItemList.clear();
-            mAdapter.clear();
-            for (MediaBrowserCompat.MediaItem item : children) {
-                AbstractFlexibleItem songItem = new SongItem(item);
-                mItemList.add(songItem);
-                mAdapter.addItem(songItem);
-            }
-            mAdapter.notifyDataSetChanged();
+            LogHelper.d(TAG, "fragment onChildrenLoaded, parentId=" + parentId + "  count=" + children.size());
+            mSongList = children;
+            draw();
         } catch (Throwable t) {
             LogHelper.e(TAG, "Error on childrenloaded", t);
         }
@@ -158,19 +151,6 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
                 }
             }
         }).show();
-        //mAdapter.updateDataSet(getItemList(0, 30));
-    }
-
-    /**
-     * {@link FastScroller.OnScrollStateChangeListener}
-     */
-    @Override
-    public void onFastScrollerStateChange(boolean scrolling) {
-        if (scrolling) {
-            hideFab();
-        } else {
-            showFab();
-        }
     }
 
     /**
@@ -237,23 +217,27 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
         setHasOptionsMenu(true);
         LogHelper.d(TAG, "fragment.onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_list, container, false);
-/*
-        mErrorView = rootView.findViewById(R.id.playback_error);
-        mErrorMessage = (TextView) mErrorView.findViewById(R.id.error_message);
-*/
 
         mEmptyView = rootView.findViewById(R.id.empty_view);
         mFastScroller = (FastScroller) rootView.findViewById(R.id.fast_scroller);
         mEmptyTextView = (TextView) rootView.findViewById(R.id.empty_text);
+
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW);
 
-        mAdapter = new SongAdapter(new ArrayList<AbstractFlexibleItem>(), this);
+        mAdapter = new SongAdapter(mItemList, this);
         mAdapter.setNotifyChangeOfUnfilteredItems(true)
                 .setAnimationOnScrolling(false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new SmoothScrollLinearLayoutManager(getActivity()));
+        if (savedInstanceState != null) {
+            mListState = savedInstanceState.getParcelable(LIST_STATE_KEY);
+        }
+        RecyclerView.LayoutManager layoutManager = new SmoothScrollLinearLayoutManager(getActivity());
+        if (mListState != null) {
+            layoutManager.onRestoreInstanceState(mListState);
+        }
+        mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
         //mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter.setFastScroller((FastScroller) rootView.findViewById(R.id.fast_scroller),
@@ -298,7 +282,27 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
         if (mIsVisibleToUser) {
             notifyFragmentChange();
         }
+        if (mItemList == null || mItemList.isEmpty()) {
+            draw();
+        }
         return rootView;
+    }
+
+    synchronized void draw() {
+        if (mSongList == null || mAdapter == null) {
+            return;
+        }
+        mItemList = createItemList();
+        mAdapter.updateDataSet(mItemList);
+    }
+
+    private List<AbstractFlexibleItem> createItemList() {
+        List<AbstractFlexibleItem> itemList = new ArrayList<>();
+        for (MediaBrowserCompat.MediaItem item : mSongList) {
+            AbstractFlexibleItem songItem = new SongItem(item);
+            itemList.add(songItem);
+        }
+        return itemList;
     }
 
     @Override
@@ -311,11 +315,5 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
     public void onStop() {
         super.onStop();
         MediaSourceObserver.getInstance().removeListener(this);
-    }
-
-    @Override
-    public void onStateChange(StampEditStateObserver.State state) {
-        super.onStateChange(state);
-        mAdapter.notifyDataSetChanged();
     }
 }

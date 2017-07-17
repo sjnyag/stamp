@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sjn.stamp.R;
 import com.sjn.stamp.media.player.CastPlayer;
@@ -145,7 +146,7 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
                 break;
             case PlaybackStateCompat.STATE_ERROR:
                 LogHelper.e(TAG, "error playbackstate: ", state.getErrorMessage());
-                //Toast.makeText(getActivity(), state.getErrorMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), state.getErrorMessage(), Toast.LENGTH_LONG).show();
                 mPlayPause.setVisibility(View.INVISIBLE);
                 break;
         }

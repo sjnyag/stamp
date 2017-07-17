@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
@@ -44,20 +45,23 @@ public abstract class ListFragment extends Fragment implements
         StampEditStateObserver.Listener {
 
     private static final String TAG = LogHelper.makeLogTag(ListFragment.class);
-
+    protected static final String LIST_STATE_KEY = "LIST_STATE_KEY";
 
     protected List<AbstractFlexibleItem> mItemList = new ArrayList<>();
     protected RecyclerView mRecyclerView;
     protected SongAdapter mAdapter;
+
     protected View mEmptyView;
-    protected FastScroller mFastScroller;
     protected TextView mEmptyTextView;
     protected SwipeRefreshLayout mSwipeRefreshLayout;
-    protected ProgressItem mProgressItem = new ProgressItem();
-    protected FragmentInteractionListener mListener;
+    protected FastScroller mFastScroller;
     protected FloatingActionButton mFab;
     protected BottomSheetLayout mBottomSheetLayout;
+    protected ProgressItem mProgressItem = new ProgressItem();
+
+    protected FragmentInteractionListener mListener;
     protected boolean mIsVisibleToUser = false;
+    protected Parcelable mListState;
 
 
     private final Handler mRefreshHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
@@ -251,8 +255,11 @@ public abstract class ListFragment extends Fragment implements
 
     }
 
+    /**
+     * {@link StampEditStateObserver.Listener}
+     */
     @Override
-    public void onStateChange(StampEditStateObserver.State state) {
+    public void onStampStateChange(StampEditStateObserver.State state) {
         switch (state) {
             case OPEN:
                 openStampEdit();
@@ -261,6 +268,7 @@ public abstract class ListFragment extends Fragment implements
                 closeStampEdit();
                 break;
         }
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -273,10 +281,11 @@ public abstract class ListFragment extends Fragment implements
             if (size > 0) {
                 mFastScroller.setVisibility(View.VISIBLE);
                 mRefreshHandler.removeMessages(2);
-                mEmptyView.setVisibility(View.GONE);
-            } else {
-                mEmptyView.setVisibility(View.VISIBLE);
                 mEmptyView.setAlpha(0);
+                mEmptyView.setVisibility(View.VISIBLE);
+            } else {
+                mEmptyView.setAlpha(0);
+                mEmptyView.setVisibility(View.GONE);
                 mRefreshHandler.sendEmptyMessage(2);
                 mFastScroller.setVisibility(View.GONE);
             }
@@ -286,5 +295,26 @@ public abstract class ListFragment extends Fragment implements
 //            message += size + " items in " + mAdapter.getTime() + "ms";
 //            Snackbar.make(getActivity().findViewById(R.id.main_view), message, Snackbar.LENGTH_SHORT).show();
 //        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        if (mRecyclerView != null && mRecyclerView.getLayoutManager() != null) {
+            mListState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+        }
+        state.putParcelable(LIST_STATE_KEY, mListState);
+    }
+
+    /**
+     * {@link FastScroller.OnScrollStateChangeListener}
+     */
+    @Override
+    public void onFastScrollerStateChange(boolean scrolling) {
+        if (scrolling) {
+            hideFab();
+        } else {
+            showFab();
+        }
     }
 }

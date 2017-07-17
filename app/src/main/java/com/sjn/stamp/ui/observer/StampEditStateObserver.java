@@ -60,7 +60,7 @@ public class StampEditStateObserver {
         if (mListenerList != null) {
             List<Listener> tempList = new ArrayList<>(mListenerList);
             for (Listener listener : tempList) {
-                listener.onStateChange(mState);
+                listener.onStampStateChange(mState);
             }
         }
     }
@@ -70,7 +70,7 @@ public class StampEditStateObserver {
 
         void onNewStampCreated(String stamp);
 
-        void onStateChange(State state);
+        void onStampStateChange(State state);
     }
 
     public void addListener(Listener listener) {
