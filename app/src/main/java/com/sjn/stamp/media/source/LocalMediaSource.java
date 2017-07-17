@@ -24,7 +24,6 @@ import com.sjn.stamp.utils.MediaRetrieveHelper;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Utility class to get a list of MusicTrack's from Content Provider.
@@ -47,14 +46,7 @@ public class LocalMediaSource implements MusicProviderSource {
             mCallback.onPermissionRequired();
             return Collections.<MediaMetadataCompat>emptyList().iterator();
         }
-        List<MediaRetrieveHelper.MediaCursorContainer> list = MediaRetrieveHelper.readCache(mContext);
-        LogHelper.i(TAG, "Read " + list.size() + "songs from cache");
-        if (list.size() == 0) {
-            list = MediaRetrieveHelper.retrieveAllMedia(mContext, mCallback);
-        }
-        MediaRetrieveHelper.retrieveAndUpdateCache(mContext, mCallback);
-        return MediaRetrieveHelper.createIterator(list);
+        return MediaRetrieveHelper.createIterator(MediaRetrieveHelper.retrieveAllMedia(mContext, mCallback));
     }
-
 
 }

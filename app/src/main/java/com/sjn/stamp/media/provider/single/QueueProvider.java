@@ -4,13 +4,13 @@ import android.content.Context;
 import android.support.v4.media.MediaMetadataCompat;
 
 import com.google.common.collect.Lists;
-import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.R;
 import com.sjn.stamp.constant.RepeatState;
+import com.sjn.stamp.utils.MediaIDHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Map;
 
 public class QueueProvider extends SingleListProvider {
 
@@ -43,7 +43,7 @@ public class QueueProvider extends SingleListProvider {
     }
 
     @Override
-    protected List<MediaMetadataCompat> createTrackList(final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
+    protected List<MediaMetadataCompat> createTrackList(final Map<String, MediaMetadataCompat> musicListById) {
         List<MediaMetadataCompat> queueList = new ArrayList<>();
         if (mQueueListener == null) {
             return queueList;

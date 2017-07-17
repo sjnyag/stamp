@@ -4,11 +4,12 @@ import android.content.Context;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 
+import com.sjn.stamp.R;
 import com.sjn.stamp.controller.StampController;
 import com.sjn.stamp.utils.MediaIDHelper;
-import com.sjn.stamp.R;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 public class StampListProvider extends MultipleListProvider {
@@ -38,7 +39,7 @@ public class StampListProvider extends MultipleListProvider {
     }
 
     @Override
-    protected ConcurrentMap<String, List<MediaMetadataCompat>> createTrackListMap(final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
+    protected Map<String, List<MediaMetadataCompat>> createTrackListMap(final Map<String, MediaMetadataCompat> musicListById) {
         StampController stampController = new StampController(mContext);
         return stampController.getAllSongList(musicListById);
     }

@@ -8,7 +8,7 @@ import com.sjn.stamp.controller.PlaylistController;
 import com.sjn.stamp.utils.MediaIDHelper;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Map;
 
 public class PlaylistProvider extends MultipleListProvider {
 
@@ -32,7 +32,7 @@ public class PlaylistProvider extends MultipleListProvider {
     }
 
     @Override
-    protected ConcurrentMap<String, List<MediaMetadataCompat>> createTrackListMap(final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
+    protected Map<String, List<MediaMetadataCompat>> createTrackListMap(final Map<String, MediaMetadataCompat> musicListById) {
         PlaylistController playlistController = new PlaylistController(mContext);
         return playlistController.getAllPlaylist();
     }

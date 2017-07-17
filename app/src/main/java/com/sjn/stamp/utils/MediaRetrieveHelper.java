@@ -5,20 +5,14 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v4.media.MediaMetadataCompat;
 import android.util.SparseArray;
 
-import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirPutCallback;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.google.gson.reflect.TypeToken;
-import com.sjn.stamp.media.source.MediaSourceObserver;
 import com.sjn.stamp.media.source.MusicProviderSource;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -58,11 +52,6 @@ public class MediaRetrieveHelper {
             Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     private static final String ALL_MUSIC_SELECTION = MediaStore.Audio.Media.IS_MUSIC + " != 0";
-    private static final int DISK_CACHE_SIZE = 1024 * 1024; // 1MB
-    private static final String CACHE_KEY = "media_source";
-
-    private static final Type CACHE_TYPE = new TypeToken<List<MediaCursorContainer>>() {
-    }.getType();
 
     public static Iterator<MediaMetadataCompat> createIterator(List<MediaCursorContainer> list) {
         return Lists.transform(list, new Function<MediaCursorContainer, MediaMetadataCompat>() {
@@ -117,28 +106,6 @@ public class MediaRetrieveHelper {
         return "";
     }
 
-    private static boolean initCache(Context context) {
-        try {
-            Reservoir.init(context, MediaRetrieveHelper.DISK_CACHE_SIZE);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public static List<MediaCursorContainer> readCache(Context context) {
-        initCache(context);
-        try {
-            if (Reservoir.contains(CACHE_KEY)) {
-                return Reservoir.get(CACHE_KEY, CACHE_TYPE);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-        return new ArrayList<>();
-    }
-
     public static List<MediaCursorContainer> retrieveAllMedia(Context context, PermissionRequiredCallback callback) {
         if (!MediaRetrieveHelper.hasPermission(context) && callback != null) {
             callback.onPermissionRequired();
@@ -160,14 +127,6 @@ public class MediaRetrieveHelper {
             e.printStackTrace();
         }
         return mediaList;
-    }
-
-    public static void retrieveAndUpdateCache(Context context, PermissionRequiredCallback callback) {
-        if (!MediaRetrieveHelper.hasPermission(context) && callback != null) {
-            callback.onPermissionRequired();
-            return;
-        }
-        new CacheUpdateAsyncTask(context, callback).execute();
     }
 
     private static SparseArray<String> createGenreMap(Context context, PermissionRequiredCallback callback) {
@@ -257,50 +216,6 @@ public class MediaRetrieveHelper {
                     .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, mTotalTrackCount)
                     .putString(MediaMetadataCompat.METADATA_KEY_DATE, mDateAdded)
                     .build();
-        }
-    }
-
-    private static class CacheUpdateAsyncTask extends AsyncTask<Void, Void, String> {
-
-        private Context mContext;
-        private PermissionRequiredCallback mCallback;
-
-        CacheUpdateAsyncTask(Context context, PermissionRequiredCallback callback) {
-            mContext = context;
-            mCallback = callback;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<MediaCursorContainer> trackList = retrieveAllMedia(mContext, mCallback);
-            writeCache(trackList);
-            MediaSourceObserver.getInstance().notifyMediaSourceChange(createIterator(trackList));
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-        }
-
-        private void writeCache(final List<MediaCursorContainer> list) {
-            initCache(mContext);
-            Reservoir.putAsync(CACHE_KEY, list, new ReservoirPutCallback() {
-                @Override
-                public void onSuccess() {
-                    LogHelper.i(TAG, "Write " + list.size() + "songs to cache");
-                }
-
-                @Override
-                public void onFailure(Exception e) {
-                    e.printStackTrace();
-                }
-            });
         }
     }
 

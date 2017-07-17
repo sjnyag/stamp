@@ -24,9 +24,9 @@ import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 
-import com.sjn.stamp.media.source.MediaSourceObserver;
-import com.sjn.stamp.media.source.MusicProviderSource;
 import com.sjn.stamp.media.provider.single.QueueProvider;
+import com.sjn.stamp.media.source.MusicProviderSource;
+import com.sjn.stamp.ui.observer.MusicListObserver;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
 
@@ -40,7 +40,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import static com.sjn.stamp.utils.MediaIDHelper.MEDIA_ID_ROOT;
 
@@ -48,39 +47,29 @@ import static com.sjn.stamp.utils.MediaIDHelper.MEDIA_ID_ROOT;
  * Simple data provider for music tracks. The actual metadata source is delegated to a
  * MusicProviderSource defined by a constructor argument of this class.
  */
-public class MusicProvider implements MediaSourceObserver.Listener {
+public class MusicProvider {
 
     private static final String TAG = LogHelper.makeLogTag(MusicProvider.class);
 
     private MusicProviderSource mSource;
 
     // Categorized caches for music track data:
-    private final ConcurrentMap<String, MediaMetadataCompat> mMusicListById;
+    private HashMap<String, MediaMetadataCompat> mMusicListById;
     private final Map<ProviderType, ListProvider> mListProviderMap = new HashMap<>();
-    private final ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> mTitleAndArtistMap;
     private final Set<String> mFavoriteTracks;
+    private Context mContext;
+    private RetrieveMediaAsyncTask mAsyncTask;
 
     private volatile ListProvider.ProviderState mCurrentState = ListProvider.ProviderState.NON_INITIALIZED;
-
-    @Override
-    public void onSourceChange(final Iterator<MediaMetadataCompat> trackIterator) {
-        LogHelper.i(TAG, "onSourceChange");
-        mCurrentState = ListProvider.ProviderState.NON_INITIALIZED;
-        for (ListProvider listProvider : mListProviderMap.values()) {
-            listProvider.reset();
-        }
-        retrieveMediaAsync(null, trackIterator);
-    }
 
     public interface Callback {
         void onMusicCatalogReady(boolean success);
     }
 
     public MusicProvider(Context context, MusicProviderSource source) {
+        mContext = context;
         mSource = source;
-        MediaSourceObserver.getInstance().addListener(this);
-        mMusicListById = new ConcurrentHashMap<>();
-        mTitleAndArtistMap = new ConcurrentHashMap<>();
+        mMusicListById = new HashMap<>();
         mFavoriteTracks = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
         for (ProviderType providerType : ProviderType.values()) {
             mListProviderMap.put(providerType, providerType.newProvider(context));
@@ -193,7 +182,6 @@ public class MusicProvider implements MediaSourceObserver.Listener {
         return getMusicByMusicId(musicId);
     }
 
-
     public synchronized void updateMusicArt(String musicId, Bitmap albumArt, Bitmap icon) {
         MediaMetadataCompat metadata = getMusicByMusicId(musicId);
         metadata = new MediaMetadataCompat.Builder(metadata)
@@ -227,83 +215,6 @@ public class MusicProvider implements MediaSourceObserver.Listener {
         return mFavoriteTracks.contains(musicId);
     }
 
-    /**
-     * Get the list of music tracks from a server and caches the track information
-     * for future reference, keying tracks by musicId and grouping by genre.
-     */
-    synchronized public void retrieveMediaAsync(final Callback callback, final Iterator<MediaMetadataCompat> trackIterator) {
-        LogHelper.d(TAG, "retrieveMediaAsync called");
-        if (mCurrentState == ListProvider.ProviderState.INITIALIZED) {
-            if (callback != null) {
-                // Nothing to do, execute callback immediately
-                callback.onMusicCatalogReady(true);
-            }
-            return;
-        }
-
-        // Asynchronously load the music catalog in a separate thread
-        new AsyncTask<Void, Void, ListProvider.ProviderState>() {
-            @Override
-            protected ListProvider.ProviderState doInBackground(Void... params) {
-                retrieveMedia();
-                return mCurrentState;
-            }
-
-            @Override
-            protected void onPostExecute(ListProvider.ProviderState current) {
-                if (callback != null) {
-                    callback.onMusicCatalogReady(current == ListProvider.ProviderState.INITIALIZED);
-                }
-                com.sjn.stamp.ui.observer.MediaSourceObserver.getInstance().notifyMediaListUpdated();
-            }
-
-            private synchronized void retrieveMedia() {
-                try {
-                    if (mCurrentState == ListProvider.ProviderState.NON_INITIALIZED) {
-                        mCurrentState = ListProvider.ProviderState.INITIALIZING;
-                        Iterator<MediaMetadataCompat> tracks = trackIterator;
-
-                        if (tracks == null) {
-                            tracks = mSource.iterator();
-                        }
-                        while (tracks.hasNext()) {
-                            MediaMetadataCompat item = tracks.next();
-                            String musicId = item.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
-                            mMusicListById.put(musicId, item);
-                            updateTitleAndArtistMap(item);
-                        }
-                        mCurrentState = ListProvider.ProviderState.INITIALIZED;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    if (mCurrentState != ListProvider.ProviderState.INITIALIZED) {
-                        // Something bad happened, so we reset ProviderState to NON_INITIALIZED to allow
-                        // retries (eg if the network connection is temporary unavailable)
-                        mCurrentState = ListProvider.ProviderState.NON_INITIALIZED;
-                    }
-                }
-            }
-
-            private void updateTitleAndArtistMap(MediaMetadataCompat item) {
-                if (item.getDescription().getSubtitle() != null && item.getDescription().getTitle() != null) {
-                    String artist = item.getDescription().getSubtitle().toString();
-                    String title = item.getDescription().getTitle().toString();
-                    ConcurrentMap<String, MediaMetadataCompat> tempMap = new ConcurrentHashMap<>();
-                    if (mTitleAndArtistMap.containsKey(title)) {
-                        tempMap = mTitleAndArtistMap.get(title);
-                    }
-                    tempMap.put(artist, item);
-                    mTitleAndArtistMap.put(title, tempMap);
-                }
-            }
-        }.execute();
-    }
-
-    public void retrieveMediaAsync(final Callback callback) {
-        retrieveMediaAsync(callback, null);
-    }
-
     public List<MediaBrowserCompat.MediaItem> getChildren(String mediaId, Resources resources, String filter, Integer size, Comparator comparator) {
         List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>();
 
@@ -330,6 +241,100 @@ public class MusicProvider implements MediaSourceObserver.Listener {
             return null;
         }
         return mListProviderMap.get(type);
+    }
+
+    /**
+     * Get the list of music tracks from a server and caches the track information
+     * for future reference, keying tracks by musicId and grouping by genre.
+     */
+    synchronized public void retrieveMediaAsync(final Callback callback) {
+        LogHelper.d(TAG, "retrieveMediaAsync called");
+        if (mCurrentState == ListProvider.ProviderState.INITIALIZED) {
+            if (callback != null) {
+                // Nothing to do, execute callback immediately
+                callback.onMusicCatalogReady(true);
+            }
+            return;
+        }
+        if (mAsyncTask != null) {
+            mAsyncTask.cancel(true);
+        }
+        mAsyncTask = new RetrieveMediaAsyncTask(callback);
+        mAsyncTask.execute();
+    }
+
+    public void cacheAndNotifyLatestMusicMap() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mMusicListById = createLatestMusicMap();
+                ProviderCache.saveCache(mContext, mMusicListById);
+                MusicListObserver.getInstance().notifyMediaListUpdated();
+            }
+        }).start();
+    }
+
+    private HashMap<String, MediaMetadataCompat> createLatestMusicMap() {
+        HashMap<String, MediaMetadataCompat> musicListById = new HashMap<>();
+        Iterator<MediaMetadataCompat> tracks = mSource.iterator();
+        while (tracks.hasNext()) {
+            MediaMetadataCompat item = tracks.next();
+            String musicId = item.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
+            musicListById.put(musicId, item);
+        }
+        return musicListById;
+    }
+
+    private class RetrieveMediaAsyncTask extends AsyncTask<Void, Void, ListProvider.ProviderState> {
+        final Callback callback;
+
+        RetrieveMediaAsyncTask(final Callback callback) {
+            this.callback = callback;
+        }
+
+        @Override
+        protected ListProvider.ProviderState doInBackground(Void... params) {
+            retrieveMedia();
+            return mCurrentState;
+        }
+
+        @Override
+        protected void onPostExecute(ListProvider.ProviderState current) {
+            if (callback != null) {
+                callback.onMusicCatalogReady(current == ListProvider.ProviderState.INITIALIZED);
+            }
+            cacheAndNotifyLatestMusicMap();
+        }
+
+        @Override
+        protected void onCancelled(ListProvider.ProviderState current) {
+            if (callback != null) {
+                callback.onMusicCatalogReady(current == ListProvider.ProviderState.INITIALIZED);
+            }
+            mCurrentState = ListProvider.ProviderState.NON_INITIALIZED;
+        }
+
+        private synchronized void retrieveMedia() {
+            try {
+                if (mCurrentState == ListProvider.ProviderState.NON_INITIALIZED) {
+                    mCurrentState = ListProvider.ProviderState.INITIALIZING;
+                    mMusicListById = ProviderCache.readCache(mContext);
+                    LogHelper.i(TAG, "Read " + mMusicListById.size() + " songs from cache");
+                    if (mMusicListById.size() == 0) {
+                        mMusicListById = createLatestMusicMap();
+                    }
+                    mCurrentState = ListProvider.ProviderState.INITIALIZED;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (mCurrentState != ListProvider.ProviderState.INITIALIZED) {
+                    // Something bad happened, so we reset ProviderState to NON_INITIALIZED to allow
+                    // retries (eg if the network connection is temporary unavailable)
+                    mCurrentState = ListProvider.ProviderState.NON_INITIALIZED;
+                }
+            }
+        }
     }
 
 }

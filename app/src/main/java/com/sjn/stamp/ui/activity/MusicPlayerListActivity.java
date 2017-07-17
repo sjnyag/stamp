@@ -20,6 +20,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
@@ -36,9 +38,12 @@ import com.sjn.stamp.utils.MediaRetrieveHelper;
 import com.sjn.stamp.utils.PermissionHelper;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import java.util.Arrays;
 import java.util.List;
 
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
+
+import static com.sjn.stamp.MusicService.CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER;
 
 /**
  * Main activity for the music player.
@@ -47,6 +52,8 @@ import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
  * connected while this activity is running.
  */
 public class MusicPlayerListActivity extends MediaBrowserListActivity {
+
+    private final int REQUEST_PERMISSION = 1;
 
     private static final String TAG = LogHelper.makeLogTag(MusicPlayerListActivity.class);
     private static final String SAVED_MEDIA_ID = "com.sjn.stamp.MEDIA_ID";
@@ -77,11 +84,16 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
         navigateToBrowser(DrawerMenu.first(), false);
 
         if (!PermissionHelper.hasPermission(this, MediaRetrieveHelper.PERMISSIONS)) {
-            Intent intent = new Intent(this, RequestPermissionActivity.class);
-            intent.putExtra(RequestPermissionActivity.KEY_PERMISSIONS, MediaRetrieveHelper.PERMISSIONS);
-            startActivity(intent);
+            ActivityCompat.requestPermissions(this, MediaRetrieveHelper.PERMISSIONS, REQUEST_PERMISSION);
         }
         mSavedInstanceState = savedInstanceState;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (Arrays.asList(permissions).contains(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            sendCustomAction(CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER, null, null);
+        }
     }
 
     @Override

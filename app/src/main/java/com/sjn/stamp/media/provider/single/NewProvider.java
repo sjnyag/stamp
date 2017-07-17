@@ -3,13 +3,13 @@ package com.sjn.stamp.media.provider.single;
 import android.content.Context;
 import android.support.v4.media.MediaMetadataCompat;
 
+import com.sjn.stamp.R;
 import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.TimeHelper;
-import com.sjn.stamp.R;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Map;
 
 public class NewProvider extends AllProvider {
 
@@ -28,7 +28,7 @@ public class NewProvider extends AllProvider {
     }
 
     @Override
-    protected List<MediaMetadataCompat> createTrackList(final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
+    protected List<MediaMetadataCompat> createTrackList(final Map<String, MediaMetadataCompat> musicListById) {
         return subList(super.createTrackList(musicListById), 14);
     }
 

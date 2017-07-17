@@ -7,6 +7,7 @@ import android.support.v4.media.MediaMetadataCompat;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 
@@ -48,10 +49,10 @@ public abstract class ListProvider {
     abstract public void reset();
 
     abstract public List<MediaBrowserCompat.MediaItem> getListItems(String mediaId, Resources resources, ProviderState state,
-                                                                    final ConcurrentMap<String, MediaMetadataCompat> musicListById,
+                                                                    final Map<String, MediaMetadataCompat> musicListById,
                                                                     String filter, Integer size, Comparator comparator);
 
-    abstract public List<MediaMetadataCompat> getListByKey(String key, ProviderState state, final ConcurrentMap<String, MediaMetadataCompat> musicListById);
+    abstract public List<MediaMetadataCompat> getListByKey(String key, ProviderState state, final Map<String, MediaMetadataCompat> musicListById);
 
     abstract protected MediaBrowserCompat.MediaItem createMediaItem(MediaMetadataCompat metadata, String key);
 

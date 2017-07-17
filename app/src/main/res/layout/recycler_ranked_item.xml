@@ -15,8 +15,8 @@
             android:id="@+id/order"
             android:layout_width="96dp"
             android:layout_height="match_parent"
-            android:gravity="center"
             android:layout_gravity="end"
+            android:gravity="center"
             android:maxLines="1"
             android:textColor="@color/media_item_icon_not_playing"
             android:textSize="64sp"
@@ -41,6 +41,7 @@
                 app:checked="false"
                 app:enableInitialAnimation="true"
                 app:frontBackgroundColor="@color/color_primary"
+                app:frontImage="@mipmap/ic_launcher"
                 app:rearBackgroundColor="@color/color_accent"/>
 
             <TextView

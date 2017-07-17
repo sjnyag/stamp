@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MediaSourceObserver {
-    private static final String TAG = LogHelper.makeLogTag(MediaSourceObserver.class);
+public class MusicListObserver {
+    private static final String TAG = LogHelper.makeLogTag(MusicListObserver.class);
 
-    private static MediaSourceObserver sInstance;
+    private static MusicListObserver sInstance;
 
     private List<Listener> mListenerList = Collections.synchronizedList(new ArrayList<Listener>());
 
@@ -41,14 +41,14 @@ public class MediaSourceObserver {
         mListenerList.remove(listener);
     }
 
-    public static MediaSourceObserver getInstance() {
+    public static MusicListObserver getInstance() {
         if (sInstance == null) {
-            sInstance = new MediaSourceObserver();
+            sInstance = new MusicListObserver();
         }
         return sInstance;
     }
 
-    private MediaSourceObserver() {
+    private MusicListObserver() {
     }
 
 }

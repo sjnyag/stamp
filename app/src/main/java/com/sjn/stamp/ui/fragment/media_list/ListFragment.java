@@ -14,7 +14,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -143,43 +142,54 @@ public abstract class ListFragment extends Fragment implements
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
+        LogHelper.d(TAG, "setUserVisibleHint START");
         super.setUserVisibleHint(isVisibleToUser);
         mIsVisibleToUser = isVisibleToUser;
         if (mIsVisibleToUser && getView() != null) {
             notifyFragmentChange();
         }
+        LogHelper.d(TAG, "setUserVisibleHint END");
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        LogHelper.d(TAG, "onCreate START");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        LogHelper.d(TAG, "onCreate END");
     }
 
     @Override
     public void onAttach(Context context) {
+        LogHelper.d(TAG, "onAttach START");
         super.onAttach(context);
         if (context instanceof FragmentInteractionListener) {
             mListener = (FragmentInteractionListener) context;
         }
+        LogHelper.d(TAG, "onAttach END");
     }
 
     @Override
     public void onDetach() {
+        LogHelper.d(TAG, "onDetach START");
         super.onDetach();
         mListener = null;
+        LogHelper.d(TAG, "onDetach END");
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.v(TAG, "onCreateOptionsMenu called!");
+        LogHelper.d(TAG, "onCreateOptionsMenu START");
         menu.clear();
         inflater.inflate(getMenuResourceId(), menu);
         mListener.initSearchView(menu);
+        LogHelper.d(TAG, "onCreateOptionsMenu END");
     }
 
     public void notifyFragmentChange() {
+        LogHelper.d(TAG, "notifyFragmentChange START");
         mListener.onFragmentChange(mSwipeRefreshLayout, mRecyclerView, SelectableAdapter.MODE_IDLE);
+        LogHelper.d(TAG, "notifyFragmentChange END");
     }
 
     public List<AbstractFlexibleItem> getCurrentItems() {
@@ -236,14 +246,18 @@ public abstract class ListFragment extends Fragment implements
 
     @Override
     public void onStart() {
+        LogHelper.d(TAG, "onStart START");
         super.onStart();
         StampEditStateObserver.getInstance().addListener(this);
+        LogHelper.d(TAG, "onStart END");
     }
 
     @Override
     public void onStop() {
+        LogHelper.d(TAG, "onStop START");
         super.onStop();
         StampEditStateObserver.getInstance().removeListener(this);
+        LogHelper.d(TAG, "onStop END");
     }
 
     @Override
@@ -273,7 +287,7 @@ public abstract class ListFragment extends Fragment implements
 
     @Override
     public void onUpdateEmptyView(int size) {
-        Log.d(TAG, "onUpdateEmptyView size=" + size);
+        LogHelper.d(TAG, "onUpdateEmptyView START ", size);
         if (mEmptyTextView != null) {
             mEmptyTextView.setText(getString(R.string.no_items));
         }
@@ -282,12 +296,12 @@ public abstract class ListFragment extends Fragment implements
                 mFastScroller.setVisibility(View.VISIBLE);
                 mRefreshHandler.removeMessages(2);
                 mEmptyView.setAlpha(0);
-                mEmptyView.setVisibility(View.VISIBLE);
+                mEmptyView.setVisibility(View.GONE);
             } else {
+                mFastScroller.setVisibility(View.GONE);
+                mRefreshHandler.sendEmptyMessage(2);
                 mEmptyView.setAlpha(0);
                 mEmptyView.setVisibility(View.GONE);
-                mRefreshHandler.sendEmptyMessage(2);
-                mFastScroller.setVisibility(View.GONE);
             }
         }
 //        if (mAdapter != null) {
@@ -295,15 +309,18 @@ public abstract class ListFragment extends Fragment implements
 //            message += size + " items in " + mAdapter.getTime() + "ms";
 //            Snackbar.make(getActivity().findViewById(R.id.main_view), message, Snackbar.LENGTH_SHORT).show();
 //        }
+        LogHelper.d(TAG, "onUpdateEmptyView END");
     }
 
     @Override
     public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
+        LogHelper.d(TAG, "onSaveInstanceState START");
         if (mRecyclerView != null && mRecyclerView.getLayoutManager() != null) {
             mListState = mRecyclerView.getLayoutManager().onSaveInstanceState();
         }
         state.putParcelable(LIST_STATE_KEY, mListState);
+        LogHelper.d(TAG, "onSaveInstanceState END");
     }
 
     /**

@@ -57,6 +57,7 @@ public abstract class MediaBrowserListActivity extends MediaBrowserActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        LogHelper.d(TAG, "onPrepareOptionsMenu START");
         if (mSearchView != null && mAdapter != null) {
             //Has searchText?
             if (!mAdapter.hasSearchText()) {
@@ -71,13 +72,14 @@ public abstract class MediaBrowserListActivity extends MediaBrowserActivity
                 //mSearchView.setIconified(false);//This is not necessary
             }
         }
+        LogHelper.d(TAG, "onPrepareOptionsMenu END");
         return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public void initSearchView(final Menu menu) {
         // Associate searchable configuration with the SearchView
-        LogHelper.i(TAG, "onCreateOptionsMenu setup SearchView!");
+        LogHelper.d(TAG, "initSearchView START");
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         if (searchItem != null) {
@@ -108,9 +110,11 @@ public abstract class MediaBrowserListActivity extends MediaBrowserActivity
             mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
             mSearchView.setOnQueryTextListener(this);
         }
+        LogHelper.d(TAG, "initSearchView END");
     }
 
     private void initializeActionModeHelper(int mode) {
+        LogHelper.d(TAG, "initializeActionModeHelper START");
         mActionModeHelper = new ActionModeHelper(mAdapter, getMenuResourceId(), this) {
             @Override
             public void updateContextTitle(int count) {
@@ -121,33 +125,41 @@ public abstract class MediaBrowserListActivity extends MediaBrowserActivity
                 }
             }
         }.withDefaultMode(mode);
+        LogHelper.d(TAG, "initializeActionModeHelper END");
     }
 
     @Override
     public void startActionModeByLongClick(int position) {
+        LogHelper.d(TAG, "startActionModeByLongClick START");
         if (mActionModeHelper != null) {
             mActionModeHelper.onLongClick(this, position);
         }
+        LogHelper.d(TAG, "startActionModeByLongClick END");
     }
 
     @Override
     public void destroyActionModeIfCan() {
+        LogHelper.d(TAG, "destroyActionModeIfCan START");
         if (mActionModeHelper != null) {
             mActionModeHelper.destroyActionModeIfCan();
         }
+        LogHelper.d(TAG, "destroyActionModeIfCan END");
     }
 
     @Override
     public void onFragmentChange(SwipeRefreshLayout swipeRefreshLayout, RecyclerView recyclerView, int mode) {
+        LogHelper.d(TAG, "onFragmentChange START");
         //mRecyclerView = recyclerView;
         mAdapter = (FlexibleAdapter) recyclerView.getAdapter();
         //mSwipeRefreshLayout = swipeRefreshLayout;
         //initializeSwipeToRefresh();
         initializeActionModeHelper(mode);
+        LogHelper.d(TAG, "onFragmentChange END");
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        LogHelper.d(TAG, "onQueryTextChange START");
         if (mAdapter.hasNewSearchText(newText)) {
             LogHelper.i(TAG, "onQueryTextChange newText: " + newText);
             mAdapter.setSearchText(newText);
@@ -162,12 +174,13 @@ public abstract class MediaBrowserListActivity extends MediaBrowserActivity
         }
         // Disable SwipeRefresh if search is active!!
         //mSwipeRefreshLayout.setEnabled(!mAdapter.hasSearchText());
+        LogHelper.d(TAG, "onQueryTextChange END");
         return true;
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        LogHelper.i(TAG, "onQueryTextSubmit called!");
+        LogHelper.d(TAG, "onQueryTextSubmit START");
         return onQueryTextChange(query);
     }
 
@@ -191,12 +204,14 @@ public abstract class MediaBrowserListActivity extends MediaBrowserActivity
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        LogHelper.d(TAG, "onCreateActionMode START");
         if (CompatibleHelper.hasMarshmallow()) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.color_accent_dark, getTheme()));
         } else if (CompatibleHelper.hasLollipop()) {
             //noinspection deprecation
             getWindow().setStatusBarColor(getResources().getColor(R.color.color_accent_dark));
         }
+        LogHelper.d(TAG, "onCreateActionMode END");
         return true;
     }
 
@@ -240,23 +255,29 @@ public abstract class MediaBrowserListActivity extends MediaBrowserActivity
 
     @Override
     public void onDestroyActionMode(ActionMode mode) {
+        LogHelper.d(TAG, "onDestroyActionMode START");
         if (CompatibleHelper.hasMarshmallow()) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.color_primary_dark, getTheme()));
         } else if (CompatibleHelper.hasLollipop()) {
             //noinspection deprecation
             getWindow().setStatusBarColor(getResources().getColor(R.color.color_primary_dark));
         }
+        LogHelper.d(TAG, "onDestroyActionMode END");
     }
 
     @Override
     public void updateContextTitle(int selectedItemCount) {
+        LogHelper.d(TAG, "updateContextTitle START");
         mActionModeHelper.updateContextTitle(selectedItemCount);
+        LogHelper.d(TAG, "updateContextTitle END");
     }
 
 
     @Override
     public void restoreSelection(){
+        LogHelper.d(TAG, "restoreSelection START");
         mActionModeHelper.restoreSelection(this);
+        LogHelper.d(TAG, "restoreSelection END");
     }
 
 }

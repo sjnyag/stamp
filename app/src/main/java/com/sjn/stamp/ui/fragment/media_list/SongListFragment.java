@@ -16,7 +16,6 @@
 package com.sjn.stamp.ui.fragment.media_list;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,11 +36,9 @@ import com.sjn.stamp.MusicService;
 import com.sjn.stamp.R;
 import com.sjn.stamp.ui.DialogFacade;
 import com.sjn.stamp.ui.SongAdapter;
-import com.sjn.stamp.ui.activity.RequestPermissionActivity;
 import com.sjn.stamp.ui.item.SongItem;
-import com.sjn.stamp.ui.observer.MediaSourceObserver;
+import com.sjn.stamp.ui.observer.MusicListObserver;
 import com.sjn.stamp.utils.LogHelper;
-import com.sjn.stamp.utils.MediaRetrieveHelper;
 import com.sjn.stamp.utils.ViewHelper;
 
 import java.util.ArrayList;
@@ -52,6 +49,8 @@ import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager;
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 
+import static com.sjn.stamp.MusicService.CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER;
+
 /**
  * A Fragment that lists all the various browsable queues available
  * from a {@link android.service.media.MediaBrowserService}.
@@ -60,7 +59,7 @@ import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
  * Once connected, the fragment subscribes to get all the children.
  * All {@link MediaBrowserCompat.MediaItem}'s that can be browsed are shown in a ListView.
  */
-public class SongListFragment extends MediaBrowserListFragment implements MediaSourceObserver.Listener {
+public class SongListFragment extends MediaBrowserListFragment implements MusicListObserver.Listener {
 
     private ProgressDialog mProgressDialog;
     protected List<MediaBrowserCompat.MediaItem> mSongList = new ArrayList<>();
@@ -83,7 +82,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
             return;
         }
         LogHelper.d(TAG, "onPlaybackStateChanged ");
-        mAdapter.notifyDataSetChanged();
+        //mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -92,7 +91,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
             return;
         }
         LogHelper.d(TAG, "Received metadata change to media ", metadata.getDescription().getMediaId());
-        mAdapter.notifyDataSetChanged();
+        //mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -130,15 +129,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
                         return;
                     case POSITIVE:
                         mListener.destroyActionModeIfCan();
-                        MediaRetrieveHelper.retrieveAndUpdateCache(getActivity(), new MediaRetrieveHelper.PermissionRequiredCallback() {
-                            @Override
-                            public void onPermissionRequired() {
-                                Intent intent = new Intent(getContext(), RequestPermissionActivity.class);
-                                intent.putExtra(RequestPermissionActivity.KEY_PERMISSIONS, MediaRetrieveHelper.PERMISSIONS);
-                                startActivity(intent);
-                            }
-                        });
-
+                        mMediaBrowsable.sendCustomAction(CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER, null, null);
                         Handler handler = new Handler(getActivity().getMainLooper());
                         handler.post(new Runnable() {
                             public void run() {
@@ -194,28 +185,35 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
     }
 
     /**
-     * {@link MediaSourceObserver.Listener}
+     * {@link MusicListObserver.Listener}
      */
     @Override
     public void onMediaListUpdated() {
+        LogHelper.d(TAG, "onMediaListUpdated START");
         MediaBrowserCompat mediaBrowser = mMediaBrowsable.getMediaBrowser();
         if (mediaBrowser != null && mediaBrowser.isConnected() && mMediaId != null) {
             reloadList();
-            if (mSwipeRefreshLayout != null) {
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-            if (mProgressDialog != null) {
-                mProgressDialog.dismiss();
-            }
+            Handler handler = new Handler(getActivity().getMainLooper());
+            handler.post(new Runnable() {
+                public void run() {
+                    if (mSwipeRefreshLayout != null) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                    if (mProgressDialog != null) {
+                        mProgressDialog.dismiss();
+                    }
+                }
+            });
         }
+        LogHelper.d(TAG, "onMediaListUpdated END");
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        LogHelper.d(TAG, "onCreateView START" + getMediaId());
         setHasOptionsMenu(true);
-        LogHelper.d(TAG, "fragment.onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_list, container, false);
 
         mEmptyView = rootView.findViewById(R.id.empty_view);
@@ -285,35 +283,44 @@ public class SongListFragment extends MediaBrowserListFragment implements MediaS
         if (mItemList == null || mItemList.isEmpty()) {
             draw();
         }
+        LogHelper.d(TAG, "onCreateView END");
         return rootView;
     }
 
     synchronized void draw() {
+        LogHelper.d(TAG, "draw START");
         if (mSongList == null || mAdapter == null) {
             return;
         }
         mItemList = createItemList();
         mAdapter.updateDataSet(mItemList);
+        LogHelper.d(TAG, "draw END");
     }
 
     private List<AbstractFlexibleItem> createItemList() {
+        LogHelper.d(TAG, "createItemList START");
         List<AbstractFlexibleItem> itemList = new ArrayList<>();
         for (MediaBrowserCompat.MediaItem item : mSongList) {
             AbstractFlexibleItem songItem = new SongItem(item);
             itemList.add(songItem);
         }
+        LogHelper.d(TAG, "createItemList END");
         return itemList;
     }
 
     @Override
     public void onStart() {
+        LogHelper.d(TAG, "onStart START");
         super.onStart();
-        MediaSourceObserver.getInstance().addListener(this);
+        MusicListObserver.getInstance().addListener(this);
+        LogHelper.d(TAG, "onStart END");
     }
 
     @Override
     public void onStop() {
+        LogHelper.d(TAG, "onStop START");
         super.onStop();
-        MediaSourceObserver.getInstance().removeListener(this);
+        MusicListObserver.getInstance().removeListener(this);
+        LogHelper.d(TAG, "onStop END");
     }
 }

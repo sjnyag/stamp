@@ -13,7 +13,7 @@ import com.sjn.stamp.utils.MediaIDHelper;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Map;
 
 abstract public class SingleListProvider extends ListProvider {
 
@@ -24,7 +24,7 @@ abstract public class SingleListProvider extends ListProvider {
     protected String mLastTrackFilter = "";
     protected int mLastTrackSeek = 0;
 
-    abstract protected List<MediaMetadataCompat> createTrackList(final ConcurrentMap<String, MediaMetadataCompat> musicListById);
+    abstract protected List<MediaMetadataCompat> createTrackList(final Map<String, MediaMetadataCompat> musicListById);
 
     public SingleListProvider(Context context) {
         mContext = context;
@@ -38,7 +38,7 @@ abstract public class SingleListProvider extends ListProvider {
     }
 
     @Override
-    final public List<MediaBrowserCompat.MediaItem> getListItems(String mediaId, Resources resources, ProviderState state, final ConcurrentMap<String, MediaMetadataCompat> musicListById, String filter, Integer size, Comparator comparator) {
+    final public List<MediaBrowserCompat.MediaItem> getListItems(String mediaId, Resources resources, ProviderState state, final Map<String, MediaMetadataCompat> musicListById, String filter, Integer size, Comparator comparator) {
         if (MediaIDHelper.isTrack(mediaId)) {
             return new ArrayList<>();
         }
@@ -69,7 +69,7 @@ abstract public class SingleListProvider extends ListProvider {
     }
 
     @Override
-    final public List<MediaMetadataCompat> getListByKey(String key, ProviderState state, final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
+    final public List<MediaMetadataCompat> getListByKey(String key, ProviderState state, final Map<String, MediaMetadataCompat> musicListById) {
         return createTrackList(musicListById);
     }
 

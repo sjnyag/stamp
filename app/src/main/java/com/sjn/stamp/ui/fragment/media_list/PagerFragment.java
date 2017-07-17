@@ -39,6 +39,7 @@ public abstract class PagerFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_pager, container, false);
         mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
+        mViewPager.setOffscreenPageLimit(4);
         setupViewPager(mViewPager);
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);

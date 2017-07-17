@@ -8,7 +8,7 @@ import com.sjn.stamp.controller.SongHistoryController;
 import com.sjn.stamp.utils.MediaIDHelper;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Map;
 
 public class TopSongProvider extends SingleListProvider {
 
@@ -27,7 +27,7 @@ public class TopSongProvider extends SingleListProvider {
     }
 
     @Override
-    protected List<MediaMetadataCompat> createTrackList(final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
+    protected List<MediaMetadataCompat> createTrackList(final Map<String, MediaMetadataCompat> musicListById) {
         SongHistoryController songHistoryController = new SongHistoryController(mContext);
         return songHistoryController.getTopSongList();
     }

@@ -80,17 +80,21 @@ public abstract class ActionBarCastActivity extends DrawerActivity {
     @Override
     public void onResume() {
         super.onResume();
+        /*
         if (mCastContext != null) {
             mCastContext.addCastStateListener(mCastStateListener);
         }
+        */
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        /*
         if (mCastContext != null) {
             mCastContext.removeCastStateListener(mCastStateListener);
         }
+        */
     }
 
     @Override

@@ -115,6 +115,13 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity
         mMediaBrowser.disconnect();
     }
 
+    @Override
+    public void sendCustomAction(String action, Bundle extras, MediaBrowserCompat.CustomActionCallback callback) {
+        if (mMediaBrowser != null) {
+            mMediaBrowser.sendCustomAction(action, extras, callback);
+        }
+    }
+
     public MediaBrowserCompat getMediaBrowser() {
         return mMediaBrowser;
     }

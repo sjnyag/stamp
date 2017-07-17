@@ -4,13 +4,13 @@ import android.content.Context;
 import android.support.v4.media.MediaMetadataCompat;
 
 import com.sjn.stamp.constant.CategoryType;
-import com.sjn.stamp.db.Song;
-import com.sjn.stamp.utils.RealmHelper;
 import com.sjn.stamp.db.CategoryStamp;
+import com.sjn.stamp.db.Song;
 import com.sjn.stamp.db.SongStamp;
 import com.sjn.stamp.db.dao.CategoryStampDao;
 import com.sjn.stamp.db.dao.SongStampDao;
 import com.sjn.stamp.utils.LogHelper;
+import com.sjn.stamp.utils.RealmHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import io.realm.Realm;
 
@@ -80,29 +79,29 @@ public class StampController {
         return result;
     }
 
-    public ConcurrentMap<String, List<MediaMetadataCompat>> getAllSongList(final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
-        ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> songStampMap = new ConcurrentHashMap<>();
+    public Map<String, List<MediaMetadataCompat>> getAllSongList(final Map<String, MediaMetadataCompat> musicListById) {
+        Map<String, Map<String, MediaMetadataCompat>> songStampMap = new ConcurrentHashMap<>();
         Realm realm = RealmHelper.getRealmInstance();
         for (SongStamp songStamp : mSongStampDao.findAll(realm)) {
             put(songStampMap, songStamp.getName(), createTrackMap(songStamp));
         }
-        ConcurrentMap<String, ConcurrentMap<CategoryType, List<String>>> stampQueryMap = new ConcurrentHashMap<>();
+        Map<String, Map<CategoryType, List<String>>> stampQueryMap = new ConcurrentHashMap<>();
         for (CategoryStamp categoryStamp : mCategoryStampDao.findAll(realm)) {
             put(stampQueryMap, categoryStamp);
         }
         realm.close();
 
-        ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> categoryStampMap = searchMusic(musicListById, stampQueryMap);
+        Map<String, Map<String, MediaMetadataCompat>> categoryStampMap = searchMusic(musicListById, stampQueryMap);
         merge(songStampMap, categoryStampMap);
 
-        ConcurrentMap<String, List<MediaMetadataCompat>> stampSongMap = new ConcurrentHashMap<>();
-        for (Map.Entry<String, ConcurrentMap<String, MediaMetadataCompat>> entry : songStampMap.entrySet()) {
+        Map<String, List<MediaMetadataCompat>> stampSongMap = new ConcurrentHashMap<>();
+        for (Map.Entry<String, Map<String, MediaMetadataCompat>> entry : songStampMap.entrySet()) {
             stampSongMap.put(entry.getKey(), new ArrayList<>(entry.getValue().values()));
         }
         return stampSongMap;
     }
 
-    private void merge(ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> songStampMap, ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> categoryStampMap) {
+    private void merge(Map<String, Map<String, MediaMetadataCompat>> songStampMap, Map<String, Map<String, MediaMetadataCompat>> categoryStampMap) {
         for (String stamp : categoryStampMap.keySet()) {
             if (songStampMap.containsKey(stamp)) {
                 songStampMap.get(stamp).putAll(categoryStampMap.get(stamp));
@@ -112,21 +111,21 @@ public class StampController {
         }
     }
 
-    private ConcurrentMap<String, MediaMetadataCompat> createTrackMap(SongStamp songStamp) {
-        ConcurrentMap<String, MediaMetadataCompat> trackMap = new ConcurrentHashMap<>();
+    private Map<String, MediaMetadataCompat> createTrackMap(SongStamp songStamp) {
+        Map<String, MediaMetadataCompat> trackMap = new ConcurrentHashMap<>();
         for (Song song : songStamp.getSongList()) {
             trackMap.put(song.getMediaId(), song.buildMediaMetadataCompat());
         }
         return trackMap;
     }
 
-    private ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> searchMusic(final ConcurrentMap<String, MediaMetadataCompat> musicListById, ConcurrentMap<String, ConcurrentMap<CategoryType, List<String>>> queryMap) {
-        ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> result = new ConcurrentHashMap<>();
+    private Map<String, Map<String, MediaMetadataCompat>> searchMusic(final Map<String, MediaMetadataCompat> musicListById, Map<String, Map<CategoryType, List<String>>> queryMap) {
+        Map<String, Map<String, MediaMetadataCompat>> result = new ConcurrentHashMap<>();
         if (musicListById == null || queryMap == null) {
             return result;
         }
         for (MediaMetadataCompat track : musicListById.values()) {
-            for (Map.Entry<String, ConcurrentMap<CategoryType, List<String>>> entry1 : queryMap.entrySet()) {
+            for (Map.Entry<String, Map<CategoryType, List<String>>> entry1 : queryMap.entrySet()) {
                 for (Map.Entry<CategoryType, List<String>> entry : entry1.getValue().entrySet()) {
                     if (entry.getValue().contains(track.getString(entry.getKey().getKey()).toLowerCase(Locale.US))) {
                         put(result, entry1.getKey(), track);
@@ -137,20 +136,20 @@ public class StampController {
         return result;
     }
 
-    private void put(ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> stampMap, String stampName, MediaMetadataCompat track) {
+    private void put(Map<String, Map<String, MediaMetadataCompat>> stampMap, String stampName, MediaMetadataCompat track) {
         if (stampMap == null) {
             return;
         }
         if (stampMap.containsKey(stampName) && !stampMap.get(stampName).isEmpty()) {
             stampMap.get(stampName).put(track.getDescription().getMediaId(), track);
         } else {
-            ConcurrentMap<String, MediaMetadataCompat> trackMap = new ConcurrentHashMap<>();
+            Map<String, MediaMetadataCompat> trackMap = new ConcurrentHashMap<>();
             trackMap.put(track.getDescription().getMediaId(), track);
             stampMap.put(stampName, trackMap);
         }
     }
 
-    private void put(ConcurrentMap<String, ConcurrentMap<String, MediaMetadataCompat>> stampMap, String stampName, ConcurrentMap<String, MediaMetadataCompat> trackMap) {
+    private void put(Map<String, Map<String, MediaMetadataCompat>> stampMap, String stampName, Map<String, MediaMetadataCompat> trackMap) {
         if (stampMap == null || trackMap == null) {
             return;
         }
@@ -161,20 +160,20 @@ public class StampController {
         }
     }
 
-    private void put(ConcurrentMap<String, ConcurrentMap<CategoryType, List<String>>> stampQueryMap, CategoryStamp categoryStamp) {
+    private void put(Map<String, Map<CategoryType, List<String>>> stampQueryMap, CategoryStamp categoryStamp) {
         if (stampQueryMap == null || categoryStamp == null) {
             return;
         }
         if (stampQueryMap.containsKey(categoryStamp.getName())) {
             putQuery(stampQueryMap.get(categoryStamp.getName()), categoryStamp);
         } else {
-            ConcurrentMap<CategoryType, List<String>> queryMap = new ConcurrentHashMap<>();
+            Map<CategoryType, List<String>> queryMap = new ConcurrentHashMap<>();
             putQuery(queryMap, categoryStamp);
             stampQueryMap.put(categoryStamp.getName(), queryMap);
         }
     }
 
-    private void putQuery(ConcurrentMap<CategoryType, List<String>> queryMap, CategoryStamp categoryStamp) {
+    private void putQuery(Map<CategoryType, List<String>> queryMap, CategoryStamp categoryStamp) {
         if (queryMap == null || categoryStamp == null) {
             return;
         }

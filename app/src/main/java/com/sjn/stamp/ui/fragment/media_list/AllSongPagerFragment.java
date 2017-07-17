@@ -1,9 +1,10 @@
 package com.sjn.stamp.ui.fragment.media_list;
 
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 
-import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.R;
+import com.sjn.stamp.utils.MediaIDHelper;
 
 
 public class AllSongPagerFragment extends PagerFragment {
@@ -18,7 +19,7 @@ public class AllSongPagerFragment extends PagerFragment {
         viewPager.setAdapter(mAdapter);
     }
 
-    private SongListFragment createSongListFragment(String mediaId) {
+    private Fragment createSongListFragment(String mediaId) {
         SongListFragment songListFragment = new SongListFragment();
         songListFragment.setMediaId(mediaId);
         return songListFragment;

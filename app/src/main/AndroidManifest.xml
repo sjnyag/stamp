@@ -99,7 +99,6 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.RequestPermissionActivity"/>
 
         <activity
             android:name=".ui.tv.TvVerticalGridActivity"

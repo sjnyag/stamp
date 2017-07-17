@@ -156,6 +156,9 @@ public class QueueHelper {
         LogHelper.d(TAG, "convertToQueue Start");
         int count = 0;
         for (MediaMetadataCompat track : tracks) {
+            if (track == null) {
+                break;
+            }
 
             // We create a hierarchy-aware mediaID, so we know what the queue is about by looking
             // at the QueueItem media IDs.

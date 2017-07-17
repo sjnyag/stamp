@@ -25,15 +25,15 @@ import android.support.v4.media.MediaBrowserServiceCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.sjn.stamp.media.playback.Playback;
+import com.sjn.stamp.media.playback.PlaybackManager;
+import com.sjn.stamp.media.player.CarPlayer;
 import com.sjn.stamp.media.player.CastPlayer;
+import com.sjn.stamp.media.player.Player;
 import com.sjn.stamp.media.provider.MusicProvider;
 import com.sjn.stamp.media.source.LocalMediaSource;
 import com.sjn.stamp.utils.CarHelper;
-import com.sjn.stamp.utils.MediaIDHelper;
-import com.sjn.stamp.media.playback.PlaybackManager;
-import com.sjn.stamp.media.player.CarPlayer;
-import com.sjn.stamp.media.player.Player;
 import com.sjn.stamp.utils.LogHelper;
+import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.MediaRetrieveHelper;
 import com.sjn.stamp.utils.WearHelper;
 
@@ -109,6 +109,9 @@ public class MusicService extends MediaBrowserServiceCompat
         Player.PlayerCallback {
 
     private static final String TAG = LogHelper.makeLogTag(MusicService.class);
+
+    public static final String CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER = "RELOAD_MUSIC_PROVIDER";
+
     // Delay stopSelf by using a handler.
     private static final int STOP_DELAY = 30000;
 
@@ -271,12 +274,12 @@ public class MusicService extends MediaBrowserServiceCompat
         } else {
             // otherwise, only return results when the music library is retrieved
             result.detach();
-            mMusicProvider.retrieveMediaAsync(new MusicProvider.Callback() {
-                @Override
-                public void onMusicCatalogReady(boolean success) {
-                    result.sendResult(mMusicProvider.getChildren(parentMediaId, getResources(), null, null, null));
-                }
-            });
+//            mMusicProvider.retrieveMediaAsync(new MusicProvider.Callback() {
+//                @Override
+//                public void onMusicCatalogReady(boolean success) {
+//                    result.sendResult(mMusicProvider.getChildren(parentMediaId, getResources(), null, null, null));
+//                }
+//            });
         }
     }
 
@@ -337,6 +340,18 @@ public class MusicService extends MediaBrowserServiceCompat
     @Override
     public Playback requestPlayback(Playback.Type type) {
         return type.createInstance(mMusicProvider, this);
+    }
+
+    @Override
+    public void onCustomAction(@NonNull String action, Bundle extras,
+                               @NonNull Result<Bundle> result) {
+        switch (action) {
+            case CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER:
+                result.detach();
+                mMusicProvider.cacheAndNotifyLatestMusicMap();
+                return;
+        }
+        result.sendError(null);
     }
 
     /**

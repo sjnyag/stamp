@@ -15,16 +15,17 @@ import com.sjn.stamp.utils.MediaIDHelper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 abstract public class MultipleListProvider extends ListProvider {
 
     private static final String TAG = LogHelper.makeLogTag(MultipleListProvider.class);
 
     protected Context mContext;
-    protected ConcurrentMap<String, List<MediaMetadataCompat>> mTrackListMap = new ConcurrentHashMap<>();
+    protected Map<String, List<MediaMetadataCompat>> mTrackListMap = new ConcurrentHashMap<>();
     protected List<MediaBrowserCompat.MediaItem> mLastTrackList = new ArrayList<>();
     protected String mLastMediaKey = "";
     protected String mLastMediaKeyFilter = "";
@@ -54,8 +55,8 @@ abstract public class MultipleListProvider extends ListProvider {
         mLastTrackFilter = "";
     }
 
-    protected ConcurrentMap<String, List<MediaMetadataCompat>> createTrackListMap(final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
-        ConcurrentMap<String, List<MediaMetadataCompat>> trackListMap = new ConcurrentHashMap<>();
+    protected Map<String, List<MediaMetadataCompat>> createTrackListMap(final Map<String, MediaMetadataCompat> musicListById) {
+        Map<String, List<MediaMetadataCompat>> trackListMap = new HashMap<>();
 
         for (MediaMetadataCompat m : musicListById.values()) {
             //noinspection ResourceType
@@ -73,7 +74,7 @@ abstract public class MultipleListProvider extends ListProvider {
     }
 
     @Override
-    final public List<MediaBrowserCompat.MediaItem> getListItems(String mediaId, Resources resources, ProviderState state, final ConcurrentMap<String, MediaMetadataCompat> musicListById, String filter, Integer size, Comparator comparator) {
+    final public List<MediaBrowserCompat.MediaItem> getListItems(String mediaId, Resources resources, ProviderState state, final Map<String, MediaMetadataCompat> musicListById, String filter, Integer size, Comparator comparator) {
         List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>();
 
         if (MediaIDHelper.isTrack(mediaId)) {
@@ -131,7 +132,7 @@ abstract public class MultipleListProvider extends ListProvider {
      * Get music tracks of the given key
      */
     @Override
-    final public List<MediaMetadataCompat> getListByKey(String key, ProviderState state, final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
+    final public List<MediaMetadataCompat> getListByKey(String key, ProviderState state, final Map<String, MediaMetadataCompat> musicListById) {
         if (state != ProviderState.INITIALIZED || !getTrackListMap(musicListById).containsKey(key)) {
             return Collections.emptyList();
         }
@@ -158,7 +159,7 @@ abstract public class MultipleListProvider extends ListProvider {
                 MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
     }
 
-    protected Uri findIconUri(String key, ProviderState state, final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
+    protected Uri findIconUri(String key, ProviderState state, final Map<String, MediaMetadataCompat> musicListById) {
         List<MediaMetadataCompat> metadataList = getListByKey(key, state, musicListById);
 
         for (final MediaMetadataCompat metadata : metadataList) {
@@ -170,11 +171,11 @@ abstract public class MultipleListProvider extends ListProvider {
         return null;
     }
 
-    final protected List<String> getKeys(ProviderState state, ConcurrentMap<String, MediaMetadataCompat> musicListById) {
+    final protected List<String> getKeys(ProviderState state, Map<String, MediaMetadataCompat> musicListById) {
         if (state != ProviderState.INITIALIZED) {
             return Collections.emptyList();
         }
-        ConcurrentMap<String, List<MediaMetadataCompat>> trackListMap = getTrackListMap(musicListById);
+        Map<String, List<MediaMetadataCompat>> trackListMap = getTrackListMap(musicListById);
         if (trackListMap == null || trackListMap.isEmpty()) {
             return new ArrayList<>();
         }
@@ -204,7 +205,7 @@ abstract public class MultipleListProvider extends ListProvider {
                 MediaBrowserCompat.MediaItem.FLAG_BROWSABLE);
     }
 
-    final protected ConcurrentMap<String, List<MediaMetadataCompat>> getTrackListMap(final ConcurrentMap<String, MediaMetadataCompat> musicListById) {
+    final protected Map<String, List<MediaMetadataCompat>> getTrackListMap(final Map<String, MediaMetadataCompat> musicListById) {
         if (mTrackListMap == null || mTrackListMap.isEmpty()) {
             mTrackListMap = createTrackListMap(musicListById);
         }
