@@ -285,4 +285,14 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
         }
         return 0;
     }
+
+    @Override
+    public void onBackPressed() {
+        SlidingUpPanelLayout slidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        if (slidingUpPanelLayout != null && slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+            return;
+        }
+        super.onBackPressed();
+    }
 }
