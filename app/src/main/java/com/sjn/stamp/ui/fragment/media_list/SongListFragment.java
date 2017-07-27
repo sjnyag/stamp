@@ -150,10 +150,15 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
      */
     @Override
     public void onItemLongClick(int position) {
-        if (mListener == null) {
+        AbstractFlexibleItem item = mAdapter.getItem(position);
+        if (!(item instanceof SongItem)) {
             return;
         }
-        mListener.startActionModeByLongClick(position);
+        if (!((SongItem) item).isPlayable()) {
+            mMediaBrowsable.playByCategory(((SongItem) item).getMediaId());
+        } else {
+            onItemClick(position);
+        }
     }
 
     /**
@@ -220,10 +225,8 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
         }
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
-        //mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter.setFastScroller((FastScroller) rootView.findViewById(R.id.fast_scroller),
                 ViewHelper.getColorAccent(getActivity()), this);
-
         mAdapter.setLongPressDragEnabled(false)
                 .setHandleDragEnabled(false)
                 .setSwipeEnabled(false)
@@ -232,33 +235,6 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                 .setStickyHeaders(false)
                 .showAllHeaders();
         mAdapter.addUserLearnedSelection(savedInstanceState == null);
-        //mAdapter.addScrollableHeaderWithDelay(new DateHeaderItem(TimeHelper.getJapanNow().toDate()), 900L, false);
-        //mAdapter.showLayoutInfo(savedInstanceState == null);
-//        mAdapter.addScrollableFooter();
-
-
-        // EndlessScrollListener - OnLoadMore (v5.0.0)
-//        mAdapter//.setLoadingMoreAtStartUp(true) //To call only if the list is empty
-        //.setEndlessPageSize(3) //Endless is automatically disabled if newItems < 3
-        //.setEndlessTargetCount(15) //Endless is automatically disabled if totalItems >= 15
-        //.setEndlessScrollThreshold(1); //Default=1
-//                .setEndlessScrollListener(this, mProgressItem);
-
-        /*
-        mBrowserAdapter = new BrowseAdapter(getActivity());
-
-        ListView listView = (ListView) rootView.findViewById(R.id.list_view);
-        listView.setAdapter(mBrowserAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                LogHelper.d(TAG, "onItemClick ");
-                checkForUserVisibleErrors(false);
-                MediaBrowserCompat.MediaItem item = mBrowserAdapter.getItem(position);
-                mMediaBrowsable.onMediaItemSelected(item);
-            }
-        });
-        */
         initializeFabWithStamp();
         if (mItemList != null && mItemList.isEmpty()) {
             mHasDrawTask = false;

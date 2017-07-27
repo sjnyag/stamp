@@ -120,7 +120,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
         TextView mTitle;
         TextView mSubtitle;
         Context mContext;
-        View frontView;
+        View mFrontView;
         TextView mDate;
         ImageView mImageView;
         ViewGroup mStampListLayout;
@@ -194,9 +194,17 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
             this.mSubtitle = (TextView) view.findViewById(R.id.subtitle);
             this.mAlbumArtView = (ImageView) view.findViewById(R.id.image);
             this.mImageView = (ImageView) view.findViewById(R.id.play_eq);
-            this.frontView = view.findViewById(R.id.front_view);
+            this.mFrontView = view.findViewById(R.id.front_view);
             this.mDate = (TextView) view.findViewById(R.id.date);
             this.mStampListLayout = (ViewGroup) view.findViewById(R.id.stamp_info);
+            this.mImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mAdapter.mItemLongClickListener != null) {
+                        mAdapter.mItemLongClickListener.onItemLongClick(getAdapterPosition());
+                    }
+                }
+            });
         }
 
         @Override
@@ -206,7 +214,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
 
         @Override
         public View getFrontView() {
-            return frontView;
+            return mFrontView;
         }
 
         @Override

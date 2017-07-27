@@ -130,6 +130,16 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
     }
 
     @Override
+    public void playByCategory(String mediaId) {
+        LogHelper.d(TAG, "playByCategory, mediaId=" + mediaId);
+        MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
+        if (controller != null) {
+            controller.getTransportControls().playFromMediaId(mediaId, null);
+        }
+
+    }
+
+    @Override
     public void onMediaItemSelected(String musicId) {
         LogHelper.d(TAG, "onMediaItemSelected, musicId=" + musicId);
         MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);

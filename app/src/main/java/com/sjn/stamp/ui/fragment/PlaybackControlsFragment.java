@@ -149,6 +149,9 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
                 Toast.makeText(getActivity(), state.getErrorMessage(), Toast.LENGTH_LONG).show();
                 mPlayPause.setVisibility(View.INVISIBLE);
                 break;
+            default:
+                mPlayPause.setVisibility(View.VISIBLE);
+                break;
         }
 
         if (enablePlay) {

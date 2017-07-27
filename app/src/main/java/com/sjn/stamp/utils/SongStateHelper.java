@@ -52,15 +52,17 @@ public class SongStateHelper {
     }
 
     public static int getMediaItemState(Context context, String mediaId, boolean isPlayable) {
-        int state = STATE_NONE;
-        // Set state to playable first, then override to playing or paused state if needed
         if (isPlayable) {
-            state = STATE_PLAYABLE;
-            if (MediaIDHelper.isMediaItemPlaying(context, mediaId)) {
-                state = getStateFromController(context);
-            }
+            return getMediaItemState(context, mediaId);
         }
+        return STATE_PLAYABLE;
+    }
 
+    private static int getMediaItemState(Context context, String mediaId) {
+        int state = STATE_PLAYABLE;
+        if (MediaIDHelper.isMediaItemPlaying(context, mediaId)) {
+            state = getStateFromController(context);
+        }
         return state;
     }
 

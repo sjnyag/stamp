@@ -267,7 +267,7 @@ final public class ParcelDiskCache<T extends Parcelable> implements DiskCache<Pa
                 writeBytesToStream(outputStream, value.marshall());
                 editor.commit();
             }
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             e.printStackTrace();
         } finally {
             value.recycle();
