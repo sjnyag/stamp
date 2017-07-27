@@ -7,10 +7,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sjn.stamp.R;
@@ -26,7 +26,6 @@ import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.items.IFilterable;
 import eu.davidea.flexibleadapter.utils.Utils;
-import eu.davidea.flipview.FlipView;
 import eu.davidea.viewholders.FlexibleViewHolder;
 
 public class RankedSongItem extends AbstractItem<RankedSongItem.SimpleViewHolder> implements IFilterable, Serializable {
@@ -59,7 +58,6 @@ public class RankedSongItem extends AbstractItem<RankedSongItem.SimpleViewHolder
     public void bindViewHolder(final FlexibleAdapter adapter, SimpleViewHolder holder, int position, List payloads) {
         Context context = holder.itemView.getContext();
 
-        holder.mFlipView.flipSilently(adapter.isSelected(position));
         String title = mTrack.getDescription().getTitle() != null ? mTrack.getDescription().getTitle().toString() : null;
         String artist = mTrack.getDescription().getSubtitle() != null ? mTrack.getDescription().getSubtitle().toString() : null;
         String artUrl = mTrack.getDescription().getIconUri() != null ? mTrack.getDescription().getIconUri().toString() : null;
@@ -74,7 +72,7 @@ public class RankedSongItem extends AbstractItem<RankedSongItem.SimpleViewHolder
             holder.mOrderView.setText(String.valueOf(mOrder));
         }
         if (artUrl != null) {
-            ViewHelper.updateAlbumArt((Activity) context, holder.mFlipView, artUrl, title);
+            ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, artUrl, title);
         }
         holder.updateStampList(mTrack.getDescription().getMediaId());
     }
@@ -91,7 +89,7 @@ public class RankedSongItem extends AbstractItem<RankedSongItem.SimpleViewHolder
 
     static final class SimpleViewHolder extends FlexibleViewHolder {
 
-        FlipView mFlipView;
+        ImageView mAlbumArtView;
         TextView mTitle;
         TextView mSubtitle;
         Context mContext;
@@ -134,9 +132,7 @@ public class RankedSongItem extends AbstractItem<RankedSongItem.SimpleViewHolder
             }
         };
 
-        public boolean swiped = false;
-
-        public void updateStampList(String mediaId) {
+        void updateStampList(String mediaId) {
             if (!StampEditStateObserver.getInstance().isOpen()) {
                 mStampListLayout.setVisibility(View.GONE);
                 return;
@@ -170,8 +166,8 @@ public class RankedSongItem extends AbstractItem<RankedSongItem.SimpleViewHolder
 
             this.mTitle = (TextView) view.findViewById(R.id.title);
             this.mSubtitle = (TextView) view.findViewById(R.id.subtitle);
-            this.mFlipView = (FlipView) view.findViewById(R.id.image);
-            this.mFlipView.setOnClickListener(new View.OnClickListener() {
+            this.mAlbumArtView = (ImageView) view.findViewById(R.id.image);
+            this.mAlbumArtView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mAdapter.mItemLongClickListener != null) {
@@ -185,12 +181,6 @@ public class RankedSongItem extends AbstractItem<RankedSongItem.SimpleViewHolder
             this.mCountView = (TextView) view.findViewById(R.id.count);
             this.mOrderView = (TextView) view.findViewById(R.id.order);
             this.mStampListLayout = (ViewGroup) view.findViewById(R.id.stamp_info);
-        }
-
-        @Override
-        public void toggleActivation() {
-            super.toggleActivation();
-            mFlipView.flip(mAdapter.isSelected(getAdapterPosition()));
         }
 
         @Override
@@ -218,12 +208,6 @@ public class RankedSongItem extends AbstractItem<RankedSongItem.SimpleViewHolder
                 else
                     AnimatorHelper.slideInFromLeftAnimator(animators, itemView, mAdapter.getRecyclerView(), 0.5f);
             }
-        }
-
-        @Override
-        public void onItemReleased(int position) {
-            swiped = (mActionState == ItemTouchHelper.ACTION_STATE_SWIPE);
-            super.onItemReleased(position);
         }
     }
 

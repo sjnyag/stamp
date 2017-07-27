@@ -69,7 +69,7 @@ public class DateHeaderItem extends AbstractHeaderItem<DateHeaderItem.HeaderView
         if (payloads.size() <= 0) {
             holder.mTitle.setText(getTitle());
         }
-        List<ISectionable> sectionableList = adapter.getSectionItems(this);
+        List sectionableList = adapter.getSectionItems(this);
         String subTitle = (sectionableList.isEmpty() ? "Empty section" :
                 sectionableList.size() + " section items");
         holder.mSubtitle.setText(subTitle);
@@ -93,17 +93,6 @@ public class DateHeaderItem extends AbstractHeaderItem<DateHeaderItem.HeaderView
             super(view, adapter, true);//True for sticky
             mTitle = (TextView) view.findViewById(R.id.title);
             mSubtitle = (TextView) view.findViewById(R.id.subtitle);
-            mTitle.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d("HeaderTitle", "Registered internal click on Header TitleTextView! " + mTitle.getText() + " position=" + getFlexibleAdapterPosition());
-                }
-            });
-
-            //Support for StaggeredGridLayoutManager
-            if (itemView.getLayoutParams() instanceof StaggeredGridLayoutManager.LayoutParams) {
-                ((StaggeredGridLayoutManager.LayoutParams) itemView.getLayoutParams()).setFullSpan(true);
-            }
         }
     }
 

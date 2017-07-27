@@ -456,7 +456,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
             try {
                 // NEW! You can take advantage of AutoMap and differentiate logic by viewType using "switch" statement
                 switch (adapterItem.getLayoutRes()) {
-                    case R.layout.recycler_simple_item:
+                    case R.layout.recycler_song_history_item:
                         AbstractItem subItem = (AbstractItem) adapterItem;
                         subItem.delete(getActivity());
                         LogHelper.i(TAG, "Confirm removed " + subItem.toString());

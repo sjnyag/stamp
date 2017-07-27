@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -15,19 +14,12 @@
         android:paddingRight="24dp"
         android:paddingTop="12dp">
 
-        <eu.davidea.flipview.FlipView
+        <ImageView
             android:id="@+id/image"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_alignParentStart="true"
-            android:layout_centerInParent="true"
-            android:clickable="true"
-            app:animationDuration="170"
-            app:checked="false"
-            app:enableInitialAnimation="true"
-            app:frontBackgroundColor="@color/color_primary"
-            app:frontImage="@mipmap/ic_launcher"
-            app:rearBackgroundColor="@color/color_accent"/>
+            android:layout_centerInParent="true"/>
 
         <TextView
             android:id="@+id/title"

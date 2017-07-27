@@ -6,10 +6,10 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sjn.stamp.R;
@@ -25,9 +25,12 @@ import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.items.IFilterable;
 import eu.davidea.flexibleadapter.utils.Utils;
-import eu.davidea.flipview.FlipView;
 import eu.davidea.viewholders.FlexibleViewHolder;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
+@Getter
+@Accessors(prefix = "m")
 public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHolder> implements IFilterable, Serializable {
 
     private int mOrder;
@@ -61,9 +64,6 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
     @SuppressWarnings({"unchecked"})
     public void bindViewHolder(final FlexibleAdapter adapter, SimpleViewHolder holder, int position, List payloads) {
         Context context = holder.itemView.getContext();
-
-        holder.mFlipView.flipSilently(adapter.isSelected(position));
-        // In case of searchText matches with Title or with a field this will be highlighted
         if (adapter.hasSearchText()) {
             Utils.highlightText(holder.mTitle, getTitle(), adapter.getSearchText());
             Utils.highlightText(holder.mSubtitle, getSubtitle(), adapter.getSearchText());
@@ -74,7 +74,7 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
             holder.mOrderView.setText(String.valueOf(mOrder));
         }
         if (mArtUrl != null) {
-            ViewHelper.updateAlbumArt((Activity) context, holder.mFlipView, mArtUrl, mArtistName);
+            ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, mArtUrl, mArtistName);
         }
         holder.updateStampList(mArtistName);
     }
@@ -84,13 +84,9 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
         return mArtistName.toLowerCase().trim().contains(constraint);
     }
 
-    public String getArtistName() {
-        return mArtistName;
-    }
-
     static final class SimpleViewHolder extends FlexibleViewHolder {
 
-        FlipView mFlipView;
+        ImageView mAlbumArtView;
         TextView mTitle;
         TextView mSubtitle;
         Context mContext;
@@ -133,8 +129,6 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
             }
         };
 
-        public boolean swiped = false;
-
         public void updateStampList(String artistName) {
             /*
             if (!StampEditStateObserver.getInstance().isOpen()) {
@@ -171,8 +165,8 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
 
             this.mTitle = (TextView) view.findViewById(R.id.title);
             this.mSubtitle = (TextView) view.findViewById(R.id.subtitle);
-            this.mFlipView = (FlipView) view.findViewById(R.id.image);
-            this.mFlipView.setOnClickListener(new View.OnClickListener() {
+            this.mAlbumArtView = (ImageView) view.findViewById(R.id.image);
+            this.mAlbumArtView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mAdapter.mItemLongClickListener != null) {
@@ -191,7 +185,6 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
         @Override
         public void toggleActivation() {
             super.toggleActivation();
-            mFlipView.flip(mAdapter.isSelected(getAdapterPosition()));
         }
 
         @Override
@@ -219,12 +212,6 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
                 else
                     AnimatorHelper.slideInFromLeftAnimator(animators, itemView, mAdapter.getRecyclerView(), 0.5f);
             }
-        }
-
-        @Override
-        public void onItemReleased(int position) {
-            swiped = (mActionState == ItemTouchHelper.ACTION_STATE_SWIPE);
-            super.onItemReleased(position);
         }
     }
 

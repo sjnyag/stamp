@@ -3,19 +3,11 @@ package com.sjn.stamp.ui.item;
 import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.media.MediaBrowserCompat;
-import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,8 +18,8 @@ import com.sjn.stamp.R;
 import com.sjn.stamp.controller.SongController;
 import com.sjn.stamp.ui.observer.StampEditStateObserver;
 import com.sjn.stamp.utils.MediaIDHelper;
+import com.sjn.stamp.utils.SongStateHelper;
 import com.sjn.stamp.utils.ViewHelper;
-import com.squareup.picasso.Target;
 
 import java.io.Serializable;
 import java.util.List;
@@ -36,18 +28,19 @@ import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.items.IFilterable;
 import eu.davidea.flexibleadapter.utils.Utils;
-import eu.davidea.flipview.FlipView;
 import eu.davidea.viewholders.FlexibleViewHolder;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
 /**
  * You should extend directly from
  * {@link eu.davidea.flexibleadapter.items.AbstractFlexibleItem} to benefit of the already
  * implemented methods (getter and setters).
  */
+@Getter
+@Accessors(prefix = "m")
 public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements IFilterable, Serializable {
 
-    //to avoid GC
-    private Target mTarget;
     private String mMediaId;
     private String mTitle;
     private String mSubTitle;
@@ -64,7 +57,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
         mSubTitle = subTitle;
         mAlbumArt = albumArt;
         mIsPlayable = isPlayable;
-        mIsBrowsable = isPlayable;
+        mIsBrowsable = isBrowsable;
     }
 
     public SongItem(MediaBrowserCompat.MediaItem mediaItem) {
@@ -89,7 +82,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
 
     @Override
     public int getLayoutRes() {
-        return R.layout.recycler_simple_item;
+        return R.layout.recycler_song_item;
     }
 
     @Override
@@ -101,26 +94,6 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
     @SuppressWarnings({"unchecked"})
     public void bindViewHolder(final FlexibleAdapter adapter, SimpleViewHolder holder, int position, List payloads) {
         Context context = holder.itemView.getContext();
-
-//        // Background, when bound the first time
-//        if (payloads.size() == 0) {
-//            Drawable drawable = DrawableUtils.getSelectableBackgroundCompat(
-//                    Color.WHITE, Color.parseColor("#dddddd"), //Same color of divider
-//                    DrawableUtils.getColorControlHighlight(context));
-//            DrawableUtils.setBackgroundCompat(holder.itemView, drawable);
-//            DrawableUtils.setBackgroundCompat(holder.mFrontView, drawable);
-//        }
-
-        // DemoApp: INNER ANIMATION EXAMPLE! ImageView - Handle Flip Animation
-//		if (adapter.isSelectAll() || adapter.isLastItemInActionMode()) {
-//			// Consume the Animation
-//			holder.mFlipView.flip(adapter.isSelected(position), 200L);
-//		} else {
-        // Display the current flip status
-        holder.mFlipView.flipSilently(adapter.isSelected(position));
-//		}
-
-        // In case of searchText matches with Title or with a field this will be highlighted
         if (adapter.hasSearchText()) {
             Utils.highlightText(holder.mTitle, getTitle(), adapter.getSearchText());
             Utils.highlightText(holder.mSubtitle, getSubtitle(), adapter.getSearchText());
@@ -129,7 +102,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
             holder.mSubtitle.setText(mSubTitle);
         }
         if (mAlbumArt != null) {
-            ViewHelper.updateAlbumArt((Activity) context, holder.mFlipView, mAlbumArt, mTitle);
+            ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, mAlbumArt, mTitle);
         }
         holder.update(holder.mImageView, mMediaId, mIsPlayable);
         holder.updateStampList(mMediaId);
@@ -141,33 +114,11 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
                 mSubTitle != null && mSubTitle.toLowerCase().trim().contains(constraint);
     }
 
-    public String getMediaId() {
-        return mMediaId;
-    }
-
-    public boolean isPlayable() {
-        return mIsPlayable;
-    }
-
-    public boolean isBrowsable() {
-        return mIsBrowsable;
-    }
-
     static final class SimpleViewHolder extends FlexibleViewHolder {
 
-        public static final int STATE_INVALID = -1;
-        public static final int STATE_NONE = 0;
-        public static final int STATE_PLAYABLE = 1;
-        public static final int STATE_PAUSED = 2;
-        public static final int STATE_PLAYING = 3;
-
-        private static ColorStateList sColorStatePlaying;
-        private static ColorStateList sColorStateNotPlaying;
-
-        FlipView mFlipView;
+        ImageView mAlbumArtView;
         TextView mTitle;
         TextView mSubtitle;
-        ImageView mHandleView;
         Context mContext;
         View frontView;
         TextView mDate;
@@ -208,9 +159,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
             }
         };
 
-        public boolean swiped = false;
-
-        public void updateStampList(String mediaId) {
+        void updateStampList(String mediaId) {
             if (!StampEditStateObserver.getInstance().isOpen()) {
                 mStampListLayout.setVisibility(View.GONE);
                 return;
@@ -241,64 +190,18 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
         SimpleViewHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter);
             this.mContext = view.getContext();
-            if (sColorStateNotPlaying == null || sColorStatePlaying == null) {
-                initializeColorStateLists(this.mContext);
-            }
-
             this.mTitle = (TextView) view.findViewById(R.id.title);
             this.mSubtitle = (TextView) view.findViewById(R.id.subtitle);
-            this.mFlipView = (FlipView) view.findViewById(R.id.image);
-            this.mFlipView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mAdapter.mItemLongClickListener != null) {
-                        mAdapter.mItemLongClickListener.onItemLongClick(getAdapterPosition());
-                        //Toast.makeText(mContext, "ImageClick on " + mTitle.getText() + " position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
-                        toggleActivation();
-                    }
-                }
-            });
-            //this.mHandleView = (ImageView) view.findViewById(R.id.row_handle);
+            this.mAlbumArtView = (ImageView) view.findViewById(R.id.image);
             this.mImageView = (ImageView) view.findViewById(R.id.play_eq);
-            //setDragHandleView(mHandleView);
-
             this.frontView = view.findViewById(R.id.front_view);
             this.mDate = (TextView) view.findViewById(R.id.date);
             this.mStampListLayout = (ViewGroup) view.findViewById(R.id.stamp_info);
         }
 
         @Override
-        public void onClick(View view) {
-            //Toast.makeText(mContext, "Click on " + mTitle.getText() + " position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
-            super.onClick(view);
-        }
-
-        @Override
-        public boolean onLongClick(View view) {
-            //Toast.makeText(mContext, "LongClick on " + mTitle.getText() + " position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
-            return super.onLongClick(view);
-        }
-
-        @Override
-        public void toggleActivation() {
-            super.toggleActivation();
-            // Here we use a custom Animation inside the ItemView
-            mFlipView.flip(mAdapter.isSelected(getAdapterPosition()));
-        }
-
-        @Override
         public float getActivationElevation() {
             return ViewHelper.dpToPx(itemView.getContext(), 4f);
-        }
-
-        @Override
-        protected boolean shouldActivateViewWhileSwiping() {
-            return false;//default=false
-        }
-
-        @Override
-        protected boolean shouldAddSelectionInActionMode() {
-            return false;//default=false
         }
 
         @Override
@@ -323,18 +226,11 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
             }
         }
 
-        @Override
-        public void onItemReleased(int position) {
-            swiped = (mActionState == ItemTouchHelper.ACTION_STATE_SWIPE);
-            super.onItemReleased(position);
-        }
-
         public void update(View view, String mediaId, boolean isPlayable) {
-            Integer cachedState = STATE_INVALID;
-            cachedState = (Integer) view.getTag(R.id.tag_mediaitem_state_cache);
-            int state = getMediaItemState(this.mContext, mediaId, isPlayable);
+            Integer cachedState = (Integer) view.getTag(R.id.tag_mediaitem_state_cache);
+            int state = SongStateHelper.getMediaItemState(this.mContext, mediaId, isPlayable);
             if (cachedState == null || cachedState != state) {
-                Drawable drawable = getDrawableByState(this.mContext, state);
+                Drawable drawable = SongStateHelper.getDrawableByState(this.mContext, state);
                 if (drawable != null) {
                     this.mImageView.setImageDrawable(drawable);
                     this.mImageView.setVisibility(View.VISIBLE);
@@ -345,66 +241,6 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
             }
         }
 
-        private static void initializeColorStateLists(Context ctx) {
-            sColorStateNotPlaying = ColorStateList.valueOf(ctx.getResources().getColor(
-                    R.color.media_item_icon_not_playing));
-            sColorStatePlaying = ColorStateList.valueOf(ctx.getResources().getColor(
-                    R.color.media_item_icon_playing));
-        }
-
-        public static Drawable getDrawableByState(Context context, int state) {
-            if (sColorStateNotPlaying == null || sColorStatePlaying == null) {
-                initializeColorStateLists(context);
-            }
-
-            switch (state) {
-                case STATE_PLAYABLE:
-                    Drawable pauseDrawable = ContextCompat.getDrawable(context,
-                            R.drawable.ic_play_arrow_black_36dp);
-                    DrawableCompat.setTintList(pauseDrawable, sColorStateNotPlaying);
-                    return pauseDrawable;
-                case STATE_PLAYING:
-                    AnimationDrawable animation = (AnimationDrawable)
-                            ContextCompat.getDrawable(context, R.drawable.ic_equalizer_white_36dp);
-                    DrawableCompat.setTintList(animation, sColorStatePlaying);
-                    animation.start();
-                    return animation;
-                case STATE_PAUSED:
-                    Drawable playDrawable = ContextCompat.getDrawable(context,
-                            R.drawable.ic_equalizer1_white_36dp);
-                    DrawableCompat.setTintList(playDrawable, sColorStatePlaying);
-                    return playDrawable;
-                default:
-                    return null;
-            }
-        }
-
-        public static int getMediaItemState(Context context, String mediaId, boolean isPlayable) {
-            int state = STATE_NONE;
-            // Set state to playable first, then override to playing or paused state if needed
-            if (isPlayable) {
-                state = STATE_PLAYABLE;
-                if (MediaIDHelper.isMediaItemPlaying(context, mediaId)) {
-                    state = getStateFromController(context);
-                }
-            }
-
-            return state;
-        }
-
-        public static int getStateFromController(Context context) {
-            MediaControllerCompat controller = ((FragmentActivity) context)
-                    .getSupportMediaController();
-            PlaybackStateCompat pbState = controller.getPlaybackState();
-            if (pbState == null ||
-                    pbState.getState() == PlaybackStateCompat.STATE_ERROR) {
-                return STATE_NONE;
-            } else if (pbState.getState() == PlaybackStateCompat.STATE_PLAYING) {
-                return STATE_PLAYING;
-            } else {
-                return STATE_PAUSED;
-            }
-        }
     }
 
     @Override

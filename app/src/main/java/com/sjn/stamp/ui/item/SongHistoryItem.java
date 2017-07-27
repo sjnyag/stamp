@@ -6,7 +6,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import com.sjn.stamp.db.SongHistory;
 import com.sjn.stamp.ui.observer.StampEditStateObserver;
 import com.sjn.stamp.utils.TimeHelper;
 import com.sjn.stamp.utils.ViewHelper;
-import com.squareup.picasso.Target;
 
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
@@ -36,7 +34,6 @@ import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.items.IFilterable;
 import eu.davidea.flexibleadapter.items.ISectionable;
 import eu.davidea.flexibleadapter.utils.Utils;
-import eu.davidea.flipview.FlipView;
 import eu.davidea.viewholders.FlexibleViewHolder;
 
 /**
@@ -55,8 +52,6 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
     }
 
     SongHistory mSongHistory;
-    //to avoid GC
-    private Target mTarget;
 
     private SongHistoryItem(SongHistory songHistory) {
         super(String.valueOf(songHistory.getId()));
@@ -93,7 +88,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
 
     @Override
     public int getLayoutRes() {
-        return R.layout.recycler_simple_item;
+        return R.layout.recycler_song_history_item;
     }
 
     @Override
@@ -105,26 +100,6 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
     @SuppressWarnings({"unchecked"})
     public void bindViewHolder(final FlexibleAdapter adapter, SimpleViewHolder holder, int position, List payloads) {
         Context context = holder.itemView.getContext();
-
-        // Background, when bound the first time
-//        if (payloads.size() == 0) {
-//            Drawable drawable = DrawableUtils.getSelectableBackgroundCompat(
-//                    Color.WHITE, Color.parseColor("#dddddd"), //Same color of divider
-//                    DrawableUtils.getColorControlHighlight(context));
-//            DrawableUtils.setBackgroundCompat(holder.itemView, drawable);
-//            DrawableUtils.setBackgroundCompat(holder.mFrontView, drawable);
-//        }
-
-        // DemoApp: INNER ANIMATION EXAMPLE! ImageView - Handle Flip Animation
-//		if (adapter.isSelectAll() || adapter.isLastItemInActionMode()) {
-//			// Consume the Animation
-//			holder.mFlipView.flip(adapter.isSelected(position), 200L);
-//		} else {
-        // Display the current flip status
-        holder.mFlipView.flipSilently(adapter.isSelected(position));
-//		}
-
-        // In case of searchText matches with Title or with a field this will be highlighted
         if (adapter.hasSearchText()) {
             Utils.highlightText(holder.mTitle, getTitle(), adapter.getSearchText());
             Utils.highlightText(holder.mSubtitle, getSubtitle(), adapter.getSearchText());
@@ -133,7 +108,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
             holder.mSubtitle.setText(getSubtitle());
         }
         holder.mDate.setText(getDateText(mSongHistory.getRecordedAt()));
-        ViewHelper.updateAlbumArt((Activity) context, holder.mFlipView, mSongHistory.getSong().getAlbumArtUri(), mSongHistory.getSong().getTitle());
+        ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, mSongHistory.getSong().getAlbumArtUri(), mSongHistory.getSong().getTitle());
         holder.updateStampList(mSongHistory.getSong().getMediaId());
     }
 
@@ -158,10 +133,9 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
 
     static final class SimpleViewHolder extends FlexibleViewHolder {
 
-        FlipView mFlipView;
+        ImageView mAlbumArtView;
         TextView mTitle;
         TextView mSubtitle;
-        ImageView mHandleView;
         Context mContext;
         View frontView;
         TextView mDate;
@@ -201,49 +175,15 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
             }
         };
 
-        public boolean swiped = false;
-
         SimpleViewHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter);
             this.mContext = view.getContext();
             this.mTitle = (TextView) view.findViewById(R.id.title);
             this.mSubtitle = (TextView) view.findViewById(R.id.subtitle);
-            this.mFlipView = (FlipView) view.findViewById(R.id.image);
-            this.mFlipView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mAdapter.mItemLongClickListener != null) {
-                        mAdapter.mItemLongClickListener.onItemLongClick(getAdapterPosition());
-                        //Toast.makeText(mContext, "ImageClick on " + mTitle.getText() + " position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
-                        toggleActivation();
-                    }
-                }
-            });
-            //this.mHandleView = (ImageView) view.findViewById(R.id.row_handle);
-            //setDragHandleView(mHandleView);
-
+            this.mAlbumArtView = (ImageView) view.findViewById(R.id.image);
             this.frontView = view.findViewById(R.id.front_view);
             this.mDate = (TextView) view.findViewById(R.id.date);
             this.mStampListLayout = (ViewGroup) view.findViewById(R.id.stamp_info);
-        }
-
-        @Override
-        public void onClick(View view) {
-            //Toast.makeText(mContext, "Click on " + mTitle.getText() + " position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
-            super.onClick(view);
-        }
-
-        @Override
-        public boolean onLongClick(View view) {
-            //Toast.makeText(mContext, "LongClick on " + mTitle.getText() + " position " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
-            return super.onLongClick(view);
-        }
-
-        @Override
-        public void toggleActivation() {
-            super.toggleActivation();
-            // Here we use a custom Animation inside the ItemView
-            mFlipView.flip(mAdapter.isSelected(getAdapterPosition()));
         }
 
         @Override
@@ -283,13 +223,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
             }
         }
 
-        @Override
-        public void onItemReleased(int position) {
-            swiped = (mActionState == ItemTouchHelper.ACTION_STATE_SWIPE);
-            super.onItemReleased(position);
-        }
-
-        public void updateStampList(String mediaId) {
+        void updateStampList(String mediaId) {
             if (!StampEditStateObserver.getInstance().isOpen()) {
                 mStampListLayout.setVisibility(View.GONE);
                 return;
