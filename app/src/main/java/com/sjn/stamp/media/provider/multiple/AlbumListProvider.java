@@ -29,6 +29,6 @@ public class AlbumListProvider extends MultipleListProvider {
 
     @Override
     protected int compareMediaList(MediaMetadataCompat lhs, MediaMetadataCompat rhs) {
-        return lhs.getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER) < (rhs.getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER)) ? 0 : 1;
+        return lhs.getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER) < (rhs.getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER)) ? -1 : 1;
     }
 }
