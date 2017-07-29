@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
-    android:background="@color/material_color_indigo_50"
+    android:background="#aa7e57c2"
     android:gravity="center_vertical"
     android:orientation="vertical">
 
@@ -17,8 +17,8 @@
         android:layout_marginRight="@dimen/margin_right"
         android:layout_marginStart="@dimen/margin_left"
         android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textColor="?colorPrimaryDark"
+        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Inverse"
+        android:textColor="?android:attr/textColorPrimary"
         tools:text="@string/staggered_layout"/>
 
     <TextView
@@ -32,8 +32,8 @@
         android:layout_marginTop="2dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textColor="?colorPrimaryDark"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textColor="?android:attr/textColorSecondary"
         tools:text="@string/columns"/>
 
 </LinearLayout>
