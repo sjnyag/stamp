@@ -20,7 +20,7 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/navigation_home"
-            android:icon="@drawable/ic_account_circle"
+            android:icon="@drawable/ic_library_music"
             android:title="@string/drawer_home_title"/>
         <item
             android:id="@+id/navigation_timeline"
@@ -30,26 +30,10 @@
             android:id="@+id/navigation_queue"
             android:icon="@drawable/ic_queue_music"
             android:title="@string/drawer_queue_title"/>
-    </group>
-    <group
-        android:id="@+id/smart_list"
-        android:checkableBehavior="single">
         <item
             android:id="@+id/navigation_stamp"
-            android:icon="@drawable/ic_filter_vintage"
+            android:icon="@drawable/ic_stamp"
             android:title="@string/drawer_stamp"/>
-        <item
-            android:id="@+id/navigation_new"
-            android:icon="@drawable/ic_timelapse"
-            android:title="@string/drawer_new"/>
-        <item
-            android:id="@+id/navigation_top_song"
-            android:icon="@drawable/ic_favorite_border"
-            android:title="@string/drawer_top_song"/>
-        <item
-            android:id="@+id/navigation_all_music"
-            android:icon="@drawable/ic_library_music"
-            android:title="@string/drawer_all_music"/>
     </group>
     <group
         android:id="@+id/functions"
@@ -58,10 +42,6 @@
             android:id="@+id/navigation_ranking"
             android:icon="@drawable/ic_star"
             android:title="@string/drawer_ranking"/>
-        <item
-            android:id="@+id/navigation_edit_playlist"
-            android:icon="@drawable/ic_mode_edit"
-            android:title="@string/drawer_edit_playlist"/>
         <item
             android:id="@+id/navigation_setting"
             android:icon="@drawable/ic_settings"

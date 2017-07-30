@@ -1,7 +1,6 @@
 package com.sjn.stamp.ui.fragment.media_list;
 
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,7 +20,6 @@ import static com.sjn.stamp.utils.ViewHelper.setFragmentTitle;
 public abstract class PagerFragment extends Fragment {
     static final String PAGER_KIND_KEY = "PAGER_KIND";
 
-    private AppBarLayout mAppBarLayout;
     protected ViewPagerAdapter mAdapter;
     protected ViewPager mViewPager;
 
@@ -43,7 +41,6 @@ public abstract class PagerFragment extends Fragment {
         setupViewPager(mViewPager);
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        mAppBarLayout = (AppBarLayout) rootView.findViewById(R.id.appbar);
         return rootView;
     }
 
@@ -51,7 +48,7 @@ public abstract class PagerFragment extends Fragment {
         setFragmentTitle(getActivity(), title);
     }
 
-    public class ViewPagerAdapter extends FragmentPagerAdapter {
+    class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 

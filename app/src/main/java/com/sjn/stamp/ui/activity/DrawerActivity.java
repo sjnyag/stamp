@@ -217,7 +217,7 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
         if (mDrawer != null) {
             return mDrawer.getCurrentSelection();
         }
-        return 0;
+        return DrawerMenu.first().getMenuId();
     }
 
     private void updateDrawerToggleState() {

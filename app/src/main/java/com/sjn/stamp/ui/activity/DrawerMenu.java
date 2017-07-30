@@ -2,14 +2,14 @@ package com.sjn.stamp.ui.activity;
 
 import android.support.v4.app.Fragment;
 
+import com.sjn.stamp.R;
 import com.sjn.stamp.ui.fragment.SettingFragment;
+import com.sjn.stamp.ui.fragment.media_list.AllSongPagerFragment;
 import com.sjn.stamp.ui.fragment.media_list.QueueListFragment;
 import com.sjn.stamp.ui.fragment.media_list.RankingPagerFragment;
+import com.sjn.stamp.ui.fragment.media_list.SongListFragment;
 import com.sjn.stamp.ui.fragment.media_list.TimelineFragment;
 import com.sjn.stamp.utils.MediaIDHelper;
-import com.sjn.stamp.R;
-import com.sjn.stamp.ui.fragment.media_list.AllSongPagerFragment;
-import com.sjn.stamp.ui.fragment.media_list.SongListFragment;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -20,7 +20,7 @@ public enum DrawerMenu {
     HOME(R.id.navigation_home, null) {
         @Override
         Fragment getFragment() {
-            return new SongListFragment();
+            return new AllSongPagerFragment();
         }
     },
     TIMELINE(R.id.navigation_timeline, MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE) {
@@ -35,40 +35,16 @@ public enum DrawerMenu {
             return new QueueListFragment();
         }
     },
-    TAG(R.id.navigation_stamp, MediaIDHelper.MEDIA_ID_MUSICS_BY_STAMP) {
+    STAMP(R.id.navigation_stamp, MediaIDHelper.MEDIA_ID_MUSICS_BY_STAMP) {
         @Override
         SongListFragment getFragment() {
             return getDefaultFragment(mMediaId);
-        }
-    },
-    NEW(R.id.navigation_new, MediaIDHelper.MEDIA_ID_MUSICS_BY_NEW) {
-        @Override
-        SongListFragment getFragment() {
-            return getDefaultFragment(mMediaId);
-        }
-    },
-    TOP_SONG(R.id.navigation_top_song, MediaIDHelper.MEDIA_ID_MUSICS_BY_TOP_SONG) {
-        @Override
-        SongListFragment getFragment() {
-            return getDefaultFragment(mMediaId);
-        }
-    },
-    ALL(R.id.navigation_all_music, null) {
-        @Override
-        Fragment getFragment() {
-            return new AllSongPagerFragment();
         }
     },
     RANKING(R.id.navigation_ranking, null) {
         @Override
         Fragment getFragment() {
             return new RankingPagerFragment();
-        }
-    },
-    EDIT_PLAYLIST(R.id.navigation_edit_playlist, null) {
-        @Override
-        Fragment getFragment() {
-            return new SongListFragment();
         }
     },
     SETTING(R.id.navigation_setting, null) {
@@ -100,11 +76,7 @@ public enum DrawerMenu {
         return null;
     }
 
-    public static DrawerMenu start() {
-        return TIMELINE;
-    }
-
-    public static Fragment first() {
-        return ALL.getFragment();
+    public static DrawerMenu first() {
+        return HOME;
     }
 }

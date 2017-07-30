@@ -81,7 +81,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
 
         setContentView(R.layout.activity_player);
         initializeToolbar();
-        navigateToBrowser(DrawerMenu.first(), false);
+        navigateToBrowser(DrawerMenu.first().getFragment(), false);
 
         if (!PermissionHelper.hasPermission(this, MediaRetrieveHelper.PERMISSIONS)) {
             ActivityCompat.requestPermissions(this, MediaRetrieveHelper.PERMISSIONS, REQUEST_PERMISSION);
