@@ -67,7 +67,7 @@ public abstract class ActionBarCastActivity extends DrawerActivity {
     };
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LogHelper.d(TAG, "Activity onCreate");
         try {
@@ -78,7 +78,7 @@ public abstract class ActionBarCastActivity extends DrawerActivity {
     }
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
         /*
         if (mCastContext != null) {

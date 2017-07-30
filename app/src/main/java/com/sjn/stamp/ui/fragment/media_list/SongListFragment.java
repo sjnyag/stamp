@@ -16,6 +16,7 @@
 package com.sjn.stamp.ui.fragment.media_list;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -64,7 +65,6 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
 
     private ProgressDialog mProgressDialog;
     private static final String TAG = LogHelper.makeLogTag(SongListFragment.class);
-    private CreateListAsyncTask mAsyncTask;
     protected boolean mHasDrawTask = true;
 
     /**
@@ -89,8 +89,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
     @Override
     public void onMediaBrowserChildrenLoaded(@NonNull String parentId,
                                              @NonNull List<MediaBrowserCompat.MediaItem> children) {
-        mAsyncTask = new CreateListAsyncTask(this, children);
-        mAsyncTask.execute();
+        new CreateListAsyncTask(this, children).execute();
     }
 
     @Override
@@ -128,6 +127,11 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                         mSwipeRefreshLayout.setRefreshing(false);
                         return;
                 }
+            }
+        }, new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         }).show();
     }
@@ -297,7 +301,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
     private static class CreateListAsyncTask extends AsyncTask<Void, Void, Void> {
 
         SongListFragment mFragment;
-        protected List<MediaBrowserCompat.MediaItem> mSongList;
+        final protected List<MediaBrowserCompat.MediaItem> mSongList;
 
         CreateListAsyncTask(SongListFragment fragment, List<MediaBrowserCompat.MediaItem> songList) {
             this.mFragment = fragment;
@@ -315,11 +319,11 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
             return null;
         }
 
-        private List<AbstractFlexibleItem> createItemList(List<MediaBrowserCompat.MediaItem> songList) {
+        synchronized private List<AbstractFlexibleItem> createItemList(List<MediaBrowserCompat.MediaItem> songList) {
             LogHelper.d(TAG, "createItemList START");
             List<AbstractFlexibleItem> itemList = new ArrayList<>();
             for (MediaBrowserCompat.MediaItem item : songList) {
-                AbstractFlexibleItem songItem = new SongItem(item);
+                AbstractFlexibleItem songItem = new SongItem(item, mFragment.mMediaBrowsable);
                 itemList.add(songItem);
             }
             LogHelper.d(TAG, "createItemList END");

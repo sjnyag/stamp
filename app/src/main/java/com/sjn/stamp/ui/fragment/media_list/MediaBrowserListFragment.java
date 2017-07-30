@@ -33,6 +33,8 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
                 public void onChildrenLoaded(@NonNull String parentId,
                                              @NonNull List<MediaBrowserCompat.MediaItem> children) {
                     LogHelper.d(TAG, "onChildrenLoaded START");
+                    LogHelper.d(TAG, "onChildrenLoaded parentId: " + parentId);
+                    LogHelper.d(TAG, "onChildrenLoaded children: " + children.size());
                     onMediaBrowserChildrenLoaded(parentId, children);
                     LogHelper.d(TAG, "onChildrenLoaded END");
                 }
@@ -122,12 +124,14 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
     public void onConnected() {
         LogHelper.d(TAG, "onConnected START");
         if (isDetached() || mMediaBrowsable == null) {
+            LogHelper.d(TAG, "onConnected SKIP");
             return;
         }
         mMediaId = getMediaId();
         if (mMediaId == null) {
             mMediaId = mMediaBrowsable.getMediaBrowser().getRoot();
         }
+        LogHelper.d(TAG, "onConnected mMediaId: " + mMediaId);
         updateTitle();
 
         // Unsubscribing before subscribing is required if this mediaId already has a subscriber

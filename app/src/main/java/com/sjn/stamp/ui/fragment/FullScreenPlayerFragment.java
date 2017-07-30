@@ -53,7 +53,6 @@ import java.util.concurrent.TimeUnit;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
-import static com.sjn.stamp.utils.ViewHelper.updateAlbumArt;
 
 /**
  * A full screen player that shows the current playing music with a background image

@@ -35,12 +35,14 @@ public class TimeHelper {
         if (d.getStandardDays() > 1) {
             return ((int) d.getStandardDays()) + "日";
         }
-        String hourMinutes = "";
+        String result = "";
+        int minutes = (int) d.getStandardMinutes();
         if (d.getStandardHours() >= 1) {
-            hourMinutes += ((int) d.getStandardHours()) + "時間";
+            result += ((int) d.getStandardHours()) + "時間";
+            minutes = minutes - ((int) d.getStandardHours()) * 60;
         }
-        hourMinutes += ((int) d.getStandardMinutes()) + "分";
-        return hourMinutes;
+        result += minutes + "分";
+        return result;
     }
 
     public static Date toDateOnly(Date date) {

@@ -4,9 +4,13 @@ package com.sjn.stamp.ui.activity;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
 
+import java.util.List;
+
 
 public interface MediaBrowsable {
     MediaBrowserCompat getMediaBrowser();
+
+    void search(String query, Bundle extras, MediaBrowserCompat.SearchCallback callback);
 
     void playByCategory(String mediaId);
 

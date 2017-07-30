@@ -35,29 +35,41 @@ import eu.davidea.flexibleadapter.items.IFilterable;
 import eu.davidea.flexibleadapter.items.ISectionable;
 import eu.davidea.flexibleadapter.utils.Utils;
 import eu.davidea.viewholders.FlexibleViewHolder;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
 /**
  * You should extend directly from
  * {@link eu.davidea.flexibleadapter.items.AbstractFlexibleItem} to benefit of the already
  * implemented methods (getter and setters).
  */
+@Accessors(prefix = "m")
 public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHolder>
         implements ISectionable<SongHistoryItem.SimpleViewHolder, DateHeaderItem>, IFilterable, Serializable {
 
     /* The header of this item */
     DateHeaderItem header;
 
-    public SongHistory getSongHistory() {
-        return mSongHistory;
-    }
-
-    SongHistory mSongHistory;
+    @Getter
+    String mMediaId;
+    private String mArtistName;
+    private Date mRecordedAt;
+    private String mTitle;
+    private String mAlbumArtUri;
+    private String mLabel;
+    private long mSongHistoryId;
 
     private SongHistoryItem(SongHistory songHistory) {
         super(String.valueOf(songHistory.getId()));
         setDraggable(true);
         setSwipeable(true);
-        mSongHistory = songHistory;
+        mSongHistoryId = songHistory.getId();
+        mMediaId = songHistory.getSong().getMediaId();
+        mArtistName = songHistory.getSong().getArtist().getName();
+        mRecordedAt = songHistory.getRecordedAt();
+        mTitle = songHistory.getSong().getTitle();
+        mAlbumArtUri = songHistory.getSong().getAlbumArtUri();
+        mLabel = songHistory.toLabel();
     }
 
     public SongHistoryItem(SongHistory songHistory, DateHeaderItem header) {
@@ -68,12 +80,12 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
     @Override
     public void delete(Context context) {
         SongHistoryController controller = new SongHistoryController(context);
-        controller.deleteSongHistory(mSongHistory);
+        controller.deleteSongHistory(mSongHistoryId);
     }
 
     @Override
     public String getSubtitle() {
-        return mSongHistory.getSong().getArtist().getName();
+        return mArtistName;
     }
 
     @Override
@@ -107,9 +119,9 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
             holder.mTitle.setText(getTitle());
             holder.mSubtitle.setText(getSubtitle());
         }
-        holder.mDate.setText(getDateText(mSongHistory.getRecordedAt()));
-        ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, mSongHistory.getSong().getAlbumArtUri(), mSongHistory.getSong().getTitle());
-        holder.updateStampList(mSongHistory.getSong().getMediaId());
+        holder.mDate.setText(getDateText(mRecordedAt));
+        ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, mAlbumArtUri, mTitle);
+        holder.updateStampList(mMediaId);
     }
 
     @Override
@@ -250,7 +262,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
 
     @Override
     public String toString() {
-        return mSongHistory.toLabel();
+        return mLabel;
     }
 
 }

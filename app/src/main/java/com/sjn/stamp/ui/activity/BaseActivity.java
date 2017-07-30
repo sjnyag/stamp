@@ -10,7 +10,7 @@ abstract public class BaseActivity extends AppCompatActivity {
 
     protected StampApplication mApplication;
 
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mApplication = (StampApplication) this.getApplicationContext();
     }

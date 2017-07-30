@@ -11,61 +11,40 @@ import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-abstract public class SingleListProvider extends ListProvider {
+abstract class SingleListProvider extends ListProvider {
 
     private static final String TAG = LogHelper.makeLogTag(SingleListProvider.class);
 
     protected Context mContext;
-    protected List<MediaBrowserCompat.MediaItem> mLastTrackList = new ArrayList<>();
-    protected String mLastTrackFilter = "";
-    protected int mLastTrackSeek = 0;
 
     abstract protected List<MediaMetadataCompat> createTrackList(final Map<String, MediaMetadataCompat> musicListById);
 
-    public SingleListProvider(Context context) {
+    SingleListProvider(Context context) {
         mContext = context;
     }
 
     @Override
     final public void reset() {
-        mLastTrackList.clear();
-        mLastTrackFilter = "";
-        mLastTrackSeek = 0;
     }
 
     @Override
-    final public List<MediaBrowserCompat.MediaItem> getListItems(String mediaId, Resources resources, ProviderState state, final Map<String, MediaMetadataCompat> musicListById, String filter, Integer size, Comparator comparator) {
+    final public List<MediaBrowserCompat.MediaItem> getListItems(String mediaId, Resources resources, ProviderState state, final Map<String, MediaMetadataCompat> musicListById) {
+        List<MediaBrowserCompat.MediaItem> items = new ArrayList<>();
         if (MediaIDHelper.isTrack(mediaId)) {
-            return new ArrayList<>();
-        }
-        if (filter == null) {
-            filter = "";
+            return items;
         }
         if (getProviderMediaId().equals(mediaId)) {
             List<MediaMetadataCompat> metadataList = createTrackList(musicListById);
-            if (mLastTrackFilter.equals("") || !mLastTrackFilter.equals(filter)) {
-                mLastTrackFilter = filter;
-                mLastTrackList.clear();
-                mLastTrackSeek = 0;
-            }
-            int startSize = mLastTrackList.size();
-            for (; mLastTrackSeek < metadataList.size(); mLastTrackSeek++) {
-                if (size != null && mLastTrackList.size() - startSize < size) {
-                    break;
-                }
-                MediaMetadataCompat track = metadataList.get(mLastTrackSeek);
-                if (matchFilter(filter, track)) {
-                    mLastTrackList.add(createMediaItem(track));
-                }
+            for (MediaMetadataCompat item : metadataList) {
+                items.add(createMediaItem(item));
             }
         } else {
             LogHelper.w(TAG, "Skipping unmatched mediaId: ", mediaId);
         }
-        return mLastTrackList;
+        return items;
     }
 
     @Override
@@ -78,7 +57,7 @@ abstract public class SingleListProvider extends ListProvider {
         return createMediaItem(metadata);
     }
 
-    final protected MediaBrowserCompat.MediaItem createMediaItem(MediaMetadataCompat metadata) {
+    private MediaBrowserCompat.MediaItem createMediaItem(MediaMetadataCompat metadata) {
         // Since mediaMetadata fields are immutable, we need to create a copy, so we
         // can set a hierarchy-aware mediaID. We will need to know the media hierarchy
         // when we get a onPlayFromMusicID call, so we can create the proper queue based

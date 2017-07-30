@@ -8,12 +8,14 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.google.android.gms.cast.framework.SessionManagerListener;
+import com.sjn.stamp.MusicService;
 import com.sjn.stamp.controller.SongHistoryController;
 import com.sjn.stamp.controller.UserSettingController;
 import com.sjn.stamp.media.QueueManager;
 import com.sjn.stamp.media.playback.Playback;
 import com.sjn.stamp.media.playback.PlaybackManager;
 import com.sjn.stamp.media.provider.MusicProvider;
+import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.R;
 import com.sjn.stamp.media.CustomController;
@@ -21,6 +23,8 @@ import com.sjn.stamp.media.CustomController;
 import java.util.List;
 
 public class Player implements SessionManager.SessionListener {
+
+    private static final String TAG = LogHelper.makeLogTag(Player.class);
 
     private PlayerCallback mPlayerCallback;
     private Context mContext;
@@ -103,6 +107,7 @@ public class Player implements SessionManager.SessionListener {
     }
 
     private QueueManager initializeQueueManager(MusicProvider musicProvider) {
+        LogHelper.d(TAG, "initializeQueueManager");
         mQueueUpdateListener = new QueueUpdateListener();
         QueueManager queueManager = new QueueManager(mContext, musicProvider, mContext.getResources(), mQueueUpdateListener);
         musicProvider.setQueueListener(queueManager);

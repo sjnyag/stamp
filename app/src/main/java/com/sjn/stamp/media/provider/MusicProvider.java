@@ -32,7 +32,6 @@ import com.sjn.stamp.utils.MediaIDHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -215,7 +214,8 @@ public class MusicProvider {
         return mFavoriteTracks.contains(musicId);
     }
 
-    public List<MediaBrowserCompat.MediaItem> getChildren(String mediaId, Resources resources, String filter, Integer size, Comparator comparator) {
+    public List<MediaBrowserCompat.MediaItem> getChildren(String mediaId, Resources resources) {
+        LogHelper.i(TAG, "getChildren mediaId: " + mediaId);
         List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>();
 
         if (!MediaIDHelper.isBrowseable(mediaId)) {
@@ -226,11 +226,10 @@ public class MusicProvider {
             for (ListProvider listProvider : mListProviderMap.values()) {
                 mediaItems.add(listProvider.getRootMenu(resources));
             }
-
         } else {
             ProviderType type = ProviderType.of(mediaId);
             if (type != null) {
-                return getProvider(type).getListItems(mediaId, resources, mCurrentState, mMusicListById, filter, size, comparator);
+                return getProvider(type).getListItems(mediaId, resources, mCurrentState, mMusicListById);
             }
         }
         return mediaItems;
@@ -295,6 +294,7 @@ public class MusicProvider {
         @Override
         protected ListProvider.ProviderState doInBackground(Void... params) {
             retrieveMedia();
+            LogHelper.i(TAG, "RetrieveMediaAsyncTask.doInBackground end");
             return mCurrentState;
         }
 

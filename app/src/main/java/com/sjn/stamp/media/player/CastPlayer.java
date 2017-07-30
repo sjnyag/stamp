@@ -1,6 +1,8 @@
 package com.sjn.stamp.media.player;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.media.MediaBrowserServiceCompat;
 
 import com.google.android.gms.cast.framework.CastContext;
@@ -26,12 +28,18 @@ public class CastPlayer {
         mSessionManagerListener = sessionManagerListener;
 
         if (!TvHelper.isTvUiMode(mContext)) {
-            try {
-                mCastSessionManager = CastContext.getSharedInstance(mContext).getSessionManager();
-                mCastSessionManager.addSessionManagerListener(mSessionManagerListener, CastSession.class);
-            } catch (RuntimeException e) {
-                e.printStackTrace();
-            }
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        mCastSessionManager = CastContext.getSharedInstance(mContext).getSessionManager();
+                        mCastSessionManager.addSessionManagerListener(mSessionManagerListener, CastSession.class);
+                    } catch (RuntimeException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
     }
 

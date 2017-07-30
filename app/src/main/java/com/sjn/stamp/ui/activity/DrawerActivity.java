@@ -81,7 +81,7 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LogHelper.d(TAG, "Activity onCreate");
     }
@@ -104,7 +104,7 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
     }
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
         // Whenever the fragment back stack changes, we may need to update the
         // action bar toggle: only top level screens show the hamburger-like icon, inner
@@ -121,13 +121,13 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
     }
 
     @Override
-    public void onPause() {
+    protected void onPause() {
         super.onPause();
         getSupportFragmentManager().removeOnBackStackChangedListener(this);
     }
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
     }
 

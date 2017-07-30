@@ -34,7 +34,7 @@ public class QueueTitleItem extends AbstractItem<QueueTitleItem.LayoutViewHolder
 
     @Override
     public int getLayoutRes() {
-        return R.layout.recycler_scrollable_layout_item;
+        return R.layout.recycler_queue_title_item;
     }
 
     @Override

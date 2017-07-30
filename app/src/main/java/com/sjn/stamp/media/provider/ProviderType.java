@@ -50,7 +50,7 @@ public enum ProviderType {
             return CategoryType.GENRE;
         }
     },
-    TAG(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_STAMP) {
+    STAMP(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_STAMP) {
         @Override
         public ListProvider newProvider(Context context) {
             return new StampListProvider(context);

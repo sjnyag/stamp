@@ -50,10 +50,14 @@ public class SongHistoryController {
         mTotalSongHistoryDao = TotalSongHistoryDao.getInstance();
     }
 
-    public void deleteSongHistory(SongHistory songHistory) {
+    public void deleteSongHistory(long songHistoryId) {
         Realm realm = RealmHelper.getRealmInstance();
-        mSongHistoryDao.remove(realm, songHistory.getId());
+        mSongHistoryDao.remove(realm, songHistoryId);
         realm.close();
+    }
+
+    public void deleteSongHistory(SongHistory songHistory) {
+        deleteSongHistory(songHistory.getId());
     }
 
     public void onPlay(MediaMetadataCompat track, Date date) {

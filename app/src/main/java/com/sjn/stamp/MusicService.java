@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
+import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaBrowserCompat.MediaItem;
 import android.support.v4.media.MediaBrowserServiceCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -31,11 +32,9 @@ import com.sjn.stamp.media.player.CastPlayer;
 import com.sjn.stamp.media.player.Player;
 import com.sjn.stamp.media.provider.MusicProvider;
 import com.sjn.stamp.media.source.LocalMediaSource;
-import com.sjn.stamp.utils.CarHelper;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.MediaRetrieveHelper;
-import com.sjn.stamp.utils.WearHelper;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -119,7 +118,7 @@ public class MusicService extends MediaBrowserServiceCompat
     private final DelayedStopHandler mDelayedStopHandler = new DelayedStopHandler(this);
     */
 
-    private PackageValidator mPackageValidator;
+    //private PackageValidator mPackageValidator;
     private MediaNotificationManager mMediaNotificationManager;
 
     private Player mPlayer;
@@ -136,7 +135,7 @@ public class MusicService extends MediaBrowserServiceCompat
         super.onCreate();
         JodaTimeAndroid.init(this);
         LogHelper.d(TAG, "onCreate");
-        mPackageValidator = new PackageValidator(this);
+        //mPackageValidator = new PackageValidator(this);
         mMusicProvider = new MusicProvider(this, new LocalMediaSource(this, this));
         // To make the app more responsive, fetch and cache catalog information now.
         // This can help improve the response time in the method
@@ -145,17 +144,24 @@ public class MusicService extends MediaBrowserServiceCompat
                 new MusicProvider.Callback() {
                     @Override
                     public void onMusicCatalogReady(boolean success) {
+                        LogHelper.d(TAG, "MusicProvider.callBack start");
                         mPlayer = new Player(MusicService.this, MusicService.this);
                         setSessionToken(mPlayer.initialize(MusicService.this, mMusicProvider));
-                        mPlayer.restorePreviousState(mMusicProvider);
-                        mCarPlayer = new CarPlayer(MusicService.this);
-                        mCastPlayer = new CastPlayer(MusicService.this, mPlayer.getSessionManageListener());
-                        try {
-                            mMediaNotificationManager = new MediaNotificationManager(MusicService.this);
-                        } catch (RemoteException e) {
-                            throw new IllegalStateException("Could not create a MediaNotificationManager", e);
-                        }
-                        mCarPlayer.registerCarConnectionReceiver();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mPlayer.restorePreviousState(mMusicProvider);
+                                mCarPlayer = new CarPlayer(MusicService.this);
+                                mCarPlayer.registerCarConnectionReceiver();
+                                mCastPlayer = new CastPlayer(MusicService.this, mPlayer.getSessionManageListener());
+                                try {
+                                    mMediaNotificationManager = new MediaNotificationManager(MusicService.this);
+                                } catch (RemoteException e) {
+                                    throw new IllegalStateException("Could not create a MediaNotificationManager", e);
+                                }
+                                LogHelper.d(TAG, "MusicProvider.callBack ended");
+                            }
+                        }).start();
                     }
                 }
         );
@@ -233,31 +239,31 @@ public class MusicService extends MediaBrowserServiceCompat
                                  Bundle rootHints) {
         LogHelper.d(TAG, "OnGetRoot: clientPackageName=" + clientPackageName,
                 "; clientUid=" + clientUid + " ; rootHints=", rootHints);
-        // To ensure you are not allowing any arbitrary app to browse your app's contents, you
-        // need to check the origin:
-        if (!mPackageValidator.isCallerAllowed(this, clientPackageName, clientUid)) {
-            // If the request comes from an untrusted package, return an empty browser root.
-            // If you return null, then the media browser will not be able to connect and
-            // no further calls will be made to other media browsing methods.
-            LogHelper.i(TAG, "OnGetRoot: Browsing NOT ALLOWED for unknown caller. "
-                    + "Returning empty browser root so all apps can use MediaController."
-                    + clientPackageName);
-            return new MediaBrowserServiceCompat.BrowserRoot(MediaIDHelper.MEDIA_ID_EMPTY_ROOT, null);
-        }
-        //noinspection StatementWithEmptyBody
-        if (CarHelper.isValidCarPackage(clientPackageName)) {
-            // Optional: if your app needs to adapt the music library to show a different subset
-            // when connected to the car, this is where you should handle it.
-            // If you want to adapt other runtime behaviors, like tweak ads or change some behavior
-            // that should be different on cars, you should instead use the boolean flag
-            // set by the BroadcastReceiver mCarConnectionReceiver (mIsConnectedToCar).
-        }
-        //noinspection StatementWithEmptyBody
-        if (WearHelper.isValidWearCompanionPackage(clientPackageName)) {
-            // Optional: if your app needs to adapt the music library for when browsing from a
-            // Wear device, you should return a different MEDIA ROOT here, and then,
-            // on onLoadChildren, handle it accordingly.
-        }
+//        // To ensure you are not allowing any arbitrary app to browse your app's contents, you
+//        // need to check the origin:
+//        if (!mPackageValidator.isCallerAllowed(this, clientPackageName, clientUid)) {
+//            // If the request comes from an untrusted package, return an empty browser root.
+//            // If you return null, then the media browser will not be able to connect and
+//            // no further calls will be made to other media browsing methods.
+//            LogHelper.i(TAG, "OnGetRoot: Browsing NOT ALLOWED for unknown caller. "
+//                    + "Returning empty browser root so all apps can use MediaController."
+//                    + clientPackageName);
+//            return new MediaBrowserServiceCompat.BrowserRoot(MediaIDHelper.MEDIA_ID_EMPTY_ROOT, null);
+//        }
+//        //noinspection StatementWithEmptyBody
+//        if (CarHelper.isValidCarPackage(clientPackageName)) {
+//            // Optional: if your app needs to adapt the music library to show a different subset
+//            // when connected to the car, this is where you should handle it.
+//            // If you want to adapt other runtime behaviors, like tweak ads or change some behavior
+//            // that should be different on cars, you should instead use the boolean flag
+//            // set by the BroadcastReceiver mCarConnectionReceiver (mIsConnectedToCar).
+//        }
+//        //noinspection StatementWithEmptyBody
+//        if (WearHelper.isValidWearCompanionPackage(clientPackageName)) {
+//            // Optional: if your app needs to adapt the music library for when browsing from a
+//            // Wear device, you should return a different MEDIA ROOT here, and then,
+//            // on onLoadChildren, handle it accordingly.
+//        }
 
         return new BrowserRoot(MediaIDHelper.MEDIA_ID_ROOT, null);
     }
@@ -270,14 +276,20 @@ public class MusicService extends MediaBrowserServiceCompat
             result.sendResult(new ArrayList<MediaItem>());
         } else if (mMusicProvider.isInitialized()) {
             // if music library is ready, return immediately
-            result.sendResult(mMusicProvider.getChildren(parentMediaId, getResources(), null, null, null));
+            result.detach();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    result.sendResult(mMusicProvider.getChildren(parentMediaId, getResources()));
+                }
+            }).start();
         } else {
             // otherwise, only return results when the music library is retrieved
             result.detach();
 //            mMusicProvider.retrieveMediaAsync(new MusicProvider.Callback() {
 //                @Override
 //                public void onMusicCatalogReady(boolean success) {
-//                    result.sendResult(mMusicProvider.getChildren(parentMediaId, getResources(), null, null, null));
+//                    result.sendResult(mMusicProvider.getChildren(parentMediaId, getResources()));
 //                }
 //            });
         }
@@ -328,6 +340,19 @@ public class MusicService extends MediaBrowserServiceCompat
     }
 
     @Override
+    public void onSearch(@NonNull final String query, Bundle extras,
+                         final @NonNull Result<List<MediaBrowserCompat.MediaItem>> result) {
+        LogHelper.i(TAG, "onSearch " + query);
+        result.detach();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                result.sendResult(mMusicProvider.getChildren(query, getResources()));
+            }
+        }).start();
+    }
+
+    @Override
     public void onNotificationRequired() {
         mMediaNotificationManager.startNotification();
     }
@@ -339,6 +364,7 @@ public class MusicService extends MediaBrowserServiceCompat
 
     @Override
     public Playback requestPlayback(Playback.Type type) {
+        LogHelper.d(TAG, "requestPlayback");
         return type.createInstance(mMusicProvider, this);
     }
 

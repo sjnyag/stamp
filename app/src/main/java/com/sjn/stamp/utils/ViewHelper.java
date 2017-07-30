@@ -99,34 +99,6 @@ public class ViewHelper {
         updateAlbumArt(activity, view, artUrl, text, 128, 128);
     }
 
-
-    public static void updateAlbumArt(final Activity activity, final FlipView flipView, final String artUrl, final String text) {
-        flipView.getChildAt(0).setBackgroundResource(0);
-        flipView.getFrontImageView().setVisibility(View.INVISIBLE);
-        flipView.getFrontImageView().setTag(artUrl);
-        if (artUrl == null || artUrl.isEmpty()) {
-            //view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));
-            flipView.getChildAt(0).setBackground(createTextDrawable(text));
-            return;
-        }
-        Picasso.with(activity).load(artUrl).into(flipView.getFrontImageView(), new Callback() {
-            @Override
-            public void onSuccess() {
-                flipView.getFrontImageView().setVisibility(View.VISIBLE);
-                if (!artUrl.equals(flipView.getFrontImageView().getTag())) {
-                    updateAlbumArt(activity, flipView.getFrontImageView(), (String) flipView.getFrontImageView().getTag(), text);
-                }
-            }
-
-            @Override
-            public void onError() {
-                flipView.getChildAt(0).setBackground(createTextDrawable(text));
-                //view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));
-            }
-        });
-    }
-
-
     public static void updateAlbumArt(final Activity activity, final ImageView view, final String artUrl, final String text, final int targetWidth, final int targetHeight) {
         view.setTag(artUrl);
         if (artUrl == null || artUrl.isEmpty()) {
@@ -134,7 +106,7 @@ public class ViewHelper {
             view.setImageDrawable(createTextDrawable(text));
             return;
         }
-        Picasso.with(activity).load(artUrl).resize(targetWidth, targetHeight).into(view, new Callback() {
+        Picasso.with(activity).load(artUrl).placeholder(createTextDrawable(text)).resize(targetWidth, targetHeight).into(view, new Callback() {
             @Override
             public void onSuccess() {
                 if (!artUrl.equals(view.getTag())) {

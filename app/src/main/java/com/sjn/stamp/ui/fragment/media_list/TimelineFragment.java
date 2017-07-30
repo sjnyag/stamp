@@ -113,7 +113,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         LogHelper.d(TAG, "onItemClick ");
         AbstractFlexibleItem item = mAdapter.getItem(position);
         if (item instanceof SongHistoryItem) {
-            mMediaBrowsable.onMediaItemSelected(((SongHistoryItem) item).getSongHistory().getSong().getMediaId());
+            mMediaBrowsable.onMediaItemSelected(((SongHistoryItem) item).getMediaId());
         }
         return false;
     }
@@ -173,29 +173,18 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         }
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
-        //mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter.setFastScroller((FastScroller) rootView.findViewById(R.id.fast_scroller),
                 ViewHelper.getColorAccent(getActivity()), this);
 
-        mAdapter.setLongPressDragEnabled(true)
-                .setHandleDragEnabled(true)
+        mAdapter.setLongPressDragEnabled(false)
+                .setHandleDragEnabled(false)
                 .setSwipeEnabled(true)
                 .setUnlinkAllItemsOnRemoveHeaders(false)
                 .setDisplayHeadersAtStartUp(false)
                 .setStickyHeaders(true)
                 .showAllHeaders();
         mAdapter.addUserLearnedSelection(savedInstanceState == null);
-        //mAdapter.addScrollableHeaderWithDelay(new DateHeaderItem(TimeHelper.getJapanNow().toDate()), 900L, false);
-        //mAdapter.showLayoutInfo(savedInstanceState == null);
-//        mAdapter.addScrollableFooter();
-
-
-        // EndlessScrollListener - OnLoadMore (v5.0.0)
-        mAdapter//.setLoadingMoreAtStartUp(true) //To call only if the list is empty
-                //.setEndlessPageSize(3) //Endless is automatically disabled if newItems < 3
-                //.setEndlessTargetCount(15) //Endless is automatically disabled if totalItems >= 15
-                //.setEndlessScrollThreshold(1); //Default=1
-                .setEndlessScrollListener(this, mProgressItem);
+        mAdapter.setEndlessScrollListener(this, mProgressItem);
         initializeFabWithStamp();
         notifyFragmentChange();
         if (mItemList == null || mItemList.isEmpty()) {

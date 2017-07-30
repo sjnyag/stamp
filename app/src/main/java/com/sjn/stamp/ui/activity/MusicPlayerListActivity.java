@@ -130,6 +130,13 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
     }
 
     @Override
+    public void search(String query, Bundle extras, MediaBrowserCompat.SearchCallback callback) {
+        if (getMediaBrowser() != null) {
+            getMediaBrowser().search(query, extras, callback);
+        }
+    }
+
+    @Override
     public void playByCategory(String mediaId) {
         LogHelper.d(TAG, "playByCategory, mediaId=" + mediaId);
         MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);

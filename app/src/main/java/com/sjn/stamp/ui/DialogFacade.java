@@ -3,18 +3,20 @@ package com.sjn.stamp.ui;
 import android.content.Context;
 import android.content.DialogInterface;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.sjn.stamp.R;
 
 public class DialogFacade {
-    public static MaterialDialog.Builder createConfirmDialog(final Context context, int content, MaterialDialog.SingleButtonCallback callback) {
+    public static MaterialDialog.Builder createConfirmDialog(final Context context, int content, MaterialDialog.SingleButtonCallback callback, final MaterialDialog.OnDismissListener dismissListener) {
         return new MaterialDialog.Builder(context)
                 .title("確認")
                 .content(content)
                 .positiveText("OK")
                 .negativeText("キャンセル")
                 .onAny(callback)
+                .dismissListener(dismissListener)
                 .contentColorRes(android.R.color.white)
                 .backgroundColorRes(R.color.material_blue_grey_800)
                 .theme(Theme.DARK);
@@ -65,13 +67,14 @@ public class DialogFacade {
                 .theme(Theme.DARK);
     }
 
-    public static MaterialDialog.Builder createRetrieveMediaDialog(final Context context, MaterialDialog.SingleButtonCallback callback) {
+    public static MaterialDialog.Builder createRetrieveMediaDialog(final Context context, final MaterialDialog.SingleButtonCallback callback, final MaterialDialog.OnDismissListener dismissListener) {
         return new MaterialDialog.Builder(context)
                 .title("音楽ファイルの再ロード")
                 .content("端末内の音楽ファイルの再ロードを実施します。（ファイルの量によっては少し時間がかかります。）よろしいですか？")
                 .positiveText("再ロードする")
                 .negativeText("キャンセル")
                 .onAny(callback)
+                .dismissListener(dismissListener)
                 .contentColorRes(android.R.color.white)
                 .backgroundColorRes(R.color.material_blue_grey_800)
                 .theme(Theme.DARK);

@@ -1,6 +1,7 @@
 package com.sjn.stamp.ui.fragment;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.preference.Preference;
@@ -51,6 +52,10 @@ public class SettingFragment extends PreferenceFragmentCompat {
                                 return;
                         }
                     }
+                }, new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                    }
                 }).show();
                 return true;
             }
@@ -74,6 +79,10 @@ public class SettingFragment extends PreferenceFragmentCompat {
                                 progressDialog.dismiss();
                                 return;
                         }
+                    }
+                }, new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
                     }
                 }).show();
                 return true;

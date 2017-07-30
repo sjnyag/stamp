@@ -55,7 +55,7 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity
     private Target mTarget;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         LogHelper.i(TAG, "Activity onCreate");
@@ -89,7 +89,9 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity
         mControlsFragment = (PlaybackControlsFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_playback_controls);
         if (mControlsFragment == null) {
-            throw new IllegalStateException("Missing fragment with id 'controls'. Cannot continue.");
+            LogHelper.e(TAG, "Missing fragment with id 'controls'. Cannot continue.");
+            return;
+            //throw new IllegalStateException("Missing fragment with id 'controls'. Cannot continue.");
         }
         if (MediaControllerCompat.getMediaController(this) != null) {
             MediaControllerCompat.getMediaController(this).registerCallback(MediaControllerObserver.getInstance());
@@ -109,7 +111,7 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity
     }
 
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         LogHelper.i(TAG, "Activity onDestroy");
         mMediaBrowser.disconnect();
@@ -200,7 +202,7 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity
     public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
         if (shouldShowControls()) {
             showPlaybackControls();
-        } else {
+        } else if (state != null) {
             LogHelper.d(TAG, "mediaControllerCallback.onPlaybackStateChanged: " +
                     "hiding controls because state is ", state.getState());
             hidePlaybackControls();
