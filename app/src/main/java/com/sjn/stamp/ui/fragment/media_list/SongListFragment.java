@@ -72,7 +72,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
      */
     @Override
     public int getMenuResourceId() {
-        return R.menu.main;
+        return R.menu.song_list;
     }
 
     /**

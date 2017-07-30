@@ -180,7 +180,7 @@ public abstract class ListFragment extends Fragment implements
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         LogHelper.d(TAG, "onCreateOptionsMenu START");
-        menu.clear();
+        //menu.clear();
         inflater.inflate(getMenuResourceId(), menu);
         mListener.initSearchView(menu);
         LogHelper.d(TAG, "onCreateOptionsMenu END");

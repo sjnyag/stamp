@@ -13,6 +13,8 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -151,6 +153,7 @@ public class RankingFragment extends MediaBrowserListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(false);
         final View rootView = inflater.inflate(R.layout.fragment_ranking, container, false);
         mRankKind = parseArgRankKind();
         mLoading = (ProgressBar) rootView.findViewById(R.id.progressBar);

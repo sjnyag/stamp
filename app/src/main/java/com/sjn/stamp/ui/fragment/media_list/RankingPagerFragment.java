@@ -35,7 +35,6 @@ public class RankingPagerFragment extends PagerFragment implements PagerFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
         inflater.inflate(R.menu.ranking, menu);
     }
 
