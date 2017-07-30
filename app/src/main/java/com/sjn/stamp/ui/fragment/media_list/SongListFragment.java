@@ -118,7 +118,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                         handler.post(new Runnable() {
                             public void run() {
                                 mProgressDialog = new ProgressDialog(getActivity());
-                                mProgressDialog.setMessage("処理中");
+                                mProgressDialog.setMessage(getString(R.string.message_processing));
                                 mProgressDialog.show();
                             }
                         });

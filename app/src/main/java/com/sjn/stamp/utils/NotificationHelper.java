@@ -42,8 +42,8 @@ public class NotificationHelper {
     }
 
     public static void sendPlayedNotification(Context context, String title, String bitmapUrl, int playCount, Date recordedAt) {
-        String contentTitle = title + "を" + playCount + "回再生しました！！";
-        String contentText = "最初に聞いてから" + TimeHelper.getDateDiff(recordedAt) + "です。";
+        String contentTitle = context.getResources().getString(R.string.notification_title, title, String.valueOf(playCount));
+        String contentText = context.getResources().getString(R.string.notification_text, TimeHelper.getDateDiff(context, recordedAt));
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_KEY_PLAYED_TEXT, contentTitle + "\n" + contentText);
         fetchBitmapFromURLAsync(context, bitmapUrl, new NotificationCompat.Builder(context)
@@ -69,7 +69,7 @@ public class NotificationHelper {
                 int requestCode = builder.hashCode();
                 builder.setContentIntent(createTweetAction(context, requestCode, builder.getExtras().getString(BUNDLE_KEY_PLAYED_TEXT)));
 
-                builder.addAction(R.drawable.ic_share, "Share", createTweetAction(context, requestCode, builder.getExtras().getString(BUNDLE_KEY_PLAYED_TEXT)));
+                builder.addAction(R.drawable.ic_share, context.getResources().getString(R.string.notification_share), createTweetAction(context, requestCode, builder.getExtras().getString(BUNDLE_KEY_PLAYED_TEXT)));
                 send(context, requestCode, builder);
             }
 
@@ -97,7 +97,7 @@ public class NotificationHelper {
             int requestCode = mBuilder.hashCode();
             mBuilder.setContentIntent(createTweetAction(mContext, requestCode, mBuilder.getExtras().getString(BUNDLE_KEY_PLAYED_TEXT)));
 
-            mBuilder.addAction(R.drawable.ic_share, "Share", createTweetAction(mContext, requestCode, mBuilder.getExtras().getString(BUNDLE_KEY_PLAYED_TEXT)));
+            mBuilder.addAction(R.drawable.ic_share, mContext.getResources().getString(R.string.notification_share), createTweetAction(mContext, requestCode, mBuilder.getExtras().getString(BUNDLE_KEY_PLAYED_TEXT)));
             send(mContext, requestCode, mBuilder);
             return null;
         }

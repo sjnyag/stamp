@@ -26,7 +26,6 @@ import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.items.IFilterable;
 import eu.davidea.flexibleadapter.utils.Utils;
-import eu.davidea.viewholders.FlexibleViewHolder;
 
 public class RankedSongItem extends AbstractItem<RankedSongItem.SimpleViewHolder> implements IFilterable, Serializable {
 
@@ -147,7 +146,7 @@ public class RankedSongItem extends AbstractItem<RankedSongItem.SimpleViewHolder
                 SongController songController = new SongController(mContext);
                 for (String stampName : songController.findStampsByMediaId(mediaId)) {
                     TextView textView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.text_view_remove_stamp, null);
-                    textView.setText("- " + stampName);
+                    textView.setText(mTitle.getContext().getString(R.string.stamp_delete, stampName));
                     textView.setTag(R.id.text_view_remove_stamp_stamp_name, stampName);
                     textView.setTag(R.id.text_view_remove_stamp_media_id, mediaId);
                     textView.setOnClickListener(mOnRemoveStamp);

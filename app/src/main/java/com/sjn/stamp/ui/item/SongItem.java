@@ -194,7 +194,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
                 SongController songController = new SongController(mContext);
                 for (String stampName : songController.findStampsByMediaId(mediaId)) {
                     TextView textView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.text_view_remove_stamp, null);
-                    textView.setText("- " + stampName);
+                    textView.setText(mTitle.getContext().getString(R.string.stamp_delete, stampName));
                     textView.setTag(R.id.text_view_remove_stamp_stamp_name, stampName);
                     textView.setTag(R.id.text_view_remove_stamp_media_id, mediaId);
                     textView.setOnClickListener(mOnRemoveStamp);

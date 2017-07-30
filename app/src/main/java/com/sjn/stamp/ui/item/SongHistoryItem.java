@@ -3,6 +3,7 @@ package com.sjn.stamp.ui.item;
 import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -59,7 +60,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
     private String mLabel;
     private long mSongHistoryId;
 
-    private SongHistoryItem(SongHistory songHistory) {
+    private SongHistoryItem(SongHistory songHistory, Resources resources) {
         super(String.valueOf(songHistory.getId()));
         setDraggable(true);
         setSwipeable(true);
@@ -69,11 +70,11 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
         mRecordedAt = songHistory.getRecordedAt();
         mTitle = songHistory.getSong().getTitle();
         mAlbumArtUri = songHistory.getSong().getAlbumArtUri();
-        mLabel = songHistory.toLabel();
+        mLabel = songHistory.toLabel(resources);
     }
 
-    public SongHistoryItem(SongHistory songHistory, DateHeaderItem header) {
-        this(songHistory);
+    public SongHistoryItem(SongHistory songHistory, DateHeaderItem header, Resources resources) {
+        this(songHistory, resources);
         this.header = header;
     }
 
@@ -119,7 +120,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
             holder.mTitle.setText(getTitle());
             holder.mSubtitle.setText(getSubtitle());
         }
-        holder.mDate.setText(getDateText(mRecordedAt));
+        holder.mDate.setText(getDateText(mRecordedAt, context.getResources()));
         ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, mAlbumArtUri, mTitle);
         holder.updateStampList(mMediaId);
     }
@@ -130,16 +131,16 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
                 getSubtitle() != null && getSubtitle().toLowerCase().trim().contains(constraint);
     }
 
-    private String getDateText(Date date) {
+    private String getDateText(Date date, Resources resources) {
         DateTime dateTime = TimeHelper.toDateTime(date).minusSeconds(20);
         DateTime now = TimeHelper.getJapanNow();
         Minutes minutes = Minutes.minutesBetween(dateTime, now);
         if (minutes.isLessThan(Minutes.minutes(1))) {
-            return String.format(Locale.JAPANESE, "%d 秒前", Seconds.secondsBetween(dateTime, now).getSeconds());
+            return resources.getString(R.string.item_song_history_seconds_ago, Seconds.secondsBetween(dateTime, now).getSeconds());
         } else if (minutes.isLessThan(Minutes.minutes(60))) {
-            return String.format(Locale.JAPANESE, "%d 分前", Minutes.minutesBetween(dateTime, now).getMinutes());
+            return resources.getString(R.string.item_song_history_minutes_ago, Minutes.minutesBetween(dateTime, now).getMinutes());
         } else {
-            return dateTime.toString("MM/dd HH:mm", Locale.JAPAN);
+            return TimeHelper.formatMMDDHHMM(dateTime);
         }
     }
 
@@ -250,7 +251,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
                 SongController songController = new SongController(mContext);
                 for (String stampName : songController.findStampsByMusicId(mediaId)) {
                     TextView textView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.text_view_remove_stamp, null);
-                    textView.setText("- " + stampName);
+                    textView.setText(mTitle.getContext().getString(R.string.stamp_delete, stampName));
                     textView.setTag(R.id.text_view_remove_stamp_stamp_name, stampName);
                     textView.setTag(R.id.text_view_remove_stamp_media_id, mediaId);
                     textView.setOnClickListener(mOnRemoveStamp);

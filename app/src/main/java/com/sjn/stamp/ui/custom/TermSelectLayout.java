@@ -1,6 +1,7 @@
 package com.sjn.stamp.ui.custom;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,17 +46,16 @@ public class TermSelectLayout extends LinearLayout {
             return mTermKind.to(mYear, mMonth, mDay);
         }
 
-        @Override
-        public String toString() {
+        public String toString(Resources resources) {
             switch (mTermKind) {
                 case TOTAL:
-                    return "総合";
+                    return resources.getString(R.string.term_label_total);
                 case YEARLY:
-                    return mYear + "年";
+                    return resources.getString(R.string.term_label_year, String.valueOf(mYear));
                 case MONTHLY:
-                    return mYear + "年" + mMonth + "月";
+                    return resources.getString(R.string.term_label_month, String.valueOf(mYear), String.valueOf(mMonth));
                 case DAIRY:
-                    return mYear + "年" + mMonth + "月" + mDay + "日";
+                    return resources.getString(R.string.tern_label_day, String.valueOf(mYear), String.valueOf(mMonth), String.valueOf(mDay));
                 default:
                     return "";
             }
@@ -70,13 +70,13 @@ public class TermSelectLayout extends LinearLayout {
     @Getter
     @AllArgsConstructor
     private enum TermKind {
-        TOTAL(0, "総合", GONE, GONE, GONE),
-        YEARLY(1, "年間", VISIBLE, GONE, GONE),
-        MONTHLY(2, "月間", VISIBLE, VISIBLE, GONE),
-        DAIRY(3, "デイリー", VISIBLE, VISIBLE, VISIBLE);
+        TOTAL(0, R.string.term_total, GONE, GONE, GONE),
+        YEARLY(1, R.string.term_yearly, VISIBLE, GONE, GONE),
+        MONTHLY(2, R.string.term_monthly, VISIBLE, VISIBLE, GONE),
+        DAIRY(3, R.string.term_dairy, VISIBLE, VISIBLE, VISIBLE);
 
         final public int mValue;
-        final public String mText;
+        final public int mTextId;
         final public int mYearVisibility;
         final public int mMonthVisibility;
         final public int mDayVisibility;
@@ -88,14 +88,14 @@ public class TermSelectLayout extends LinearLayout {
             return null;
         }
 
-        public String toString() {
-            return this.getText();
+        public String toString(Resources resources) {
+            return resources.getString(mTextId);
         }
 
-        public static String[] strings() {
+        public static String[] strings(Resources resources) {
             List<String> strings = new ArrayList<>();
             for (TermKind termKind : TermKind.values()) {
-                strings.add(termKind.mText);
+                strings.add(resources.getString(termKind.mTextId));
             }
             return strings.toArray(new String[0]);
         }
@@ -151,7 +151,7 @@ public class TermSelectLayout extends LinearLayout {
         mTermMonth = (LinearLayout) mLayout.findViewById(R.id.term_month);
         mTermDay = (LinearLayout) mLayout.findViewById(R.id.term_day);
         mTerm = term;
-        termSpinner.setAdapter(createSpinnerAdapter(TermKind.strings()));
+        termSpinner.setAdapter(createSpinnerAdapter(TermKind.strings(getResources())));
         termSpinner.setSelection(mTerm.getTermKind().getValue());
         termSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

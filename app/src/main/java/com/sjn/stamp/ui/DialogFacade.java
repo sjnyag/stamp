@@ -3,7 +3,6 @@ package com.sjn.stamp.ui;
 import android.content.Context;
 import android.content.DialogInterface;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.sjn.stamp.R;
@@ -11,10 +10,10 @@ import com.sjn.stamp.R;
 public class DialogFacade {
     public static MaterialDialog.Builder createConfirmDialog(final Context context, int content, MaterialDialog.SingleButtonCallback callback, final MaterialDialog.OnDismissListener dismissListener) {
         return new MaterialDialog.Builder(context)
-                .title("確認")
+                .title(R.string.dialog_confirm_title)
                 .content(content)
-                .positiveText("OK")
-                .negativeText("キャンセル")
+                .positiveText(R.string.dialog_ok)
+                .negativeText(R.string.dialog_cancel)
                 .onAny(callback)
                 .dismissListener(dismissListener)
                 .contentColorRes(android.R.color.white)
@@ -24,9 +23,9 @@ public class DialogFacade {
 
     public static MaterialDialog.Builder createRestartDialog(final Context context, MaterialDialog.SingleButtonCallback callback) {
         return new MaterialDialog.Builder(context)
-                .title("再起動")
-                .content("バックアップを反映するために再起動します。")
-                .positiveText("OK")
+                .title(R.string.dialog_restart_title)
+                .content(R.string.dialog_restart_content)
+                .positiveText(R.string.dialog_ok)
                 .onAny(callback)
                 .contentColorRes(android.R.color.white)
                 .backgroundColorRes(R.color.material_blue_grey_800)
@@ -35,10 +34,10 @@ public class DialogFacade {
 
     public static MaterialDialog.Builder createStampDeleteDialog(final Context context, String stamp, MaterialDialog.SingleButtonCallback callback) {
         return new MaterialDialog.Builder(context)
-                .title("タグの削除")
-                .content("タグ「" + stamp + "」を削除しますか？")
-                .positiveText("削除する")
-                .negativeText("キャンセル")
+                .title(R.string.dialog_delete_stamp_title)
+                .content(R.string.dialog_delete_stamp_content, stamp)
+                .positiveText(R.string.dialog_delete)
+                .negativeText(R.string.dialog_cancel)
                 .onAny(callback)
                 .contentColorRes(android.R.color.white)
                 .backgroundColorRes(R.color.material_blue_grey_800)
@@ -47,8 +46,8 @@ public class DialogFacade {
 
     public static MaterialDialog.Builder createLetsPlayMusicDialog(final Context context) {
         return new MaterialDialog.Builder(context)
-                .title("まだ音楽の再生履歴がありません")
-                .positiveText("OK")
+                .title(R.string.dialog_lets_play_title)
+                .positiveText(R.string.dialog_ok)
                 .contentColorRes(android.R.color.white)
                 .backgroundColorRes(R.color.material_blue_grey_800)
                 .theme(Theme.DARK);
@@ -56,10 +55,10 @@ public class DialogFacade {
 
     public static MaterialDialog.Builder createHistoryDeleteDialog(final Context context, String history, MaterialDialog.SingleButtonCallback callback, DialogInterface.OnDismissListener dismissListener) {
         return new MaterialDialog.Builder(context)
-                .title("再生履歴の削除")
-                .content("再生履歴「" + history + "」を削除しますか？")
-                .positiveText("削除する")
-                .negativeText("キャンセル")
+                .title(R.string.dialog_delete_history_title)
+                .content(R.string.dialog_delete_history_content, history)
+                .positiveText(R.string.dialog_delete)
+                .negativeText(R.string.dialog_cancel)
                 .onAny(callback)
                 .dismissListener(dismissListener)
                 .contentColorRes(android.R.color.white)
@@ -69,10 +68,10 @@ public class DialogFacade {
 
     public static MaterialDialog.Builder createRetrieveMediaDialog(final Context context, final MaterialDialog.SingleButtonCallback callback, final MaterialDialog.OnDismissListener dismissListener) {
         return new MaterialDialog.Builder(context)
-                .title("音楽ファイルの再ロード")
-                .content("端末内の音楽ファイルの再ロードを実施します。（ファイルの量によっては少し時間がかかります。）よろしいですか？")
-                .positiveText("再ロードする")
-                .negativeText("キャンセル")
+                .title(R.string.dialog_reload_music_title)
+                .content(R.string.dialog_reload_music_content)
+                .positiveText(R.string.dialog_reload)
+                .negativeText(R.string.dialog_cancel)
                 .onAny(callback)
                 .dismissListener(dismissListener)
                 .contentColorRes(android.R.color.white)

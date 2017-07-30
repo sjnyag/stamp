@@ -105,7 +105,6 @@ dependencies {
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
     compile 'com.github.vajro:MaterialDesignLibrary:1.6'
     compile 'com.github.pedrovgs:draggablepanel:1.9'
-    compile 'com.github.linger1216:labelview:v1.1.2'
     compile 'eu.davidea:flexible-adapter:5.0.0-rc1'
     compile 'eu.davidea:flipview:1.1.2'
     compile 'com.anupcowkur:reservoir:2.1'

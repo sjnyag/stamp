@@ -56,27 +56,23 @@ public class SongHistoryController {
         realm.close();
     }
 
-    public void deleteSongHistory(SongHistory songHistory) {
-        deleteSongHistory(songHistory.getId());
-    }
-
     public void onPlay(MediaMetadataCompat track, Date date) {
-        LogHelper.i(TAG, "insertPLAY ", track.getDescription().getTitle());
+        LogHelper.d(TAG, "insertPLAY ", track.getDescription().getTitle());
         registerHistory(track, RecordType.PLAY, date);
     }
 
     public void onSkip(MediaMetadataCompat track, Date date) {
-        LogHelper.i(TAG, "insertSKIP ", track.getDescription().getTitle());
+        LogHelper.d(TAG, "insertSKIP ", track.getDescription().getTitle());
         registerHistory(track, RecordType.SKIP, date);
     }
 
     public void onStart(MediaMetadataCompat track, Date date) {
-        LogHelper.i(TAG, "insertSTART ", track.getDescription().getTitle());
+        LogHelper.d(TAG, "insertSTART ", track.getDescription().getTitle());
         registerHistory(track, RecordType.START, date);
     }
 
     public void onComplete(MediaMetadataCompat track, Date date) {
-        LogHelper.i(TAG, "insertComplete ", track.getDescription().getTitle());
+        LogHelper.d(TAG, "insertComplete ", track.getDescription().getTitle());
         registerHistory(track, RecordType.COMPLETE, date);
     }
 
@@ -163,11 +159,11 @@ public class SongHistoryController {
     }
 
     private List<RankedSong> getRankedSongList(Realm realm, Date from, Date to) {
-        LogHelper.i(TAG, "getRankedSongList start");
-        LogHelper.i(TAG, "calc historyList");
+        LogHelper.d(TAG, "getRankedSongList start");
+        LogHelper.d(TAG, "calc historyList");
         List<SongHistory> historyList = mSongHistoryDao.where(realm, from, to, RecordType.PLAY.getValue());
         Map<Song, Integer> songCountMap = new HashMap<>();
-        LogHelper.i(TAG, "put songCountMap");
+        LogHelper.d(TAG, "put songCountMap");
         for (SongHistory songHistory : historyList) {
             if (songCountMap.containsKey(songHistory.getSong())) {
                 songCountMap.put(songHistory.getSong(), songCountMap.get(songHistory.getSong()) + 1);
@@ -175,12 +171,12 @@ public class SongHistoryController {
                 songCountMap.put(songHistory.getSong(), 1);
             }
         }
-        LogHelper.i(TAG, "create rankedSongList");
+        LogHelper.d(TAG, "create rankedSongList");
         List<RankedSong> rankedSongList = new ArrayList<>();
         for (Map.Entry<Song, Integer> entry : songCountMap.entrySet()) {
             rankedSongList.add(new RankedSong(entry.getValue(), entry.getKey()));
         }
-        LogHelper.i(TAG, "sort rankedSongList");
+        LogHelper.d(TAG, "sort rankedSongList");
         Collections.sort(rankedSongList, new Comparator<RankedSong>() {
             @Override
             public int compare(RankedSong t1, RankedSong t2) {
@@ -190,12 +186,12 @@ public class SongHistoryController {
         if (rankedSongList.size() > 30) {
             rankedSongList = rankedSongList.subList(0, 30);
         }
-        LogHelper.i(TAG, "getRankedSongList end");
+        LogHelper.d(TAG, "getRankedSongList end");
         return rankedSongList;
     }
 
     private List<RankedArtist> getRankedArtistList(Realm realm, Date from, Date to) {
-        LogHelper.i(TAG, "getRankedArtistList start");
+        LogHelper.d(TAG, "getRankedArtistList start");
         List<SongHistory> historyList = mSongHistoryDao.where(realm, from, to, RecordType.PLAY.getValue());
         Map<Artist, ArtistCounter> artistMap = new HashMap<>();
         for (SongHistory songHistory : historyList) {
@@ -215,7 +211,7 @@ public class SongHistoryController {
         if (rankedArtistList.size() > 30) {
             rankedArtistList = rankedArtistList.subList(0, 30);
         }
-        LogHelper.i(TAG, "getRankedArtistList end");
+        LogHelper.d(TAG, "getRankedArtistList end");
         return rankedArtistList;
     }
 
@@ -257,7 +253,13 @@ public class SongHistoryController {
                 int playCount = historyList.size();
                 if (NotificationHelper.isSendPlayedNotification(playCount)) {
                     SongHistory oldestSongHistory = mSongHistoryDao.findOldestByArtist(realm, mArtistName);
-                    NotificationHelper.sendPlayedNotification(mContext, mArtistName, oldestSongHistory.getSong().getAlbumArtUri(), playCount, oldestSongHistory.mRecordedAt);
+                    NotificationHelper.sendPlayedNotification(
+                            mContext,
+                            mArtistName,
+                            oldestSongHistory.getSong().getAlbumArtUri(),
+                            playCount,
+                            oldestSongHistory.mRecordedAt
+                    );
                 }
             } finally {
                 if (realm != null) {

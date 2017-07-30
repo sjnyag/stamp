@@ -30,8 +30,8 @@ import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.images.WebImage;
 import com.sjn.stamp.media.provider.MusicProvider;
 import com.sjn.stamp.media.source.MusicProviderSource;
-import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.LogHelper;
+import com.sjn.stamp.utils.MediaIDHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,30 +41,30 @@ import static android.support.v4.media.session.MediaSessionCompat.QueueItem;
 /**
  * An implementation of Playback that talks to Cast.
  */
-public class CastPlayback implements Playback {
+class CastPlayback implements Playback {
 
     private static final String TAG = LogHelper.makeLogTag(CastPlayback.class);
 
-    protected static final String MIME_TYPE_AUDIO_MPEG = "audio/mpeg";
-    protected static final String ITEM_ID = "itemId";
+    private static final String MIME_TYPE_AUDIO_MPEG = "audio/mpeg";
+    static final String ITEM_ID = "itemId";
 
-    protected final MusicProvider mMusicProvider;
-    protected final Context mAppContext;
-    protected final RemoteMediaClient mRemoteMediaClient;
-    protected final RemoteMediaClient.Listener mRemoteMediaClientListener;
+    final MusicProvider mMusicProvider;
+    final Context mAppContext;
+    final RemoteMediaClient mRemoteMediaClient;
+    private final RemoteMediaClient.Listener mRemoteMediaClientListener;
 
     /**
      * The current PlaybackState
      */
-    protected int mState;
+    int mState;
     /**
      * Callback for making completion/error calls on
      */
-    protected Callback mCallback;
-    protected volatile int mCurrentPosition;
-    protected volatile String mCurrentMediaId;
+    private Callback mCallback;
+    volatile int mCurrentPosition;
+    volatile String mCurrentMediaId;
 
-    public CastPlayback(MusicProvider musicProvider, Context context) {
+    CastPlayback(MusicProvider musicProvider, Context context) {
         mMusicProvider = musicProvider;
         mAppContext = context.getApplicationContext();
 

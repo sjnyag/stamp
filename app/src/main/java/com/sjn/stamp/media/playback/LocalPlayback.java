@@ -48,16 +48,16 @@ import static com.sjn.stamp.utils.NotificationHelper.CMD_PAUSE;
 /**
  * A class that implements local media playback using {@link android.media.MediaPlayer}
  */
-public class LocalPlayback implements Playback, AudioManager.OnAudioFocusChangeListener,
+class LocalPlayback implements Playback, AudioManager.OnAudioFocusChangeListener,
         OnCompletionListener, OnErrorListener, OnPreparedListener, OnSeekCompleteListener {
 
     private static final String TAG = LogHelper.makeLogTag(LocalPlayback.class);
 
     // The volume we set the media player to when we lose audio focus, but are
     // allowed to reduce the volume instead of stopping playback.
-    public static final float VOLUME_DUCK = 0.2f;
+    private static final float VOLUME_DUCK = 0.2f;
     // The volume we set the media player when we have audio focus.
-    public static final float VOLUME_NORMAL = 1.0f;
+    private static final float VOLUME_NORMAL = 1.0f;
 
     // we don't have audio focus, and can't duck (play at a low volume)
     private static final int AUDIO_NO_FOCUS_NO_DUCK = 0;
@@ -99,7 +99,7 @@ public class LocalPlayback implements Playback, AudioManager.OnAudioFocusChangeL
         }
     };
 
-    public LocalPlayback(MusicProvider musicProvider, Context context) {
+    LocalPlayback(MusicProvider musicProvider, Context context) {
         this.mContext = context;
         this.mMusicProvider = musicProvider;
         this.mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);

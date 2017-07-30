@@ -49,7 +49,7 @@ public class StampController {
         void onStampChange();
     }
 
-    public void notifyStampChange() {
+    void notifyStampChange() {
         for (Listener listener : mListenerSet) {
             listener.onStampChange();
         }
@@ -127,7 +127,7 @@ public class StampController {
         for (MediaMetadataCompat track : musicListById.values()) {
             for (Map.Entry<String, Map<CategoryType, List<String>>> entry1 : queryMap.entrySet()) {
                 for (Map.Entry<CategoryType, List<String>> entry : entry1.getValue().entrySet()) {
-                    if (entry.getValue().contains(track.getString(entry.getKey().getKey()).toLowerCase(Locale.US))) {
+                    if (entry.getValue().contains(track.getString(entry.getKey().getKey()).toLowerCase(Locale.getDefault()))) {
                         put(result, entry1.getKey(), track);
                     }
                 }
@@ -181,7 +181,7 @@ public class StampController {
         if (categoryType == null) {
             return;
         }
-        String query = categoryStamp.getValue().toLowerCase(Locale.US);
+        String query = categoryStamp.getValue().toLowerCase(Locale.getDefault());
         if (queryMap.containsKey(categoryType) && !queryMap.get(categoryType).isEmpty()) {
             queryMap.get(categoryType).add(query);
         } else {

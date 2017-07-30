@@ -13,8 +13,6 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -209,7 +207,7 @@ public class RankingFragment extends MediaBrowserListFragment {
                 if (getActivity() != null) {
                     final RankingSelectLayout termSelectLayout = new RankingSelectLayout(getActivity(), null, mTerm);
                     new MaterialDialog.Builder(getContext())
-                            .title("ランキング対象選択")
+                            .title(getString(R.string.dialog_ranking_target))
                             .customView(termSelectLayout, true)
                             .positiveText(R.string.dialog_ok)
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -217,7 +215,7 @@ public class RankingFragment extends MediaBrowserListFragment {
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                     final TermSelectLayout.Term term = termSelectLayout.getTerm();
                                     final int songNum = termSelectLayout.getSongNum();
-                                    TweetHelper.tweet(getActivity(), getResources().getString(R.string.tweet_ranking, term.toString(), mRankKind.getRankingTweet(getResources(), mSongHistoryController, term, songNum)));
+                                    TweetHelper.tweet(getActivity(), getResources().getString(R.string.tweet_ranking, term.toString(getResources()), mRankKind.getRankingTweet(getResources(), mSongHistoryController, term, songNum)));
                                 }
                             })
                             .contentColorRes(android.R.color.white)

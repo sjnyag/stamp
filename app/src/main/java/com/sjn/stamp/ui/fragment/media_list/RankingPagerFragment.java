@@ -18,7 +18,6 @@ import com.sjn.stamp.ui.custom.TermSelectLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class RankingPagerFragment extends PagerFragment implements PagerFragment.PageFragmentContainer.Creator {
 
@@ -77,7 +76,7 @@ public class RankingPagerFragment extends PagerFragment implements PagerFragment
     }
 
     private void updateTitleByTerm() {
-        setTitle(String.format(Locale.JAPANESE, "%s(%s)", getResources().getString(R.string.drawer_ranking), mTerm.toString()));
+        setTitle(mTerm.toString(getResources()));
     }
 
     @Override

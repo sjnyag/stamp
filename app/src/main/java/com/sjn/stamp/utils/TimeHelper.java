@@ -1,22 +1,27 @@
 package com.sjn.stamp.utils;
 
+import android.content.Context;
+
+import com.sjn.stamp.R;
+
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class TimeHelper {
 
-    public static String getDateDiff(Date before) {
-        return getDateDiff(before, getJapanNow().toDate());
+    public static String getDateDiff(Context context, Date before) {
+        return getDateDiff(context, before, getJapanNow().toDate());
     }
 
-    public static String getDateDiff(Date before, Date after) {
+    public static String getDateDiff(Context context, Date before, Date after) {
         DateTime dt1 = toDateTime(before);
         DateTime dt2 = toDateTime(after);
         if (dt1.isAfter(dt2)) {
@@ -27,22 +32,20 @@ public class TimeHelper {
         if (months > 12) {
             int years = months / 12;
             months = months - years * 12;
-            return months == 0 ? years + "年" : years + "年" + months + "ヶ月";
+            return months == 0 ? context.getResources().getString(R.string.date_diff_years, String.valueOf(years)) :
+                    context.getResources().getString(R.string.date_diff_years_and_months, String.valueOf(years), String.valueOf(months));
         } else if (months > 0) {
-            return months + "ヶ月";
+            return context.getResources().getString(R.string.date_diff_months, String.valueOf(months));
         }
         Duration d = new Duration(dt1, dt2);
         if (d.getStandardDays() > 1) {
-            return ((int) d.getStandardDays()) + "日";
+            return context.getResources().getString(R.string.date_diff_days, String.valueOf(d.getStandardDays()));
         }
-        String result = "";
-        int minutes = (int) d.getStandardMinutes();
         if (d.getStandardHours() >= 1) {
-            result += ((int) d.getStandardHours()) + "時間";
-            minutes = minutes - ((int) d.getStandardHours()) * 60;
+            return context.getResources().getString(R.string.date_diff_hours_and_minutes, String.valueOf(d.getStandardHours()), String.valueOf(d.getStandardMinutes() - ((int) d.getStandardHours()) * 60));
+        } else {
+            return context.getResources().getString(R.string.date_diff_minutes, String.valueOf(d.getStandardMinutes()));
         }
-        result += minutes + "分";
-        return result;
     }
 
     public static Date toDateOnly(Date date) {
@@ -54,11 +57,11 @@ public class TimeHelper {
     }
 
     public static LocalDate getJapanToday() {
-        return new LocalDate(DateTimeZone.forID("Asia/Tokyo"));
+        return new LocalDate(new Date(System.currentTimeMillis()));
     }
 
     public static DateTime getJapanNow() {
-        return new DateTime(DateTimeZone.forID("Asia/Tokyo"));
+        return new DateTime(new Date(System.currentTimeMillis()));
     }
 
     public static String toRFC3339(long unixTime) {
@@ -71,6 +74,18 @@ public class TimeHelper {
 
     public static String format(DateTime dateTime) {
         return DateTimeFormat.mediumDateTime().print(dateTime);
+    }
+
+    public static String formatYYYYMMDDHHMMSS(Date date) {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(date);
+    }
+
+    public static String formatMMDDHHMM(Date date) {
+        return new SimpleDateFormat("MM/dd HH:mm", Locale.getDefault()).format(date);
+    }
+
+    public static String formatMMDDHHMM(DateTime date) {
+        return new SimpleDateFormat("MM/dd HH:mm", Locale.getDefault()).format(date.toDate());
     }
 
     public static DateTime toDateTime(String rfc3339) {

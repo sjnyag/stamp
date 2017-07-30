@@ -165,7 +165,7 @@ public class SongAdapter extends FlexibleAdapter<AbstractFlexibleItem> {
         } else if (position >= getItemCount() - getScrollableFooters().size()) {
             return "Bottom";
         } else {
-            position -= getScrollableHeaders().size() + 1;
+            position -= getScrollableHeaders().size();
         }
         // TODO FOR YOU: The basic value, usually, is the first letter
         // For me is the position

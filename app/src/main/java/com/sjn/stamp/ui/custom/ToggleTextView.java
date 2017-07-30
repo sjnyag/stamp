@@ -2,8 +2,8 @@ package com.sjn.stamp.ui.custom;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
 import com.sjn.stamp.R;
 
@@ -12,7 +12,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 
-public class ToggleTextView extends TextView {
+public class ToggleTextView extends AppCompatTextView {
 
     @Accessors(prefix = "m")
     @Getter

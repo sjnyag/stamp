@@ -1,5 +1,6 @@
 package com.sjn.stamp.ui.item;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,9 +66,10 @@ public class DateHeaderItem extends AbstractHeaderItem<DateHeaderItem.HeaderView
         if (payloads.size() <= 0) {
             holder.mTitle.setText(getTitle());
         }
+        final Context context = holder.mTitle.getContext();
         List sectionableList = adapter.getSectionItems(this);
-        String subTitle = (sectionableList.isEmpty() ? "Empty section" :
-                sectionableList.size() + " section items");
+        String subTitle = (sectionableList.isEmpty() ? context.getString(R.string.item_date_header_empty) :
+                context.getString(R.string.item_date_header_item_counts, String.valueOf(sectionableList.size())));
         holder.mSubtitle.setText(subTitle);
     }
 

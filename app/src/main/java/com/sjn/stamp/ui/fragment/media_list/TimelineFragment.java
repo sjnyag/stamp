@@ -3,6 +3,7 @@ package com.sjn.stamp.ui.fragment.media_list;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -245,8 +246,8 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         return new DateHeaderItem(songHistory.getRecordedAt());
     }
 
-    public static SongHistoryItem newSimpleItem(SongHistory songHistory, IHeader header) {
-        SongHistoryItem item = new SongHistoryItem(songHistory, (DateHeaderItem) header);
+    public static SongHistoryItem newSimpleItem(SongHistory songHistory, IHeader header, Resources resources) {
+        SongHistoryItem item = new SongHistoryItem(songHistory, (DateHeaderItem) header, resources);
         item.setTitle(songHistory.getSong().getTitle());
         return item;
     }
@@ -266,7 +267,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
                 }
                 header = newHeader(mAllSongHistoryList.get(i));
             }
-            headerItemList.add(newSimpleItem(mAllSongHistoryList.get(i), header));
+            headerItemList.add(newSimpleItem(mAllSongHistoryList.get(i), header, getResources()));
         }
         return headerItemList;
     }

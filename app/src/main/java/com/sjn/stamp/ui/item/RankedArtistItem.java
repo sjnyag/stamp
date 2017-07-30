@@ -69,7 +69,7 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
             Utils.highlightText(holder.mSubtitle, getSubtitle(), adapter.getSearchText());
         } else {
             holder.mTitle.setText(mArtistName);
-            holder.mSubtitle.setText(String.format("最も聴いた曲 %s", mMostPlayedSongTitle));
+            holder.mSubtitle.setText(context.getString(R.string.item_ranking_most_played, mMostPlayedSongTitle));
             holder.mCountView.setText(String.valueOf(mPlayCount));
             holder.mOrderView.setText(String.valueOf(mOrder));
         }

@@ -143,9 +143,9 @@ public class MusicProvider {
             return Collections.emptyList();
         }
         ArrayList<MediaMetadataCompat> result = new ArrayList<>();
-        query = query.toLowerCase(Locale.US);
+        query = query.toLowerCase(Locale.getDefault());
         for (MediaMetadataCompat metadata : mMusicListById.values()) {
-            if (metadata.getString(metadataField).toLowerCase(Locale.US)
+            if (metadata.getString(metadataField).toLowerCase(Locale.getDefault())
                     .contains(query)) {
                 result.add(metadata);
             }

@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
         android:key="backup"
-        android:title="バックアップ">
+        android:title="@string/setting_backup">
         <Preference
             android:key="@string/import_backup"
             android:summary="@string/import_backup_summary"
@@ -14,7 +14,7 @@
     </PreferenceCategory>
     <PreferenceCategory
         android:key="application_information"
-        android:title="アプリ情報">
+        android:title="@string/setting_application_information">
         <Preference
             android:key="@string/licence"
             android:title="@string/licence"/>

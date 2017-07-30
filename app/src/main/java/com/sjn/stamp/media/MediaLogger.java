@@ -99,11 +99,11 @@ public class MediaLogger {
         }
     }
 
-    static boolean isStart(int state, int position) {
+    private static boolean isStart(int state, int position) {
         return isPlaying(state) && position < START_LIMIT_TIME;
     }
 
-    static boolean isSongPlaying(int state) {
+    private static boolean isSongPlaying(int state) {
         return isPlaying(state);
     }
 

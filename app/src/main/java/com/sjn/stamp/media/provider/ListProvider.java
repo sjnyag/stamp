@@ -7,6 +7,7 @@ import android.support.v4.media.MediaMetadataCompat;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
@@ -43,7 +44,7 @@ public abstract class ListProvider {
     }
 
     final public boolean matchFilter(String filter, String target) {
-        return filter == null || filter.isEmpty() || (target.toUpperCase().contains(filter.toUpperCase()));
+        return filter == null || filter.isEmpty() || (target.toUpperCase(Locale.getDefault()).contains(filter.toUpperCase(Locale.getDefault())));
     }
 
     abstract public void reset();

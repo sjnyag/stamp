@@ -24,7 +24,7 @@ public class TotalSongHistoryDao extends BaseDao {
     }
 
     public int saveOrIncrement(Realm realm, final TotalSongHistory rawTotalSongHistory) {
-        int playCount = 0;
+        int playCount;
         realm.beginTransaction();
         TotalSongHistory totalSongHistory = realm.where(TotalSongHistory.class)
                 .equalTo("mSong.mMediaId", rawTotalSongHistory.getSong().getMediaId())

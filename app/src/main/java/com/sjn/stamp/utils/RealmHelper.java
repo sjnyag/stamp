@@ -8,6 +8,7 @@ import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
 
+import com.sjn.stamp.R;
 import com.sjn.stamp.migration.Migration;
 
 import java.io.File;
@@ -81,7 +82,7 @@ public class RealmHelper {
             e.printStackTrace();
         }
 
-        String msg = "File exported to Path: " + EXPORT_REALM_PATH + "/" + EXPORT_REALM_FILE_NAME;
+        String msg = activity.getResources().getString(R.string.message_file_exported, EXPORT_REALM_PATH + "/" + EXPORT_REALM_FILE_NAME);
         Toast.makeText(activity.getApplicationContext(), msg, Toast.LENGTH_LONG).show();
         realm.close();
 

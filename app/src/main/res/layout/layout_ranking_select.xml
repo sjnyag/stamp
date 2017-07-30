@@ -8,7 +8,7 @@
         android:id="@+id/layout_term_select_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="対象期間"
+        android:text="@string/ranking_select_target_term"
         android:textAlignment="center"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="?android:attr/textColorPrimary"/>
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout_term_select"
         android:layout_marginTop="48sp"
-        android:text="対象数"
+        android:text="@string/ranking_select_target_count"
         android:textAlignment="center"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="?android:attr/textColorPrimary"/>

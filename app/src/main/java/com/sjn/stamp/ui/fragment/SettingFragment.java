@@ -39,7 +39,7 @@ public class SettingFragment extends PreferenceFragmentCompat {
                                 return;
                             case POSITIVE:
                                 ProgressDialog progressDialog = new ProgressDialog(getActivity());
-                                progressDialog.setMessage("処理中");
+                                progressDialog.setMessage(getString(R.string.message_processing));
                                 progressDialog.show();
                                 RealmHelper.importBackUp(getActivity());
                                 progressDialog.dismiss();
@@ -73,7 +73,7 @@ public class SettingFragment extends PreferenceFragmentCompat {
                                 return;
                             case POSITIVE:
                                 ProgressDialog progressDialog = new ProgressDialog(getActivity());
-                                progressDialog.setMessage("処理中");
+                                progressDialog.setMessage(getString(R.string.message_processing));
                                 progressDialog.show();
                                 RealmHelper.exportBackUp(getActivity());
                                 progressDialog.dismiss();

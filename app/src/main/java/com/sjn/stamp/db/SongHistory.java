@@ -1,8 +1,10 @@
 package com.sjn.stamp.db;
 
-import android.graphics.Color;
+import android.content.res.Resources;
 
+import com.sjn.stamp.R;
 import com.sjn.stamp.constant.RecordType;
+import com.sjn.stamp.utils.TimeHelper;
 
 import java.util.Date;
 
@@ -43,27 +45,11 @@ public class SongHistory extends RealmObject {
         setCount(count);
     }
 
-    public void setRecordType(RecordType recordType) {
+    private void setRecordType(RecordType recordType) {
         this.mRecordType = recordType.getValue();
     }
 
-    public RecordType getRecordType() {
-        return RecordType.of(mRecordType);
-    }
-
-    public int getColor() {
-//        return Color.rgb(255, 255, 255 - getYellow());
-        return Color.rgb(0, 0, 0);
-    }
-
-    private int getYellow() {
-        if (getCount() * 2.55 > 255) {
-            return 255;
-        }
-        return (int) (getCount() * 2.55);
-    }
-
-    public String toLabel() {
-        return mSong.getTitle() + "/" + mSong.getArtist().getName() + "@" + mRecordedAt;
+    public String toLabel(Resources resources) {
+        return resources.getString(R.string.song_history_label, mSong.getTitle(), mSong.getArtist().getName(), TimeHelper.formatYYYYMMDDHHMMSS(mRecordedAt));
     }
 }

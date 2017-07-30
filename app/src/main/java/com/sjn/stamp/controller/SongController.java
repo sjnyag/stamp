@@ -3,7 +3,6 @@ package com.sjn.stamp.controller;
 import android.content.Context;
 import android.support.v4.media.MediaMetadataCompat;
 
-import com.sjn.stamp.utils.RealmHelper;
 import com.sjn.stamp.constant.CategoryType;
 import com.sjn.stamp.db.CategoryStamp;
 import com.sjn.stamp.db.Song;
@@ -15,6 +14,7 @@ import com.sjn.stamp.media.provider.ProviderType;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.MediaRetrieveHelper;
+import com.sjn.stamp.utils.RealmHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +38,17 @@ public class SongController {
 
     public void registerStampList(List<String> stampNameList, String mediaId) {
         if (MediaIDHelper.isTrack(mediaId)) {
-            registerSongStampList(stampNameList, MediaRetrieveHelper.findByMusicId(mContext, Long.valueOf(MediaIDHelper.extractMusicIDFromMediaID(mediaId)), new MediaRetrieveHelper.PermissionRequiredCallback() {
-                @Override
-                public void onPermissionRequired() {
-
-                }
-            }));
+            registerSongStampList(
+                    stampNameList,
+                    MediaRetrieveHelper.findByMusicId(
+                            mContext,
+                            Long.valueOf(MediaIDHelper.extractMusicIDFromMediaID(mediaId)),
+                            new MediaRetrieveHelper.PermissionRequiredCallback() {
+                                @Override
+                                public void onPermissionRequired() {
+                                }
+                            }
+                    ));
         } else {
             String[] hierarchy = MediaIDHelper.getHierarchy(mediaId);
             if (hierarchy.length <= 1) {
