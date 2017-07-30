@@ -79,6 +79,7 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
     public void onStart() {
         LogHelper.d(TAG, "onStart START");
         super.onStart();
+        updateTitle();
         MediaControllerObserver.getInstance().addListener(this);
         LogHelper.d(TAG, "onStart END");
     }
@@ -132,7 +133,6 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
             mMediaId = mMediaBrowsable.getMediaBrowser().getRoot();
         }
         LogHelper.d(TAG, "onConnected mMediaId: " + mMediaId);
-        updateTitle();
 
         // Unsubscribing before subscribing is required if this mediaId already has a subscriber
         // on this MediaBrowser instance. Subscribing to an already subscribed mediaId will replace
@@ -180,6 +180,10 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
         }
         if (MediaIDHelper.MEDIA_ID_ROOT.equals(mMediaId)) {
             mListener.setToolbarTitle(null);
+            return;
+        }
+        mMediaId = getMediaId();
+        if (mMediaId == null) {
             return;
         }
 

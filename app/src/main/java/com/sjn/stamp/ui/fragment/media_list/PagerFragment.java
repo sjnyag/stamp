@@ -15,6 +15,9 @@ import com.sjn.stamp.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
+
 import static com.sjn.stamp.utils.ViewHelper.setFragmentTitle;
 
 public abstract class PagerFragment extends Fragment {
@@ -22,8 +25,53 @@ public abstract class PagerFragment extends Fragment {
 
     protected ViewPagerAdapter mAdapter;
     protected ViewPager mViewPager;
+    private List<PageFragmentContainer> mFragments;
 
-    abstract protected void setupViewPager(ViewPager viewPager);
+    abstract List<PageFragmentContainer> setUpFragmentContainer();
+
+    protected void setupViewPager(ViewPager viewPager, Bundle savedInstanceState) {
+        if (mFragments == null) {
+            mFragments = setUpFragmentContainer();
+        }
+        mAdapter = new ViewPagerAdapter(getChildFragmentManager());
+        for (PageFragmentContainer fragmentContainer : mFragments) {
+            fragmentContainer.findOrCreate(savedInstanceState, getChildFragmentManager());
+            mAdapter.addFragment(fragmentContainer.mFragment, fragmentContainer.mLabel);
+        }
+        viewPager.setAdapter(mAdapter);
+    }
+
+    @Accessors(prefix = "m")
+    @Getter
+    static class PageFragmentContainer {
+        Fragment mFragment;
+        String mLabel;
+        String mTag;
+        String mFragmentHint;
+        Creator mCreator;
+
+        PageFragmentContainer(String label, String fragmentHint, Creator creator) {
+            mLabel = label;
+            mFragmentHint = fragmentHint;
+            mCreator = creator;
+            mTag = label + fragmentHint;
+        }
+
+        void findOrCreate(Bundle savedInstanceState, FragmentManager fragmentManager) {
+            if (mFragment != null) {
+                return;
+            }
+            if (fragmentManager.findFragmentByTag(mTag) != null) {
+                mFragment = fragmentManager.getFragment(savedInstanceState, mTag);
+            } else {
+                mFragment = mCreator.create(mFragmentHint);
+            }
+        }
+
+        interface Creator {
+            Fragment create(String fragmentHint);
+        }
+    }
 
     public Fragment getCurrent() {
         if (mAdapter == null) {
@@ -38,10 +86,20 @@ public abstract class PagerFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_pager, container, false);
         mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
         //mViewPager.setOffscreenPageLimit(4);
-        setupViewPager(mViewPager);
+        setupViewPager(mViewPager, savedInstanceState);
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        for (PageFragmentContainer fragmentContainer : mFragments) {
+            if (fragmentContainer.mFragment != null && fragmentContainer.mFragment.isAdded()) {
+                getChildFragmentManager().putFragment(outState, fragmentContainer.mTag, fragmentContainer.mFragment);
+            }
+        }
     }
 
     protected void setTitle(String title) {

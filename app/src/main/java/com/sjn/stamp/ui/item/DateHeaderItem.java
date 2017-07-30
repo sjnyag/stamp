@@ -1,7 +1,5 @@
 package com.sjn.stamp.ui.item;
 
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +14,6 @@ import java.util.List;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.items.AbstractHeaderItem;
 import eu.davidea.flexibleadapter.items.IFilterable;
-import eu.davidea.flexibleadapter.items.ISectionable;
-import eu.davidea.viewholders.FlexibleViewHolder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -84,7 +80,7 @@ public class DateHeaderItem extends AbstractHeaderItem<DateHeaderItem.HeaderView
         return TimeHelper.toDateOnly(recordedAt).compareTo(mDate) == 0;
     }
 
-    static class HeaderViewHolder extends FlexibleViewHolder {
+    static class HeaderViewHolder extends LongClickDisableViewHolder {
 
         TextView mTitle;
         TextView mSubtitle;

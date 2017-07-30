@@ -84,7 +84,7 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
         return mArtistName.toLowerCase().trim().contains(constraint);
     }
 
-    static final class SimpleViewHolder extends FlexibleViewHolder {
+    static final class SimpleViewHolder extends LongClickDisableViewHolder {
 
         ImageView mAlbumArtView;
         TextView mTitle;

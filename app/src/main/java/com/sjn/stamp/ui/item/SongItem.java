@@ -31,7 +31,6 @@ import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.items.IFilterable;
 import eu.davidea.flexibleadapter.utils.Utils;
-import eu.davidea.viewholders.FlexibleViewHolder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -53,19 +52,6 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
     private boolean mIsPlayable;
     private boolean mIsBrowsable;
     private MediaBrowsable mMediaBrowsable;
-
-    public SongItem(String mediaId, String title, String subTitle, String albumArt, boolean isPlayable, boolean isBrowsable, MediaBrowsable mediaBrowsable) {
-        super(mediaId);
-        setDraggable(true);
-        setSwipeable(true);
-        mMediaId = mediaId;
-        mTitle = title;
-        mSubTitle = subTitle;
-        mAlbumArt = albumArt;
-        mIsPlayable = isPlayable;
-        mIsBrowsable = isBrowsable;
-        mMediaBrowsable = mediaBrowsable;
-    }
 
     public SongItem(MediaBrowserCompat.MediaItem mediaItem, MediaBrowsable mediaBrowsable) {
         super(mediaItem.getMediaId());
@@ -118,14 +104,13 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
             mMediaBrowsable.search(mMediaId, null, new MediaBrowserCompat.SearchCallback() {
                 @Override
                 public void onSearchResult(@NonNull String query, Bundle extras, @NonNull List<MediaBrowserCompat.MediaItem> items) {
-                    LogHelper.i(TAG, "onSearchResult " + query);
                     for (final MediaBrowserCompat.MediaItem metadata : items) {
                         if (metadata.getDescription().getIconUri() == null) {
                             continue;
                         }
-                        LogHelper.i(TAG, query + " : " + metadata.getDescription().getTitle() + " : " + metadata.getDescription().getIconUri());
                         if (query.equals(holder.mMediaId)) {
-                            ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, metadata.getDescription().getIconUri().toString(), mTitle);
+                            mAlbumArt = metadata.getDescription().getIconUri().toString();
+                            ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, mAlbumArt, mTitle);
                         }
                         break;
                     }
@@ -148,7 +133,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
                 mSubTitle != null && mSubTitle.toLowerCase().trim().contains(constraint);
     }
 
-    static final class SimpleViewHolder extends FlexibleViewHolder {
+    static final class SimpleViewHolder extends LongClickDisableViewHolder {
 
         String mMediaId;
         ImageView mAlbumArtView;

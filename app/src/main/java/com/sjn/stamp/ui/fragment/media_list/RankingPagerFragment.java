@@ -1,10 +1,8 @@
 package com.sjn.stamp.ui.fragment.media_list;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,13 +13,14 @@ import android.view.ViewGroup;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-import com.sjn.stamp.ui.custom.TermSelectLayout;
 import com.sjn.stamp.R;
+import com.sjn.stamp.ui.custom.TermSelectLayout;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
-
-public class RankingPagerFragment extends PagerFragment {
+public class RankingPagerFragment extends PagerFragment implements PagerFragment.PageFragmentContainer.Creator {
 
     private TermSelectLayout.Term mTerm;
 
@@ -33,7 +32,6 @@ public class RankingPagerFragment extends PagerFragment {
         setHasOptionsMenu(true);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -84,18 +82,18 @@ public class RankingPagerFragment extends PagerFragment {
     }
 
     @Override
-    protected void setupViewPager(ViewPager viewPager) {
-        Resources resources = getResources();
-        mAdapter = new ViewPagerAdapter(getChildFragmentManager());
-        mAdapter.addFragment(createRankingFragment(RankingFragment.RankKind.SONG), resources.getString(R.string.ranking_tab_my_songs));
-        mAdapter.addFragment(createRankingFragment(RankingFragment.RankKind.ARTIST), resources.getString(R.string.ranking_tab_my_artists));
-        viewPager.setAdapter(mAdapter);
+    List<PageFragmentContainer> setUpFragmentContainer() {
+        List<PageFragmentContainer> fragmentContainerList = new ArrayList<>();
+        fragmentContainerList.add(new PageFragmentContainer(getString(R.string.ranking_tab_my_songs), RankingFragment.RankKind.SONG.toString(), this));
+        fragmentContainerList.add(new PageFragmentContainer(getString(R.string.ranking_tab_my_artists), RankingFragment.RankKind.ARTIST.toString(), this));
+        return fragmentContainerList;
     }
 
-    private Fragment createRankingFragment(RankingFragment.RankKind rankKind) {
+    @Override
+    public Fragment create(String fragmentHint) {
         Fragment fragment = new RankingFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(PAGER_KIND_KEY, rankKind.toString());
+        bundle.putString(PAGER_KIND_KEY, fragmentHint);
         fragment.setArguments(bundle);
         return fragment;
     }

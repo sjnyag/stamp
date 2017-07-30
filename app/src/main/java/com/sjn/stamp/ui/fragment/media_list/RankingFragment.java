@@ -151,7 +151,6 @@ public class RankingFragment extends MediaBrowserListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
         final View rootView = inflater.inflate(R.layout.fragment_ranking, container, false);
         mRankKind = parseArgRankKind();
         mLoading = (ProgressBar) rootView.findViewById(R.id.progressBar);

@@ -86,7 +86,7 @@ abstract class MultipleListProvider extends ListProvider {
         if (state != ProviderState.INITIALIZED || !getTrackListMap(musicListById).containsKey(key)) {
             return Collections.emptyList();
         }
-        List<MediaMetadataCompat> list = getTrackListMap(musicListById).get(key);
+        List<MediaMetadataCompat> list = new ArrayList<>(getTrackListMap(musicListById).get(key));
         Collections.sort(list, new Comparator<MediaMetadataCompat>() {
             @Override
             public int compare(MediaMetadataCompat lhs, MediaMetadataCompat rhs) {

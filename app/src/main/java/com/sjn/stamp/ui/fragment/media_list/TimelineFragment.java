@@ -147,7 +147,6 @@ public class TimelineFragment extends MediaBrowserListFragment implements
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
         final View rootView = inflater.inflate(R.layout.fragment_list, container, false);
         mSongHistoryController = new SongHistoryController(getContext());
         mRealm = RealmHelper.getRealmInstance();

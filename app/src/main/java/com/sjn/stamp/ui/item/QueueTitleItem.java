@@ -16,15 +16,14 @@ import java.util.List;
 
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
-import eu.davidea.viewholders.FlexibleViewHolder;
 
 /**
  * Item dedicated to display which Layout is currently displayed.
  * This item is a Scrollable Header.
  */
 public class QueueTitleItem extends AbstractItem<QueueTitleItem.LayoutViewHolder> {
-    ProviderType mProviderType;
-    String mProviderValue;
+    private ProviderType mProviderType;
+    private String mProviderValue;
 
     public QueueTitleItem(ProviderType providerType, String providerValue) {
         super(providerType.name() + providerValue);
@@ -55,12 +54,12 @@ public class QueueTitleItem extends AbstractItem<QueueTitleItem.LayoutViewHolder
         }
     }
 
-    public static class LayoutViewHolder extends FlexibleViewHolder {
+    static class LayoutViewHolder extends LongClickDisableViewHolder {
 
         public TextView mTitle;
-        public TextView mSubtitle;
+        TextView mSubtitle;
 
-        public LayoutViewHolder(View view, FlexibleAdapter adapter) {
+        LayoutViewHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter, true);
             mTitle = (TextView) view.findViewById(R.id.title);
             mSubtitle = (TextView) view.findViewById(R.id.subtitle);

@@ -205,7 +205,6 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         LogHelper.d(TAG, "onCreateView START" + getMediaId());
-        setHasOptionsMenu(true);
         final View rootView = inflater.inflate(R.layout.fragment_list, container, false);
 
         mEmptyView = rootView.findViewById(R.id.empty_view);

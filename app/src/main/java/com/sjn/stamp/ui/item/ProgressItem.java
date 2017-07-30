@@ -17,7 +17,6 @@ import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.Payload;
 import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
-import eu.davidea.viewholders.FlexibleViewHolder;
 
 public class ProgressItem extends AbstractFlexibleItem<ProgressItem.ProgressViewHolder> {
 
@@ -28,11 +27,7 @@ public class ProgressItem extends AbstractFlexibleItem<ProgressItem.ProgressView
         return this == o;//The default implementation
     }
 
-    public StatusEnum getStatus() {
-        return status;
-    }
-
-    public void setStatus(StatusEnum status) {
+    private void setStatus(StatusEnum status) {
         this.status = status;
     }
 
@@ -87,7 +82,7 @@ public class ProgressItem extends AbstractFlexibleItem<ProgressItem.ProgressView
         }
     }
 
-    static class ProgressViewHolder extends FlexibleViewHolder {
+    static class ProgressViewHolder extends LongClickDisableViewHolder {
 
         ProgressBar progressBar;
         TextView progressMessage;
@@ -104,7 +99,7 @@ public class ProgressItem extends AbstractFlexibleItem<ProgressItem.ProgressView
         }
     }
 
-    public enum StatusEnum {
+    private enum StatusEnum {
         MORE_TO_LOAD, //Default = should have an empty Payload
         DISABLE_ENDLESS, //Endless is disabled because user has set limits
         NO_MORE_LOAD, //Non-empty Payload = Payload.NO_MORE_LOAD

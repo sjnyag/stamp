@@ -143,7 +143,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
         }
     }
 
-    static final class SimpleViewHolder extends FlexibleViewHolder {
+    static final class SimpleViewHolder extends LongClickDisableViewHolder {
 
         ImageView mAlbumArtView;
         TextView mTitle;

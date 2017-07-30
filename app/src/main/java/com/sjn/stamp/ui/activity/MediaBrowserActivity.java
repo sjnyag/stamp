@@ -267,7 +267,7 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity
                             if (metadata.getDescription().getSubtitle() != null) {
                                 profileDrawerItem.withEmail(metadata.getDescription().getSubtitle().toString());
                             }
-                            profileDrawerItem.withIcon(R.mipmap.ic_notification);
+                            profileDrawerItem.withIcon(R.mipmap.ic_launcher);
                             mAccountHeader.clear();
                             mAccountHeader.addProfiles(profileDrawerItem);
                         }
@@ -281,7 +281,7 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity
                             if (metadata.getDescription().getSubtitle() != null) {
                                 profileDrawerItem.withEmail(metadata.getDescription().getSubtitle().toString());
                             }
-                            profileDrawerItem.withIcon(R.mipmap.ic_notification);
+                            profileDrawerItem.withIcon(R.mipmap.ic_launcher);
                             mAccountHeader.clear();
                             mAccountHeader.addProfiles(profileDrawerItem);
                         }
