@@ -44,8 +44,8 @@
     <string name="menu_term_change">Term</string>
 
     <string name="notification_share">Share</string>
-    <string name="notification_title">%1$sを%2$s回再生しました！！</string>
-    <string name="notification_text">最初に聞いてから%1$sです。</string>
+    <string name="notification_title">%1$s is played %2$s times!!</string>
+    <string name="notification_text">%1$s since first time</string>
 
     <string name="date_diff_years">%1$s年</string>
     <string name="date_diff_years_and_months">%1$s年%2$sヶ月</string>
@@ -81,20 +81,20 @@
     <string name="ranking_tab_my_songs">Song</string>
     <string name="ranking_tab_my_artists">Artist</string>
 
-    <string name="dialog_ranking_target">ランキング対象選択</string>
-    <string name="dialog_term_select">期間選択</string>
+    <string name="dialog_ranking_target">Select ranking target</string>
+    <string name="dialog_term_select">Select ranking term</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_ok">OK</string>
-    <string name="dialog_delete">削除する</string>
-    <string name="dialog_reload">再ロードする</string>
-    <string name="dialog_confirm_title">確認</string>
+    <string name="dialog_delete">Delete</string>
+    <string name="dialog_reload">Reload</string>
+    <string name="dialog_confirm_title">Confirm</string>
 
-    <string name="term_total">総合</string>
-    <string name="term_yearly">年間</string>
-    <string name="term_monthly">マンスリー</string>
-    <string name="term_dairy">デイリー</string>
+    <string name="term_total">total</string>
+    <string name="term_yearly">yearly</string>
+    <string name="term_monthly">monthly</string>
+    <string name="term_dairy">dairy</string>
 
-    <string name="term_label_total">総合</string>
+    <string name="term_label_total">total</string>
     <string name="term_label_year">%1$s年</string>
     <string name="term_label_month">%1$s年%2$s月</string>
     <string name="tern_label_day">%1$s年%2$s月%3$s日</string>
@@ -103,7 +103,7 @@
     <string name="item_song_history_seconds_ago">%1$d 秒前</string>
     <string name="item_song_history_minutes_ago">%1$d 分前</string>
 
-    <string name="item_ranking_most_played">最も聴いた曲 %1$s</string>
+    <string name="item_ranking_most_played">Most played %1$s</string>
 
     <string name="item_date_header_empty">Empty section</string>
     <string name="item_date_header_item_counts">%1$s section items</string>
@@ -121,23 +121,23 @@
 
     <string name="song_history_label">%1$s/%2$s@%3$s</string>
 
-    <string name="no_more_data">これ以上の履歴はありません</string>
-    <string name="no_more_data_by_error">読み込みに失敗しました</string>
+    <string name="no_more_data">No more data</string>
+    <string name="no_more_data_by_error">Failed to load data</string>
     <string name="album_art">album art</string>
-    <string name="menu_timeline_upward">最上部へ</string>
+    <string name="menu_timeline_upward">Go to top</string>
 
-    <string name="setting_backup">バックアップ</string>
-    <string name="setting_application_information">アプリ情報</string>
+    <string name="setting_backup">Backup</string>
+    <string name="setting_application_information">Application information</string>
 
-    <string name="export_backup">バックアップを作成する</string>
-    <string name="import_backup">バックアップを取り込む</string>
-    <string name="import_backup_summary">これまでのデータは失われます。</string>
+    <string name="export_backup">Export backup</string>
+    <string name="import_backup">Import backup</string>
+    <string name="import_backup_summary">Existing data will be lost.</string>
 
     <string name="message_file_exported">File exported to Path: %1$s</string>
-    <string name="message_processing">処理中</string>
+    <string name="message_processing">processing</string>
 
-    <string name="licence">ライセンス</string>
-    <string name="version">バージョン情報</string>
+    <string name="licence">licence</string>
+    <string name="version">version</string>
 
     <string name="action_selected_one">%1$s selected</string>
     <string name="action_selected_many">%1$s selected</string>
@@ -153,7 +153,7 @@
     <string name="dialog_confirm_export">すでにバックアップが存在する場合は上書きされます。</string>
     <string name="dialog_restart_title">再起動</string>
     <string name="dialog_restart_content">バックアップを反映するために再起動します。</string>
-    <string name="dialog_delete_stamp_title">スタンプの削除</string>
+    <string name="dialog_delete_stamp_title">Delete stamp</string>
     <string name="dialog_delete_stamp_content">タグ「%1$s」を削除しますか？</string>
     <string name="dialog_lets_play_title">まだ音楽の再生履歴がありません</string>
     <string name="dialog_delete_history_title">再生履歴の削除</string>
@@ -163,9 +163,15 @@
     <string name="month">month</string>
     <string name="day">day</string>
     <string name="year">year</string>
-    <string name="ranking_select_target_count">対象数</string>
-    <string name="ranking_select_target_term">対象期間</string>
+    <string name="ranking_select_target_count">Count</string>
+    <string name="ranking_select_target_term">Terms</string>
     <string name="stamp_register">register</string>
     <string name="stamp_new">New Stamp Name</string>
     <string name="icon">icon</string>
+
+    <string name="stop_casting">Stop Casting</string>
+    <string name="label_pause">Pause</string>
+    <string name="label_play">Play</string>
+    <string name="label_previous">Previous</string>
+    <string name="label_next">Next</string>
 </resources>

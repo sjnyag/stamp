@@ -27,7 +27,6 @@ public class RankingPagerFragment extends PagerFragment implements PagerFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mTerm = new TermSelectLayout.Term();
-        updateTitleByTerm();
         setHasOptionsMenu(true);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -51,7 +50,6 @@ public class RankingPagerFragment extends PagerFragment implements PagerFragment
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                     mTerm = termSelectLayout.getTerm();
-                                    updateTitleByTerm();
                                     if (mAdapter == null) {
                                         return;
                                     }
@@ -73,10 +71,6 @@ public class RankingPagerFragment extends PagerFragment implements PagerFragment
                 break;
         }
         return false;
-    }
-
-    private void updateTitleByTerm() {
-        setTitle(mTerm.toString(getResources()));
     }
 
     @Override
