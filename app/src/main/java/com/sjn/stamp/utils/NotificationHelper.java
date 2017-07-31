@@ -67,9 +67,9 @@ public class NotificationHelper {
             @Override
             public void onBitmapFailed(Drawable errorDrawable) {
                 int requestCode = builder.hashCode();
-                builder.setContentIntent(createTweetAction(context, requestCode, builder.getExtras().getString(BUNDLE_KEY_PLAYED_TEXT)));
+                builder.setContentIntent(createShareAction(context, requestCode, builder.getExtras().getString(BUNDLE_KEY_PLAYED_TEXT)));
 
-                builder.addAction(R.drawable.ic_share, context.getResources().getString(R.string.notification_share), createTweetAction(context, requestCode, builder.getExtras().getString(BUNDLE_KEY_PLAYED_TEXT)));
+                builder.addAction(R.drawable.ic_share, context.getResources().getString(R.string.notification_share), createShareAction(context, requestCode, builder.getExtras().getString(BUNDLE_KEY_PLAYED_TEXT)));
                 send(context, requestCode, builder);
             }
 
@@ -95,15 +95,15 @@ public class NotificationHelper {
         protected Void doInBackground(Void... params) {
             mBuilder.setLargeIcon(mBitmap);
             int requestCode = mBuilder.hashCode();
-            mBuilder.setContentIntent(createTweetAction(mContext, requestCode, mBuilder.getExtras().getString(BUNDLE_KEY_PLAYED_TEXT)));
+            mBuilder.setContentIntent(createShareAction(mContext, requestCode, mBuilder.getExtras().getString(BUNDLE_KEY_PLAYED_TEXT)));
 
-            mBuilder.addAction(R.drawable.ic_share, mContext.getResources().getString(R.string.notification_share), createTweetAction(mContext, requestCode, mBuilder.getExtras().getString(BUNDLE_KEY_PLAYED_TEXT)));
+            mBuilder.addAction(R.drawable.ic_share, mContext.getResources().getString(R.string.notification_share), createShareAction(mContext, requestCode, mBuilder.getExtras().getString(BUNDLE_KEY_PLAYED_TEXT)));
             send(mContext, requestCode, mBuilder);
             return null;
         }
     }
 
-    private static PendingIntent createTweetAction(Context context, int requestCode, String text) {
+    private static PendingIntent createShareAction(Context context, int requestCode, String text) {
         Intent i = new Intent(context, NowPlayingActivity.class);
         i.setAction(ACTION_CMD);
         i.putExtra(CMD_NAME, CMD_SHARE);

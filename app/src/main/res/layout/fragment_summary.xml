@@ -14,10 +14,10 @@
   limitations under the License.
   -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/background">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:background="@color/background">
 
     <TextView
         android:id="@+id/total_play_count"
@@ -30,7 +30,7 @@
         android:maxLines="1"
         android:paddingTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textColor="?primaryTextSelector" />
+        android:textColor="?primaryTextSelector"/>
 
     <TextView
         android:id="@+id/most_play_count"
@@ -43,7 +43,7 @@
         android:maxLines="1"
         android:paddingTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textColor="?primaryTextSelector" />
+        android:textColor="?primaryTextSelector"/>
 
     <TextView
         android:id="@+id/total_play_time"
@@ -56,7 +56,7 @@
         android:maxLines="1"
         android:paddingTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textColor="?primaryTextSelector" />
+        android:textColor="?primaryTextSelector"/>
 
     <TextView
         android:id="@+id/most_artist_count"
@@ -69,7 +69,7 @@
         android:maxLines="1"
         android:paddingTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textColor="?primaryTextSelector" />
+        android:textColor="?primaryTextSelector"/>
 
     <TextView
         android:id="@+id/total_artist_count"
@@ -82,7 +82,7 @@
         android:maxLines="1"
         android:paddingTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textColor="?primaryTextSelector" />
+        android:textColor="?primaryTextSelector"/>
 
     <TextView
         android:id="@+id/most_song_count"
@@ -95,7 +95,7 @@
         android:maxLines="1"
         android:paddingTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textColor="?primaryTextSelector" />
+        android:textColor="?primaryTextSelector"/>
 
     <TextView
         android:id="@+id/total_song_count"
@@ -108,7 +108,7 @@
         android:maxLines="1"
         android:paddingTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textColor="?primaryTextSelector" />
+        android:textColor="?primaryTextSelector"/>
 
     <TextView
         android:id="@+id/listening_clock"
@@ -121,7 +121,7 @@
         android:maxLines="1"
         android:paddingTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textColor="?primaryTextSelector" />
+        android:textColor="?primaryTextSelector"/>
 
     <TextView
         android:id="@+id/listening_week"
@@ -134,7 +134,7 @@
         android:maxLines="1"
         android:paddingTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textColor="?primaryTextSelector" />
+        android:textColor="?primaryTextSelector"/>
 
     <TextView
         android:id="@+id/new_artist"
@@ -147,7 +147,7 @@
         android:maxLines="1"
         android:paddingTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textColor="?primaryTextSelector" />
+        android:textColor="?primaryTextSelector"/>
 
     <TextView
         android:id="@+id/new_song"
@@ -160,7 +160,7 @@
         android:maxLines="1"
         android:paddingTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textColor="?primaryTextSelector" />
+        android:textColor="?primaryTextSelector"/>
 
     <TextView
         android:id="@+id/continuous"
@@ -173,7 +173,7 @@
         android:maxLines="1"
         android:paddingTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textColor="?primaryTextSelector" />
+        android:textColor="?primaryTextSelector"/>
 
     <TextView
         android:id="@+id/most_play_day"
@@ -186,7 +186,7 @@
         android:maxLines="1"
         android:paddingTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textColor="?primaryTextSelector" />
+        android:textColor="?primaryTextSelector"/>
 
     <TextView
         android:id="@+id/most_repeat_song"
@@ -199,7 +199,7 @@
         android:maxLines="1"
         android:paddingTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textColor="?primaryTextSelector" />
+        android:textColor="?primaryTextSelector"/>
 
     <TextView
         android:id="@+id/monthly_mvp"
@@ -212,5 +212,5 @@
         android:maxLines="1"
         android:paddingTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textColor="?primaryTextSelector" />
+        android:textColor="?primaryTextSelector"/>
 </RelativeLayout>

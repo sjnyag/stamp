@@ -15,15 +15,15 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Getter
 @Setter
-public class RankedSong implements Tweetable {
+public class RankedSong implements Shareable {
     int mPlayCount;
     public Song mSong;
 
     @Override
-    public String tweet(Resources resources) {
+    public String share(Resources resources) {
         if (mSong == null) {
             return "";
         }
-        return resources.getString(R.string.tweet_ranked, mPlayCount, mSong.tweet(resources));
+        return resources.getString(R.string.share_ranked, mPlayCount, mSong.share(resources));
     }
 }

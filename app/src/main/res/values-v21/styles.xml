@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.UAmp.TVLeanback" parent="Theme.Leanback">
+    <style name="Theme.Stamp.TVLeanback" parent="Theme.Leanback">
         <item name="android:windowEnterTransition">@android:transition/fade</item>
         <item name="android:windowExitTransition">@android:transition/fade</item>
         <item name="android:windowSharedElementExitTransition">@android:transition/move
@@ -16,7 +16,7 @@
         <item name="colorAccent">@color/color_accent</item>
     </style>
 
-    <style name="UAmpAppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="StampAppTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="windowActionModeOverlay">true</item>
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorPrimaryDark">@color/color_primary_dark</item>

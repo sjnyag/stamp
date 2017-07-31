@@ -21,17 +21,17 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Getter
 @Setter
-public class RankedArtist implements Tweetable {
+public class RankedArtist implements Shareable {
     int mPlayCount;
     public Artist mArtist;
     Map<Song, Integer> mSongCountMap;
 
     @Override
-    public String tweet(Resources resources) {
+    public String share(Resources resources) {
         if (mArtist == null) {
             return "";
         }
-        return resources.getString(R.string.tweet_ranked, mPlayCount, mArtist.getName());
+        return resources.getString(R.string.share_ranked, mPlayCount, mArtist.getName());
     }
 
     public Song mostPlayedSong() {

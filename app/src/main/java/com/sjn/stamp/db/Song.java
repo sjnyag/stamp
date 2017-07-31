@@ -23,7 +23,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Song extends RealmObject implements Tweetable {
+public class Song extends RealmObject implements Shareable {
 
     @PrimaryKey
     public long mId;
@@ -117,7 +117,7 @@ public class Song extends RealmObject implements Tweetable {
     }
 
     @Override
-    public String tweet(Resources resources) {
-        return resources.getString(R.string.tweet_song, mTitle, mArtist.getName());
+    public String share(Resources resources) {
+        return resources.getString(R.string.share_song, mTitle, mArtist.getName());
     }
 }

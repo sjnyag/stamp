@@ -41,7 +41,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/UAmpAppTheme">
+        android:theme="@style/StampAppTheme">
 
         <!--
         <meta-data
@@ -93,7 +93,7 @@
         <activity
             android:name=".ui.tv.TvBrowseActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.UAmp.TVLeanback">
+            android:theme="@style/Theme.Stamp.TVLeanback">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
@@ -103,13 +103,13 @@
         <activity
             android:name=".ui.tv.TvVerticalGridActivity"
             android:parentActivityName=".ui.tv.TvBrowseActivity"
-            android:theme="@style/Theme.UAmp.TVLeanback"/>
+            android:theme="@style/Theme.Stamp.TVLeanback"/>
 
         <!-- Android TV UI when playing a song -->
         <activity
             android:name=".ui.tv.TvPlaybackActivity"
             android:parentActivityName=".ui.tv.TvBrowseActivity"
-            android:theme="@style/Theme.UAmp.TVLeanback"/>
+            android:theme="@style/Theme.Stamp.TVLeanback"/>
 
         <!--
              (OPTIONAL) use this meta data to indicate which icon should be

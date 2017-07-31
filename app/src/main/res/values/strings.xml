@@ -18,12 +18,8 @@
     <string name="app_name">Stamp Music Player</string>
     <string name="favorite">Favorite</string>
     <string name="error_no_metadata">Unable to retrieve metadata.</string>
-    <string name="browse_genres">Genres</string>
-    <string name="browse_genre_subtitle">Songs by genre</string>
     <string name="browse_musics_by_genre_subtitle">%1$s songs</string>
     <string name="random_queue_title">Random music</string>
-    <string name="error_no_connection">Cannot connect to server. Please, check your Internet connectivity.</string>
-    <string name="error_loading_media">Error Loading Media</string>
     <string name="casting_to_device">Casting to %1$s</string>
     <string name="currently_playing_song">Song currently playing</string>
     <string name="currently_playing_artist">Artist of currently playing song</string>
@@ -39,15 +35,9 @@
          the css and images under <project-root>/docs/cast_styled_receiver -->
     <string name="cast_application_id">CC1AD845</string>
     <string name="home_title">Home</string>
-    <string name="related_content_header">You may also like</string>
-    <string name="action_listen">Listen</string>
-    <string name="open_content_drawer">Open the main menu</string>
-    <string name="close_content_drawer">Close the main menu</string>
-    <string name="placeholder_message">This is a placeholder for your application code.</string>
     <string name="now_playing">Now Playing</string>
     <string name="background_image_str">Background image for album art</string>
     <string name="search_queue_title">Search results</string>
-    <string name="no_search_results">No search results.</string>
     <string name="loading">Loading…</string>
     <string name="media_route_menu_title">Play on…</string>
 
@@ -78,11 +68,7 @@
     <string name="drawer_timeline_title">Timeline</string>
     <string name="drawer_queue_title">Queue</string>
     <string name="drawer_stamp">Stamp</string>
-    <string name="drawer_new">New</string>
-    <string name="drawer_top_song">Top Song</string>
-    <string name="drawer_all_music">All Music</string>
     <string name="drawer_ranking">Ranking</string>
-    <string name="drawer_edit_playlist">Edit Playlist</string>
     <string name="drawer_setting">Setting</string>
 
     <string name="all_song_tab_all">all</string>
@@ -128,10 +114,10 @@
     <string name="hash_tag">#StampMusicPlayer</string>
     <string name="base_url">https://play.google.com/store/apps/details?id=com.sjn.stamp</string>
 
-    <string name="tweet_song">%1$s / %2$s</string>
-    <string name="tweet_ranked">位(%1$d回) : %2$s</string>
-    <string name="tweet_each_rank">%1$d%2$s\n</string>
-    <string name="tweet_ranking">再生回数ランキング(%1$s)\n%2$s</string>
+    <string name="share_song">%1$s / %2$s</string>
+    <string name="share_ranked">位(%1$d回) : %2$s</string>
+    <string name="share_each_rank">%1$d%2$s\n</string>
+    <string name="share_ranking">再生回数ランキング(%1$s)\n%2$s</string>
 
     <string name="song_history_label">%1$s/%2$s@%3$s</string>
 
@@ -153,8 +139,6 @@
     <string name="licence">ライセンス</string>
     <string name="version">バージョン情報</string>
 
-    <string name="action_delete">Delete</string>
-    <string name="action_select_all">Select All</string>
     <string name="action_selected_one">%1$s selected</string>
     <string name="action_selected_many">%1$s selected</string>
     <string name="action_deleted">Deleted</string>
@@ -163,10 +147,6 @@
     <string name="columns">%1$s column(s)</string>
     <string name="no_items">No items</string>
     <string name="no_more_load_retry">No more items to load. Refresh to retry.</string>
-    <string name="scrollable_expandable_header_title">Scrollable Expandable Header Item</string>
-    <string name="scrollable_expandable_header_subtitle"><![CDATA[<i>When expanded, subItems will be added as headers too.</i>]]></string>
-    <string name="scrollable_footer_title">Scrollable Footer Item</string>
-    <string name="scrollable_footer_subtitle"><![CDATA[<i>Scrollable Footers are always displayed at the bottom of all main items.</i>]]></string>
     <string name="action_search">Search…</string>
     <string name="undo">Undo</string>
     <string name="dialog_confirm_import">これまでのスタンプや履歴はすべて失われ、バックアップに置き換えられます。</string>
@@ -187,4 +167,5 @@
     <string name="ranking_select_target_term">対象期間</string>
     <string name="stamp_register">register</string>
     <string name="stamp_new">New Stamp Name</string>
+    <string name="icon">icon</string>
 </resources>

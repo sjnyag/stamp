@@ -23,7 +23,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.sjn.stamp.ui.tv.TvPlaybackActivity;
 import com.sjn.stamp.utils.LogHelper;
-import com.sjn.stamp.utils.TweetHelper;
+import com.sjn.stamp.utils.ShareHelper;
 
 import static com.sjn.stamp.utils.NotificationHelper.ACTION_CMD;
 import static com.sjn.stamp.utils.NotificationHelper.CMD_NAME;
@@ -61,7 +61,7 @@ public class NowPlayingActivity extends AppCompatActivity {
         String action = newIntent.getAction();
         String command = newIntent.getStringExtra(CMD_NAME);
         if (ACTION_CMD.equals(action) && CMD_SHARE.equals(command)) {
-            TweetHelper.tweet(this, newIntent.getExtras().getString(SHARE_MESSAGE));
+            ShareHelper.share(this, newIntent.getExtras().getString(SHARE_MESSAGE));
         } else {
             startActivity(newIntent);
             finish();

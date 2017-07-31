@@ -1,5 +1,6 @@
 package com.sjn.stamp.ui.fragment.media_list;
 
+import android.app.ProgressDialog;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -25,7 +26,7 @@ import com.sjn.stamp.R;
 import com.sjn.stamp.controller.SongHistoryController;
 import com.sjn.stamp.db.RankedArtist;
 import com.sjn.stamp.db.RankedSong;
-import com.sjn.stamp.db.Tweetable;
+import com.sjn.stamp.db.Shareable;
 import com.sjn.stamp.ui.SongAdapter;
 import com.sjn.stamp.ui.custom.RankingSelectLayout;
 import com.sjn.stamp.ui.custom.TermSelectLayout;
@@ -34,7 +35,7 @@ import com.sjn.stamp.ui.item.RankedSongItem;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.RealmHelper;
-import com.sjn.stamp.utils.TweetHelper;
+import com.sjn.stamp.utils.ShareHelper;
 import com.sjn.stamp.utils.ViewHelper;
 
 import java.util.ArrayList;
@@ -58,6 +59,7 @@ public class RankingFragment extends MediaBrowserListFragment {
 
     private ProgressBar mLoading;
     private CalculateAsyncTask mAsyncTask;
+    private ProgressDialog mProgressDialog;
 
     /**
      * {@link ListFragment}
@@ -201,7 +203,7 @@ public class RankingFragment extends MediaBrowserListFragment {
         //.setEndlessTargetCount(15) //Endless is automatically disabled if totalItems >= 15
         //.setEndlessScrollThreshold(1); //Default=1
         //.setEndlessScrollListener(this, mProgressItem);
-        initializeFab(R.drawable.ic_twitter, ColorStateList.valueOf(Color.WHITE), new View.OnClickListener() {
+        initializeFab(R.drawable.ic_share, ColorStateList.valueOf(Color.WHITE), new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (getActivity() != null) {
@@ -215,7 +217,16 @@ public class RankingFragment extends MediaBrowserListFragment {
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                     final TermSelectLayout.Term term = termSelectLayout.getTerm();
                                     final int songNum = termSelectLayout.getSongNum();
-                                    TweetHelper.tweet(getActivity(), getResources().getString(R.string.tweet_ranking, term.toString(getResources()), mRankKind.getRankingTweet(getResources(), mSongHistoryController, term, songNum)));
+                                    final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                                    progressDialog.setMessage(getString(R.string.message_processing));
+                                    progressDialog.show();
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            ShareHelper.share(getActivity(), getResources().getString(R.string.share_ranking, term.toString(getResources()), mRankKind.getRankingShareMessage(getResources(), mSongHistoryController, term, songNum)));
+                                            progressDialog.dismiss();
+                                        }
+                                    }).start();
                                 }
                             })
                             .contentColorRes(android.R.color.white)
@@ -248,6 +259,9 @@ public class RankingFragment extends MediaBrowserListFragment {
 
     public void setTermAndReload(TermSelectLayout.Term term) {
         mTerm = term;
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setMessage(getString(R.string.message_processing));
+        mProgressDialog.show();
         draw();
     }
 
@@ -302,6 +316,9 @@ public class RankingFragment extends MediaBrowserListFragment {
                     realm.close();
                 }
             }
+            if (fragment.mProgressDialog != null) {
+                fragment.mProgressDialog.dismiss();
+            }
             return null;
         }
 
@@ -313,15 +330,15 @@ public class RankingFragment extends MediaBrowserListFragment {
 
         SONG {
             @Override
-            public String getRankingTweet(Resources resource, SongHistoryController controller, TermSelectLayout.Term term, int songNum) {
-                List<Tweetable> tweetableList = new ArrayList<>();
+            public String getRankingShareMessage(Resources resource, SongHistoryController controller, TermSelectLayout.Term term, int songNum) {
+                List<Shareable> shareableList = new ArrayList<>();
                 Realm realm = RealmHelper.getRealmInstance();
-                for (Tweetable tweetable : controller.getRankedSongList(realm, term)) {
-                    tweetableList.add(tweetable);
+                for (Shareable shareable : controller.getRankedSongList(realm, term)) {
+                    shareableList.add(shareable);
                 }
-                String tweet = tweet(resource, tweetableList, songNum);
+                String shareMessage = createShareMessage(resource, shareableList, songNum);
                 realm.close();
-                return tweet;
+                return shareMessage;
             }
 
             @Override
@@ -341,15 +358,15 @@ public class RankingFragment extends MediaBrowserListFragment {
 
         ARTIST {
             @Override
-            public String getRankingTweet(Resources resource, SongHistoryController controller, TermSelectLayout.Term term, int songNum) {
-                List<Tweetable> tweetableList = new ArrayList<>();
+            public String getRankingShareMessage(Resources resource, SongHistoryController controller, TermSelectLayout.Term term, int songNum) {
+                List<Shareable> shareableList = new ArrayList<>();
                 Realm realm = RealmHelper.getRealmInstance();
-                for (Tweetable tweetable : controller.getRankedArtistList(realm, term)) {
-                    tweetableList.add(tweetable);
+                for (Shareable shareable : controller.getRankedArtistList(realm, term)) {
+                    shareableList.add(shareable);
                 }
-                String tweet = tweet(resource, tweetableList, songNum);
+                String shareMessage = createShareMessage(resource, shareableList, songNum);
                 realm.close();
-                return tweet;
+                return shareMessage;
             }
 
             @Override
@@ -368,7 +385,7 @@ public class RankingFragment extends MediaBrowserListFragment {
 
         },;
 
-        public abstract String getRankingTweet(Resources resources, SongHistoryController controller, TermSelectLayout.Term term, int songNum);
+        public abstract String getRankingShareMessage(Resources resources, SongHistoryController controller, TermSelectLayout.Term term, int songNum);
 
         public static RankKind of(String value) {
             for (RankKind rankKind : RankKind.values()) {
@@ -377,11 +394,11 @@ public class RankingFragment extends MediaBrowserListFragment {
             return null;
         }
 
-        private static String tweet(Resources resources, List<Tweetable> tweetableList, int songNum) {
+        private static String createShareMessage(Resources resources, List<Shareable> shareableList, int songNum) {
             String content = "";
             int order = 1;
-            for (Tweetable tweetable : tweetableList) {
-                content = content + resources.getString(R.string.tweet_each_rank, order++, tweetable.tweet(resources));
+            for (Shareable shareable : shareableList) {
+                content = content + resources.getString(R.string.share_each_rank, order++, shareable.share(resources));
                 if (order > songNum) {
                     break;
                 }

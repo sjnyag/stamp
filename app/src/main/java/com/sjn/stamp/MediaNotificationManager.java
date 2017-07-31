@@ -355,11 +355,11 @@ public class MediaNotificationManager extends BroadcastReceiver {
         PendingIntent intent;
         if (mPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING) {
             label = mService.getString(com.sjn.stamp.R.string.label_pause);
-            icon = com.sjn.stamp.R.drawable.uamp_ic_pause_white_24dp;
+            icon = com.sjn.stamp.R.drawable.stamp_ic_pause_white_24dp;
             intent = mPauseIntent;
         } else {
             label = mService.getString(com.sjn.stamp.R.string.label_play);
-            icon = com.sjn.stamp.R.drawable.uamp_ic_play_arrow_white_24dp;
+            icon = com.sjn.stamp.R.drawable.stamp_ic_play_arrow_white_24dp;
             intent = mPlayIntent;
         }
         builder.addAction(new NotificationCompat.Action(icon, label, intent));

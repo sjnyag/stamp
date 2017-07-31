@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="primaryTextSelector" format="reference" />
+    <attr name="primaryTextSelector" format="reference"/>
     <declare-styleable name="ScrollViewWithMaxHeight">
-        <attr name="scrollViewMaxHeight" format="integer" />
+        <attr name="scrollViewMaxHeight" format="integer"/>
     </declare-styleable>
 </resources>

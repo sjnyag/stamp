@@ -222,35 +222,7 @@ public abstract class MediaBrowserListActivity extends MediaBrowserActivity
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_select_all:
-                mAdapter.selectAll();
-                if (mActionModeHelper != null) {
-                    mActionModeHelper.updateContextTitle(mAdapter.getSelectedItemCount());
-                }
-                // We consume the event
-                return true;
-
-            case R.id.action_delete:
-                /*
-                // Build message before delete, for the SnackBar
-                StringBuilder message = new StringBuilder();
-                message.append(getString(R.string.action_deleted)).append(" ");
-                for (Integer pos : mAdapter.getSelectedPositions()) {
-                    message.append(extractTitleFrom(mAdapter.getItem(pos)));
-                    if (mAdapter.getSelectedItemCount() > 1)
-                        message.append(", ");
-                }
-
-                // Experimenting NEW feature
-                mAdapter.setRestoreSelectionOnUndo(true);
-                // We consume the event
-                */
-                return true;
-            default:
-                // If an item is not implemented we don't consume the event, so we finish the ActionMode
-                return false;
-        }
+        return true;
     }
 
     @Override

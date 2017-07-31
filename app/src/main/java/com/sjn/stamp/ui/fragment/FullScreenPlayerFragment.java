@@ -122,8 +122,8 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
         View rootView = inflater.inflate(R.layout.fragment_full_player, container, false);
 
         mBackgroundImage = (ImageView) rootView.findViewById(R.id.background_image);
-        mPauseDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.uamp_ic_pause_white_48dp);
-        mPlayDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.uamp_ic_play_arrow_white_48dp);
+        mPauseDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.stamp_ic_pause_white_48dp);
+        mPlayDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.stamp_ic_play_arrow_white_48dp);
         mRepeatOneDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_repeat_one_white_48dp);
         mRepeatAllDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_repeat_white_48dp);
         mNoRepeatDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_repeat_white_48dp);
