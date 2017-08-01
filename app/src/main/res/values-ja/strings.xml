@@ -47,12 +47,21 @@
     <string name="notification_title">%1$sを%2$s回再生しました！！</string>
     <string name="notification_text">最初に聞いてから%1$sです。</string>
 
-    <string name="date_diff_years">%1$s年</string>
-    <string name="date_diff_years_and_months">%1$s年%2$sヶ月</string>
-    <string name="date_diff_months">%1$sヶ月</string>
-    <string name="date_diff_days">%1$s日</string>
-    <string name="date_diff_hours_and_minutes">%1$s時間%2$s分</string>
-    <string name="date_diff_minutes">%1$s分</string>
+    <plurals name="date_diff_years">
+        <item quantity="other">%1$d年</item>
+    </plurals>
+    <plurals name="date_diff_months">
+        <item quantity="other">%1$dヶ月</item>
+    </plurals>
+    <plurals name="date_diff_days">
+        <item quantity="other">%1$d日</item>
+    </plurals>
+    <plurals name="date_diff_hours">
+        <item quantity="other">%1$d時間</item>
+    </plurals>
+    <plurals name="date_diff_minutes">
+        <item quantity="other">%1$d分</item>
+    </plurals>
 
     <string name="media_item_label_all_song">All</string>
     <string name="media_item_label_queue">Queue</string>
@@ -115,9 +124,9 @@
     <string name="base_url">https://play.google.com/store/apps/details?id=com.sjn.stamp</string>
 
     <string name="share_song">%1$s / %2$s</string>
-    <string name="share_ranked">位(%1$d回) : %2$s</string>
+    <string name="share_ranked">.(%1$d回) %2$s</string>
     <string name="share_each_rank">%1$d%2$s\n</string>
-    <string name="share_ranking">再生回数ランキング(%1$s)\n%2$s</string>
+    <string name="share_ranking">%1$s\n%2$s</string>
 
     <string name="song_history_label">%1$s/%2$s@%3$s</string>
 
@@ -154,7 +163,7 @@
     <string name="dialog_restart_title">再起動</string>
     <string name="dialog_restart_content">バックアップを反映するために再起動します。</string>
     <string name="dialog_delete_stamp_title">スタンプの削除</string>
-    <string name="dialog_delete_stamp_content">タグ「%1$s」を削除しますか？</string>
+    <string name="dialog_delete_stamp_content">スタンプ「%1$s」を削除しますか？</string>
     <string name="dialog_lets_play_title">まだ音楽の再生履歴がありません</string>
     <string name="dialog_delete_history_title">再生履歴の削除</string>
     <string name="dialog_delete_history_content">再生履歴「%1$s」を削除しますか？</string>
@@ -165,7 +174,7 @@
     <string name="year">年</string>
     <string name="ranking_select_target_count">対象数</string>
     <string name="ranking_select_target_term">対象期間</string>
-    <string name="stamp_register">register</string>
+    <string name="stamp_register">Register</string>
     <string name="stamp_new">New Stamp Name</string>
     <string name="icon">icon</string>
 

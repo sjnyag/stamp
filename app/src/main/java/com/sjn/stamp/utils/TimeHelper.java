@@ -17,11 +17,11 @@ import java.util.Locale;
 
 public class TimeHelper {
 
-    public static String getDateDiff(Context context, Date before) {
+    static String getDateDiff(Context context, Date before) {
         return getDateDiff(context, before, getJapanNow().toDate());
     }
 
-    public static String getDateDiff(Context context, Date before, Date after) {
+    private static String getDateDiff(Context context, Date before, Date after) {
         DateTime dt1 = toDateTime(before);
         DateTime dt2 = toDateTime(after);
         if (dt1.isAfter(dt2)) {
@@ -32,19 +32,23 @@ public class TimeHelper {
         if (months > 12) {
             int years = months / 12;
             months = months - years * 12;
-            return months == 0 ? context.getResources().getString(R.string.date_diff_years, String.valueOf(years)) :
-                    context.getResources().getString(R.string.date_diff_years_and_months, String.valueOf(years), String.valueOf(months));
+            return months == 0 ? context.getResources().getQuantityString(R.plurals.date_diff_years, years, years) :
+                    context.getResources().getQuantityString(R.plurals.date_diff_years, years, years) + " " + context.getResources().getQuantityString(R.plurals.date_diff_months, months, months);
         } else if (months > 0) {
-            return context.getResources().getString(R.string.date_diff_months, String.valueOf(months));
+            return context.getResources().getQuantityString(R.plurals.date_diff_months, months, months);
         }
         Duration d = new Duration(dt1, dt2);
         if (d.getStandardDays() > 1) {
-            return context.getResources().getString(R.string.date_diff_days, String.valueOf(d.getStandardDays()));
+            int days = (int) d.getStandardDays();
+            return context.getResources().getQuantityString(R.plurals.date_diff_days, days, days);
         }
         if (d.getStandardHours() >= 1) {
-            return context.getResources().getString(R.string.date_diff_hours_and_minutes, String.valueOf(d.getStandardHours()), String.valueOf(d.getStandardMinutes() - ((int) d.getStandardHours()) * 60));
+            int hours = (int) d.getStandardHours();
+            int minutes = (int) d.getStandardMinutes() - hours * 60;
+            return context.getResources().getQuantityString(R.plurals.date_diff_hours, hours, hours) + " " + context.getResources().getQuantityString(R.plurals.date_diff_minutes, minutes, minutes);
         } else {
-            return context.getResources().getString(R.string.date_diff_minutes, String.valueOf(d.getStandardMinutes()));
+            int minutes = (int) d.getStandardMinutes();
+            return context.getResources().getQuantityString(R.plurals.date_diff_minutes, minutes, minutes);
         }
     }
 
@@ -64,7 +68,7 @@ public class TimeHelper {
         return new DateTime(new Date(System.currentTimeMillis()));
     }
 
-    public static String toRFC3339(long unixTime) {
+    static String toRFC3339(long unixTime) {
         return ISODateTimeFormat.dateTime().print(new DateTime(new Date(unixTime * 1000L)));
     }
 
@@ -72,7 +76,7 @@ public class TimeHelper {
         return format(toDateTime(dateTime));
     }
 
-    public static String format(DateTime dateTime) {
+    private static String format(DateTime dateTime) {
         return DateTimeFormat.mediumDateTime().print(dateTime);
     }
 
@@ -116,7 +120,7 @@ public class TimeHelper {
         return new LocalDate(year, 12, 31);
     }
 
-    public static LocalDate yearMonthStart(int year, int month) {
+    private static LocalDate yearMonthStart(int year, int month) {
         return new LocalDate(year, month, 1);
     }
 
