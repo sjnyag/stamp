@@ -80,10 +80,12 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
      */
     @Override
     public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onMetadataChanged(MediaMetadataCompat metadata) {
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
