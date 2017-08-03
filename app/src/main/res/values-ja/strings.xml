@@ -183,4 +183,6 @@
     <string name="label_play">Play</string>
     <string name="label_previous">Previous</string>
     <string name="label_next">Next</string>
+    <string name="dialog_permission_necessary_content">このアプリは機器上のファイルへのアクセス許可がないと動きません。</string>
+    <string name="dialog_permission_necessary_title">アクセス許可が必要です。</string>
 </resources>

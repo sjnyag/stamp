@@ -188,4 +188,6 @@
     <string name="label_play">Play</string>
     <string name="label_previous">Previous</string>
     <string name="label_next">Next</string>
+    <string name="dialog_permission_necessary_title">Permission required</string>
+    <string name="dialog_permission_necessary_content">Sorry. This app cannot move without storage permission.</string>
 </resources>

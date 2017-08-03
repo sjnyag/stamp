@@ -21,13 +21,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.text.TextUtils;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.sjn.stamp.R;
+import com.sjn.stamp.ui.DialogFacade;
 import com.sjn.stamp.ui.fragment.FullScreenPlayerFragment;
 import com.sjn.stamp.ui.fragment.media_list.MediaBrowserListFragment;
 import com.sjn.stamp.ui.fragment.media_list.PagerFragment;
@@ -84,13 +86,26 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
         navigateToBrowser(DrawerMenu.first().getFragment(), false);
 
         if (!PermissionHelper.hasPermission(this, MediaRetrieveHelper.PERMISSIONS)) {
-            ActivityCompat.requestPermissions(this, MediaRetrieveHelper.PERMISSIONS, REQUEST_PERMISSION);
+            LogHelper.d(TAG, "has no Permission");
+            PermissionHelper.requestPermissions(this, MediaRetrieveHelper.PERMISSIONS, REQUEST_PERMISSION);
         }
         mSavedInstanceState = savedInstanceState;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        LogHelper.d(TAG, "onRequestPermissionsResult");
+        LogHelper.d(TAG, "onRequestPermissionsResult: requestCode " + requestCode);
+        LogHelper.d(TAG, "onRequestPermissionsResult: permissions " + Arrays.toString(permissions));
+        LogHelper.d(TAG, "onRequestPermissionsResult: grantResults " + Arrays.toString(grantResults));
+        if (!PermissionHelper.hasPermission(this, MediaRetrieveHelper.PERMISSIONS)) {
+            DialogFacade.createPermissionNecessaryDialog(this, new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    finish();
+                }
+            }).show();
+        }
         if (Arrays.asList(permissions).contains(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
             sendCustomAction(CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER, null, null);
         }

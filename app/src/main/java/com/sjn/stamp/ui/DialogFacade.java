@@ -21,6 +21,18 @@ public class DialogFacade {
                 .theme(Theme.DARK);
     }
 
+    public static MaterialDialog.Builder createPermissionNecessaryDialog(final Context context, MaterialDialog.SingleButtonCallback callback) {
+        return new MaterialDialog.Builder(context)
+                .title(R.string.dialog_permission_necessary_title)
+                .content(R.string.dialog_permission_necessary_content)
+                .positiveText(R.string.dialog_ok)
+                .onAny(callback)
+                .cancelable(false)
+                .contentColorRes(android.R.color.white)
+                .backgroundColorRes(R.color.material_blue_grey_800)
+                .theme(Theme.DARK);
+    }
+
     public static MaterialDialog.Builder createRestartDialog(final Context context, MaterialDialog.SingleButtonCallback callback) {
         return new MaterialDialog.Builder(context)
                 .title(R.string.dialog_restart_title)
