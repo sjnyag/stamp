@@ -105,7 +105,7 @@ public enum ProviderType {
             return null;
         }
     },
-    TOP_SONG(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_TOP_SONG) {
+    FREQUENT_SONG(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_FREQUENT_SONG) {
         @Override
         public ListProvider newProvider(Context context) {
             return new TopSongProvider(context);

@@ -67,7 +67,7 @@
     <string name="media_item_label_queue">Queue</string>
     <string name="media_item_label_stamp">Stamp</string>
     <string name="media_item_label_new">New</string>
-    <string name="media_item_label_top_song">Top Song</string>
+    <string name="media_item_label_frequent_song">Frequent Song</string>
     <string name="media_item_label_artist">Artist</string>
     <string name="media_item_label_album">Album</string>
     <string name="media_item_label_genre">Genre</string>
@@ -84,7 +84,7 @@
     <string name="all_song_tab_artist">artist</string>
     <string name="all_song_tab_album">album</string>
     <string name="all_song_tab_playlist">playlist</string>
-    <string name="all_song_tab_top_song">top</string>
+    <string name="all_song_tab_frequent_song">frequent</string>
     <string name="all_song_tab_new">new</string>
 
     <string name="ranking_tab_my_songs">Song</string>
