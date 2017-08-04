@@ -14,7 +14,7 @@ import com.sjn.stamp.utils.TvHelper;
 
 public class CastPlayer {
 
-    private static final String TAG = LogHelper.makeLogTag(CarPlayer.class);
+    private static final String TAG = LogHelper.makeLogTag(CastPlayer.class);
 
     // Extra on MediaSession that contains the Cast device name currently connected to
     public static final String EXTRA_CONNECTED_CAST = "com.sjn.stamp.CAST_NAME";

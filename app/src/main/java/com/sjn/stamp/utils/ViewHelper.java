@@ -23,13 +23,10 @@ import com.sjn.stamp.R;
 import com.sjn.stamp.ui.custom.TextDrawable;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-
-import eu.davidea.flipview.FlipView;
 
 public class ViewHelper {
     private static int colorAccent = -1;
@@ -126,6 +123,14 @@ public class ViewHelper {
         LayerDrawable shape = (LayerDrawable) ContextCompat.getDrawable(activity, drawableId);
         shape.findDrawableByLayerId(layerId).mutate().setColorFilter(color, PorterDuff.Mode.SRC_IN);
         view.setBackground(shape);
+    }
+
+    public static TextDrawable createTextDrawable(CharSequence text) {
+        if (text == null) {
+            return createTextDrawable("");
+        } else {
+            return createTextDrawable(text.toString());
+        }
     }
 
     public static TextDrawable createTextDrawable(String text) {
