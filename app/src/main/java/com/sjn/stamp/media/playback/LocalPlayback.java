@@ -174,12 +174,18 @@ class LocalPlayback implements Playback, AudioManager.OnAudioFocusChangeListener
 
         if (mState == PlaybackStateCompat.STATE_PAUSED && !mediaHasChanged && mMediaPlayer != null) {
             configMediaPlayerState();
+        } else if (item.getDescription().getMediaUri() == null) {
+            mState = PlaybackStateCompat.STATE_ERROR;
+            if (mCallback != null) {
+                mCallback.onPlaybackStatusChanged(mState);
+                mCallback.onError("Media not found.");
+            }
         } else {
             mState = PlaybackStateCompat.STATE_STOPPED;
             relaxResources(false); // release everything except MediaPlayer
             MediaMetadataCompat track = mMusicProvider.getMusicByMediaId(item.getDescription().getMediaId());
 
-            String source = track == null ? item.getDescription().getMediaUri().toString() : track.getString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE);
+            String source = (track == null) ? item.getDescription().getMediaUri().toString() : track.getString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE);
             /*
             if (source != null) {
                 source = source.replaceAll(" ", "%20"); // Escape spaces for URLs
@@ -192,7 +198,7 @@ class LocalPlayback implements Playback, AudioManager.OnAudioFocusChangeListener
                 mState = PlaybackStateCompat.STATE_BUFFERING;
 
                 mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                DataSourceHelper.setMediaPlayerDataSource(mContext, mMediaPlayer, source.toString());
+                DataSourceHelper.setMediaPlayerDataSource(mContext, mMediaPlayer, source);
 
                 // Starts preparing the media player in the background. When
                 // it's done, it will call our OnPreparedListener (that is,
