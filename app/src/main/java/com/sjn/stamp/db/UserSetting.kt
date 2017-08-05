@@ -16,7 +16,7 @@ open class UserSetting(
         this.repeatState = repeatState.no
     }
 
-    fun fetchRepeatState(): RepeatState {
+    fun fetchRepeatState(): RepeatState? {
         return RepeatState.of(repeatState)
     }
 
@@ -24,7 +24,7 @@ open class UserSetting(
         this.shuffleState = shuffleState.no
     }
 
-    fun fetchShuffleStateValue(): ShuffleState {
+    fun fetchShuffleStateValue(): ShuffleState? {
         return ShuffleState.of(shuffleState)
     }
 

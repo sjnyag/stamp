@@ -89,8 +89,8 @@ public class CustomController {
     }
 
     private CustomController() {
-        mShuffleState = ShuffleState.getDefault();
-        mRepeatState = RepeatState.getDefault();
+        mShuffleState = ShuffleState.Companion.getDefault();
+        mRepeatState = RepeatState.Companion.getDefault();
     }
 
 }

@@ -177,7 +177,7 @@ public class StampController {
         if (queryMap == null || categoryStamp == null) {
             return;
         }
-        CategoryType categoryType = CategoryType.of(categoryStamp.getType());
+        CategoryType categoryType = CategoryType.Companion.of(categoryStamp.getType());
         if (categoryType == null) {
             return;
         }
