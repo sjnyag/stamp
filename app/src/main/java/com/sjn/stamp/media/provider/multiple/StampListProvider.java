@@ -7,10 +7,10 @@ import android.support.v4.media.MediaMetadataCompat;
 import com.sjn.stamp.R;
 import com.sjn.stamp.controller.StampController;
 import com.sjn.stamp.utils.MediaIDHelper;
+import com.sjn.stamp.utils.MediaItemHelper;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 
 public class StampListProvider extends MultipleListProvider {
 
@@ -46,15 +46,7 @@ public class StampListProvider extends MultipleListProvider {
 
     @Override
     protected MediaBrowserCompat.MediaItem createMediaItem(MediaMetadataCompat metadata, String key) {
-        // Since mediaMetadata fields are immutable, we need to create a copy, so we
-        // can set a hierarchy-aware mediaID. We will need to know the media hierarchy
-        // when we get a onPlayFromMusicID call, so we can create the proper queue based
-        // on where the music was selected from (by artist, by genre, random, etc)
-        MediaMetadataCompat copy = new MediaMetadataCompat.Builder(metadata)
-                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, createHierarchyAwareMediaID(metadata, key))
-                .build();
-        return new MediaBrowserCompat.MediaItem(copy.getDescription(),
-                MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
+        return MediaItemHelper.createPlayableItem(MediaItemHelper.updateMediaId(metadata, createHierarchyAwareMediaID(metadata, key)));
     }
 
     protected String createHierarchyAwareMediaID(MediaMetadataCompat metadata, String key) {

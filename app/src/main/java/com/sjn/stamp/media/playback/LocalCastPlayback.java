@@ -29,6 +29,7 @@ import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
+import com.sjn.stamp.utils.MediaItemHelper;
 import com.sjn.stamp.utils.TimeHelper;
 
 import org.json.JSONException;
@@ -180,39 +181,7 @@ public class LocalCastPlayback extends CastPlayback {
         }
         String url = "http://" + getWifiAddress() + ":" + mHttpServer.mPort;
         mHttpServer.setMedia(item);
-        MediaInfo media = toCastMediaMetadata(item, url);
+        MediaInfo media = MediaItemHelper.convertToMediaInfo(item, url);
         mRemoteMediaClient.load(media, autoPlay, mCurrentPosition, customData);
     }
-
-    private MediaInfo toCastMediaMetadata(MediaSessionCompat.QueueItem track, String url) {
-        MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
-        mediaMetadata.putString(MediaMetadata.KEY_TITLE,
-                track.getDescription().getTitle() == null ? "" :
-                        track.getDescription().getTitle().toString());
-        mediaMetadata.putString(MediaMetadata.KEY_SUBTITLE,
-                track.getDescription().getSubtitle() == null ? "" :
-                        track.getDescription().getSubtitle().toString());
-        if (track.getDescription().getExtras() != null) {
-            mediaMetadata.putString(MediaMetadata.KEY_ALBUM_ARTIST,
-                    track.getDescription().getExtras().getString((MediaMetadataCompat.METADATA_KEY_ARTIST)));
-            mediaMetadata.putString(MediaMetadata.KEY_ARTIST,
-                    track.getDescription().getExtras().getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
-            mediaMetadata.putString(MediaMetadata.KEY_ALBUM_TITLE,
-                    track.getDescription().getExtras().getString(MediaMetadataCompat.METADATA_KEY_ALBUM));
-        }
-        WebImage image = new WebImage(
-                new Uri.Builder().encodedPath(url + "/image/" + TimeHelper.getJapanNow().toString()).build());
-        // First image is used by the receiver for showing the audio album art.
-        mediaMetadata.addImage(image);
-        // Second image is used by Cast Companion Library on the full screen activity that is shown
-        // when the cast dialog is clicked.
-        mediaMetadata.addImage(image);
-
-        return new MediaInfo.Builder(url)
-                .setContentType("audio/mpeg")
-                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-                .setMetadata(mediaMetadata)
-                .build();
-    }
-
 }

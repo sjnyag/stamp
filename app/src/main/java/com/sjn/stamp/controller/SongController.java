@@ -13,6 +13,7 @@ import com.sjn.stamp.db.dao.SongStampDao;
 import com.sjn.stamp.media.provider.ProviderType;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
+import com.sjn.stamp.utils.MediaItemHelper;
 import com.sjn.stamp.utils.MediaRetrieveHelper;
 import com.sjn.stamp.utils.RealmHelper;
 
@@ -160,7 +161,7 @@ public class SongController {
             return;
         }
         Song song = SongDao.getInstance().newStandalone();
-        song.parseMetadata(track);
+        MediaItemHelper.updateSong(song, track);
         Realm realm = RealmHelper.getRealmInstance();
         for (String stampName : stampNameList) {
             SongStamp songStamp = mSongStampDao.newStandalone();

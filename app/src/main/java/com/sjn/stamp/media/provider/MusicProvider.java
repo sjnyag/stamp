@@ -29,6 +29,7 @@ import com.sjn.stamp.media.source.MusicProviderSource;
 import com.sjn.stamp.ui.observer.MusicListObserver;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
+import com.sjn.stamp.utils.MediaItemHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -182,20 +183,7 @@ public class MusicProvider {
     }
 
     public synchronized void updateMusicArt(String musicId, Bitmap albumArt, Bitmap icon) {
-        MediaMetadataCompat metadata = getMusicByMusicId(musicId);
-        metadata = new MediaMetadataCompat.Builder(metadata)
-
-                // set high resolution bitmap in METADATA_KEY_ALBUM_ART. This is used, for
-                // example, on the lockscreen background when the media session is active.
-                .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumArt)
-
-                // set small version of the album art in the DISPLAY_ICON. This is used on
-                // the MediaDescription and thus it should be small to be serialized if
-                // necessary
-                .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, icon)
-
-                .build();
-        mMusicListById.put(musicId, metadata);
+        mMusicListById.put(musicId, MediaItemHelper.updateMusicArt(getMusicByMusicId(musicId), albumArt, icon));
     }
 
     public void setFavorite(String musicId, boolean favorite) {

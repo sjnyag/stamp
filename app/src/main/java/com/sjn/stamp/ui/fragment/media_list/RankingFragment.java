@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.media.MediaBrowserCompat;
-import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -33,7 +32,7 @@ import com.sjn.stamp.ui.custom.TermSelectLayout;
 import com.sjn.stamp.ui.item.RankedArtistItem;
 import com.sjn.stamp.ui.item.RankedSongItem;
 import com.sjn.stamp.utils.LogHelper;
-import com.sjn.stamp.utils.MediaIDHelper;
+import com.sjn.stamp.utils.MediaItemHelper;
 import com.sjn.stamp.utils.RealmHelper;
 import com.sjn.stamp.utils.ShareHelper;
 import com.sjn.stamp.utils.ViewHelper;
@@ -114,13 +113,9 @@ public class RankingFragment extends MediaBrowserListFragment {
         if (item instanceof RankedSongItem) {
             mMediaBrowsable.onMediaItemSelected(((RankedSongItem) item).getMediaId());
         } else if (item instanceof RankedArtistItem) {
-            String artist = ((RankedArtistItem) item).getArtistName();
-            MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
-                    .setMediaId(MediaIDHelper.createMediaID(null, MediaIDHelper.MEDIA_ID_MUSICS_BY_ARTIST, artist))
-                    .setTitle(MediaIDHelper.unescape(artist))
-                    .build();
-            MediaBrowserCompat.MediaItem mediaItem = new MediaBrowserCompat.MediaItem(description, MediaBrowserCompat.MediaItem.FLAG_BROWSABLE);
-            mMediaBrowsable.onMediaItemSelected(mediaItem);
+            mMediaBrowsable.onMediaItemSelected(MediaItemHelper.createArtistMediaItem(
+                    ((RankedArtistItem) item).getArtistName()
+            ));
         }
         return false;
     }

@@ -2,38 +2,23 @@ package com.sjn.stamp.media.provider;
 
 import android.content.res.Resources;
 import android.support.v4.media.MediaBrowserCompat;
-import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 
-import java.util.Comparator;
+import com.sjn.stamp.utils.MediaItemHelper;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 
 
 public abstract class ListProvider {
-
-    //noinspection ResourceType
-    public static String CUSTOM_METADATA_TRACK_PREFIX = "__PREFIX__";
 
     public enum ProviderState {
         NON_INITIALIZED, INITIALIZING, INITIALIZED
     }
 
     final public MediaBrowserCompat.MediaItem getRootMenu(Resources resources) {
-        MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
-                .setMediaId(getProviderMediaId())
-                .setTitle(resources.getString(getTitleId()))
-                /*
-
-                .setSubtitle(resources.getString(R.string.browse_genre_subtitle))
-                .setIconUri(Uri.parse("android.resource://" +
-                        "com.sjn.stamp/drawable/ic_by_genre"))
-                 */
-                .build();
-        return new MediaBrowserCompat.MediaItem(description,
-                MediaBrowserCompat.MediaItem.FLAG_BROWSABLE);
+        return MediaItemHelper.createBrowsableItem(getProviderMediaId(), resources.getString(getTitleId()));
     }
 
     final public boolean matchFilter(String filter, MediaMetadataCompat track) {

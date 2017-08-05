@@ -5,7 +5,7 @@ import android.media.MediaMetadata
 import android.support.v4.media.MediaMetadataCompat
 import com.sjn.stamp.R
 import com.sjn.stamp.db.dao.ArtistDao
-import com.sjn.stamp.media.source.MusicProviderSource
+import com.sjn.stamp.utils.MediaItemHelper
 import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.Index
@@ -45,58 +45,9 @@ open class Song(
         return result
     }
 
-    fun parseMetadata(metadata: MediaMetadataCompat) {
-        mediaId = metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)
-        trackSource = metadata.getString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE)
-        album = fetchString(metadata, MediaMetadata.METADATA_KEY_ALBUM)
-        val artistName = fetchString(metadata, MediaMetadata.METADATA_KEY_ARTIST)
-        val artist = ArtistDao.getInstance().newStandalone()
-        artist!!.name = artistName
-        artist.albumArtUri = fetchString(metadata, MediaMetadata.METADATA_KEY_ALBUM_ART_URI)
-        this.artist = artist
-        duration = fetchLong(metadata, MediaMetadata.METADATA_KEY_DURATION)
-        genre = fetchString(metadata, MediaMetadata.METADATA_KEY_GENRE)
-        albumArtUri = fetchString(metadata, MediaMetadata.METADATA_KEY_ALBUM_ART_URI)
-        title = fetchString(metadata, MediaMetadata.METADATA_KEY_TITLE)
-        trackNumber = fetchLong(metadata, MediaMetadata.METADATA_KEY_TRACK_NUMBER)
-        numTracks = fetchLong(metadata, MediaMetadata.METADATA_KEY_NUM_TRACKS)
-        dateAdded = fetchString(metadata, MediaMetadata.METADATA_KEY_DATE)
-    }
-
-    fun mediaMetadataCompatBuilder(): MediaMetadataCompat.Builder {
-
-        return MediaMetadataCompat.Builder()
-                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mediaId)
-                .putString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE, trackSource)
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, album)
-                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist!!.name)
-                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, duration!!)
-                .putString(MediaMetadataCompat.METADATA_KEY_GENRE, genre)
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, albumArtUri)
-                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
-                .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, trackNumber!!)
-                .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, trackNumber!!)
-                .putString(MediaMetadataCompat.METADATA_KEY_DATE, dateAdded)
-    }
-
     fun buildMediaMetadataCompat(): MediaMetadataCompat {
-        return mediaMetadataCompatBuilder().build()
+        return MediaItemHelper.convertToMetadata(this)
     }
-
-    internal fun fetchString(metadata: MediaMetadataCompat, key: String): String? {
-        if (metadata.containsKey(key)) {
-            return metadata.getString(key)
-        }
-        return null
-    }
-
-    internal fun fetchLong(metadata: MediaMetadataCompat, key: String): Long? {
-        if (metadata.containsKey(key)) {
-            return metadata.getLong(key)
-        }
-        return null
-    }
-
     override fun share(resources: Resources): String {
         return resources.getString(R.string.share_song, title, artist!!.name)
     }

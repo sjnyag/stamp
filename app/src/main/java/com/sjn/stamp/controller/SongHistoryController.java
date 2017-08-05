@@ -16,9 +16,9 @@ import com.sjn.stamp.db.dao.DeviceDao;
 import com.sjn.stamp.db.dao.SongDao;
 import com.sjn.stamp.db.dao.SongHistoryDao;
 import com.sjn.stamp.db.dao.TotalSongHistoryDao;
-import com.sjn.stamp.media.provider.ListProvider;
 import com.sjn.stamp.ui.custom.TermSelectLayout;
 import com.sjn.stamp.utils.LogHelper;
+import com.sjn.stamp.utils.MediaItemHelper;
 import com.sjn.stamp.utils.NotificationHelper;
 import com.sjn.stamp.utils.RealmHelper;
 
@@ -113,7 +113,7 @@ public class SongHistoryController {
 
     private Song createSong(MediaMetadataCompat track) {
         Song song = mSongDao.newStandalone();
-        song.parseMetadata(track);
+        MediaItemHelper.updateSong(song, track);
         return song;
     }
 
@@ -131,12 +131,7 @@ public class SongHistoryController {
             if (totalSongHistory.getPlayCount() == 0 || trackList.size() > 30) {
                 break;
             }
-            //noinspection ResourceType
-            trackList.add(
-                    totalSongHistory.getSong().mediaMetadataCompatBuilder()
-                            .putLong(ListProvider.CUSTOM_METADATA_TRACK_PREFIX, totalSongHistory.getPlayCount())
-                            .build()
-            );
+            trackList.add(MediaItemHelper.convertToMetadata(totalSongHistory.getSong()));
         }
         realm.close();
         return trackList;

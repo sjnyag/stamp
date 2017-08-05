@@ -3,13 +3,13 @@ package com.sjn.stamp.media.provider.multiple;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.v4.media.MediaBrowserCompat;
-import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 
 import com.google.common.collect.Lists;
 import com.sjn.stamp.media.provider.ListProvider;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
+import com.sjn.stamp.utils.MediaItemHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -98,15 +98,7 @@ abstract class MultipleListProvider extends ListProvider {
 
     @Override
     protected MediaBrowserCompat.MediaItem createMediaItem(MediaMetadataCompat metadata, String key) {
-        // Since mediaMetadata fields are immutable, we need to create a copy, so we
-        // can set a hierarchy-aware mediaID. We will need to know the media hierarchy
-        // when we get a onPlayFromMusicID call, so we can create the proper queue based
-        // on where the music was selected from (by artist, by genre, random, etc)
-        MediaMetadataCompat copy = new MediaMetadataCompat.Builder(metadata)
-                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, createHierarchyAwareMediaID(metadata))
-                .build();
-        return new MediaBrowserCompat.MediaItem(copy.getDescription(),
-                MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
+        return MediaItemHelper.createPlayableItem(MediaItemHelper.updateMediaId(metadata, createHierarchyAwareMediaID(metadata)));
     }
 
     private List<String> getKeys(ProviderState state, Map<String, MediaMetadataCompat> musicListById) {
@@ -125,21 +117,11 @@ abstract class MultipleListProvider extends ListProvider {
     private String createHierarchyAwareMediaID(MediaMetadataCompat metadata) {
         //noinspection ResourceType
         String category = metadata.getString(getMediaKey());
-        return MediaIDHelper.createMediaID(
-                metadata.getDescription().getMediaId(), getProviderMediaId(), category);
+        return MediaIDHelper.createMediaID(metadata.getDescription().getMediaId(), getProviderMediaId(), category);
     }
 
     private MediaBrowserCompat.MediaItem createBrowsableMediaItemForKey(String key) {
-        MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
-                .setMediaId(MediaIDHelper.createMediaID(null, getProviderMediaId(), key))
-                .setTitle(MediaIDHelper.unescape(key))
-                /*
-                .setSubtitle(resources.getString(
-                        R.string.browse_musics_by_genre_subtitle, genre))
-                */
-                .build();
-        return new MediaBrowserCompat.MediaItem(description,
-                MediaBrowserCompat.MediaItem.FLAG_BROWSABLE);
+        return MediaItemHelper.createBrowsableItem(MediaIDHelper.createMediaID(null, getProviderMediaId(), key), MediaIDHelper.unescape(key));
     }
 
     private Map<String, List<MediaMetadataCompat>> getTrackListMap(final Map<String, MediaMetadataCompat> musicListById) {

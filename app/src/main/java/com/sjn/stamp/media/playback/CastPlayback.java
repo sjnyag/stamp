@@ -16,20 +16,17 @@
 package com.sjn.stamp.media.playback;
 
 import android.content.Context;
-import android.net.Uri;
-import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 
 import com.google.android.gms.cast.MediaInfo;
-import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.MediaStatus;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
-import com.google.android.gms.common.images.WebImage;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
+import com.sjn.stamp.utils.MediaItemHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,8 +39,6 @@ import static android.support.v4.media.session.MediaSessionCompat.QueueItem;
 class CastPlayback implements Playback {
 
     private static final String TAG = LogHelper.makeLogTag(CastPlayback.class);
-
-    private static final String MIME_TYPE_AUDIO_MPEG = "audio/mpeg";
     static final String ITEM_ID = "itemId";
 
     final Context mAppContext;
@@ -192,51 +187,8 @@ class CastPlayback implements Playback {
         }
         JSONObject customData = new JSONObject();
         customData.put(ITEM_ID, mediaId);
-        MediaInfo media = toCastMediaMetadata(item, customData);
+        MediaInfo media = MediaItemHelper.convertToMediaInfo(item, customData);
         mRemoteMediaClient.load(media, autoPlay, mCurrentPosition, customData);
-    }
-
-    /**
-     * Helper method to convert a {@link android.media.MediaMetadata} to a
-     * {@link com.google.android.gms.cast.MediaInfo} used for sending media to the receiver app.
-     *
-     * @param track      {@link com.google.android.gms.cast.MediaMetadata}
-     * @param customData custom data specifies the local mediaId used by the player.
-     * @return mediaInfo {@link com.google.android.gms.cast.MediaInfo}
-     */
-    private static MediaInfo toCastMediaMetadata(QueueItem track,
-                                                 JSONObject customData) {
-        MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
-        mediaMetadata.putString(MediaMetadata.KEY_TITLE,
-                track.getDescription().getTitle() == null ? "" :
-                        track.getDescription().getTitle().toString());
-        mediaMetadata.putString(MediaMetadata.KEY_SUBTITLE,
-                track.getDescription().getSubtitle() == null ? "" :
-                        track.getDescription().getSubtitle().toString());
-        if (track.getDescription().getExtras() != null) {
-            mediaMetadata.putString(MediaMetadata.KEY_ALBUM_ARTIST,
-                    track.getDescription().getExtras().getString((MediaMetadataCompat.METADATA_KEY_ARTIST)));
-            mediaMetadata.putString(MediaMetadata.KEY_ARTIST,
-                    track.getDescription().getExtras().getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
-            mediaMetadata.putString(MediaMetadata.KEY_ALBUM_TITLE,
-                    track.getDescription().getExtras().getString(MediaMetadataCompat.METADATA_KEY_ALBUM));
-        }
-        WebImage image = new WebImage(
-                new Uri.Builder().encodedPath(track.getDescription().getIconUri().toString())
-                        .build());
-        // First image is used by the receiver for showing the audio album art.
-        mediaMetadata.addImage(image);
-        // Second image is used by Cast Companion Library on the full screen activity that is shown
-        // when the cast dialog is clicked.
-        mediaMetadata.addImage(image);
-
-        //noinspection ResourceType
-        return new MediaInfo.Builder(track.getDescription().getMediaUri().toString())
-                .setContentType(MIME_TYPE_AUDIO_MPEG)
-                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-                .setMetadata(mediaMetadata)
-                .setCustomData(customData)
-                .build();
     }
 
     private void setMetadataFromRemote() {

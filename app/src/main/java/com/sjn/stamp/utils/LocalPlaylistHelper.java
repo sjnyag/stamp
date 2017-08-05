@@ -7,8 +7,6 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.media.MediaMetadataCompat;
 
-import com.sjn.stamp.media.source.MusicProviderSource;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -202,20 +200,7 @@ public class LocalPlaylistHelper {
         long totalTrackCount = cursor.getLong(6);
         String musicId = cursor.getString(7);
         long albumId = cursor.getLong(8);
-
-        //noinspection ResourceType
-        return new MediaMetadataCompat.Builder()
-                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, musicId)
-                .putString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE, source)
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, album)
-                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
-                .putString(MediaMetadataCompat.METADATA_KEY_GENRE, playlistTitle)
-                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, duration)
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, MediaRetrieveHelper.makeAlbumArtUri(albumId).toString())
-                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
-                .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, trackNumber)
-                .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, totalTrackCount)
-                .build();
+        return MediaItemHelper.createMetadata(musicId, source, album, artist, playlistTitle, duration, MediaRetrieveHelper.makeAlbumArtUri(albumId).toString(), title, trackNumber, totalTrackCount, null);
     }
 
     private static Uri createPlaylistUrl(int playlistId) {

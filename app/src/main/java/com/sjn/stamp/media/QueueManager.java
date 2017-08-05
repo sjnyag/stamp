@@ -34,6 +34,7 @@ import com.sjn.stamp.media.provider.single.QueueProvider;
 import com.sjn.stamp.utils.BitmapHelper;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
+import com.sjn.stamp.utils.MediaItemHelper;
 import com.sjn.stamp.utils.QueueHelper;
 import com.sjn.stamp.utils.ViewHelper;
 import com.squareup.picasso.Picasso;
@@ -51,8 +52,6 @@ import java.util.List;
  */
 public class QueueManager implements QueueProvider.QueueListener, CustomController.ShuffleStateListener {
     private static final String TAG = LogHelper.makeLogTag(QueueManager.class);
-
-    public static final String META_DATA_KEY_BASE_MEDIA_ID = "com.sjn.stamp.media.META_DATA_KEY_BASE_MEDIA_ID";
     private Context mContext;
     private MusicProvider mMusicProvider;
     private MetadataUpdateListener mListener;
@@ -326,29 +325,9 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
     @Override
     public Iterable<MediaMetadataCompat> getPlayingQueueMetadata() {
         List<MediaMetadataCompat> queueList = new ArrayList<>();
+        MediaSessionCompat.QueueItem current = getCurrentMusic();
         for (MediaSessionCompat.QueueItem queueItem : getPlayingQueue()) {
-
-            MediaMetadataCompat.Builder builder = new MediaMetadataCompat.Builder();
-            if (queueItem.getDescription().getMediaId() != null) {
-                builder.putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, MediaIDHelper.extractMusicIDFromMediaID(queueItem.getDescription().getMediaId()));
-            }
-            if (queueItem.getDescription().getDescription() != null) {
-                builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, queueItem.getDescription().getDescription().toString());
-            }
-            if (queueItem.getDescription().getSubtitle() != null) {
-                builder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, queueItem.getDescription().getSubtitle().toString());
-            }
-            if (queueItem.getDescription().getIconUri() != null) {
-                builder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, queueItem.getDescription().getIconUri().toString());
-            }
-            if (queueItem.getDescription().getTitle() != null) {
-                builder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, queueItem.getDescription().getTitle().toString());
-            }
-            MediaSessionCompat.QueueItem current = getCurrentMusic();
-            if (current != null) {
-                builder.putString(META_DATA_KEY_BASE_MEDIA_ID, current.getDescription().getMediaId());
-            }
-            queueList.add(builder.build());
+            queueList.add(MediaItemHelper.convertToMetadata(queueItem, current.getDescription().getMediaId()));
         }
         return queueList;
     }

@@ -11,7 +11,6 @@ import android.util.SparseArray;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.sjn.stamp.media.source.MusicProviderSource;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -207,20 +206,7 @@ public class MediaRetrieveHelper {
         }
 
         private MediaMetadataCompat buildMediaMetadataCompat() {
-            //noinspection ResourceType
-            return new MediaMetadataCompat.Builder()
-                    .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mMusicId)
-                    .putString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE, mSource)
-                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, mAlbum)
-                    .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, mArtist)
-                    .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, mDuration)
-                    .putString(MediaMetadataCompat.METADATA_KEY_GENRE, mGenre)
-                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, mAlbumArtUri)
-                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, mTitle)
-                    .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, mTrackNumber)
-                    .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, mTotalTrackCount)
-                    .putString(MediaMetadataCompat.METADATA_KEY_DATE, mDateAdded)
-                    .build();
+            return MediaItemHelper.createMetadata(mMusicId, mSource, mAlbum, mArtist,mGenre, mDuration, mAlbumArtUri, mTitle, mTrackNumber, mTotalTrackCount, mDateAdded);
         }
     }
 

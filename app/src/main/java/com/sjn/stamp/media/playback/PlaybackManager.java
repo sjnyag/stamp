@@ -18,31 +18,27 @@ package com.sjn.stamp.media.playback;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
-import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.text.TextUtils;
 
-import com.sjn.stamp.controller.SongHistoryController;
-import com.sjn.stamp.media.QueueManager;
-import com.sjn.stamp.media.provider.MusicProvider;
-import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.R;
 import com.sjn.stamp.constant.RepeatState;
+import com.sjn.stamp.controller.SongHistoryController;
 import com.sjn.stamp.media.CustomController;
 import com.sjn.stamp.media.MediaLogger;
+import com.sjn.stamp.media.QueueManager;
+import com.sjn.stamp.media.provider.MusicProvider;
 import com.sjn.stamp.utils.LogHelper;
+import com.sjn.stamp.utils.MediaIDHelper;
+import com.sjn.stamp.utils.MediaItemHelper;
 import com.sjn.stamp.utils.TimeHelper;
 import com.sjn.stamp.utils.WearHelper;
-
-import java.util.List;
 
 /**
  * Manage the interactions among the container service, the queue manager and the actual playback.
@@ -328,7 +324,7 @@ public class PlaybackManager implements Playback.Callback, MediaLogger.Listener 
         @Override
         public void onPlayFromUri(Uri uri, Bundle extras) {
 
-            MediaSessionCompat.QueueItem queueItem = createQueueItemFromUri(uri);
+            MediaSessionCompat.QueueItem queueItem = MediaItemHelper.createQueueItem(mContext, uri);
             if (queueItem == null) {
                 return;
             }
@@ -338,37 +334,6 @@ public class PlaybackManager implements Playback.Callback, MediaLogger.Listener 
             }
             mServiceCallback.onPlaybackStart();
             mPlayback.play(queueItem);
-        }
-
-
-        private MediaSessionCompat.QueueItem createQueueItemFromUri(Uri uri) {
-            List<String> pathSegments = uri.getPathSegments();
-            String host = uri.getHost();
-            String scheme = uri.getScheme();
-            String albumName;
-            String trackName;
-            String artistName;
-            try {
-                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                retriever.setDataSource(mContext, uri);
-                albumName = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
-                artistName = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-                trackName = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-                retriever.release();
-            } catch (Exception e) {
-                return null;
-            }
-            if (TextUtils.isEmpty(trackName) && pathSegments != null) {
-                trackName = pathSegments.get(pathSegments.size() - 1);
-            }
-            return new MediaSessionCompat.QueueItem(new MediaDescriptionCompat.Builder()
-                    .setMediaUri(uri)
-                    .setMediaId(uri.toString())
-                    .setTitle(trackName)
-                    .setSubtitle(artistName)
-                    .setDescription("streaming from " + scheme)
-                    //.setIconUri(Uri.parse(mCoverArtUrl))
-                    .build(), 0);
         }
 
         @Override
