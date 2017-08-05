@@ -19,15 +19,15 @@ public class CategoryStampDao extends BaseDao {
     }
 
     public List<CategoryStamp> findAllStampGroupByName(Realm realm) {
-        return realm.where(CategoryStamp.class).distinct("mName");
+        return realm.where(CategoryStamp.class).distinct("name");
     }
 
     public List<CategoryStamp> findCategoryStampList(Realm realm, CategoryType categoryType, String categoryValue) {
-        return realm.where(CategoryStamp.class).equalTo("mType", categoryType.getValue()).equalTo("mValue", categoryValue).findAll();
+        return realm.where(CategoryStamp.class).equalTo("type", categoryType.getValue()).equalTo("value", categoryValue).findAll();
     }
 
     public List<CategoryStamp> findCategoryStampList(Realm realm, String stampName) {
-        return realm.where(CategoryStamp.class).equalTo("mName", stampName).findAll();
+        return realm.where(CategoryStamp.class).equalTo("name", stampName).findAll();
     }
 
     public List<CategoryStamp> findAll(Realm realm) {
@@ -36,13 +36,13 @@ public class CategoryStampDao extends BaseDao {
 
     public void remove(Realm realm, String name, CategoryType categoryType, String categoryValue) {
         realm.beginTransaction();
-        realm.where(CategoryStamp.class).equalTo("mName", name).equalTo("mType", categoryType.getValue()).equalTo("mValue", categoryValue).findAll().deleteAllFromRealm();
+        realm.where(CategoryStamp.class).equalTo("name", name).equalTo("type", categoryType.getValue()).equalTo("value", categoryValue).findAll().deleteAllFromRealm();
         realm.commitTransaction();
     }
 
     public void remove(Realm realm, final String name) {
         realm.beginTransaction();
-        realm.where(CategoryStamp.class).equalTo("mName", name).findAll().deleteAllFromRealm();
+        realm.where(CategoryStamp.class).equalTo("name", name).findAll().deleteAllFromRealm();
         realm.commitTransaction();
     }
 
@@ -51,7 +51,7 @@ public class CategoryStampDao extends BaseDao {
             return;
         }
         realm.beginTransaction();
-        CategoryStamp categoryStamp = realm.where(CategoryStamp.class).equalTo("mName", name).equalTo("mType", categoryType.getValue()).equalTo("mValue", categoryValue).findFirst();
+        CategoryStamp categoryStamp = realm.where(CategoryStamp.class).equalTo("name", name).equalTo("type", categoryType.getValue()).equalTo("value", categoryValue).findFirst();
         if (categoryStamp == null) {
             categoryStamp = realm.createObject(CategoryStamp.class, getAutoIncrementId(realm, CategoryStamp.class));
             categoryStamp.setName(name);

@@ -21,7 +21,7 @@ import io.realm.RealmConfiguration;
 import io.realm.internal.IOException;
 
 public class RealmHelper {
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
 
     private static final String TAG = LogHelper.makeLogTag(RealmHelper.class);
     private static final File EXPORT_REALM_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);

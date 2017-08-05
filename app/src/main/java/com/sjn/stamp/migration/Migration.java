@@ -49,5 +49,79 @@ public class Migration implements RealmMigration {
                     .renameField("mArtist_new", "mArtist");
             oldVersion++;
         }
+        if (oldVersion == 1) {
+            schema.get("Artist")
+                    .renameField("mId", "id")
+                    .renameField("mName", "name")
+                    .renameField("mAlbumArtUri", "albumArtUri");
+            schema.get("CategoryStamp")
+                    .renameField("mId", "id")
+                    .renameField("mName", "name")
+                    .renameField("mValue", "value")
+                    .renameField("mType", "type");
+            schema.get("Device")
+                    .renameField("mId", "id")
+                    .renameField("mModel", "model")
+                    .renameField("mOs", "os");
+            schema.get("Playlist")
+                    .renameField("mId", "id")
+                    .renameField("mName", "name")
+                    .renameField("mActive", "active")
+                    .renameField("mCreatedAt", "createdAt")
+                    .renameField("mUpdatedAt", "updatedAt")
+                    .renameField("mSongs", "songs");
+            schema.get("PlaylistSong")
+                    .renameField("mId", "id")
+                    .renameField("mArtist", "artist")
+                    .renameField("mTitle", "title")
+                    .renameField("mSongId", "songId")
+                    .renameField("mActive", "active")
+                    .renameField("mCreatedAt", "createdAt")
+                    .renameField("mUpdatedAt", "updatedAt")
+                    .renameField("mPlaylist", "playlist");
+            schema.get("Song")
+                    .renameField("mId", "id")
+                    .renameField("mMediaId", "mediaId")
+                    .renameField("mTrackSource", "trackSource")
+                    .renameField("mAlbum", "album")
+                    .renameField("mDuration", "duration")
+                    .renameField("mGenre", "genre")
+                    .renameField("mAlbumArtUri", "albumArtUri")
+                    .renameField("mTitle", "title")
+                    .renameField("mTrackNumber", "trackNumber")
+                    .renameField("mNumTracks", "numTracks")
+                    .renameField("mDateAdded", "dateAdded")
+                    .renameField("mSongStampList", "songStampList")
+                    .renameField("mArtist", "artist");
+            schema.get("SongHistory")
+                    .renameField("mId", "id")
+                    .renameField("mSong", "song")
+                    .renameField("mRecordedAt", "recordedAt")
+                    .renameField("mRecordType", "recordType")
+                    .renameField("mDevice", "device")
+                    .renameField("mCount", "count")
+                    .renameField("mLatitude", "latitude")
+                    .renameField("mLongitude", "longitude")
+                    .renameField("mAccuracy", "accuracy")
+                    .renameField("mAltitude", "altitude");
+            schema.get("SongStamp")
+                    .renameField("mId", "id")
+                    .renameField("mName", "name")
+                    .renameField("mIsSystem", "isSystem")
+                    .renameField("mSongList", "songList");
+            schema.get("TotalSongHistory")
+                    .renameField("mId", "id")
+                    .renameField("mSong", "song")
+                    .renameField("mPlayCount", "playCount")
+                    .renameField("mSkipCount", "skipCount")
+                    .renameField("mCompleteCount", "completeCount");
+            schema.get("UserSetting")
+                    .renameField("mIsAutoLogin", "isAutoLogin")
+                    .renameField("mRepeatState", "repeatState")
+                    .renameField("mShuffleState", "shuffleState")
+                    .renameField("mQueueIdentifyMediaId", "queueIdentifyMediaId")
+                    .renameField("mLastMusicId", "lastMusicId");
+            oldVersion++;
+        }
     }
 }

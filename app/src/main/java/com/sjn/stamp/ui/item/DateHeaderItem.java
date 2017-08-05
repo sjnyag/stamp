@@ -15,17 +15,20 @@ import java.util.List;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.items.AbstractHeaderItem;
 import eu.davidea.flexibleadapter.items.IFilterable;
-import lombok.Getter;
-import lombok.experimental.Accessors;
 
 /**
  * This is a header item with custom layout for section headers.
  * <p><b>Note:</b> THIS ITEM IS NOT A SCROLLABLE HEADER.</p>
  * A Section should not contain others Sections and headers are not Sectionable!
  */
-@Getter
-@Accessors(prefix = "m")
 public class DateHeaderItem extends AbstractHeaderItem<DateHeaderItem.HeaderViewHolder> implements IFilterable {
+    public Date getDate() {
+        return mDate;
+    }
+
+    public String getTitle() {
+        return mTitle;
+    }
 
     private Date mDate;
     private String mTitle;

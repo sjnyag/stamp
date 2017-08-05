@@ -132,7 +132,7 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
         if (mMediaId == null) {
             mMediaId = mMediaBrowsable.getMediaBrowser().getRoot();
         }
-        LogHelper.d(TAG, "onConnected mMediaId: " + mMediaId);
+        LogHelper.d(TAG, "onConnected mediaId: " + mMediaId);
 
         // Unsubscribing before subscribing is required if this mediaId already has a subscriber
         // on this MediaBrowser instance. Subscribing to an already subscribed mediaId will replace

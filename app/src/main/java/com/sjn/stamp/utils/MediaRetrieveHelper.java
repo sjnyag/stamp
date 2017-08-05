@@ -17,11 +17,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-
 public class MediaRetrieveHelper {
     private static final String TAG = LogHelper.makeLogTag(MediaRetrieveHelper.class);
 
@@ -184,10 +179,6 @@ public class MediaRetrieveHelper {
         return ContentUris.withAppendedId(albumArtUri, albumId);
     }
 
-    @Accessors(prefix = "m")
-    @Getter
-    @Setter
-    @AllArgsConstructor(suppressConstructorProperties = true)
     public static class MediaCursorContainer {
         String mMusicId;
         String mSource;
@@ -200,6 +191,20 @@ public class MediaRetrieveHelper {
         int mTrackNumber;
         long mTotalTrackCount;
         String mDateAdded;
+
+        public MediaCursorContainer(String musicId, String source, String album, String artist, long duration, String genre, String albumArtUri, String title, int trackNumber, long totalTrackCount, String dateAdded) {
+            mMusicId = musicId;
+            mSource = source;
+            mAlbum = album;
+            mArtist = artist;
+            mDuration = duration;
+            mGenre = genre;
+            mAlbumArtUri = albumArtUri;
+            mTitle = title;
+            mTrackNumber = trackNumber;
+            mTotalTrackCount = totalTrackCount;
+            mDateAdded = dateAdded;
+        }
 
         private MediaMetadataCompat buildMediaMetadataCompat() {
             //noinspection ResourceType

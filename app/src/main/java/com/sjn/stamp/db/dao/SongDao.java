@@ -17,11 +17,11 @@ public class SongDao extends BaseDao {
     }
 
     public Song findById(Realm realm, long id) {
-        return realm.where(Song.class).equalTo("mId", id).findFirst();
+        return realm.where(Song.class).equalTo("id", id).findFirst();
     }
 
     public Song findOrCreate(Realm realm, Song rawSong) {
-        Song song = realm.where(Song.class).equalTo("mTitle", rawSong.getTitle()).equalTo("mArtist.mName", rawSong.getArtist().getName()).findFirst();
+        Song song = realm.where(Song.class).equalTo("title", rawSong.getTitle()).equalTo("artist.name", rawSong.getArtist().getName()).findFirst();
         if (song == null) {
             ArtistDao artistDao = ArtistDao.getInstance();
             Artist artist = artistDao.findOrCreate(realm, rawSong.getArtist());
@@ -33,7 +33,7 @@ public class SongDao extends BaseDao {
     }
 
     public Song findByMusicId(Realm realm, String musicId) {
-        return realm.where(Song.class).equalTo("mMediaId", musicId).findFirst();
+        return realm.where(Song.class).equalTo("mediaId", musicId).findFirst();
     }
 
     public Song newStandalone() {

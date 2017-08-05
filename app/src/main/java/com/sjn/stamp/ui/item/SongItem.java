@@ -31,19 +31,40 @@ import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.items.IFilterable;
 import eu.davidea.flexibleadapter.utils.Utils;
-import lombok.Getter;
-import lombok.experimental.Accessors;
 
 /**
  * You should extend directly from
  * {@link eu.davidea.flexibleadapter.items.AbstractFlexibleItem} to benefit of the already
  * implemented methods (getter and setters).
  */
-@Getter
-@Accessors(prefix = "m")
 public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements IFilterable, Serializable {
 
     private static final String TAG = LogHelper.makeLogTag(SongItem.class);
+
+    public String getMediaId() {
+        return mMediaId;
+    }
+
+    @Override
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public String getSubTitle() {
+        return mSubTitle;
+    }
+
+    public String getAlbumArt() {
+        return mAlbumArt;
+    }
+
+    public boolean isPlayable() {
+        return mIsPlayable;
+    }
+
+    public boolean isBrowsable() {
+        return mIsBrowsable;
+    }
 
     private String mMediaId;
     private String mTitle;

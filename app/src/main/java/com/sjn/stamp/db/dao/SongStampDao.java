@@ -20,7 +20,7 @@ public class SongStampDao extends BaseDao {
     }
 
     public List<SongStamp> findAll(Realm realm) {
-        return realm.where(SongStamp.class).findAll().sort("mName");
+        return realm.where(SongStamp.class).findAll().sort("name");
     }
 
     public void saveOrAdd(Realm realm, final SongStamp rawSongStamp, final Song rawSong) {
@@ -30,7 +30,7 @@ public class SongStampDao extends BaseDao {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                SongStamp managedSongStamp = realm.where(SongStamp.class).equalTo("mName", rawSongStamp.getName()).findFirst();
+                SongStamp managedSongStamp = realm.where(SongStamp.class).equalTo("name", rawSongStamp.getName()).findFirst();
                 Song managedSong = SongDao.getInstance().findOrCreate(realm, rawSong);
                 if (managedSongStamp == null) {
                     rawSongStamp.setId(getAutoIncrementId(realm, SongStamp.class));
@@ -56,7 +56,7 @@ public class SongStampDao extends BaseDao {
 
     public void remove(Realm realm, final String name) {
         realm.beginTransaction();
-        realm.where(SongStamp.class).equalTo("mName", name).findAll().deleteAllFromRealm();
+        realm.where(SongStamp.class).equalTo("name", name).findAll().deleteAllFromRealm();
         realm.commitTransaction();
     }
 
@@ -66,7 +66,7 @@ public class SongStampDao extends BaseDao {
             return false;
         }
         realm.beginTransaction();
-        SongStamp songStamp = realm.where(SongStamp.class).equalTo("mName", name).findFirst();
+        SongStamp songStamp = realm.where(SongStamp.class).equalTo("name", name).findFirst();
         if (songStamp == null) {
             songStamp = realm.createObject(SongStamp.class, getAutoIncrementId(realm, SongStamp.class));
             songStamp.setName(name);

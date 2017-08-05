@@ -7,16 +7,17 @@ import android.util.AttributeSet;
 
 import com.sjn.stamp.R;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-
 
 public class ToggleTextView extends AppCompatTextView {
 
-    @Accessors(prefix = "m")
-    @Getter
-    @Setter
+    public boolean isBooleanValue() {
+        return mBooleanValue;
+    }
+
+    public void setBooleanValue(boolean booleanValue) {
+        mBooleanValue = booleanValue;
+    }
+
     private boolean mBooleanValue = false;
     Context mContext;
 

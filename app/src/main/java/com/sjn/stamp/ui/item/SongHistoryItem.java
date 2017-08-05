@@ -28,30 +28,28 @@ import org.joda.time.Seconds;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.items.IFilterable;
 import eu.davidea.flexibleadapter.items.ISectionable;
 import eu.davidea.flexibleadapter.utils.Utils;
-import eu.davidea.viewholders.FlexibleViewHolder;
-import lombok.Getter;
-import lombok.experimental.Accessors;
 
 /**
  * You should extend directly from
  * {@link eu.davidea.flexibleadapter.items.AbstractFlexibleItem} to benefit of the already
  * implemented methods (getter and setters).
  */
-@Accessors(prefix = "m")
 public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHolder>
         implements ISectionable<SongHistoryItem.SimpleViewHolder, DateHeaderItem>, IFilterable, Serializable {
 
     /* The header of this item */
     DateHeaderItem header;
 
-    @Getter
+    public String getMediaId() {
+        return mMediaId;
+    }
+
     String mMediaId;
     private String mArtistName;
     private Date mRecordedAt;

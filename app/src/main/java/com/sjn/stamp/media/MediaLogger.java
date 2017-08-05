@@ -7,8 +7,6 @@ import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.sjn.stamp.utils.LogHelper;
 
-import lombok.AllArgsConstructor;
-
 public class MediaLogger {
 
     private static final String TAG = LogHelper.makeLogTag(MediaLogger.class);
@@ -86,9 +84,12 @@ public class MediaLogger {
         }
     }
 
-    @AllArgsConstructor(suppressConstructorProperties = true)
     private class MediaPlayTimer implements Runnable {
         final MediaMetadataCompat mStartMetadata;
+
+        public MediaPlayTimer(MediaMetadataCompat startMetadata) {
+            mStartMetadata = startMetadata;
+        }
 
         @Override
         public void run() {

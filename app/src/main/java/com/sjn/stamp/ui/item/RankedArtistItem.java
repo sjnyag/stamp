@@ -25,13 +25,27 @@ import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.items.IFilterable;
 import eu.davidea.flexibleadapter.utils.Utils;
-import eu.davidea.viewholders.FlexibleViewHolder;
-import lombok.Getter;
-import lombok.experimental.Accessors;
 
-@Getter
-@Accessors(prefix = "m")
 public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHolder> implements IFilterable, Serializable {
+    public int getOrder() {
+        return mOrder;
+    }
+
+    public int getPlayCount() {
+        return mPlayCount;
+    }
+
+    public String getMostPlayedSongTitle() {
+        return mMostPlayedSongTitle;
+    }
+
+    public String getArtistName() {
+        return mArtistName;
+    }
+
+    public String getArtUrl() {
+        return mArtUrl;
+    }
 
     private int mOrder;
     private int mPlayCount;

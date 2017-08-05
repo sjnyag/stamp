@@ -11,11 +11,6 @@ import com.sjn.stamp.ui.fragment.media_list.SongListFragment;
 import com.sjn.stamp.ui.fragment.media_list.TimelineFragment;
 import com.sjn.stamp.utils.MediaIDHelper;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
-
-@Accessors(prefix = "m")
-@Getter
 public enum DrawerMenu {
     HOME(R.id.navigation_home, null) {
         @Override
@@ -59,6 +54,14 @@ public enum DrawerMenu {
     DrawerMenu(int menuId, String mediaId) {
         mMenuId = menuId;
         mMediaId = mediaId;
+    }
+
+    public int getMenuId() {
+        return mMenuId;
+    }
+
+    public String getMediaId() {
+        return mMediaId;
     }
 
     abstract Fragment getFragment();

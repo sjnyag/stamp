@@ -15,9 +15,6 @@ import com.sjn.stamp.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
-
 import static com.sjn.stamp.utils.ViewHelper.setFragmentTitle;
 
 public abstract class PagerFragment extends Fragment {
@@ -41,8 +38,6 @@ public abstract class PagerFragment extends Fragment {
         viewPager.setAdapter(mAdapter);
     }
 
-    @Accessors(prefix = "m")
-    @Getter
     static class PageFragmentContainer {
         Fragment mFragment;
         String mLabel;

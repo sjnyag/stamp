@@ -46,8 +46,6 @@ import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager;
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 import io.realm.Realm;
-import lombok.Getter;
-import lombok.experimental.Accessors;
 
 public class RankingFragment extends MediaBrowserListFragment {
 
@@ -324,8 +322,6 @@ public class RankingFragment extends MediaBrowserListFragment {
 
     }
 
-    @Getter
-    @Accessors(prefix = "m")
     enum RankKind implements CalculateAsyncTask.Callback {
 
         SONG {

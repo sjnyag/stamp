@@ -36,7 +36,7 @@ public class UserSettingDao extends BaseDao {
             @Override
             public void execute(Realm realm) {
                 UserSetting userSetting = findOrCreate(realm);
-                userSetting.setShuffleState(shuffleState);
+                userSetting.applyShuffleState(shuffleState);
             }
         });
     }
@@ -46,7 +46,7 @@ public class UserSettingDao extends BaseDao {
             @Override
             public void execute(Realm realm) {
                 UserSetting userSetting = findOrCreate(realm);
-                userSetting.setRepeatState(repeatState);
+                userSetting.applyRepeatState(repeatState);
             }
         });
     }

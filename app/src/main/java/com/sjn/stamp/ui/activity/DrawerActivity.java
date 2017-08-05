@@ -35,17 +35,16 @@ import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.sjn.stamp.R;
 import com.sjn.stamp.utils.LogHelper;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
-
 public abstract class DrawerActivity extends BaseActivity implements FragmentManager.OnBackStackChangedListener {
 
     private static final String TAG = LogHelper.makeLogTag(DrawerActivity.class);
     public static final String FRAGMENT_TAG = "fragment_container";
 
-    @Accessors(prefix = "m")
-    @Getter
     protected Toolbar mToolbar;
+
+    public Drawer getDrawer() {
+        return mDrawer;
+    }
 
     protected Drawer mDrawer;
     private ActionBarDrawerToggle mDrawerToggle;

@@ -19,24 +19,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-
 public class TermSelectLayout extends LinearLayout {
 
-    @Accessors(prefix = "m")
-    @Getter
-    @Setter
-    @AllArgsConstructor(suppressConstructorProperties = true)
-    @NoArgsConstructor
     public static class Term {
         TermKind mTermKind = TermKind.TOTAL;
         int mYear = TimeHelper.getJapanYear();
         int mMonth = TimeHelper.getJapanMonth();
         int mDay = TimeHelper.getJapanDay();
+
+        public Term(TermKind termKind, int year, int month, int day) {
+            mTermKind = termKind;
+            mYear = year;
+            mMonth = month;
+            mDay = day;
+        }
+
+        public Term() {
+        }
 
         public LocalDate from() {
             return mTermKind.from(mYear, mMonth, mDay);
@@ -60,15 +59,44 @@ public class TermSelectLayout extends LinearLayout {
                     return "";
             }
         }
+
+        public TermKind getTermKind() {
+            return mTermKind;
+        }
+
+        public void setTermKind(TermKind termKind) {
+            mTermKind = termKind;
+        }
+
+        public int getYear() {
+            return mYear;
+        }
+
+        public void setYear(int year) {
+            mYear = year;
+        }
+
+        public int getMonth() {
+            return mMonth;
+        }
+
+        public void setMonth(int month) {
+            mMonth = month;
+        }
+
+        public int getDay() {
+            return mDay;
+        }
+
+        public void setDay(int day) {
+            mDay = day;
+        }
     }
 
     interface TermChangeListener {
         void onChange(LocalDate from, LocalDate to);
     }
 
-    @Accessors(prefix = "m")
-    @Getter
-    @AllArgsConstructor
     private enum TermKind {
         TOTAL(0, R.string.term_total, GONE, GONE, GONE),
         YEARLY(1, R.string.term_yearly, VISIBLE, GONE, GONE),
@@ -80,6 +108,14 @@ public class TermSelectLayout extends LinearLayout {
         final public int mYearVisibility;
         final public int mMonthVisibility;
         final public int mDayVisibility;
+
+        TermKind(int value, int textId, int yearVisibility, int monthVisibility, int dayVisibility) {
+            mValue = value;
+            mTextId = textId;
+            mYearVisibility = yearVisibility;
+            mMonthVisibility = monthVisibility;
+            mDayVisibility = dayVisibility;
+        }
 
         public static TermKind of(int value) {
             for (TermKind termKind : TermKind.values()) {
@@ -124,14 +160,38 @@ public class TermSelectLayout extends LinearLayout {
                     mDayVisibility == GONE ? endDay : day
             );
         }
+
+        public int getValue() {
+            return mValue;
+        }
+
+        public int getTextId() {
+            return mTextId;
+        }
+
+        public int getYearVisibility() {
+            return mYearVisibility;
+        }
+
+        public int getMonthVisibility() {
+            return mMonthVisibility;
+        }
+
+        public int getDayVisibility() {
+            return mDayVisibility;
+        }
     }
 
-    @Accessors(prefix = "m")
-    @Setter
+    public TermChangeListener getTermChangeListener() {
+        return mTermChangeListener;
+    }
+
+    public Term getTerm() {
+        return mTerm;
+    }
+
     private TermChangeListener mTermChangeListener;
 
-    @Accessors(prefix = "m")
-    @Getter
     private Term mTerm;
     private LinearLayout mTermYear;
     private LinearLayout mTermMonth;

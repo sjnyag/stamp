@@ -14,31 +14,27 @@
  * limitations under the License.
  */
 
-package com.sjn.stamp;
+package com.sjn.stamp
 
-import android.content.Context;
+import android.content.Context
 
-import com.google.android.gms.cast.framework.CastOptions;
-import com.google.android.gms.cast.framework.OptionsProvider;
-import com.google.android.gms.cast.framework.SessionProvider;
-
-import java.util.List;
+import com.google.android.gms.cast.framework.CastOptions
+import com.google.android.gms.cast.framework.OptionsProvider
+import com.google.android.gms.cast.framework.SessionProvider
 
 /**
  * Specify receiver application ID for cast
  */
-@SuppressWarnings(value = "unused")
-public class CastOptionsProvider implements OptionsProvider {
+@Suppress("unused")
+class CastOptionsProvider : OptionsProvider {
 
-    @Override
-    public CastOptions getCastOptions(Context context) {
-        return new CastOptions.Builder()
+    override fun getCastOptions(context: Context): CastOptions {
+        return CastOptions.Builder()
                 .setReceiverApplicationId(context.getString(com.sjn.stamp.R.string.cast_application_id))
-                .build();
+                .build()
     }
 
-    @Override
-    public List<SessionProvider> getAdditionalSessionProviders(Context context) {
-        return null;
+    override fun getAdditionalSessionProviders(context: Context): List<SessionProvider>? {
+        return null
     }
 }

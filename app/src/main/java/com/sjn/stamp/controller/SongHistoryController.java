@@ -91,7 +91,7 @@ public class SongHistoryController {
     private void sendNotificationBySongCount(Realm realm, Song song, int playCount) {
         if (NotificationHelper.isSendPlayedNotification(playCount)) {
             SongHistory oldestSongHistory = mSongHistoryDao.findOldest(realm, song);
-            NotificationHelper.sendPlayedNotification(mContext, song.getTitle(), song.getAlbumArtUri(), playCount, oldestSongHistory.mRecordedAt);
+            NotificationHelper.sendPlayedNotification(mContext, song.getTitle(), song.getAlbumArtUri(), playCount, oldestSongHistory.getRecordedAt());
         }
     }
 
@@ -119,7 +119,7 @@ public class SongHistoryController {
 
     private SongHistory createSongHistory(Song song, Device device, RecordType recordType, Date date, int count) {
         SongHistory songHistory = mSongHistoryDao.newStandalone();
-        songHistory.setValues(song, recordType, device, date, count);
+        songHistory.applyValues(song, recordType, device, date, count);
         return songHistory;
     }
 
@@ -258,7 +258,7 @@ public class SongHistoryController {
                             mArtistName,
                             oldestSongHistory.getSong().getAlbumArtUri(),
                             playCount,
-                            oldestSongHistory.mRecordedAt
+                            oldestSongHistory.getRecordedAt()
                     );
                 }
             } finally {

@@ -6,9 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
-
 
 public class StampEditStateObserver {
 
@@ -23,8 +20,10 @@ public class StampEditStateObserver {
 
     State mState = State.CLOSE;
 
-    @Accessors(prefix = "m")
-    @Getter
+    public List<String> getSelectedStampList() {
+        return mSelectedStampList;
+    }
+
     List<String> mSelectedStampList = new ArrayList<>();
 
     private List<Listener> mListenerList = Collections.synchronizedList(new ArrayList<Listener>());

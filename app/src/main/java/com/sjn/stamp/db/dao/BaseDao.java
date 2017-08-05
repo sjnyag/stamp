@@ -5,7 +5,7 @@ import io.realm.Realm;
 public abstract class BaseDao {
 
     protected Integer getAutoIncrementId(Realm realm, Class clazz) {
-        Number maxId = realm.where(clazz).max("mId");
+        Number maxId = realm.where(clazz).max("id");
         if (maxId != null) {
             return maxId.intValue() + 1;
         }

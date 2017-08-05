@@ -24,7 +24,7 @@ public class UserSettingController {
     public ShuffleState getShuffleState() {
         Realm realm = RealmHelper.getRealmInstance();
         UserSetting userSetting = mUserSettingDao.getUserSetting(realm);
-        ShuffleState shuffleState = userSetting == null || userSetting.getShuffleState() == null ? ShuffleState.getDefault() : userSetting.getShuffleState();
+        ShuffleState shuffleState = userSetting == null || userSetting.fetchShuffleStateValue() == null ? ShuffleState.getDefault() : userSetting.fetchShuffleStateValue();
         realm.close();
         return shuffleState;
     }
@@ -32,7 +32,7 @@ public class UserSettingController {
     public RepeatState getRepeatState() {
         Realm realm = RealmHelper.getRealmInstance();
         UserSetting userSetting = mUserSettingDao.getUserSetting(realm);
-        RepeatState repeatState = userSetting == null || userSetting.getRepeatState() == null ? RepeatState.getDefault() : userSetting.getRepeatState();
+        RepeatState repeatState = userSetting == null || userSetting.fetchRepeatState() == null ? RepeatState.getDefault() : userSetting.fetchRepeatState();
         realm.close();
         return repeatState;
     }

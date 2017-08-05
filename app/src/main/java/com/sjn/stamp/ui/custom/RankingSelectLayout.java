@@ -9,14 +9,17 @@ import android.widget.Spinner;
 
 import com.sjn.stamp.R;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 
 public class RankingSelectLayout extends TermSelectLayout {
-    @Accessors(prefix = "m")
-    @Getter
-    @Setter
+
+    public int getSongNum() {
+        return mSongNum;
+    }
+
+    public void setSongNum(int songNum) {
+        mSongNum = songNum;
+    }
+
     private int mSongNum = 3;
 
     public RankingSelectLayout(Context context, AttributeSet attr, Term term) {

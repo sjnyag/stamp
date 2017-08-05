@@ -23,30 +23,30 @@ public class SongHistoryDao extends BaseDao {
     }
 
     public List<SongHistory> timeline(Realm realm, String recordType) {
-        return realm.where(SongHistory.class).equalTo("mRecordType", recordType).findAllSorted("mRecordedAt", Sort.DESCENDING);
+        return realm.where(SongHistory.class).equalTo("recordType", recordType).findAllSorted("recordedAt", Sort.DESCENDING);
     }
 
     public List<SongHistory> where(Realm realm, Date from, Date to, String recordType) {
-        RealmQuery<SongHistory> query = realm.where(SongHistory.class).equalTo("mRecordType", recordType);
+        RealmQuery<SongHistory> query = realm.where(SongHistory.class).equalTo("recordType", recordType);
         if (from != null) {
-            query.greaterThanOrEqualTo("mRecordedAt", from);
+            query.greaterThanOrEqualTo("recordedAt", from);
         }
         if (to != null) {
-            query.lessThanOrEqualTo("mRecordedAt", to);
+            query.lessThanOrEqualTo("recordedAt", to);
         }
         return query.findAll();
     }
 
     public List<SongHistory> findPlayRecordByArtist(Realm realm, String artistName) {
-        return realm.where(SongHistory.class).equalTo("mRecordType", RecordType.PLAY.getValue()).equalTo("mSong.mArtist.mName", artistName).findAll();
+        return realm.where(SongHistory.class).equalTo("recordType", RecordType.PLAY.getValue()).equalTo("song.artist.name", artistName).findAll();
     }
 
     public SongHistory findOldestByArtist(Realm realm, String artistName) {
-        return realm.where(SongHistory.class).equalTo("mRecordType", RecordType.PLAY.getValue()).equalTo("mSong.mArtist.mName", artistName).findAllSorted("mRecordedAt", Sort.ASCENDING).first();
+        return realm.where(SongHistory.class).equalTo("recordType", RecordType.PLAY.getValue()).equalTo("song.artist.name", artistName).findAllSorted("recordedAt", Sort.ASCENDING).first();
     }
 
     public SongHistory findOldest(Realm realm, final Song song) {
-        return realm.where(SongHistory.class).equalTo("mSong.mMediaId", song.getMediaId()).equalTo("mRecordType", RecordType.PLAY.getValue()).findAllSorted("mRecordedAt", Sort.ASCENDING).first();
+        return realm.where(SongHistory.class).equalTo("song.mediaId", song.getMediaId()).equalTo("recordType", RecordType.PLAY.getValue()).findAllSorted("recordedAt", Sort.ASCENDING).first();
     }
 
     public void save(Realm realm, final SongHistory songHistory) {
@@ -65,7 +65,7 @@ public class SongHistoryDao extends BaseDao {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                realm.where(SongHistory.class).equalTo("mId", id).findFirst().deleteFromRealm();
+                realm.where(SongHistory.class).equalTo("id", id).findFirst().deleteFromRealm();
             }
         });
     }

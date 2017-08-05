@@ -16,7 +16,7 @@ public class DeviceDao extends BaseDao {
     }
 
     public Device findOrCreate(Realm realm, Device rawDevice) {
-        Device device = realm.where(Device.class).equalTo("mModel", rawDevice.getModel()).equalTo("mOs", rawDevice.getOs()).findFirst();
+        Device device = realm.where(Device.class).equalTo("model", rawDevice.getModel()).equalTo("os", rawDevice.getOs()).findFirst();
         if (device == null) {
             device = realm.copyToRealm(rawDevice);
         }

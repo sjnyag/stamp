@@ -16,11 +16,11 @@ public class ArtistDao extends BaseDao {
     }
 
     public Artist findById(Realm realm, long id) {
-        return realm.where(Artist.class).equalTo("mId", id).findFirst();
+        return realm.where(Artist.class).equalTo("id", id).findFirst();
     }
 
     public Artist findOrCreate(Realm realm, Artist rawArtist) {
-        Artist artist = realm.where(Artist.class).equalTo("mName", rawArtist.getName()).findFirst();
+        Artist artist = realm.where(Artist.class).equalTo("name", rawArtist.getName()).findFirst();
         if (artist == null) {
             rawArtist.setId(getAutoIncrementId(realm, Artist.class));
             artist = realm.copyToRealm(rawArtist);
