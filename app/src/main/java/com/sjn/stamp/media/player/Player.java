@@ -8,17 +8,16 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.google.android.gms.cast.framework.SessionManagerListener;
-import com.sjn.stamp.MusicService;
+import com.sjn.stamp.R;
 import com.sjn.stamp.controller.SongHistoryController;
 import com.sjn.stamp.controller.UserSettingController;
+import com.sjn.stamp.media.CustomController;
 import com.sjn.stamp.media.QueueManager;
 import com.sjn.stamp.media.playback.Playback;
 import com.sjn.stamp.media.playback.PlaybackManager;
 import com.sjn.stamp.media.provider.MusicProvider;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
-import com.sjn.stamp.R;
-import com.sjn.stamp.media.CustomController;
 
 import java.util.List;
 
@@ -26,7 +25,6 @@ public class Player implements SessionManager.SessionListener {
 
     private static final String TAG = LogHelper.makeLogTag(Player.class);
 
-    private PlayerCallback mPlayerCallback;
     private Context mContext;
     private PlaybackManager mPlaybackManager;
     private QueueManager mQueueManager;
@@ -55,17 +53,12 @@ public class Player implements SessionManager.SessionListener {
         }
     }
 
-    public interface PlayerCallback {
-        Playback requestPlayback(Playback.Type type);
-    }
-
-    public Player(Context context, PlayerCallback playerCallback) {
+    public Player(Context context) {
         mContext = context;
-        mPlayerCallback = playerCallback;
     }
 
     public MediaSessionCompat.Token initialize(PlaybackManager.PlaybackServiceCallback callback, MusicProvider musicProvider) {
-        Playback playback = mPlayerCallback.requestPlayback(Playback.Type.LOCAL);
+        Playback playback = Playback.Type.LOCAL.createInstance(mContext);
         mQueueManager = initializeQueueManager(musicProvider);
         mPlaybackManager = new PlaybackManager(mContext, callback, mContext.getResources(), musicProvider, mQueueManager, playback,
                 new SongHistoryController(mContext));
@@ -124,12 +117,12 @@ public class Player implements SessionManager.SessionListener {
 
     @Override
     public void toLocalPlayback() {
-        mPlaybackManager.switchToPlayback(mPlayerCallback.requestPlayback(Playback.Type.LOCAL), false);
+        mPlaybackManager.switchToPlayback(Playback.Type.LOCAL.createInstance(mContext), false);
     }
 
     @Override
     public void toCastCallback() {
-        mPlaybackManager.switchToPlayback(mPlayerCallback.requestPlayback(Playback.Type.CAST), true);
+        mPlaybackManager.switchToPlayback(Playback.Type.CAST.createInstance(mContext), true);
     }
 
     @Override

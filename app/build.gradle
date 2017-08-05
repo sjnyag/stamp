@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'realm-android'
 apply plugin: 'com.github.triplet.play'
+apply plugin: 'kotlin-android'
 
 final stampVersionCode = hasProperty('version_code') ? property('version_code').toInteger() : 1
 final stampVersionName = hasProperty('version_name') ? '0.1.0.' + property('version_name') : '0.1.0.0'
@@ -69,6 +70,7 @@ repositories {
         dirs 'libs'
     }
     maven { url "https://jitpack.io" }
+    mavenCentral()
 }
 
 dependencies {
@@ -120,6 +122,7 @@ dependencies {
     androidTestCompile 'com.android.support.test:rules:0.5'
     androidTestCompile 'com.android.support:support-annotations:25.4.0'
     provided 'org.projectlombok:lombok:1.12.6'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
 
 play {

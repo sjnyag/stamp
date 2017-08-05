@@ -23,14 +23,11 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.wifi.WifiManager;
 import android.os.PowerManager;
-import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 
 import com.sjn.stamp.MusicService;
 import com.sjn.stamp.controller.UserSettingController;
-import com.sjn.stamp.media.provider.MusicProvider;
-import com.sjn.stamp.media.source.MusicProviderSource;
 import com.sjn.stamp.utils.DataSourceHelper;
 import com.sjn.stamp.utils.LogHelper;
 
@@ -71,7 +68,6 @@ class LocalPlayback implements Playback, AudioManager.OnAudioFocusChangeListener
     private int mState;
     private boolean mPlayOnFocusGain;
     private Callback mCallback;
-    private final MusicProvider mMusicProvider;
     private volatile boolean mAudioNoisyReceiverRegistered;
     private volatile int mCurrentPosition;
     private volatile String mCurrentMediaId;
@@ -99,9 +95,8 @@ class LocalPlayback implements Playback, AudioManager.OnAudioFocusChangeListener
         }
     };
 
-    LocalPlayback(MusicProvider musicProvider, Context context) {
+    LocalPlayback(Context context) {
         this.mContext = context;
-        this.mMusicProvider = musicProvider;
         this.mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         // Create the Wifi lock (this does not acquire the lock, this just creates it)
         this.mWifiLock = ((WifiManager) context.getSystemService(Context.WIFI_SERVICE))
@@ -183,14 +178,7 @@ class LocalPlayback implements Playback, AudioManager.OnAudioFocusChangeListener
         } else {
             mState = PlaybackStateCompat.STATE_STOPPED;
             relaxResources(false); // release everything except MediaPlayer
-            MediaMetadataCompat track = mMusicProvider.getMusicByMediaId(item.getDescription().getMediaId());
-
-            String source = (track == null) ? item.getDescription().getMediaUri().toString() : track.getString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE);
-            /*
-            if (source != null) {
-                source = source.replaceAll(" ", "%20"); // Escape spaces for URLs
-            }
-            */
+            String source = item.getDescription().getMediaUri().toString();
 
             try {
                 createMediaPlayerIfNeeded();

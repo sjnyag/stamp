@@ -20,14 +20,13 @@ import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
-import com.sjn.stamp.media.provider.MusicProvider;
-import com.sjn.stamp.media.source.MusicProviderSource;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.TimeHelper;
@@ -59,14 +58,14 @@ public class LocalCastPlayback extends CastPlayback {
 
     private class HttpServer extends NanoHTTPD {
         final int mPort;
-        MediaMetadataCompat mMedia;
+        MediaSessionCompat.QueueItem mMedia;
 
         HttpServer(int port) throws IOException {
             super(port);
             mPort = port;
         }
 
-        void setMedia(MediaMetadataCompat media) {
+        void setMedia(MediaSessionCompat.QueueItem media) {
             mMedia = media;
         }
 
@@ -78,7 +77,7 @@ public class LocalCastPlayback extends CastPlayback {
             if (session.getUri().contains("image")) {
                 return serveImage();
             } else if (session.getUri().contains("debug")) {
-                return new Response(NOT_FOUND, MIME_PLAINTEXT, mMedia.getString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE));
+                return new Response(NOT_FOUND, MIME_PLAINTEXT, mMedia.getDescription().getMediaUri().toString());
             } else {
                 return serveMusic();
             }
@@ -88,7 +87,7 @@ public class LocalCastPlayback extends CastPlayback {
             InputStream stream = null;
             try {
                 stream = new FileInputStream(
-                        mMedia.getString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE));
+                        mMedia.getDescription().getMediaUri().toString());
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -98,8 +97,7 @@ public class LocalCastPlayback extends CastPlayback {
         private Response serveImage() {
             InputStream stream = null;
             try {
-                stream = mAppContext.getContentResolver().openInputStream(Uri.parse(
-                        mMedia.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI)));
+                stream = mAppContext.getContentResolver().openInputStream(Uri.parse(mMedia.getDescription().getIconUri().toString()));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -150,8 +148,8 @@ public class LocalCastPlayback extends CastPlayback {
         }
     }
 
-    public LocalCastPlayback(MusicProvider musicProvider, Context context) {
-        super(musicProvider, context);
+    public LocalCastPlayback(Context context) {
+        super(context);
     }
 
     @Override
@@ -162,11 +160,14 @@ public class LocalCastPlayback extends CastPlayback {
         }
     }
 
-    protected void loadMedia(String mediaId, boolean autoPlay) throws JSONException {
+    protected void loadMedia(MediaSessionCompat.QueueItem item, boolean autoPlay) throws JSONException {
+        String mediaId = item.getDescription().getMediaId();
+        if (mediaId == null || mediaId.isEmpty()) {
+            throw new IllegalArgumentException("Invalid mediaId");
+        }
         String musicId = MediaIDHelper.extractMusicIDFromMediaID(mediaId);
-        MediaMetadataCompat track = mMusicProvider.getMusicByMusicId(musicId);
-        if (track == null) {
-            throw new IllegalArgumentException("Invalid mediaId " + mediaId);
+        if (musicId == null || musicId.isEmpty()) {
+            throw new IllegalArgumentException("Invalid mediaId");
         }
         if (!TextUtils.equals(mediaId, mCurrentMediaId) || mState != PlaybackStateCompat.STATE_PAUSED) {
             mCurrentMediaId = mediaId;
@@ -178,12 +179,12 @@ public class LocalCastPlayback extends CastPlayback {
             startSever();
         }
         String url = "http://" + getWifiAddress() + ":" + mHttpServer.mPort;
-        mHttpServer.setMedia(track);
-        MediaInfo media = toCastMediaMetadata(url, track);
+        mHttpServer.setMedia(item);
+        MediaInfo media = toCastMediaMetadata(item, url);
         mRemoteMediaClient.load(media, autoPlay, mCurrentPosition, customData);
     }
 
-    private MediaInfo toCastMediaMetadata(String url, MediaMetadataCompat track) {
+    private MediaInfo toCastMediaMetadata(MediaSessionCompat.QueueItem track, String url) {
         MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
         mediaMetadata.putString(MediaMetadata.KEY_TITLE,
                 track.getDescription().getTitle() == null ? "" :
@@ -191,12 +192,14 @@ public class LocalCastPlayback extends CastPlayback {
         mediaMetadata.putString(MediaMetadata.KEY_SUBTITLE,
                 track.getDescription().getSubtitle() == null ? "" :
                         track.getDescription().getSubtitle().toString());
-        mediaMetadata.putString(MediaMetadata.KEY_ALBUM_ARTIST,
-                track.getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
-        mediaMetadata.putString(MediaMetadata.KEY_ARTIST,
-                track.getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
-        mediaMetadata.putString(MediaMetadata.KEY_ALBUM_TITLE,
-                track.getString(MediaMetadataCompat.METADATA_KEY_ALBUM));
+        if (track.getDescription().getExtras() != null) {
+            mediaMetadata.putString(MediaMetadata.KEY_ALBUM_ARTIST,
+                    track.getDescription().getExtras().getString((MediaMetadataCompat.METADATA_KEY_ARTIST)));
+            mediaMetadata.putString(MediaMetadata.KEY_ARTIST,
+                    track.getDescription().getExtras().getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
+            mediaMetadata.putString(MediaMetadata.KEY_ALBUM_TITLE,
+                    track.getDescription().getExtras().getString(MediaMetadataCompat.METADATA_KEY_ALBUM));
+        }
         WebImage image = new WebImage(
                 new Uri.Builder().encodedPath(url + "/image/" + TimeHelper.getJapanNow().toString()).build());
         // First image is used by the receiver for showing the audio album art.

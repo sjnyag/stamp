@@ -28,8 +28,6 @@ import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.images.WebImage;
-import com.sjn.stamp.media.provider.MusicProvider;
-import com.sjn.stamp.media.source.MusicProviderSource;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
 
@@ -48,7 +46,6 @@ class CastPlayback implements Playback {
     private static final String MIME_TYPE_AUDIO_MPEG = "audio/mpeg";
     static final String ITEM_ID = "itemId";
 
-    final MusicProvider mMusicProvider;
     final Context mAppContext;
     final RemoteMediaClient mRemoteMediaClient;
     private final RemoteMediaClient.Listener mRemoteMediaClientListener;
@@ -64,8 +61,7 @@ class CastPlayback implements Playback {
     volatile int mCurrentPosition;
     volatile String mCurrentMediaId;
 
-    CastPlayback(MusicProvider musicProvider, Context context) {
-        mMusicProvider = musicProvider;
+    CastPlayback(Context context) {
         mAppContext = context.getApplicationContext();
 
         CastSession castSession = CastContext.getSharedInstance(mAppContext).getSessionManager()
@@ -114,7 +110,7 @@ class CastPlayback implements Playback {
     @Override
     public void play(QueueItem item) {
         try {
-            loadMedia(item.getDescription().getMediaId(), true);
+            loadMedia(item, true);
             mState = PlaybackStateCompat.STATE_BUFFERING;
             if (mCallback != null) {
                 mCallback.onPlaybackStatusChanged(mState);
@@ -129,18 +125,9 @@ class CastPlayback implements Playback {
 
     @Override
     public void pause() {
-        try {
-            if (mRemoteMediaClient.hasMediaSession()) {
-                mRemoteMediaClient.pause();
-                mCurrentPosition = (int) mRemoteMediaClient.getApproximateStreamPosition();
-            } else {
-                loadMedia(mCurrentMediaId, false);
-            }
-        } catch (JSONException e) {
-            LogHelper.e(TAG, e, "Exception pausing cast playback");
-            if (mCallback != null) {
-                mCallback.onError(e.getMessage());
-            }
+        if (mRemoteMediaClient.hasMediaSession()) {
+            mRemoteMediaClient.pause();
+            mCurrentPosition = (int) mRemoteMediaClient.getApproximateStreamPosition();
         }
     }
 
@@ -152,19 +139,9 @@ class CastPlayback implements Playback {
             }
             return;
         }
-        try {
-            if (mRemoteMediaClient.hasMediaSession()) {
-                mRemoteMediaClient.seek(position);
-                mCurrentPosition = position;
-            } else {
-                mCurrentPosition = position;
-                loadMedia(mCurrentMediaId, false);
-            }
-        } catch (JSONException e) {
-            LogHelper.e(TAG, e, "Exception pausing cast playback");
-            if (mCallback != null) {
-                mCallback.onError(e.getMessage());
-            }
+        if (mRemoteMediaClient.hasMediaSession()) {
+            mRemoteMediaClient.seek(position);
+            mCurrentPosition = position;
         }
     }
 
@@ -200,11 +177,14 @@ class CastPlayback implements Playback {
         return mState;
     }
 
-    protected void loadMedia(String mediaId, boolean autoPlay) throws JSONException {
+    protected void loadMedia(QueueItem item, boolean autoPlay) throws JSONException {
+        String mediaId = item.getDescription().getMediaId();
+        if (mediaId == null || mediaId.isEmpty()) {
+            throw new IllegalArgumentException("Invalid mediaId");
+        }
         String musicId = MediaIDHelper.extractMusicIDFromMediaID(mediaId);
-        MediaMetadataCompat track = mMusicProvider.getMusicByMusicId(musicId);
-        if (track == null) {
-            throw new IllegalArgumentException("Invalid mediaId " + mediaId);
+        if (musicId == null || musicId.isEmpty()) {
+            throw new IllegalArgumentException("Invalid mediaId");
         }
         if (!TextUtils.equals(mediaId, mCurrentMediaId) || mState != PlaybackStateCompat.STATE_PAUSED) {
             mCurrentMediaId = mediaId;
@@ -212,7 +192,7 @@ class CastPlayback implements Playback {
         }
         JSONObject customData = new JSONObject();
         customData.put(ITEM_ID, mediaId);
-        MediaInfo media = toCastMediaMetadata(track, customData);
+        MediaInfo media = toCastMediaMetadata(item, customData);
         mRemoteMediaClient.load(media, autoPlay, mCurrentPosition, customData);
     }
 
@@ -224,7 +204,7 @@ class CastPlayback implements Playback {
      * @param customData custom data specifies the local mediaId used by the player.
      * @return mediaInfo {@link com.google.android.gms.cast.MediaInfo}
      */
-    private static MediaInfo toCastMediaMetadata(MediaMetadataCompat track,
+    private static MediaInfo toCastMediaMetadata(QueueItem track,
                                                  JSONObject customData) {
         MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
         mediaMetadata.putString(MediaMetadata.KEY_TITLE,
@@ -233,13 +213,16 @@ class CastPlayback implements Playback {
         mediaMetadata.putString(MediaMetadata.KEY_SUBTITLE,
                 track.getDescription().getSubtitle() == null ? "" :
                         track.getDescription().getSubtitle().toString());
-        mediaMetadata.putString(MediaMetadata.KEY_ALBUM_ARTIST,
-                track.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST));
-        mediaMetadata.putString(MediaMetadata.KEY_ALBUM_TITLE,
-                track.getString(MediaMetadataCompat.METADATA_KEY_ALBUM));
+        if (track.getDescription().getExtras() != null) {
+            mediaMetadata.putString(MediaMetadata.KEY_ALBUM_ARTIST,
+                    track.getDescription().getExtras().getString((MediaMetadataCompat.METADATA_KEY_ARTIST)));
+            mediaMetadata.putString(MediaMetadata.KEY_ARTIST,
+                    track.getDescription().getExtras().getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
+            mediaMetadata.putString(MediaMetadata.KEY_ALBUM_TITLE,
+                    track.getDescription().getExtras().getString(MediaMetadataCompat.METADATA_KEY_ALBUM));
+        }
         WebImage image = new WebImage(
-                new Uri.Builder().encodedPath(
-                        track.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI))
+                new Uri.Builder().encodedPath(track.getDescription().getIconUri().toString())
                         .build());
         // First image is used by the receiver for showing the audio album art.
         mediaMetadata.addImage(image);
@@ -248,7 +231,7 @@ class CastPlayback implements Playback {
         mediaMetadata.addImage(image);
 
         //noinspection ResourceType
-        return new MediaInfo.Builder(track.getString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE))
+        return new MediaInfo.Builder(track.getDescription().getMediaUri().toString())
                 .setContentType(MIME_TYPE_AUDIO_MPEG)
                 .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
                 .setMetadata(mediaMetadata)

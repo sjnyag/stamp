@@ -28,6 +28,7 @@ import android.text.TextUtils;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.sjn.stamp.MusicService;
 import com.sjn.stamp.R;
 import com.sjn.stamp.ui.DialogFacade;
 import com.sjn.stamp.ui.fragment.FullScreenPlayerFragment;
@@ -44,8 +45,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
-
-import static com.sjn.stamp.MusicService.CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER;
 
 /**
  * Main activity for the music player.
@@ -107,7 +106,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
             }).show();
         }
         if (Arrays.asList(permissions).contains(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            sendCustomAction(CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER, null, null);
+            sendCustomAction(MusicService.Companion.getCUSTOM_ACTION_RELOAD_MUSIC_PROVIDER(), null, null);
         }
     }
 

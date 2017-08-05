@@ -18,7 +18,6 @@ package com.sjn.stamp.media.playback;
 import android.content.Context;
 
 import com.sjn.stamp.MusicService;
-import com.sjn.stamp.media.provider.MusicProvider;
 
 import static android.support.v4.media.session.MediaSessionCompat.QueueItem;
 
@@ -31,18 +30,18 @@ public interface Playback {
     enum Type {
         CAST {
             @Override
-            public Playback createInstance(MusicProvider musicProvider, Context context) {
-                return new LocalCastPlayback(musicProvider, context);
+            public Playback createInstance(Context context) {
+                return new LocalCastPlayback(context);
             }
         },
         LOCAL {
             @Override
-            public Playback createInstance(MusicProvider musicProvider, Context context) {
-                return new LocalPlayback(musicProvider, context);
+            public Playback createInstance(Context context) {
+                return new LocalPlayback(context);
             }
         };
 
-        public abstract Playback createInstance(MusicProvider musicProvider, Context context);
+        public abstract Playback createInstance(Context context);
     }
 
 

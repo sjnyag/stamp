@@ -51,8 +51,6 @@ import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager;
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 
-import static com.sjn.stamp.MusicService.CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER;
-
 /**
  * A Fragment that lists all the various browsable queues available
  * from a {@link android.service.media.MediaBrowserService}.
@@ -115,7 +113,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                         return;
                     case POSITIVE:
                         mListener.destroyActionModeIfCan();
-                        mMediaBrowsable.sendCustomAction(CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER, null, null);
+                        mMediaBrowsable.sendCustomAction(MusicService.Companion.getCUSTOM_ACTION_RELOAD_MUSIC_PROVIDER(), null, null);
                         Handler handler = new Handler(getActivity().getMainLooper());
                         handler.post(new Runnable() {
                             public void run() {

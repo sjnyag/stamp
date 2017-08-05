@@ -17,16 +17,20 @@
 package com.sjn.stamp.utils;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
 
+import com.google.android.gms.cast.MediaMetadata;
 import com.sjn.stamp.media.provider.MusicProvider;
+import com.sjn.stamp.media.source.MusicProviderSource;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -166,14 +170,26 @@ public class QueueHelper {
             String hierarchyAwareMediaID = MediaIDHelper.createMediaID(
                     track.getDescription().getMediaId(), categories);
 
-            MediaMetadataCompat trackCopy = new MediaMetadataCompat.Builder(track)
-                    .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, hierarchyAwareMediaID)
-                    .build();
+            Bundle bundle = track.getBundle();
+            bundle.putString(MediaMetadata.KEY_ARTIST,
+                    track.getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
+            bundle.putString(MediaMetadata.KEY_ALBUM_TITLE,
+                    track.getString(MediaMetadataCompat.METADATA_KEY_ALBUM));
+
+            MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
+                    .setMediaId(hierarchyAwareMediaID)
+                    .setTitle(track.getDescription().getTitle())
+                    .setSubtitle(track.getDescription().getSubtitle())
+                    .setDescription(track.getDescription().getDescription())
+                    .setIconBitmap(track.getDescription().getIconBitmap())
+                    .setIconUri(track.getDescription().getIconUri())
+                    .setMediaUri(Uri.parse(track.getString(MusicProviderSource.CUSTOM_METADATA_TRACK_SOURCE)))
+                    .setExtras(bundle).build();
 
             // We don't expect queues to change after created, so we use the item index as the
             // queueId. Any other number unique in the queue would work.
             MediaSessionCompat.QueueItem item = new MediaSessionCompat.QueueItem(
-                    trackCopy.getDescription(), count++);
+                    description, count++);
             queue.add(item);
         }
         LogHelper.d(TAG, "convertToQueue End");
