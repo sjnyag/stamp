@@ -31,7 +31,7 @@ public class AllSongPagerFragment extends PagerFragment implements PagerFragment
     @Override
     List<PageFragmentContainer> setUpFragmentContainer() {
         List<PageFragmentContainer> fragmentContainerList = new ArrayList<>();
-        fragmentContainerList.add(new PageFragmentContainer(getString(R.string.all_song_tab_frequent_song), MediaIDHelper.MEDIA_ID_MUSICS_BY_FREQUENT_SONG, this));
+        fragmentContainerList.add(new PageFragmentContainer(getString(R.string.all_song_tab_most_played), MediaIDHelper.MEDIA_ID_MUSICS_BY_MOST_PLAYED, this));
         fragmentContainerList.add(new PageFragmentContainer(getString(R.string.all_song_tab_artist), MediaIDHelper.MEDIA_ID_MUSICS_BY_ARTIST, this));
         fragmentContainerList.add(new PageFragmentContainer(getString(R.string.all_song_tab_album), MediaIDHelper.MEDIA_ID_MUSICS_BY_ALBUM, this));
         fragmentContainerList.add(new PageFragmentContainer(getString(R.string.all_song_tab_playlist), MediaIDHelper.MEDIA_ID_MUSICS_BY_PLAYLIST, this));

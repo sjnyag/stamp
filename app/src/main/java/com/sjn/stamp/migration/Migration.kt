@@ -7,6 +7,7 @@ class Migration : RealmMigration {
 
     companion object {
         private val TAG = LogHelper.makeLogTag(Migration::class.java)
+        val VERSION = 3
     }
 
     override fun migrate(realm: DynamicRealm, version: Long, newVersion: Long) {
@@ -19,6 +20,10 @@ class Migration : RealmMigration {
         }
         if (oldVersion == 1L) {
             migrateTo2(schema)
+            oldVersion++
+        }
+        if (oldVersion == 2L) {
+            migrateTo3(schema)
             oldVersion++
         }
         if (oldVersion == newVersion) {
@@ -126,6 +131,23 @@ class Migration : RealmMigration {
                 .renameField("mShuffleState", "shuffleState")
                 .renameField("mQueueIdentifyMediaId", "queueIdentifyMediaId")
                 .renameField("mLastMusicId", "lastMusicId")
+    }
+
+
+    internal fun migrateTo3(schema: RealmSchema) {
+        schema.get("UserSetting")
+                .addField("stopOnAudioLostFocus", Boolean::class.java, FieldAttribute.REQUIRED)
+                .transform({ obj -> obj.setBoolean("stopOnAudioLostFocus", false) })
+                .addField("showAlbumArtOnLockScreen", Boolean::class.java, FieldAttribute.REQUIRED)
+                .transform({ obj -> obj.setBoolean("showAlbumArtOnLockScreen", false) })
+                .addField("autoPlayOnHeadsetConnected", Boolean::class.java, FieldAttribute.REQUIRED)
+                .transform({ obj -> obj.setBoolean("autoPlayOnHeadsetConnected", false) })
+                .addField("alertSpeaker", Boolean::class.java, FieldAttribute.REQUIRED)
+                .transform({ obj -> obj.setBoolean("alertSpeaker", false) })
+                .addField("newSongDays", Int::class.java, FieldAttribute.REQUIRED)
+                .transform({ obj -> obj.setInt("newSongDays", 30) })
+                .addField("mostPlayedSongSize", Int::class.java, FieldAttribute.REQUIRED)
+                .transform({ obj -> obj.setInt("mostPlayedSongSize", 30) })
     }
 
     internal fun getAutoIncrementId(realm: DynamicRealm, clazz: String): Int {

@@ -1,8 +1,10 @@
 package com.sjn.stamp.db.dao;
 
+import android.support.annotation.NonNull;
+
+import com.sjn.stamp.constant.RepeatState;
 import com.sjn.stamp.constant.ShuffleState;
 import com.sjn.stamp.db.UserSetting;
-import com.sjn.stamp.constant.RepeatState;
 
 import io.realm.Realm;
 
@@ -17,8 +19,9 @@ public class UserSettingDao extends BaseDao {
         return sInstance;
     }
 
+    @NonNull
     public UserSetting getUserSetting(Realm realm) {
-        return find(realm);
+        return findOrCreate(realm);
     }
 
     public void updateAutoLogin(Realm realm, final boolean isAutoLogin) {
@@ -71,16 +74,33 @@ public class UserSettingDao extends BaseDao {
         });
     }
 
-    private UserSetting find(Realm realm) {
-        return realm.where(UserSetting.class).findFirst();
+    public void updateNewSongDays(Realm realm, final int newSongDays) {
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                UserSetting userSetting = findOrCreate(realm);
+                userSetting.setNewSongDays(newSongDays);
+            }
+        });
+    }
+
+    public void updateMostPlayedSongSize(Realm realm, final int mostPlayedSongSize) {
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                UserSetting userSetting = findOrCreate(realm);
+                userSetting.setMostPlayedSongSize(mostPlayedSongSize);
+            }
+        });
     }
 
     private UserSetting findOrCreate(Realm realm) {
         UserSetting userSetting = realm.where(UserSetting.class).findFirst();
         if (userSetting == null) {
+            realm.beginTransaction();
             userSetting = realm.createObject(UserSetting.class);
+            realm.commitTransaction();
         }
         return userSetting;
     }
-
 }

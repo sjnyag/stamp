@@ -18,12 +18,12 @@ public class TopSongProvider extends SingleListProvider {
 
     @Override
     protected String getProviderMediaId() {
-        return MediaIDHelper.MEDIA_ID_MUSICS_BY_FREQUENT_SONG;
+        return MediaIDHelper.MEDIA_ID_MUSICS_BY_MOST_PLAYED;
     }
 
     @Override
     protected int getTitleId() {
-        return R.string.media_item_label_frequent_song;
+        return R.string.media_item_label_most_played;
     }
 
     @Override

@@ -67,7 +67,7 @@
     <string name="media_item_label_queue">Queue</string>
     <string name="media_item_label_stamp">Stamp</string>
     <string name="media_item_label_new">New</string>
-    <string name="media_item_label_frequent_song">Frequent Song</string>
+    <string name="media_item_label_most_played">Most Played</string>
     <string name="media_item_label_artist">Artist</string>
     <string name="media_item_label_album">Album</string>
     <string name="media_item_label_genre">Genre</string>
@@ -84,7 +84,7 @@
     <string name="all_song_tab_artist">artist</string>
     <string name="all_song_tab_album">album</string>
     <string name="all_song_tab_playlist">playlist</string>
-    <string name="all_song_tab_frequent_song">frequent</string>
+    <string name="all_song_tab_most_played">most played</string>
     <string name="all_song_tab_new">new</string>
 
     <string name="ranking_tab_my_songs">Song</string>
@@ -134,6 +134,10 @@
     <string name="no_more_data_by_error">読み込みに失敗しました</string>
     <string name="album_art">album art</string>
     <string name="menu_timeline_upward">最上部へ</string>
+
+    <string name="setting_songs">プレイリスト</string>
+    <string name="setting_songs_new_song_days">\"NEW\"に表示される日数(0~999)</string>
+    <string name="setting_songs_most_played_song_size">\"MOST PLAYED\"に表示される曲数(0~999)</string>
 
     <string name="setting_backup">バックアップ</string>
     <string name="setting_application_information">アプリ情報</string>
@@ -187,5 +191,8 @@
     <string name="dialog_permission_necessary_title">アクセス許可が必要です。</string>
     <string name="empty_message_ranking">再生履歴に応じたランキングが表示されます。</string>
     <string name="empty_message_timeline">再生履歴に応じたタイムラインが表示されます。</string>
-    <string name="empty_message_queue">現在再生中のキューが表示されます。キューはホームから選択できます。</string>
+    <string name="empty_message_queue">現在再生中のキューが表示されます。キューはHome画面から選択できます。</string>
+    <string name="empty_message_most_played">再生数が多い曲が表示されます。対象となる期間はSetting画面から変更できます。</string>
+    <string name="empty_message_playlist">アンドロイドに登録されているプレイリストが表示されます。</string>
+    <string name="empty_message_new">新しく登録された曲が表示されます。対象となる期間はSetting画面から変更できます。</string>
 </resources>

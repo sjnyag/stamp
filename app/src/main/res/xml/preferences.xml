@@ -1,25 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
+        android:key="setting_songs"
+        android:title="@string/setting_songs">
+        <EditTextPreference
+            android:maxLength="3"
+            android:defaultValue="30"
+            android:dialogTitle="@string/setting_songs_new_song_days"
+            android:numeric="integer"
+            android:key="setting_songs_new_song_days"
+            android:title="@string/setting_songs_new_song_days"/>
+        <EditTextPreference
+            android:maxLength="3"
+            android:defaultValue="30"
+            android:dialogTitle="@string/setting_songs_most_played_song_size"
+            android:numeric="integer"
+            android:key="setting_songs_most_played_song_size"
+            android:title="@string/setting_songs_most_played_song_size"/>
+    </PreferenceCategory>
+    <PreferenceCategory
         android:key="backup"
         android:title="@string/setting_backup">
         <Preference
-            android:key="@string/import_backup"
+            android:key="import_backup"
             android:summary="@string/import_backup_summary"
             android:title="@string/import_backup">
         </Preference>
         <Preference
-            android:key="@string/export_backup"
+            android:key="export_backup"
             android:title="@string/export_backup"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:key="application_information"
         android:title="@string/setting_application_information">
         <Preference
-            android:key="@string/licence"
+            android:key="licence"
             android:title="@string/licence"/>
         <Preference
-            android:key="@string/version"
+            android:key="version"
             android:summary="@string/versionName"
             android:title="@string/version"/>
     </PreferenceCategory>

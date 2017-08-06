@@ -130,6 +130,9 @@ public class QueueHelper {
     public static int getMusicIndexOnQueue(Iterable<MediaSessionCompat.QueueItem> queue,
                                            String mediaId) {
         int index = 0;
+        if (queue == null) {
+            return -1;
+        }
         for (MediaSessionCompat.QueueItem item : queue) {
             if (mediaId.equals(item.getDescription().getMediaId())) {
                 return index;
@@ -156,6 +159,9 @@ public class QueueHelper {
         List<MediaSessionCompat.QueueItem> queue = new ArrayList<>();
         LogHelper.d(TAG, "convertToQueue Start");
         int count = 0;
+        if (tracks == null) {
+            return queue;
+        }
         for (MediaMetadataCompat track : tracks) {
             if (track == null) {
                 break;

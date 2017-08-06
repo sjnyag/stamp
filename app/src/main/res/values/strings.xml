@@ -72,7 +72,7 @@
     <string name="media_item_label_queue">Queue</string>
     <string name="media_item_label_stamp">Stamp</string>
     <string name="media_item_label_new">New</string>
-    <string name="media_item_label_frequent_song">Frequent Song</string>
+    <string name="media_item_label_most_played">Most Played</string>
     <string name="media_item_label_artist">Artist</string>
     <string name="media_item_label_album">Album</string>
     <string name="media_item_label_genre">Genre</string>
@@ -89,7 +89,7 @@
     <string name="all_song_tab_artist">artist</string>
     <string name="all_song_tab_album">album</string>
     <string name="all_song_tab_playlist">playlist</string>
-    <string name="all_song_tab_frequent_song">frequent</string>
+    <string name="all_song_tab_most_played">most played</string>
     <string name="all_song_tab_new">new</string>
 
     <string name="ranking_tab_my_songs">Song</string>
@@ -139,6 +139,10 @@
     <string name="no_more_data_by_error">Failed to load data</string>
     <string name="album_art">album art</string>
     <string name="menu_timeline_upward">Go to top</string>
+
+    <string name="setting_songs">Songs</string>
+    <string name="setting_songs_new_song_days">Days for \"NEW\"(0~999)</string>
+    <string name="setting_songs_most_played_song_size">Size of \"MOST PLAYED\"(0~999)</string>
 
     <string name="setting_backup">Backup</string>
     <string name="setting_application_information">Application information</string>
@@ -192,5 +196,8 @@
     <string name="dialog_permission_necessary_content">Sorry. This app cannot move without storage permission.</string>
     <string name="empty_message_ranking">Ranking according to your playback will be displayed.</string>
     <string name="empty_message_timeline">History according to your playback will be displayed.</string>
-    <string name="empty_message_queue">Current playing queue will be displayed. You can choose queue from Home.</string>
+    <string name="empty_message_queue">Current playing queue will be displayed. You can choose queue from Home Screen.</string>
+    <string name="empty_message_most_played">Most played songs will be displayed. Song count can be edit at Setting Screen.</string>
+    <string name="empty_message_playlist">Playlists registered to Android will be displayed.</string>
+    <string name="empty_message_new">New registered songs will be displayed. Displaying period can be edit at Setting Screen.</string>
 </resources>

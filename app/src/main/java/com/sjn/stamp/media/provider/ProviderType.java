@@ -63,7 +63,7 @@ public enum ProviderType {
             return null;
         }
     },
-    PLAYLIST(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_PLAYLIST, R.string.no_items) {
+    PLAYLIST(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_PLAYLIST, R.string.empty_message_playlist) {
         @Override
         public ListProvider newProvider(Context context) {
             return new PlaylistProvider(context);
@@ -85,7 +85,7 @@ public enum ProviderType {
             return CategoryType.ALBUM;
         }
     },
-    QUEUE(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE, R.string.no_items) {
+    QUEUE(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE, R.string.empty_message_queue) {
         @Override
         public ListProvider newProvider(Context context) {
             return new QueueProvider(context);
@@ -96,7 +96,7 @@ public enum ProviderType {
             return null;
         }
     },
-    NEW(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_NEW, R.string.no_items) {
+    NEW(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_NEW, R.string.empty_message_new) {
         @Override
         public ListProvider newProvider(Context context) {
             return new NewProvider(context);
@@ -107,7 +107,7 @@ public enum ProviderType {
             return null;
         }
     },
-    FREQUENT_SONG(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_FREQUENT_SONG, R.string.no_items) {
+    MOST_PLAYED(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_MOST_PLAYED, R.string.empty_message_most_played) {
         @Override
         public ListProvider newProvider(Context context) {
             return new TopSongProvider(context);

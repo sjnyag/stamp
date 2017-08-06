@@ -21,7 +21,6 @@ import io.realm.RealmConfiguration;
 import io.realm.internal.IOException;
 
 public class RealmHelper {
-    private static final int VERSION = 2;
 
     private static final String TAG = LogHelper.makeLogTag(RealmHelper.class);
     private static final File EXPORT_REALM_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
@@ -56,7 +55,7 @@ public class RealmHelper {
         if (com.sjn.stamp.BuildConfig.BUILD_TYPE.equals("debug")) {
             //builder.deleteRealmIfMigrationNeeded();
         }
-        builder.schemaVersion(VERSION);
+        builder.schemaVersion(Migration.Companion.getVERSION());
         return builder.build();
     }
 

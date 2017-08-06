@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.media.MediaMetadataCompat;
 
 import com.sjn.stamp.R;
+import com.sjn.stamp.controller.UserSettingController;
 import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.TimeHelper;
 
@@ -29,7 +30,7 @@ public class NewProvider extends AllProvider {
 
     @Override
     protected List<MediaMetadataCompat> createTrackList(final Map<String, MediaMetadataCompat> musicListById) {
-        return subList(super.createTrackList(musicListById), 14);
+        return subList(super.createTrackList(musicListById), new UserSettingController(mContext).getNewSongDays());
     }
 
     @Override
