@@ -368,8 +368,6 @@ public class MediaNotificationManager extends BroadcastReceiver {
     private void setNotificationPlaybackState(NotificationCompat.Builder builder) {
         LogHelper.d(TAG, "updateNotificationPlaybackState. mPlaybackState=" + mPlaybackState);
         if (mPlaybackState == null || !mStarted) {
-            LogHelper.d(TAG, "updateNotificationPlaybackState. cancelling notification!");
-            LogHelper.i(TAG, "setNotificationPlaybackState stopForeground(true)");
             mService.stopForeground(true);
             return;
         }
@@ -377,18 +375,15 @@ public class MediaNotificationManager extends BroadcastReceiver {
                 && mPlaybackState.getPosition() >= 0) {
             LogHelper.d(TAG, "updateNotificationPlaybackState. updating playback position to ",
                     (System.currentTimeMillis() - mPlaybackState.getPosition()) / 1000, " seconds");
-            builder
-                    .setWhen(System.currentTimeMillis() - mPlaybackState.getPosition())
+            builder.setWhen(System.currentTimeMillis() - mPlaybackState.getPosition())
                     .setShowWhen(true)
                     .setUsesChronometer(true);
         } else {
             LogHelper.d(TAG, "updateNotificationPlaybackState. hiding playback position");
-            builder
-                    .setWhen(0)
+            builder.setWhen(0)
                     .setShowWhen(false)
                     .setUsesChronometer(false);
         }
-
         // Make sure that the notification can be dismissed by the user when we are not playing:
         builder.setOngoing(mPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING);
     }
@@ -400,8 +395,6 @@ public class MediaNotificationManager extends BroadcastReceiver {
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 if (mMetadata != null && mMetadata.getDescription().getIconUri() != null &&
                         mMetadata.getDescription().getIconUri().toString().equals(bitmapUrl)) {
-                    LogHelper.d(TAG, "fetchBitmapFromURLAsync: set bitmap to ", bitmapUrl);
-                    // If the media is still the same, update the notification:
                     new SetNotificationBitmapAsyncTask(builder, bitmap).execute();
                 }
             }
@@ -430,9 +423,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
         @Override
         protected Void doInBackground(Void... params) {
             mBuilder.setLargeIcon(mBitmap);
-            LogHelper.d(TAG, "fetchBitmapFromURLAsync: finish");
             mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-            LogHelper.d(TAG, "onBitmapLoaded: finish");
             return null;
         }
     }

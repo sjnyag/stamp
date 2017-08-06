@@ -301,7 +301,7 @@ public abstract class ListFragment extends Fragment implements
                 mFastScroller.setVisibility(View.GONE);
                 mRefreshHandler.sendEmptyMessage(2);
                 mEmptyView.setAlpha(0);
-                mEmptyView.setVisibility(View.GONE);
+                mEmptyView.setVisibility(View.VISIBLE);
             }
         }
 //        if (mAdapter != null) {

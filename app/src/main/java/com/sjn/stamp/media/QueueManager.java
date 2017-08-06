@@ -260,7 +260,6 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
         LogHelper.d(TAG, "updateMetadata");
         MediaSessionCompat.QueueItem currentMusic = getCurrentMusic();
         if (currentMusic == null) {
-            mListener.onMetadataRetrieveError();
             return;
         }
         final String musicId = MediaIDHelper.extractMusicIDFromMediaID(
@@ -268,7 +267,6 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
         final MediaMetadataCompat metadata = mMusicProvider.getMusicByMusicId(musicId);
         if (metadata == null) {
             return;
-            //throw new IllegalArgumentException("Invalid musicId " + musicId);
         }
 
         mListener.onMetadataChanged(metadata);

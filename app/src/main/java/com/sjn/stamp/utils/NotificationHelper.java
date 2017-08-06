@@ -20,17 +20,9 @@ import java.util.Date;
 
 public class NotificationHelper {
 
-    // The action of the incoming Intent indicating that it contains a command
-    // to be executed (see {@link #onStartCommand})
     public static final String ACTION_CMD = "com.sjn.stamp.ACTION_CMD";
-    // The key in the extras of the incoming Intent indicating the command that
-    // should be executed (see {@link #onStartCommand})
     public static final String CMD_NAME = "CMD_NAME";
-    // A value of a CMD_NAME key in the extras of the incoming Intent that
-    // indicates that the music playback should be paused (see {@link #onStartCommand})
     public static final String CMD_PAUSE = "CMD_PAUSE";
-    // A value of a CMD_NAME key that indicates that the music playback should switch
-    // to local playback from cast playback.
     public static final String CMD_STOP_CASTING = "CMD_STOP_CASTING";
     public static final String CMD_KILL = "CMD_KILL";
     public static final String CMD_SHARE = "CMD_SHARE";
@@ -96,7 +88,6 @@ public class NotificationHelper {
             mBuilder.setLargeIcon(mBitmap);
             int requestCode = mBuilder.hashCode();
             mBuilder.setContentIntent(createShareAction(mContext, requestCode, mBuilder.getExtras().getString(BUNDLE_KEY_PLAYED_TEXT)));
-
             mBuilder.addAction(R.drawable.ic_share, mContext.getResources().getString(R.string.notification_share), createShareAction(mContext, requestCode, mBuilder.getExtras().getString(BUNDLE_KEY_PLAYED_TEXT)));
             send(mContext, requestCode, mBuilder);
             return null;
