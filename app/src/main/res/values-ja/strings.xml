@@ -15,7 +15,7 @@
   -->
 <resources>
 
-    <string name="app_name">Stamp Music Player</string>
+    <string name="app_name">Stamp</string>
     <string name="favorite">Favorite</string>
     <string name="error_no_metadata">Unable to retrieve metadata.</string>
     <string name="browse_musics_by_genre_subtitle">%1$s songs</string>

@@ -48,7 +48,6 @@ public class SettingFragment extends PreferenceFragmentCompat {
                                         getActivity().recreate();
                                     }
                                 }).show();
-                                return;
                         }
                     }
                 }, new DialogInterface.OnDismissListener() {
@@ -76,7 +75,6 @@ public class SettingFragment extends PreferenceFragmentCompat {
                                 progressDialog.show();
                                 RealmHelper.exportBackUp(getActivity());
                                 progressDialog.dismiss();
-                                return;
                         }
                     }
                 }, new DialogInterface.OnDismissListener() {
