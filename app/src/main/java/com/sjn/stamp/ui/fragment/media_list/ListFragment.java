@@ -285,11 +285,15 @@ public abstract class ListFragment extends Fragment implements
         mAdapter.notifyDataSetChanged();
     }
 
+    public String emptyMessage() {
+        return getString(R.string.no_items);
+    }
+
     @Override
     public void onUpdateEmptyView(int size) {
         LogHelper.d(TAG, "onUpdateEmptyView START ", size);
         if (mEmptyTextView != null) {
-            mEmptyTextView.setText(getString(R.string.no_items));
+            mEmptyTextView.setText(emptyMessage());
         }
         if (mFastScroller != null && mRefreshHandler != null && mEmptyView != null) {
             if (size > 0) {

@@ -69,6 +69,11 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         return R.menu.timeline;
     }
 
+    @Override
+    public String emptyMessage(){
+        return getString(R.string.empty_message_timeline);
+    }
+
     /**
      * {@link MediaBrowserListFragment}
      */

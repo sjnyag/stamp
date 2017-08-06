@@ -66,6 +66,11 @@ public class RankingFragment extends MediaBrowserListFragment {
         return R.menu.ranking;
     }
 
+    @Override
+    public String emptyMessage(){
+        return getString(R.string.empty_message_ranking);
+    }
+
     /**
      * {@link MediaBrowserListFragment}
      */

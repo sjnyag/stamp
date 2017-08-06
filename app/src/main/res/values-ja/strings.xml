@@ -185,4 +185,6 @@
     <string name="label_next">Next</string>
     <string name="dialog_permission_necessary_content">このアプリは機器上のファイルへのアクセス許可がないと動きません。</string>
     <string name="dialog_permission_necessary_title">アクセス許可が必要です。</string>
+    <string name="empty_message_ranking">再生履歴に応じたランキングが表示されます。</string>
+    <string name="empty_message_timeline">再生履歴に応じたタイムラインが表示されます。</string>
 </resources>
