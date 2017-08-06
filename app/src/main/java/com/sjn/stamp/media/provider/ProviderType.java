@@ -1,8 +1,10 @@
 package com.sjn.stamp.media.provider;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.v4.media.MediaMetadataCompat;
 
+import com.sjn.stamp.R;
 import com.sjn.stamp.constant.CategoryType;
 import com.sjn.stamp.media.provider.multiple.GenreListProvider;
 import com.sjn.stamp.media.provider.multiple.PlaylistProvider;
@@ -17,7 +19,7 @@ import com.sjn.stamp.media.provider.single.QueueProvider;
 
 
 public enum ProviderType {
-    ARTIST(MediaMetadataCompat.METADATA_KEY_ARTIST, MediaIDHelper.MEDIA_ID_MUSICS_BY_ARTIST) {
+    ARTIST(MediaMetadataCompat.METADATA_KEY_ARTIST, MediaIDHelper.MEDIA_ID_MUSICS_BY_ARTIST, R.string.no_items) {
         @Override
         public ListProvider newProvider(Context context) {
             return new ArtistListProvider(context);
@@ -28,7 +30,7 @@ public enum ProviderType {
             return CategoryType.ARTIST;
         }
     },
-    ALL(null, MediaIDHelper.MEDIA_ID_MUSICS_BY_ALL) {
+    ALL(null, MediaIDHelper.MEDIA_ID_MUSICS_BY_ALL, R.string.no_items) {
         @Override
         public ListProvider newProvider(Context context) {
             return new AllProvider(context);
@@ -39,7 +41,7 @@ public enum ProviderType {
             return null;
         }
     },
-    GENRE(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_GENRE) {
+    GENRE(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_GENRE, R.string.no_items) {
         @Override
         public ListProvider newProvider(Context context) {
             return new GenreListProvider(context);
@@ -50,7 +52,7 @@ public enum ProviderType {
             return CategoryType.GENRE;
         }
     },
-    STAMP(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_STAMP) {
+    STAMP(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_STAMP, R.string.no_items) {
         @Override
         public ListProvider newProvider(Context context) {
             return new StampListProvider(context);
@@ -61,7 +63,7 @@ public enum ProviderType {
             return null;
         }
     },
-    PLAYLIST(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_PLAYLIST) {
+    PLAYLIST(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_PLAYLIST, R.string.no_items) {
         @Override
         public ListProvider newProvider(Context context) {
             return new PlaylistProvider(context);
@@ -72,7 +74,7 @@ public enum ProviderType {
             return null;
         }
     },
-    ALBUM(MediaMetadataCompat.METADATA_KEY_ALBUM, MediaIDHelper.MEDIA_ID_MUSICS_BY_ALBUM) {
+    ALBUM(MediaMetadataCompat.METADATA_KEY_ALBUM, MediaIDHelper.MEDIA_ID_MUSICS_BY_ALBUM, R.string.no_items) {
         @Override
         public ListProvider newProvider(Context context) {
             return new AlbumListProvider(context);
@@ -83,7 +85,7 @@ public enum ProviderType {
             return CategoryType.ALBUM;
         }
     },
-    QUEUE(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE) {
+    QUEUE(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE, R.string.no_items) {
         @Override
         public ListProvider newProvider(Context context) {
             return new QueueProvider(context);
@@ -94,7 +96,7 @@ public enum ProviderType {
             return null;
         }
     },
-    NEW(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_NEW) {
+    NEW(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_NEW, R.string.no_items) {
         @Override
         public ListProvider newProvider(Context context) {
             return new NewProvider(context);
@@ -105,7 +107,7 @@ public enum ProviderType {
             return null;
         }
     },
-    FREQUENT_SONG(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_FREQUENT_SONG) {
+    FREQUENT_SONG(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_FREQUENT_SONG, R.string.no_items) {
         @Override
         public ListProvider newProvider(Context context) {
             return new TopSongProvider(context);
@@ -118,15 +120,21 @@ public enum ProviderType {
     },;
     final String mMediaKey;
     final String mKeyId;
+    final int mEmptyMessageResourceId;
 
-    ProviderType(String mediaKey, String keyId) {
+    ProviderType(String mediaKey, String keyId, int emptyMessageResourceId) {
         mMediaKey = mediaKey;
         mKeyId = keyId;
+        mEmptyMessageResourceId = emptyMessageResourceId;
     }
 
     public abstract ListProvider newProvider(Context context);
 
     public abstract CategoryType getCategoryType();
+
+    public String getEmptyMessage(Resources resources){
+        return resources.getString(mEmptyMessageResourceId);
+    }
 
     public static ProviderType of(String value) {
         if (value == null) {

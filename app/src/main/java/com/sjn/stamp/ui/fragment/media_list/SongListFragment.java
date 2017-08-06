@@ -36,11 +36,13 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.sjn.stamp.MusicService;
 import com.sjn.stamp.R;
+import com.sjn.stamp.media.provider.ProviderType;
 import com.sjn.stamp.ui.DialogFacade;
 import com.sjn.stamp.ui.SongAdapter;
 import com.sjn.stamp.ui.item.SongItem;
 import com.sjn.stamp.ui.observer.MusicListObserver;
 import com.sjn.stamp.utils.LogHelper;
+import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.ViewHelper;
 
 import java.util.ArrayList;
@@ -72,6 +74,21 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
     public int getMenuResourceId() {
         return R.menu.song_list;
     }
+
+    @Override
+    public String emptyMessage() {
+        String mediaId = getMediaId();
+        if (mediaId == null || mediaId.isEmpty()) {
+            return super.emptyMessage();
+        }
+        ProviderType providerType = MediaIDHelper.getProviderType(mediaId);
+        if (providerType == null) {
+            return super.emptyMessage();
+        }
+
+        return providerType.getEmptyMessage(getResources());
+    }
+
 
     /**
      * {@link MediaBrowserListFragment}
