@@ -14,19 +14,19 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.sjn.stamp.R;
-import com.sjn.stamp.ui.custom.TermSelectLayout;
+import com.sjn.stamp.ui.custom.PeriodSelectLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RankingPagerFragment extends PagerFragment implements PagerFragment.PageFragmentContainer.Creator {
 
-    private TermSelectLayout.Term mTerm;
+    private PeriodSelectLayout.Period mPeriod;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mTerm = new TermSelectLayout.Term();
+        mPeriod = new PeriodSelectLayout.Period();
         setHasOptionsMenu(true);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -39,24 +39,24 @@ public class RankingPagerFragment extends PagerFragment implements PagerFragment
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.term:
+            case R.id.period:
                 if (getActivity() != null) {
-                    final TermSelectLayout termSelectLayout = new TermSelectLayout(getActivity(), null, mTerm);
+                    final PeriodSelectLayout periodSelectLayout = new PeriodSelectLayout(getActivity(), null, mPeriod);
                     new MaterialDialog.Builder(getContext())
-                            .title(R.string.dialog_term_select)
-                            .customView(termSelectLayout, true)
+                            .title(R.string.dialog_period_select)
+                            .customView(periodSelectLayout, true)
                             .positiveText(R.string.dialog_ok)
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    mTerm = termSelectLayout.getTerm();
+                                    mPeriod = periodSelectLayout.getPeriod();
                                     if (mAdapter == null) {
                                         return;
                                     }
                                     for (int i = 0; i < mAdapter.getCount(); i++) {
                                         Fragment fragment = mAdapter.getItem(i);
                                         if (fragment != null && fragment instanceof RankingFragment) {
-                                            ((RankingFragment) fragment).setTermAndReload(mTerm);
+                                            ((RankingFragment) fragment).setPeriodAndReload(mPeriod);
                                         }
                                     }
                                 }

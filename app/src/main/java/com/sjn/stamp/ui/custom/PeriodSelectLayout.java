@@ -19,53 +19,53 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TermSelectLayout extends LinearLayout {
+public class PeriodSelectLayout extends LinearLayout {
 
-    public static class Term {
-        TermKind mTermKind = TermKind.TOTAL;
+    public static class Period {
+        PeriodKind mPeriodKind = PeriodKind.TOTAL;
         int mYear = TimeHelper.getJapanYear();
         int mMonth = TimeHelper.getJapanMonth();
         int mDay = TimeHelper.getJapanDay();
 
-        public Term(TermKind termKind, int year, int month, int day) {
-            mTermKind = termKind;
+        public Period(PeriodKind periodKind, int year, int month, int day) {
+            mPeriodKind = periodKind;
             mYear = year;
             mMonth = month;
             mDay = day;
         }
 
-        public Term() {
+        public Period() {
         }
 
         public LocalDate from() {
-            return mTermKind.from(mYear, mMonth, mDay);
+            return mPeriodKind.from(mYear, mMonth, mDay);
         }
 
         public LocalDate to() {
-            return mTermKind.to(mYear, mMonth, mDay);
+            return mPeriodKind.to(mYear, mMonth, mDay);
         }
 
         public String toString(Resources resources) {
-            switch (mTermKind) {
+            switch (mPeriodKind) {
                 case TOTAL:
-                    return resources.getString(R.string.term_label_total);
+                    return resources.getString(R.string.period_label_total);
                 case YEARLY:
-                    return resources.getString(R.string.term_label_year, String.valueOf(mYear));
+                    return resources.getString(R.string.period_label_year, String.valueOf(mYear));
                 case MONTHLY:
-                    return resources.getString(R.string.term_label_month, String.valueOf(mYear), String.valueOf(mMonth));
+                    return resources.getString(R.string.period_label_month, String.valueOf(mYear), String.valueOf(mMonth));
                 case DAIRY:
-                    return resources.getString(R.string.tern_label_day, String.valueOf(mYear), String.valueOf(mMonth), String.valueOf(mDay));
+                    return resources.getString(R.string.period_label_day, String.valueOf(mYear), String.valueOf(mMonth), String.valueOf(mDay));
                 default:
                     return "";
             }
         }
 
-        public TermKind getTermKind() {
-            return mTermKind;
+        public PeriodKind getPeriodKind() {
+            return mPeriodKind;
         }
 
-        public void setTermKind(TermKind termKind) {
-            mTermKind = termKind;
+        public void setPeriodKind(PeriodKind periodKind) {
+            mPeriodKind = periodKind;
         }
 
         public int getYear() {
@@ -93,15 +93,15 @@ public class TermSelectLayout extends LinearLayout {
         }
     }
 
-    interface TermChangeListener {
+    interface PeriodChangeListener {
         void onChange(LocalDate from, LocalDate to);
     }
 
-    private enum TermKind {
-        TOTAL(0, R.string.term_total, GONE, GONE, GONE),
-        YEARLY(1, R.string.term_yearly, VISIBLE, GONE, GONE),
-        MONTHLY(2, R.string.term_monthly, VISIBLE, VISIBLE, GONE),
-        DAIRY(3, R.string.term_dairy, VISIBLE, VISIBLE, VISIBLE);
+    private enum PeriodKind {
+        TOTAL(0, R.string.period_total, GONE, GONE, GONE),
+        YEARLY(1, R.string.period_yearly, VISIBLE, GONE, GONE),
+        MONTHLY(2, R.string.period_monthly, VISIBLE, VISIBLE, GONE),
+        DAIRY(3, R.string.period_dairy, VISIBLE, VISIBLE, VISIBLE);
 
         final public int mValue;
         final public int mTextId;
@@ -109,7 +109,7 @@ public class TermSelectLayout extends LinearLayout {
         final public int mMonthVisibility;
         final public int mDayVisibility;
 
-        TermKind(int value, int textId, int yearVisibility, int monthVisibility, int dayVisibility) {
+        PeriodKind(int value, int textId, int yearVisibility, int monthVisibility, int dayVisibility) {
             mValue = value;
             mTextId = textId;
             mYearVisibility = yearVisibility;
@@ -117,9 +117,9 @@ public class TermSelectLayout extends LinearLayout {
             mDayVisibility = dayVisibility;
         }
 
-        public static TermKind of(int value) {
-            for (TermKind termKind : TermKind.values()) {
-                if (termKind.mValue == value) return termKind;
+        public static PeriodKind of(int value) {
+            for (PeriodKind periodKind : PeriodKind.values()) {
+                if (periodKind.mValue == value) return periodKind;
             }
             return null;
         }
@@ -130,8 +130,8 @@ public class TermSelectLayout extends LinearLayout {
 
         public static String[] strings(Resources resources) {
             List<String> strings = new ArrayList<>();
-            for (TermKind termKind : TermKind.values()) {
-                strings.add(resources.getString(termKind.mTextId));
+            for (PeriodKind periodKind : PeriodKind.values()) {
+                strings.add(resources.getString(periodKind.mTextId));
             }
             return strings.toArray(new String[0]);
         }
@@ -182,51 +182,51 @@ public class TermSelectLayout extends LinearLayout {
         }
     }
 
-    public TermChangeListener getTermChangeListener() {
-        return mTermChangeListener;
+    public PeriodChangeListener getPeriodChangeListener() {
+        return mPeriodChangeListener;
     }
 
-    public Term getTerm() {
-        return mTerm;
+    public Period getPeriod() {
+        return mPeriod;
     }
 
-    private TermChangeListener mTermChangeListener;
+    private PeriodChangeListener mPeriodChangeListener;
 
-    private Term mTerm;
-    private LinearLayout mTermYear;
-    private LinearLayout mTermMonth;
-    private LinearLayout mTermDay;
+    private Period mPeriod;
+    private LinearLayout mPeriodYear;
+    private LinearLayout mPeriodMonth;
+    private LinearLayout mPeriodDay;
     private LocalDate mCachedFromDate;
     private LocalDate mCachedToDate;
     protected View mLayout;
 
-    public TermSelectLayout(Context context, AttributeSet attr, Term term) {
+    public PeriodSelectLayout(Context context, AttributeSet attr, Period period) {
         super(context, attr);
         mLayout = inflateRootLayout(context);
-        final Spinner termSpinner = (Spinner) mLayout.findViewById(R.id.term_kind);
-        Spinner spinnerYear = (Spinner) mLayout.findViewById(R.id.term_year_spinner);
-        Spinner spinnerMonth = (Spinner) mLayout.findViewById(R.id.term_month_spinner);
-        Spinner spinnerTermDay = (Spinner) mLayout.findViewById(R.id.term_day_spinner);
-        mTermYear = (LinearLayout) mLayout.findViewById(R.id.term_year);
-        mTermMonth = (LinearLayout) mLayout.findViewById(R.id.term_month);
-        mTermDay = (LinearLayout) mLayout.findViewById(R.id.term_day);
-        mTerm = term;
-        termSpinner.setAdapter(createSpinnerAdapter(TermKind.strings(getResources())));
-        termSpinner.setSelection(mTerm.getTermKind().getValue());
-        termSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        final Spinner periodSpinner = (Spinner) mLayout.findViewById(R.id.period_kind);
+        Spinner spinnerYear = (Spinner) mLayout.findViewById(R.id.period_year_spinner);
+        Spinner spinnerMonth = (Spinner) mLayout.findViewById(R.id.period_month_spinner);
+        Spinner spinnerDay = (Spinner) mLayout.findViewById(R.id.period_day_spinner);
+        mPeriodYear = (LinearLayout) mLayout.findViewById(R.id.period_year);
+        mPeriodMonth = (LinearLayout) mLayout.findViewById(R.id.period_month);
+        mPeriodDay = (LinearLayout) mLayout.findViewById(R.id.period_day);
+        mPeriod = period;
+        periodSpinner.setAdapter(createSpinnerAdapter(PeriodKind.strings(getResources())));
+        periodSpinner.setSelection(mPeriod.getPeriodKind().getValue());
+        periodSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                mTerm.setTermKind(TermKind.of(i));
-                if (mTerm.getTermKind() == null) {
+                mPeriod.setPeriodKind(PeriodKind.of(i));
+                if (mPeriod.getPeriodKind() == null) {
                     return;
                 }
                 //noinspection ResourceType
-                mTermYear.setVisibility(mTerm.getTermKind().getYearVisibility());
+                mPeriodYear.setVisibility(mPeriod.getPeriodKind().getYearVisibility());
                 //noinspection ResourceType
-                mTermMonth.setVisibility(mTerm.getTermKind().getMonthVisibility());
+                mPeriodMonth.setVisibility(mPeriod.getPeriodKind().getMonthVisibility());
                 //noinspection ResourceType
-                mTermDay.setVisibility(mTerm.getTermKind().getDayVisibility());
-                onTermChange();
+                mPeriodDay.setVisibility(mPeriod.getPeriodKind().getDayVisibility());
+                onPeriodChange();
             }
 
             @Override
@@ -235,14 +235,14 @@ public class TermSelectLayout extends LinearLayout {
             }
         });
         Integer[] days = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
-        spinnerTermDay.setAdapter(createSpinnerAdapter(days));
-        spinnerTermDay.setSelection(findOr0(days, mTerm.getDay()));
-        spinnerTermDay.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinnerDay.setAdapter(createSpinnerAdapter(days));
+        spinnerDay.setSelection(findOr0(days, mPeriod.getDay()));
+        spinnerDay.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 Spinner spinner = (Spinner) adapterView;
-                mTerm.setDay(Integer.valueOf(spinner.getSelectedItem().toString()));
-                onTermChange();
+                mPeriod.setDay(Integer.valueOf(spinner.getSelectedItem().toString()));
+                onPeriodChange();
             }
 
             @Override
@@ -252,13 +252,13 @@ public class TermSelectLayout extends LinearLayout {
         });
         Integer[] months = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
         spinnerMonth.setAdapter(createSpinnerAdapter(months));
-        spinnerMonth.setSelection(findOr0(months, mTerm.getMonth()));
+        spinnerMonth.setSelection(findOr0(months, mPeriod.getMonth()));
         spinnerMonth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 Spinner spinner = (Spinner) adapterView;
-                mTerm.setMonth(Integer.valueOf(spinner.getSelectedItem().toString()));
-                onTermChange();
+                mPeriod.setMonth(Integer.valueOf(spinner.getSelectedItem().toString()));
+                onPeriodChange();
             }
 
             @Override
@@ -268,13 +268,13 @@ public class TermSelectLayout extends LinearLayout {
         });
         Integer[] years = {2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023};
         spinnerYear.setAdapter(createSpinnerAdapter(years));
-        spinnerYear.setSelection(findOr0(years, mTerm.getYear()));
+        spinnerYear.setSelection(findOr0(years, mPeriod.getYear()));
         spinnerYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 Spinner spinner = (Spinner) adapterView;
-                mTerm.setYear(Integer.valueOf(spinner.getSelectedItem().toString()));
-                onTermChange();
+                mPeriod.setYear(Integer.valueOf(spinner.getSelectedItem().toString()));
+                onPeriodChange();
             }
 
             @Override
@@ -282,22 +282,22 @@ public class TermSelectLayout extends LinearLayout {
 
             }
         });
-        mCachedFromDate = mTerm.from();
-        mCachedToDate = mTerm.to();
+        mCachedFromDate = mPeriod.from();
+        mCachedToDate = mPeriod.to();
     }
 
     protected View inflateRootLayout(Context context) {
-        return LayoutInflater.from(context).inflate(R.layout.layout_term_select, this);
+        return LayoutInflater.from(context).inflate(R.layout.layout_period_select, this);
     }
 
-    private void onTermChange() {
-        if (mCachedFromDate != null && mCachedToDate != null && mCachedFromDate.equals(mTerm.from()) && mCachedToDate.equals(mTerm.to())) {
+    private void onPeriodChange() {
+        if (mCachedFromDate != null && mCachedToDate != null && mCachedFromDate.equals(mPeriod.from()) && mCachedToDate.equals(mPeriod.to())) {
             return;
         }
-        mCachedFromDate = mTerm.from();
-        mCachedToDate = mTerm.to();
-        if (mTermChangeListener != null && mCachedFromDate != null && mCachedToDate != null) {
-            mTermChangeListener.onChange(mCachedFromDate, mCachedToDate);
+        mCachedFromDate = mPeriod.from();
+        mCachedToDate = mPeriod.to();
+        if (mPeriodChangeListener != null && mCachedFromDate != null && mCachedToDate != null) {
+            mPeriodChangeListener.onChange(mCachedFromDate, mCachedToDate);
         }
     }
 

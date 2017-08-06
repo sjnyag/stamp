@@ -28,7 +28,7 @@ import com.sjn.stamp.db.RankedSong;
 import com.sjn.stamp.db.Shareable;
 import com.sjn.stamp.ui.SongAdapter;
 import com.sjn.stamp.ui.custom.RankingSelectLayout;
-import com.sjn.stamp.ui.custom.TermSelectLayout;
+import com.sjn.stamp.ui.custom.PeriodSelectLayout;
 import com.sjn.stamp.ui.item.RankedArtistItem;
 import com.sjn.stamp.ui.item.RankedSongItem;
 import com.sjn.stamp.utils.LogHelper;
@@ -50,7 +50,7 @@ public class RankingFragment extends MediaBrowserListFragment {
 
     private static final String TAG = LogHelper.makeLogTag(RankingFragment.class);
 
-    private TermSelectLayout.Term mTerm = new TermSelectLayout.Term();
+    private PeriodSelectLayout.Period mPeriod = new PeriodSelectLayout.Period();
     private RankKind mRankKind;
     private SongHistoryController mSongHistoryController;
 
@@ -205,23 +205,23 @@ public class RankingFragment extends MediaBrowserListFragment {
             @Override
             public void onClick(View view) {
                 if (getActivity() != null) {
-                    final RankingSelectLayout termSelectLayout = new RankingSelectLayout(getActivity(), null, mTerm);
+                    final RankingSelectLayout periodSelectLayout = new RankingSelectLayout(getActivity(), null, mPeriod);
                     new MaterialDialog.Builder(getContext())
                             .title(getString(R.string.dialog_ranking_target))
-                            .customView(termSelectLayout, true)
+                            .customView(periodSelectLayout, true)
                             .positiveText(R.string.dialog_ok)
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    final TermSelectLayout.Term term = termSelectLayout.getTerm();
-                                    final int songNum = termSelectLayout.getSongNum();
+                                    final PeriodSelectLayout.Period period = periodSelectLayout.getPeriod();
+                                    final int songNum = periodSelectLayout.getSongNum();
                                     final ProgressDialog progressDialog = new ProgressDialog(getActivity());
                                     progressDialog.setMessage(getString(R.string.message_processing));
                                     progressDialog.show();
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            ShareHelper.share(getActivity(), getResources().getString(R.string.share_ranking, term.toString(getResources()), mRankKind.getRankingShareMessage(getResources(), mSongHistoryController, term, songNum)));
+                                            ShareHelper.share(getActivity(), getResources().getString(R.string.share_ranking, period.toString(getResources()), mRankKind.getRankingShareMessage(getResources(), mSongHistoryController, period, songNum)));
                                             progressDialog.dismiss();
                                         }
                                     }).start();
@@ -251,12 +251,12 @@ public class RankingFragment extends MediaBrowserListFragment {
         if (mAsyncTask != null) {
             mAsyncTask.cancel(true);
         }
-        mAsyncTask = new CalculateAsyncTask(this, mAdapter, mRankKind, mTerm, mSongHistoryController);
+        mAsyncTask = new CalculateAsyncTask(this, mAdapter, mRankKind, mPeriod, mSongHistoryController);
         mAsyncTask.execute();
     }
 
-    public void setTermAndReload(TermSelectLayout.Term term) {
-        mTerm = term;
+    public void setPeriodAndReload(PeriodSelectLayout.Period period) {
+        mPeriod = period;
         mProgressDialog = new ProgressDialog(getActivity());
         mProgressDialog.setMessage(getString(R.string.message_processing));
         mProgressDialog.show();
@@ -273,19 +273,19 @@ public class RankingFragment extends MediaBrowserListFragment {
         RankingFragment fragment;
         FlexibleAdapter adapter;
         Callback mCallback;
-        TermSelectLayout.Term mTerm;
+        PeriodSelectLayout.Period mPeriod;
         SongHistoryController mSongHistoryController;
 
-        CalculateAsyncTask(RankingFragment fragment, FlexibleAdapter adapter, Callback callback, TermSelectLayout.Term term, SongHistoryController songHistoryController) {
+        CalculateAsyncTask(RankingFragment fragment, FlexibleAdapter adapter, Callback callback, PeriodSelectLayout.Period period, SongHistoryController songHistoryController) {
             this.fragment = fragment;
             this.adapter = adapter;
             mCallback = callback;
-            mTerm = term;
+            mPeriod = period;
             mSongHistoryController = songHistoryController;
         }
 
         interface Callback {
-            List<AbstractFlexibleItem> createItemList(Realm realm, TermSelectLayout.Term term, SongHistoryController songHistoryController);
+            List<AbstractFlexibleItem> createItemList(Realm realm, PeriodSelectLayout.Period period, SongHistoryController songHistoryController);
         }
 
         @Override
@@ -293,7 +293,7 @@ public class RankingFragment extends MediaBrowserListFragment {
             Realm realm = null;
             try {
                 realm = RealmHelper.getRealmInstance();
-                fragment.mItemList = mCallback.createItemList(realm, mTerm, mSongHistoryController);
+                fragment.mItemList = mCallback.createItemList(realm, mPeriod, mSongHistoryController);
                 if (fragment.getActivity() == null) {
                     return null;
                 }
@@ -326,10 +326,10 @@ public class RankingFragment extends MediaBrowserListFragment {
 
         SONG {
             @Override
-            public String getRankingShareMessage(Resources resource, SongHistoryController controller, TermSelectLayout.Term term, int songNum) {
+            public String getRankingShareMessage(Resources resource, SongHistoryController controller, PeriodSelectLayout.Period period, int songNum) {
                 List<Shareable> shareableList = new ArrayList<>();
                 Realm realm = RealmHelper.getRealmInstance();
-                for (Shareable shareable : controller.getRankedSongList(realm, term)) {
+                for (Shareable shareable : controller.getRankedSongList(realm, period)) {
                     shareableList.add(shareable);
                 }
                 String shareMessage = createShareMessage(resource, shareableList, songNum);
@@ -338,10 +338,10 @@ public class RankingFragment extends MediaBrowserListFragment {
             }
 
             @Override
-            public List<AbstractFlexibleItem> createItemList(Realm realm, TermSelectLayout.Term term, SongHistoryController songHistoryController) {
+            public List<AbstractFlexibleItem> createItemList(Realm realm, PeriodSelectLayout.Period period, SongHistoryController songHistoryController) {
                 List<AbstractFlexibleItem> itemList = new ArrayList<>();
                 int order = 1;
-                for (RankedSong rankedSong : songHistoryController.getRankedSongList(realm, term)) {
+                for (RankedSong rankedSong : songHistoryController.getRankedSongList(realm, period)) {
                     itemList.add(newSimpleItem(rankedSong, order++));
                 }
                 return itemList;
@@ -354,10 +354,10 @@ public class RankingFragment extends MediaBrowserListFragment {
 
         ARTIST {
             @Override
-            public String getRankingShareMessage(Resources resource, SongHistoryController controller, TermSelectLayout.Term term, int songNum) {
+            public String getRankingShareMessage(Resources resource, SongHistoryController controller, PeriodSelectLayout.Period period, int songNum) {
                 List<Shareable> shareableList = new ArrayList<>();
                 Realm realm = RealmHelper.getRealmInstance();
-                for (Shareable shareable : controller.getRankedArtistList(realm, term)) {
+                for (Shareable shareable : controller.getRankedArtistList(realm, period)) {
                     shareableList.add(shareable);
                 }
                 String shareMessage = createShareMessage(resource, shareableList, songNum);
@@ -366,10 +366,10 @@ public class RankingFragment extends MediaBrowserListFragment {
             }
 
             @Override
-            public List<AbstractFlexibleItem> createItemList(Realm realm, TermSelectLayout.Term term, SongHistoryController songHistoryController) {
+            public List<AbstractFlexibleItem> createItemList(Realm realm, PeriodSelectLayout.Period period, SongHistoryController songHistoryController) {
                 List<AbstractFlexibleItem> itemList = new ArrayList<>();
                 int order = 1;
-                for (RankedArtist rankedArtist : songHistoryController.getRankedArtistList(realm, term)) {
+                for (RankedArtist rankedArtist : songHistoryController.getRankedArtistList(realm, period)) {
                     itemList.add(newSimpleItem(rankedArtist, order++));
                 }
                 return itemList;
@@ -381,7 +381,7 @@ public class RankingFragment extends MediaBrowserListFragment {
 
         },;
 
-        public abstract String getRankingShareMessage(Resources resources, SongHistoryController controller, TermSelectLayout.Term term, int songNum);
+        public abstract String getRankingShareMessage(Resources resources, SongHistoryController controller, PeriodSelectLayout.Period period, int songNum);
 
         public static RankKind of(String value) {
             for (RankKind rankKind : RankKind.values()) {

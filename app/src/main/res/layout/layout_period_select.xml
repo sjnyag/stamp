@@ -5,30 +5,30 @@
     android:layout_height="wrap_content">
 
     <Spinner
-        android:id="@+id/term_kind"
+        android:id="@+id/period_kind"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:textColor="?android:attr/textColorPrimary"/>
 
     <LinearLayout
-        android:id="@+id/term_year"
+        android:id="@+id/period_year"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/term_kind"
+        android:layout_below="@+id/period_kind"
         android:layout_marginTop="24sp"
         android:orientation="horizontal">
 
         <Spinner
-            android:id="@+id/term_year_spinner"
+            android:id="@+id/period_year_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textColor="?android:attr/textColorPrimary"/>
 
         <TextView
-            android:id="@+id/term_year_label"
+            android:id="@+id/period_year_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/year"
@@ -37,23 +37,23 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/term_month"
+        android:id="@+id/period_month"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/term_year"
+        android:layout_below="@+id/period_year"
         android:layout_marginTop="24sp"
         android:orientation="horizontal">
 
         <Spinner
-            android:id="@+id/term_month_spinner"
+            android:id="@+id/period_month_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textColor="?android:attr/textColorPrimary"/>
 
         <TextView
-            android:id="@+id/term_month_label"
+            android:id="@+id/period_month_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/month"
@@ -62,23 +62,23 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/term_day"
+        android:id="@+id/period_day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/term_month"
+        android:layout_below="@+id/period_month"
         android:layout_marginTop="24sp"
         android:orientation="horizontal">
 
         <Spinner
-            android:id="@+id/term_day_spinner"
+            android:id="@+id/period_day_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textColor="?android:attr/textColorPrimary"/>
 
         <TextView
-            android:id="@+id/term_day_label"
+            android:id="@+id/period_day_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/day"

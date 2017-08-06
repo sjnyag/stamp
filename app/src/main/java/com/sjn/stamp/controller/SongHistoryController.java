@@ -16,7 +16,7 @@ import com.sjn.stamp.db.dao.DeviceDao;
 import com.sjn.stamp.db.dao.SongDao;
 import com.sjn.stamp.db.dao.SongHistoryDao;
 import com.sjn.stamp.db.dao.TotalSongHistoryDao;
-import com.sjn.stamp.ui.custom.TermSelectLayout;
+import com.sjn.stamp.ui.custom.PeriodSelectLayout;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaItemHelper;
 import com.sjn.stamp.utils.NotificationHelper;
@@ -141,16 +141,16 @@ public class SongHistoryController {
         return mSongHistoryDao.timeline(realm, RecordType.PLAY.getValue());
     }
 
-    public List<RankedSong> getRankedSongList(Realm realm, TermSelectLayout.Term term) {
+    public List<RankedSong> getRankedSongList(Realm realm, PeriodSelectLayout.Period period) {
         return getRankedSongList(realm,
-                term.from() == null ? null : term.from().toDateTimeAtStartOfDay().toDate(),
-                term.to() == null ? null : term.to().toDateTimeAtStartOfDay().plusDays(1).toDate());
+                period.from() == null ? null : period.from().toDateTimeAtStartOfDay().toDate(),
+                period.to() == null ? null : period.to().toDateTimeAtStartOfDay().plusDays(1).toDate());
     }
 
-    public List<RankedArtist> getRankedArtistList(Realm realm, TermSelectLayout.Term term) {
+    public List<RankedArtist> getRankedArtistList(Realm realm, PeriodSelectLayout.Period period) {
         return getRankedArtistList(realm,
-                term.from() == null ? null : term.from().toDateTimeAtStartOfDay().toDate(),
-                term.to() == null ? null : term.to().toDateTimeAtStartOfDay().plusDays(1).toDate());
+                period.from() == null ? null : period.from().toDateTimeAtStartOfDay().toDate(),
+                period.to() == null ? null : period.to().toDateTimeAtStartOfDay().plusDays(1).toDate());
     }
 
     private List<RankedSong> getRankedSongList(Realm realm, Date from, Date to) {

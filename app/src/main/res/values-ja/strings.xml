@@ -41,7 +41,7 @@
     <string name="loading">Loading…</string>
     <string name="media_route_menu_title">Play on…</string>
 
-    <string name="menu_term_change">Term</string>
+    <string name="menu_period_change">Period</string>
 
     <string name="notification_share">Share</string>
     <string name="notification_title">%1$sを%2$s回再生しました！！</string>
@@ -91,22 +91,22 @@
     <string name="ranking_tab_my_artists">Artist</string>
 
     <string name="dialog_ranking_target">ランキング対象選択</string>
-    <string name="dialog_term_select">期間選択</string>
+    <string name="dialog_period_select">期間選択</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_delete">削除する</string>
     <string name="dialog_reload">再ロードする</string>
     <string name="dialog_confirm_title">確認</string>
 
-    <string name="term_total">総合</string>
-    <string name="term_yearly">年間</string>
-    <string name="term_monthly">マンスリー</string>
-    <string name="term_dairy">デイリー</string>
+    <string name="period_total">総合</string>
+    <string name="period_yearly">年間</string>
+    <string name="period_monthly">マンスリー</string>
+    <string name="period_dairy">デイリー</string>
 
-    <string name="term_label_total">総合</string>
-    <string name="term_label_year">%1$s年</string>
-    <string name="term_label_month">%1$s年%2$s月</string>
-    <string name="tern_label_day">%1$s年%2$s月%3$s日</string>
+    <string name="period_label_total">総合</string>
+    <string name="period_label_year">%1$s年</string>
+    <string name="period_label_month">%1$s年%2$s月</string>
+    <string name="period_label_day">%1$s年%2$s月%3$s日</string>
 
 
     <string name="item_song_history_seconds_ago">%1$d 秒前</string>
@@ -177,7 +177,7 @@
     <string name="day">日</string>
     <string name="year">年</string>
     <string name="ranking_select_target_count">対象数</string>
-    <string name="ranking_select_target_term">対象期間</string>
+    <string name="ranking_select_target_period">対象期間</string>
     <string name="stamp_register">Register</string>
     <string name="stamp_new">New Stamp Name</string>
     <string name="icon">icon</string>

@@ -10,7 +10,7 @@ import android.widget.Spinner;
 import com.sjn.stamp.R;
 
 
-public class RankingSelectLayout extends TermSelectLayout {
+public class RankingSelectLayout extends PeriodSelectLayout {
 
     public int getSongNum() {
         return mSongNum;
@@ -22,8 +22,8 @@ public class RankingSelectLayout extends TermSelectLayout {
 
     private int mSongNum = 3;
 
-    public RankingSelectLayout(Context context, AttributeSet attr, Term term) {
-        super(context, attr, term);
+    public RankingSelectLayout(Context context, AttributeSet attr, Period period) {
+        super(context, attr, period);
         final Spinner spinnerSongNum = (Spinner) mLayout.findViewById(R.id.song_num_spinner);
 
         Integer[] songNumList = new Integer[]{
