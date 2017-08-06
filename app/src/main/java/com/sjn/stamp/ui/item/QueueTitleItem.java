@@ -45,7 +45,12 @@ public class QueueTitleItem extends AbstractItem<QueueTitleItem.LayoutViewHolder
     public void bindViewHolder(FlexibleAdapter adapter, LayoutViewHolder holder, int position, List payloads) {
         if (mProviderType != null) {
             holder.mTitle.setText(mProviderType.name());
-            holder.mSubtitle.setText(mProviderValue);
+            if (mProviderValue == null || mProviderValue.isEmpty()) {
+                holder.mSubtitle.setVisibility(View.GONE);
+            } else {
+                holder.mSubtitle.setVisibility(View.VISIBLE);
+                holder.mSubtitle.setText(mProviderValue);
+            }
         }
         //Support for StaggeredGridLayoutManager
         if (holder.itemView.getLayoutParams() instanceof StaggeredGridLayoutManager.LayoutParams) {
