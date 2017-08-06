@@ -3,6 +3,7 @@ package com.sjn.stamp.ui.fragment.media_list;
 import android.support.annotation.NonNull;
 import android.support.v4.media.MediaBrowserCompat;
 
+import com.sjn.stamp.R;
 import com.sjn.stamp.media.provider.ProviderType;
 import com.sjn.stamp.ui.activity.DrawerMenu;
 import com.sjn.stamp.ui.item.QueueTitleItem;
@@ -19,6 +20,11 @@ public class QueueListFragment extends SongListFragment {
 
     public QueueListFragment() {
         setMediaId(DrawerMenu.QUEUE.getMediaId());
+    }
+
+    @Override
+    public String emptyMessage(){
+        return getString(R.string.empty_message_queue);
     }
 
     @Override

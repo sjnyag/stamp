@@ -187,4 +187,5 @@
     <string name="dialog_permission_necessary_title">アクセス許可が必要です。</string>
     <string name="empty_message_ranking">再生履歴に応じたランキングが表示されます。</string>
     <string name="empty_message_timeline">再生履歴に応じたタイムラインが表示されます。</string>
+    <string name="empty_message_queue">現在再生中のキューが表示されます。キューはホームから選択できます。</string>
 </resources>

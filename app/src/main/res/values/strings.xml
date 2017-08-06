@@ -192,4 +192,5 @@
     <string name="dialog_permission_necessary_content">Sorry. This app cannot move without storage permission.</string>
     <string name="empty_message_ranking">Ranking according to your playback will be displayed.</string>
     <string name="empty_message_timeline">History according to your playback will be displayed.</string>
+    <string name="empty_message_queue">Current playing queue will be displayed. You can choose queue from Home.</string>
 </resources>
