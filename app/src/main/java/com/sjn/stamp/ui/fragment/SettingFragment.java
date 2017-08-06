@@ -11,7 +11,6 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.sjn.stamp.R;
 import com.sjn.stamp.ui.DialogFacade;
-import com.sjn.stamp.ui.activity.DrawerActivity;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.RealmHelper;
 
@@ -92,7 +91,7 @@ public class SettingFragment extends PreferenceFragmentCompat {
         findPreference(getString(R.string.licence)).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                ((DrawerActivity) getActivity()).navigateToBrowser(new SettingFragment(), true);
+                DialogFacade.createLicenceDialog(getActivity()).show();
                 return true;
             }
         });

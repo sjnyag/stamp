@@ -76,55 +76,48 @@ repositories {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile('com.mikepenz:materialdrawer:5.3.0@aar') {
-        transitive = true
-    }
-    compile('com.github.afollestad.material-dialogs:core:0.8.5.8@aar') {
-        transitive = true
-    }
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
-        transitive = true;
-    }
     compile 'com.android.support:appcompat-v7:25.4.0'
-    compile 'com.takisoft.fix:preference-v7:25.4.0.3'
     compile 'com.android.support:cardview-v7:25.4.0'
     compile 'com.android.support:leanback-v17:25.4.0'
     compile 'com.android.support:design:25.4.0'
     compile 'com.android.support:mediarouter-v7:25.4.0'
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.google.android.gms:play-services-cast-framework:9.4.0'
     compile 'com.google.android.support:wearable:2.0.0'
+    compile 'com.google.android.gms:play-services-cast-framework:9.4.0'
     compile 'com.google.firebase:firebase-core:9.4.0'
     compile 'com.google.firebase:firebase-crash:9.4.0'
-    compile 'com.google.code.gson:gson:2.7'
     compile 'com.google.guava:guava:20.0'
-    compile 'com.squareup.picasso:picasso:2.3.3'
-    compile 'com.squareup.okhttp3:okhttp:3.3.1'
-    compile 'com.mikepenz:iconics-core:2.6.5@aar'
-    compile 'com.github.sjnyag:AnimationWrapLayout:0.1.0'
-    compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
-    compile 'com.github.vajro:MaterialDesignLibrary:1.6'
-    compile 'com.github.pedrovgs:draggablepanel:1.9'
-    compile 'eu.davidea:flexible-adapter:5.0.0-rc1'
-    compile 'eu.davidea:flipview:1.1.2'
-    compile 'com.anupcowkur:reservoir:2.1'
-    compile 'com.sothree.slidinguppanel:library:3.3.0'
-    compile 'net.danlew:android.joda:2.6.0'
-    compile 'me.relex:circleindicator:1.2.1@aar'
-    compile 'com.nanohttpd:nanohttpd-webserver:2.1.1'
     compile 'com.bowyer.app:fabtransitionlayout:0.4.0@aar'
+    compile('com.github.afollestad.material-dialogs:core:0.8.5.8@aar') {
+        transitive = true
+    }
+    compile('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
+        transitive = true;
+    }
+    compile 'com.github.sjnyag:AnimationWrapLayout:0.1.0'
+    compile 'com.jakewharton:disklrucache:2.0.2'
+    compile('com.mikepenz:materialdrawer:5.3.0@aar') {
+        transitive = true
+    }
+    compile 'com.nanohttpd:nanohttpd-webserver:2.1.1'
+    compile 'com.sothree.slidinguppanel:library:3.3.0'
+    compile 'com.squareup.picasso:picasso:2.3.3'
+    compile 'com.takisoft.fix:preference-v7:25.4.0.3'
+    compile 'eu.davidea:flexible-adapter:5.0.0-rc1'
+    compile 'net.danlew:android.joda:2.6.0'
+    compile 'net.yslibrary.licenseadapter:licenseadapter:1.4.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    kapt 'io.realm:realm-annotations:3.0.0'
+    kapt 'io.realm:realm-annotations-processor:3.0.0'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'
     androidTestCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test:rules:0.5'
     androidTestCompile 'com.android.support:support-annotations:25.4.0'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    kapt 'io.realm:realm-annotations:3.0.0'
-    kapt 'io.realm:realm-annotations-processor:3.0.0'
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
 }
 
 play {
