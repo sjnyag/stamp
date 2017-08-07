@@ -21,6 +21,7 @@ import com.sjn.stamp.controller.StampController;
 import com.sjn.stamp.ui.DialogFacade;
 import com.sjn.stamp.ui.custom.StampRegisterLayout;
 import com.sjn.stamp.ui.custom.ToggleTextView;
+import com.sjn.stamp.ui.fragment.media_list.RankingFragment;
 import com.sjn.stamp.ui.observer.StampEditStateObserver;
 import com.sjn.stamp.utils.LogHelper;
 
@@ -48,6 +49,12 @@ public class StampEditFragment extends Fragment {
                 new MaterialDialog.Builder(getContext())
                         .title(R.string.dialog_stamp_register)
                         .customView(stampRegisterLayout, true)
+                        .positiveText(R.string.dialog_ok)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            }
+                        })
                         .contentColorRes(android.R.color.white)
                         .backgroundColorRes(R.color.material_blue_grey_800)
                         .theme(Theme.DARK)

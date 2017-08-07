@@ -84,7 +84,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="bottom"
-                app:ft_color="@color/primary"
                 app:ft_container_gravity="center">
 
                 <fragment
