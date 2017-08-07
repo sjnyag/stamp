@@ -202,4 +202,5 @@
     <string name="empty_message_playlist">Playlists registered to Android will be displayed.</string>
     <string name="empty_message_new">New registered songs will be displayed. Displaying period can be edit at Setting Screen.</string>
     <string name="choose_stamps">Choose stamps</string>
+    <string name="empty_stamp">Stamp has not registered yet. Please register stamp by + button.</string>
 </resources>

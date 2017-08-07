@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -31,11 +32,13 @@ public class StampEditFragment extends Fragment {
     private static final String TAG = LogHelper.makeLogTag(StampEditFragment.class);
     private AnimationWrapLayout mStampListLayout;
     private ButtonFloatSmall mRegisterButton;
+    private TextView mEmptyString;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stamp_edit, container, false);
         mStampListLayout = (AnimationWrapLayout) rootView.findViewById(R.id.stamp_list_layout);
+        mEmptyString = (TextView) rootView.findViewById(R.id.stamp_list_empty);
 
         final StampRegisterLayout stampRegisterLayout = new StampRegisterLayout(getActivity(), null);
         mRegisterButton = (ButtonFloatSmall) LayoutInflater.from(getContext()).inflate(R.layout.add_stamp_button, null);
@@ -65,6 +68,11 @@ public class StampEditFragment extends Fragment {
     private void drawStampList(Context context, List<String> stampList) {
         mStampListLayout.removeAllViews();
         mStampListLayout.addView(mRegisterButton);
+        if (stampList == null || stampList.isEmpty()) {
+            mEmptyString.setVisibility(View.VISIBLE);
+            return;
+        }
+        mEmptyString.setVisibility(View.GONE);
         for (String stampName : stampList) {
             mStampListLayout.addView(inflateStampView(context, stampName));
         }

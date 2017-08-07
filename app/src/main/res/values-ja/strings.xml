@@ -196,5 +196,6 @@
     <string name="empty_message_most_played">再生数が多い曲が表示されます。対象となる期間はSetting画面から変更できます。</string>
     <string name="empty_message_playlist">Androidに登録されているプレイリストが表示されます。</string>
     <string name="empty_message_new">新しく登録された曲が表示されます。対象となる期間はSetting画面から変更できます。</string>
-    <string name="choose_stamps">Stampを選んでください。</string>
+    <string name="choose_stamps">スタンプを選んでください。</string>
+    <string name="empty_stamp">まだスタンプが登録されていません。+ボタンからスタンプを登録してください。</string>
 </resources>
