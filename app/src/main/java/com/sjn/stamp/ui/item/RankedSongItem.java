@@ -132,7 +132,7 @@ public class RankedSongItem extends AbstractItem<RankedSongItem.SimpleViewHolder
         };
 
         void updateStampList(String mediaId) {
-            if (!StampEditStateObserver.getInstance().isOpen()) {
+            if (!StampEditStateObserver.getInstance().isStampMode()) {
                 mStampListLayout.setVisibility(View.GONE);
                 return;
             }

@@ -145,7 +145,7 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
 
         public void updateStampList(String artistName) {
             /*
-            if (!StampEditStateObserver.getInstance().isOpen()) {
+            if (!StampEditStateObserver.getInstance().isStampMode()) {
                 mStampListLayout.setVisibility(View.GONE);
                 return;
             }

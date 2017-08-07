@@ -90,6 +90,7 @@
     <string name="ranking_tab_my_songs">Song</string>
     <string name="ranking_tab_my_artists">Artist</string>
 
+    <string name="dialog_stamp_register">スタンプ登録</string>
     <string name="dialog_ranking_target">ランキング対象選択</string>
     <string name="dialog_period_select">期間選択</string>
     <string name="dialog_cancel">Cancel</string>
@@ -193,6 +194,7 @@
     <string name="empty_message_timeline">再生履歴に応じたタイムラインが表示されます。</string>
     <string name="empty_message_queue">現在再生中のキューが表示されます。キューはHome画面から選択できます。</string>
     <string name="empty_message_most_played">再生数が多い曲が表示されます。対象となる期間はSetting画面から変更できます。</string>
-    <string name="empty_message_playlist">アンドロイドに登録されているプレイリストが表示されます。</string>
+    <string name="empty_message_playlist">Androidに登録されているプレイリストが表示されます。</string>
     <string name="empty_message_new">新しく登録された曲が表示されます。対象となる期間はSetting画面から変更できます。</string>
+    <string name="choose_stamps">Stampを選んでください。</string>
 </resources>

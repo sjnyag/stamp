@@ -112,6 +112,7 @@ public class DialogFacade {
         dataSet.add(Licenses.fromGitHub("google/guava", LICENSE_APACHE_V2));
         dataSet.add(Licenses.fromGitHubMIT("bowyer-app/FabTransitionLayout"));
         dataSet.add(Licenses.fromGitHubMIT("afollestad/material-dialogs"));
+        dataSet.add(Licenses.fromGitHubApacheV2("vajro/MaterialDesignLibrary"));
         dataSet.add(Licenses.fromGitHubMIT("ozodrukh/CircularReveal"));
         dataSet.add(Licenses.fromGitHubApacheV2("sjnyag/AnimationWrapLayout"));
         dataSet.add(Licenses.fromGitHubApacheV2("jakewharton/DiskLruCache"));

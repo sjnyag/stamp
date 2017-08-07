@@ -90,14 +90,14 @@ public abstract class ListFragment extends Fragment implements
     View.OnClickListener startStampEdit = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.OPEN);
+            StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.EDITING);
         }
     };
 
     View.OnClickListener stopStampEdit = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.CLOSE);
+            StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.NO_EDIT);
         }
     };
 
@@ -275,11 +275,16 @@ public abstract class ListFragment extends Fragment implements
     @Override
     public void onStampStateChange(StampEditStateObserver.State state) {
         switch (state) {
-            case OPEN:
+            case EDITING:
                 openStampEdit();
                 break;
-            case CLOSE:
+            case NO_EDIT:
                 closeStampEdit();
+                break;
+            case STAMPING:
+                if (mBottomSheetLayout.isFabExpanded()) {
+                    mBottomSheetLayout.contractFab();
+                }
                 break;
         }
         mAdapter.notifyDataSetChanged();

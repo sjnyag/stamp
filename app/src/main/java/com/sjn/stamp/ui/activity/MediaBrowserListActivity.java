@@ -186,8 +186,8 @@ public abstract class MediaBrowserListActivity extends MediaBrowserActivity
 
     @Override
     public void onBackPressed() {
-        if (StampEditStateObserver.getInstance().isOpen()) {
-            StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.CLOSE);
+        if (StampEditStateObserver.getInstance().isStampMode()) {
+            StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.NO_EDIT);
             return;
         }
         // If ActionMode is active, back key closes it

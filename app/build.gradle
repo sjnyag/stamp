@@ -95,6 +95,7 @@ dependencies {
         transitive = true;
     }
     compile 'com.github.sjnyag:AnimationWrapLayout:0.1.0'
+    compile 'com.github.vajro:MaterialDesignLibrary:1.6'
     compile 'com.jakewharton:disklrucache:2.0.2'
     compile('com.mikepenz:materialdrawer:5.3.0@aar') {
         transitive = true

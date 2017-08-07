@@ -10,15 +10,16 @@ import java.util.List;
 public class StampEditStateObserver {
 
     public enum State {
-        OPEN,
-        CLOSE
+        EDITING,
+        NO_EDIT,
+        STAMPING
     }
 
     private static final String TAG = LogHelper.makeLogTag(StampEditStateObserver.class);
 
     private static StampEditStateObserver sInstance;
 
-    State mState = State.CLOSE;
+    State mState = State.NO_EDIT;
 
     public List<String> getSelectedStampList() {
         return mSelectedStampList;
@@ -28,8 +29,8 @@ public class StampEditStateObserver {
 
     private List<Listener> mListenerList = Collections.synchronizedList(new ArrayList<Listener>());
 
-    public boolean isOpen() {
-        return mState == State.OPEN;
+    public boolean isStampMode() {
+        return mState == State.EDITING || mState == State.STAMPING;
     }
 
     public void notifyAllStampChange(String stamp) {

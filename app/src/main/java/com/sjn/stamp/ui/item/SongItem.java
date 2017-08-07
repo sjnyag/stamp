@@ -201,7 +201,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
         };
 
         void updateStampList(String mediaId) {
-            if (!StampEditStateObserver.getInstance().isOpen()) {
+            if (!StampEditStateObserver.getInstance().isStampMode()) {
                 mStampListLayout.setVisibility(View.GONE);
                 return;
             }
