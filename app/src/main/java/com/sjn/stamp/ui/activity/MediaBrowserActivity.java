@@ -96,6 +96,7 @@ public abstract class MediaBrowserActivity extends ActionBarCastActivity
         if (MediaControllerCompat.getMediaController(this) != null) {
             MediaControllerCompat.getMediaController(this).registerCallback(MediaControllerObserver.getInstance());
         }
+        onConnected();
 
         hidePlaybackControls();
     }

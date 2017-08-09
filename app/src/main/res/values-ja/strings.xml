@@ -138,8 +138,8 @@
     <string name="menu_timeline_upward">最上部へ</string>
 
     <string name="setting_songs">プレイリスト</string>
-    <string name="setting_songs_new_song_days">\"NEW\"に表示される日数(0~999)</string>
-    <string name="setting_songs_most_played_song_size">\"MOST PLAYED\"に表示される曲数(0~999)</string>
+    <string name="setting_songs_new_song_days">\"NEW\" の日数(0~999)</string>
+    <string name="setting_songs_most_played_song_size">\"MOST PLAYED\"の曲数(0~999)</string>
 
     <string name="setting_backup">バックアップ</string>
     <string name="setting_application_information">アプリ情報</string>

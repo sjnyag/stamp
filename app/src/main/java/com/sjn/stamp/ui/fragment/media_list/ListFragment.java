@@ -220,6 +220,7 @@ public abstract class ListFragment extends Fragment implements
     protected void initializeFab(int resourceId, ColorStateList color, View.OnClickListener onClickListener) {
         mBottomSheetLayout = (BottomSheetLayout) getActivity().findViewById(R.id.bottom_sheet);
         mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        mFab.setVisibility(View.VISIBLE);
         if (Integer.valueOf(resourceId).equals(mFab.getTag(R.id.fab_type))) {
             return;
         }

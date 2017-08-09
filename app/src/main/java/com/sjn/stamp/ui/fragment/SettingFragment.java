@@ -4,11 +4,13 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.View;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -151,6 +153,24 @@ public class SettingFragment extends PreferenceFragmentCompat {
                 return false;
             }
         });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FloatingActionButton mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        if (mFab != null) {
+            mFab.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FloatingActionButton mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        if (mFab != null) {
+            mFab.setVisibility(View.VISIBLE);
+        }
     }
 
 }
