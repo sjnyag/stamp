@@ -27,8 +27,8 @@ import com.sjn.stamp.db.RankedArtist;
 import com.sjn.stamp.db.RankedSong;
 import com.sjn.stamp.db.Shareable;
 import com.sjn.stamp.ui.SongAdapter;
-import com.sjn.stamp.ui.custom.RankingSelectLayout;
 import com.sjn.stamp.ui.custom.PeriodSelectLayout;
+import com.sjn.stamp.ui.custom.RankingSelectLayout;
 import com.sjn.stamp.ui.item.RankedArtistItem;
 import com.sjn.stamp.ui.item.RankedSongItem;
 import com.sjn.stamp.utils.LogHelper;
@@ -53,8 +53,6 @@ public class RankingFragment extends MediaBrowserListFragment {
     private PeriodSelectLayout.Period mPeriod = new PeriodSelectLayout.Period();
     private RankKind mRankKind;
     private SongHistoryController mSongHistoryController;
-
-    private ProgressBar mLoading;
     private CalculateAsyncTask mAsyncTask;
     private ProgressDialog mProgressDialog;
 
@@ -67,7 +65,7 @@ public class RankingFragment extends MediaBrowserListFragment {
     }
 
     @Override
-    public String emptyMessage(){
+    public String emptyMessage() {
         return getString(R.string.empty_message_ranking);
     }
 
@@ -240,6 +238,8 @@ public class RankingFragment extends MediaBrowserListFragment {
         if (mItemList == null || mItemList.isEmpty()) {
             mLoading.setVisibility(View.VISIBLE);
             draw();
+        } else {
+            mLoading.setVisibility(View.GONE);
         }
         return rootView;
     }

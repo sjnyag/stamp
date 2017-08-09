@@ -17,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bowyer.app.fabtransitionlayout.BottomSheetLayout;
@@ -50,6 +51,8 @@ public abstract class ListFragment extends Fragment implements
     protected RecyclerView mRecyclerView;
     protected SongAdapter mAdapter;
 
+
+    protected ProgressBar mLoading;
     protected View mEmptyView;
     protected TextView mEmptyTextView;
     protected SwipeRefreshLayout mSwipeRefreshLayout;
@@ -302,7 +305,7 @@ public abstract class ListFragment extends Fragment implements
             mEmptyTextView.setText(emptyMessage());
         }
         if (mFastScroller != null && mRefreshHandler != null && mEmptyView != null) {
-            if (size > 0) {
+            if (size > 0 || (mLoading != null && mLoading.getVisibility() == View.VISIBLE)) {
                 mFastScroller.setVisibility(View.VISIBLE);
                 mRefreshHandler.removeMessages(2);
                 mEmptyView.setAlpha(0);
