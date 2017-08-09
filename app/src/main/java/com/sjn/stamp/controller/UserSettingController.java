@@ -77,11 +77,14 @@ public class UserSettingController {
     }
 
     public boolean stopOnAudioLostFocus() {
+        return false;
+        /*
         Realm realm = RealmHelper.getRealmInstance();
         UserSetting userSetting = mUserSettingDao.getUserSetting(realm);
         boolean result = userSetting.getStopOnAudioLostFocus();
         realm.close();
         return result;
+        */
     }
 
     public int getNewSongDays() {

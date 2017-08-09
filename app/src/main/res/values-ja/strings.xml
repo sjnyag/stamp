@@ -95,6 +95,7 @@
     <string name="dialog_period_select">期間選択</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_ok">OK</string>
+    <string name="dialog_close">CLOSE</string>
     <string name="dialog_delete">削除する</string>
     <string name="dialog_reload">再ロードする</string>
     <string name="dialog_confirm_title">確認</string>

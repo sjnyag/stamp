@@ -21,14 +21,13 @@ import com.sjn.stamp.controller.StampController;
 import com.sjn.stamp.ui.DialogFacade;
 import com.sjn.stamp.ui.custom.StampRegisterLayout;
 import com.sjn.stamp.ui.custom.ToggleTextView;
-import com.sjn.stamp.ui.fragment.media_list.RankingFragment;
 import com.sjn.stamp.ui.observer.StampEditStateObserver;
 import com.sjn.stamp.utils.LogHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StampEditFragment extends Fragment {
+public class StampEditFragment extends Fragment implements StampEditStateObserver.Listener {
 
     private static final String TAG = LogHelper.makeLogTag(StampEditFragment.class);
     private AnimationWrapLayout mStampListLayout;
@@ -49,7 +48,7 @@ public class StampEditFragment extends Fragment {
                 new MaterialDialog.Builder(getContext())
                         .title(R.string.dialog_stamp_register)
                         .customView(stampRegisterLayout, true)
-                        .positiveText(R.string.dialog_ok)
+                        .positiveText(R.string.dialog_close)
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -85,6 +84,14 @@ public class StampEditFragment extends Fragment {
         }
     }
 
+    private void updateEmptyString(List<String> stampList) {
+        if (stampList == null || stampList.isEmpty()) {
+            mEmptyString.setVisibility(View.VISIBLE);
+            return;
+        }
+        mEmptyString.setVisibility(View.GONE);
+    }
+
     private ToggleTextView inflateStampView(Context context, String stampName) {
         ToggleTextView stampView = (ToggleTextView) LayoutInflater.from(context).inflate(R.layout.text_view_select_stamp, null);
         stampView.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +118,7 @@ public class StampEditFragment extends Fragment {
                                 StampController stampController = new StampController(context);
                                 stampController.remove(stamp);
                                 mStampListLayout.removeViewWithAnimation(view);
+                                updateEmptyString(new StampController(getContext()).findAll());
                                 break;
                         }
                     }
@@ -134,5 +142,33 @@ public class StampEditFragment extends Fragment {
             }
         }
         StampEditStateObserver.getInstance().notifySelectedStampListChange(stampList);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        StampEditStateObserver.getInstance().addListener(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        StampEditStateObserver.getInstance().removeListener(this);
+    }
+
+    @Override
+    public void onSelectedStampChange(List<String> selectedStampList) {
+
+    }
+
+    @Override
+    public void onNewStampCreated(String stamp) {
+        mStampListLayout.addViewWithAnimation(inflateStampView(getContext(), stamp), 1);
+        updateEmptyString(new StampController(getContext()).findAll());
+    }
+
+    @Override
+    public void onStampStateChange(StampEditStateObserver.State state) {
+
     }
 }

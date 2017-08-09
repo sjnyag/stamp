@@ -2,19 +2,19 @@ package com.sjn.stamp.ui.custom;
 
 
 import android.content.Context;
-import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import com.sjn.stamp.R;
 import com.sjn.stamp.controller.StampController;
 import com.sjn.stamp.ui.observer.StampEditStateObserver;
 import com.sjn.stamp.utils.LogHelper;
 
-public class StampRegisterLayout extends CardView {
+public class StampRegisterLayout extends RelativeLayout {
 
     private static final String TAG = LogHelper.makeLogTag(StampRegisterLayout.class);
 

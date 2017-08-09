@@ -95,11 +95,12 @@
     <string name="ranking_tab_my_songs">Song</string>
     <string name="ranking_tab_my_artists">Artist</string>
 
-    <string name="dialog_stamp_register">Stamp register</string>
+    <string name="dialog_stamp_register">Register stamp</string>
     <string name="dialog_ranking_target">Select ranking target</string>
     <string name="dialog_period_select">Select ranking period</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_ok">OK</string>
+    <string name="dialog_close">CLOSE</string>
     <string name="dialog_delete">Delete</string>
     <string name="dialog_reload">Reload</string>
     <string name="dialog_confirm_title">Confirm</string>
