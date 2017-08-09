@@ -92,6 +92,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
     @SuppressWarnings(value = "FieldCanBeLocal")
     private Target mTarget;
     private Notification mLatestNotification = null;
+    private SetNotificationBitmapAsyncTask mBitmapLoadTask;
 
     public MediaNotificationManager(MusicService service) throws RemoteException {
         mService = service;
@@ -395,7 +396,11 @@ public class MediaNotificationManager extends BroadcastReceiver {
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 if (mMetadata != null && mMetadata.getDescription().getIconUri() != null &&
                         mMetadata.getDescription().getIconUri().toString().equals(bitmapUrl)) {
-                    new SetNotificationBitmapAsyncTask(builder, bitmap).execute();
+                    if (mBitmapLoadTask != null) {
+                        mBitmapLoadTask.cancel(true);
+                    }
+                    mBitmapLoadTask = new SetNotificationBitmapAsyncTask(builder, bitmap);
+                    mBitmapLoadTask.execute();
                 }
             }
 
