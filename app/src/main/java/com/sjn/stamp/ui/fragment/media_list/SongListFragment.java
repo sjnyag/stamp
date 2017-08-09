@@ -30,6 +30,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -224,6 +225,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
         LogHelper.d(TAG, "onCreateView START" + getMediaId());
         final View rootView = inflater.inflate(R.layout.fragment_list, container, false);
 
+        mLoading = (ProgressBar) rootView.findViewById(R.id.progressBar);
         mEmptyView = rootView.findViewById(R.id.empty_view);
         mFastScroller = (FastScroller) rootView.findViewById(R.id.fast_scroller);
         mEmptyTextView = (TextView) rootView.findViewById(R.id.empty_text);
@@ -262,6 +264,11 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
         if (mIsVisibleToUser) {
             notifyFragmentChange();
         }
+        if (mItemList == null || mItemList.isEmpty()) {
+            mLoading.setVisibility(View.VISIBLE);
+        } else {
+            mLoading.setVisibility(View.GONE);
+        }
         draw();
         LogHelper.d(TAG, "onCreateView END");
         return rootView;
@@ -282,6 +289,9 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                     return;
                 }
                 mAdapter.updateDataSet(mItemList);
+                if (mLoading != null) {
+                    mLoading.setVisibility(View.INVISIBLE);
+                }
             }
         });
         mHasDrawTask = false;

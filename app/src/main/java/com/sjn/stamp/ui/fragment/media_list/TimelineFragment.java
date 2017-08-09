@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -70,7 +71,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
     }
 
     @Override
-    public String emptyMessage(){
+    public String emptyMessage() {
         return getString(R.string.empty_message_timeline);
     }
 
@@ -157,6 +158,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         mSongHistoryController = new SongHistoryController(getContext());
         mRealm = RealmHelper.getRealmInstance();
 
+        mLoading = (ProgressBar) rootView.findViewById(R.id.progressBar);
         mEmptyView = rootView.findViewById(R.id.empty_view);
         mFastScroller = (FastScroller) rootView.findViewById(R.id.fast_scroller);
         mEmptyTextView = (TextView) rootView.findViewById(R.id.empty_text);
@@ -193,7 +195,10 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         initializeFabWithStamp();
         notifyFragmentChange();
         if (mItemList == null || mItemList.isEmpty()) {
+            mLoading.setVisibility(View.VISIBLE);
             draw();
+        } else {
+            mLoading.setVisibility(View.GONE);
         }
 
         return rootView;
@@ -232,6 +237,9 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         mAllSongHistoryList = mSongHistoryController.getManagedTimeline(mRealm);
         mItemList = createItemList(0, 30);
         mAdapter.updateDataSet(mItemList);
+        if (mLoading != null) {
+            mLoading.setVisibility(View.INVISIBLE);
+        }
     }
 
     private int calcGoToTopBufferedPosition(int bufferSize) {

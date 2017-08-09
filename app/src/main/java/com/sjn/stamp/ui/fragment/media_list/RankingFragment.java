@@ -150,7 +150,7 @@ public class RankingFragment extends MediaBrowserListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(false);
-        final View rootView = inflater.inflate(R.layout.fragment_ranking, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_list, container, false);
         mRankKind = parseArgRankKind();
         mLoading = (ProgressBar) rootView.findViewById(R.id.progressBar);
         mSongHistoryController = new SongHistoryController(getContext());
