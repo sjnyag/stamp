@@ -73,8 +73,9 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
     private boolean mIsPlayable;
     private boolean mIsBrowsable;
     private MediaBrowsable mMediaBrowsable;
+    private Activity mActivity;
 
-    public SongItem(MediaBrowserCompat.MediaItem mediaItem, MediaBrowsable mediaBrowsable) {
+    public SongItem(MediaBrowserCompat.MediaItem mediaItem, MediaBrowsable mediaBrowsable, Activity activity) {
         super(mediaItem.getMediaId());
         setDraggable(true);
         setSwipeable(true);
@@ -85,6 +86,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
         mIsPlayable = mediaItem.isPlayable();
         mIsBrowsable = mediaItem.isBrowsable();
         mMediaBrowsable = mediaBrowsable;
+        mActivity = activity;
     }
 
     @Override
@@ -102,7 +104,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
 
     @Override
     public SimpleViewHolder createViewHolder(FlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent) {
-        return new SimpleViewHolder(inflater.inflate(getLayoutRes(), parent, false), adapter);
+        return new SimpleViewHolder(inflater.inflate(getLayoutRes(), parent, false), adapter, mActivity);
     }
 
     @Override
@@ -160,7 +162,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
         ImageView mAlbumArtView;
         TextView mTitle;
         TextView mSubtitle;
-        Context mContext;
+        Activity mActivity;
         View mFrontView;
         TextView mDate;
         ImageView mImageView;
@@ -170,9 +172,9 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
             public void onClick(View v) {
                 StampEditStateObserver stampEditStateObserver = StampEditStateObserver.getInstance();
                 final String mediaId = (String) v.getTag(R.id.text_view_new_stamp_media_id);
-                SongController songController = new SongController(mContext);
+                SongController songController = new SongController(mActivity);
                 songController.registerStampList(stampEditStateObserver.getSelectedStampList(), mediaId);
-                ((Activity) mContext).runOnUiThread(new Runnable() {
+                mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         updateStampList(mediaId);
@@ -186,17 +188,15 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
             public void onClick(View v) {
                 final String mediaId = (String) v.getTag(R.id.text_view_remove_stamp_media_id);
                 final String stampName = (String) v.getTag(R.id.text_view_remove_stamp_stamp_name);
-                SongController songController = new SongController(mContext);
+                SongController songController = new SongController(mActivity);
                 songController.removeStamp(stampName, mediaId);
 
-                if (mContext instanceof Activity) {
-                    ((Activity) mContext).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateStampList(mediaId);
-                        }
-                    });
-                }
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateStampList(mediaId);
+                    }
+                });
             }
         };
 
@@ -208,13 +208,13 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
             mStampListLayout.setVisibility(View.VISIBLE);
             if (mStampListLayout != null && isStampMedia(mediaId)) {
                 mStampListLayout.removeAllViews();
-                TextView addView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.text_view_new_stamp, null);
+                TextView addView = (TextView) LayoutInflater.from(mActivity).inflate(R.layout.text_view_new_stamp, null);
                 addView.setTag(R.id.text_view_new_stamp_media_id, mediaId);
                 addView.setOnClickListener(mOnNewStamp);
                 mStampListLayout.addView(addView);
-                SongController songController = new SongController(mContext);
+                SongController songController = new SongController(mActivity);
                 for (String stampName : songController.findStampsByMediaId(mediaId)) {
-                    TextView textView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.text_view_remove_stamp, null);
+                    TextView textView = (TextView) LayoutInflater.from(mActivity).inflate(R.layout.text_view_remove_stamp, null);
                     textView.setText(mTitle.getContext().getString(R.string.stamp_delete, stampName));
                     textView.setTag(R.id.text_view_remove_stamp_stamp_name, stampName);
                     textView.setTag(R.id.text_view_remove_stamp_media_id, mediaId);
@@ -228,9 +228,9 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
             return MediaIDHelper.getCategoryType(mediaId) != null || MediaIDHelper.isTrack(mediaId);
         }
 
-        SimpleViewHolder(View view, FlexibleAdapter adapter) {
+        SimpleViewHolder(View view, FlexibleAdapter adapter, Activity activity) {
             super(view, adapter);
-            this.mContext = view.getContext();
+            this.mActivity = activity;
             this.mTitle = (TextView) view.findViewById(R.id.title);
             this.mSubtitle = (TextView) view.findViewById(R.id.subtitle);
             this.mAlbumArtView = (ImageView) view.findViewById(R.id.image);
@@ -277,9 +277,9 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
 
         public void update(View view, String mediaId, boolean isPlayable) {
             Integer cachedState = (Integer) view.getTag(R.id.tag_mediaitem_state_cache);
-            int state = SongStateHelper.getMediaItemState(this.mContext, mediaId, isPlayable);
+            int state = SongStateHelper.getMediaItemState(this.mActivity, mediaId, isPlayable);
             if (cachedState == null || cachedState != state) {
-                Drawable drawable = SongStateHelper.getDrawableByState(this.mContext, state);
+                Drawable drawable = SongStateHelper.getDrawableByState(this.mActivity, state);
                 if (drawable != null) {
                     this.mImageView.setImageDrawable(drawable);
                     this.mImageView.setVisibility(View.VISIBLE);

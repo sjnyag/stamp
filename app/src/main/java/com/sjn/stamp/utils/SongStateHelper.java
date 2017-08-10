@@ -1,11 +1,11 @@
 package com.sjn.stamp.utils;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.media.session.MediaControllerCompat;
@@ -51,17 +51,17 @@ public class SongStateHelper {
         }
     }
 
-    public static int getMediaItemState(Context context, String mediaId, boolean isPlayable) {
+    public static int getMediaItemState(Activity activity, String mediaId, boolean isPlayable) {
         if (isPlayable) {
-            return getMediaItemState(context, mediaId);
+            return getMediaItemState(activity, mediaId);
         }
         return STATE_PLAYABLE;
     }
 
-    private static int getMediaItemState(Context context, String mediaId) {
+    private static int getMediaItemState(Activity activity, String mediaId) {
         int state = STATE_PLAYABLE;
-        if (MediaIDHelper.isMediaItemPlaying(context, mediaId)) {
-            state = getStateFromController(context);
+        if (MediaIDHelper.isMediaItemPlaying(activity, mediaId)) {
+            state = getStateFromController(activity);
         }
         return state;
     }
@@ -73,9 +73,8 @@ public class SongStateHelper {
                 R.color.media_item_icon_playing));
     }
 
-    private static int getStateFromController(Context context) {
-        MediaControllerCompat controller = ((FragmentActivity) context)
-                .getSupportMediaController();
+    private static int getStateFromController(Activity activity) {
+        MediaControllerCompat controller = MediaControllerCompat.getMediaController(activity);
         PlaybackStateCompat pbState = controller.getPlaybackState();
         if (pbState == null ||
                 pbState.getState() == PlaybackStateCompat.STATE_ERROR) {

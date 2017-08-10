@@ -349,7 +349,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
             LogHelper.d(TAG, "createItemList START");
             List<AbstractFlexibleItem> itemList = new ArrayList<>();
             for (MediaBrowserCompat.MediaItem item : songList) {
-                AbstractFlexibleItem songItem = new SongItem(item, mFragment.mMediaBrowsable);
+                AbstractFlexibleItem songItem = new SongItem(item, mFragment.mMediaBrowsable, mFragment.getActivity());
                 itemList.add(songItem);
             }
             LogHelper.d(TAG, "createItemList END");

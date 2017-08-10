@@ -16,6 +16,7 @@
 
 package com.sjn.stamp.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -25,6 +26,7 @@ import android.text.TextUtils;
 
 import com.sjn.stamp.constant.CategoryType;
 import com.sjn.stamp.media.provider.ProviderType;
+import com.sjn.stamp.ui.observer.MediaControllerObserver;
 
 import java.util.Arrays;
 
@@ -160,11 +162,10 @@ public class MediaIDHelper {
         return createMediaID(null, parentHierarchy);
     }
 
-    public static boolean isMediaItemPlaying(Context context,String mediaId) {
+    public static boolean isMediaItemPlaying(Activity activity, String mediaId) {
         // Media item is considered to be playing or paused based on the controller's current
         // media id
-        MediaControllerCompat controller = ((FragmentActivity) context)
-                .getSupportMediaController();
+        MediaControllerCompat controller = MediaControllerCompat.getMediaController(activity);
         if (controller != null && controller.getMetadata() != null) {
             String currentPlayingMediaId = controller.getMetadata().getDescription()
                     .getMediaId();

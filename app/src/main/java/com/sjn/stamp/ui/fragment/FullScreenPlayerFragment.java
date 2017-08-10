@@ -36,6 +36,8 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.sjn.stamp.R;
+import com.sjn.stamp.constant.RepeatState;
 import com.sjn.stamp.constant.ShuffleState;
 import com.sjn.stamp.media.CustomController;
 import com.sjn.stamp.media.player.CastPlayer;
@@ -43,8 +45,6 @@ import com.sjn.stamp.ui.activity.MusicPlayerListActivity;
 import com.sjn.stamp.ui.observer.MediaControllerObserver;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.ViewHelper;
-import com.sjn.stamp.R;
-import com.sjn.stamp.constant.RepeatState;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -456,6 +456,6 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
         if (getActivity() == null) {
             return null;
         }
-        return getActivity().getSupportMediaController();
+        return MediaControllerCompat.getMediaController(getActivity());
     }
 }

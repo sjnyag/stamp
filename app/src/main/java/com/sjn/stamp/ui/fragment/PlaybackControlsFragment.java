@@ -162,8 +162,7 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
                     ContextCompat.getDrawable(getActivity(), R.drawable.ic_pause_black_36dp));
         }
 
-        MediaControllerCompat controller = getActivity()
-                .getSupportMediaController();
+        MediaControllerCompat controller = MediaControllerCompat.getMediaController(getActivity());
         String extraInfo = null;
         if (controller != null && controller.getExtras() != null) {
             String castName = controller.getExtras().getString(CastPlayer.EXTRA_CONNECTED_CAST);
@@ -177,8 +176,7 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
     private final View.OnClickListener mButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            MediaControllerCompat controller = getActivity()
-                    .getSupportMediaController();
+            MediaControllerCompat controller = MediaControllerCompat.getMediaController(getActivity());
             if (controller == null) {
                 return;
             }
@@ -204,16 +202,14 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
     };
 
     private void playMedia() {
-        MediaControllerCompat controller = getActivity()
-                .getSupportMediaController();
+        MediaControllerCompat controller = MediaControllerCompat.getMediaController(getActivity());
         if (controller != null) {
             controller.getTransportControls().play();
         }
     }
 
     private void pauseMedia() {
-        MediaControllerCompat controller = getActivity()
-                .getSupportMediaController();
+        MediaControllerCompat controller = MediaControllerCompat.getMediaController(getActivity());
         if (controller != null) {
             controller.getTransportControls().pause();
         }

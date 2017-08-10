@@ -61,9 +61,11 @@ public class CardPresenter extends Presenter {
             MediaSessionCompat.QueueItem queueItem = (MediaSessionCompat.QueueItem) item;
             LogHelper.d(TAG, "onBindViewHolder QueueItem: ", queueItem.toString());
             description = queueItem.getDescription();
+            /*TODO
             if (QueueHelper.isQueueItemPlaying(mContext, queueItem)) {
                 cardViewHolder.setState(ColorState.getStateFromController(mContext));
             }
+            */
         } else {
             throw new IllegalArgumentException("Object must be MediaItem or QueueItem, not "
                     + item.getClass().getSimpleName());

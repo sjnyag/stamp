@@ -19,15 +19,12 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.media.MediaBrowserCompat;
-import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.sjn.stamp.R;
-import com.sjn.stamp.utils.MediaIDHelper;
 
 public class ColorState {
 
@@ -79,18 +76,23 @@ public class ColorState {
         // Set state to playable first, then override to playing or paused state if needed
         if (mediaItem.isPlayable()) {
             state = STATE_PLAYABLE;
+            /*TODO
             if (MediaIDHelper.isMediaItemPlaying(context, mediaItem.getMediaId())) {
                 state = getStateFromController(context);
             }
+            */
         }
 
         return state;
     }
 
     public static int getStateFromController(Context context) {
+        /*TODO
         MediaControllerCompat controller = ((FragmentActivity) context)
                 .getSupportMediaController();
         PlaybackStateCompat pbState = controller.getPlaybackState();
+                */
+        PlaybackStateCompat pbState = null;
         if (pbState == null ||
                 pbState.getState() == PlaybackStateCompat.STATE_ERROR) {
             return ColorState.STATE_NONE;
