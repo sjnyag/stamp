@@ -288,10 +288,10 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                 if (!isAdded()) {
                     return;
                 }
-                mAdapter.updateDataSet(mItemList);
                 if (mLoading != null) {
                     mLoading.setVisibility(View.INVISIBLE);
                 }
+                mAdapter.updateDataSet(mItemList);
             }
         });
         mHasDrawTask = false;
@@ -327,7 +327,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
     private static class CreateListAsyncTask extends AsyncTask<Void, Void, Void> {
 
         SongListFragment mFragment;
-        final protected List<MediaBrowserCompat.MediaItem> mSongList;
+        final List<MediaBrowserCompat.MediaItem> mSongList;
 
         CreateListAsyncTask(SongListFragment fragment, List<MediaBrowserCompat.MediaItem> songList) {
             this.mFragment = fragment;

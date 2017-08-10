@@ -236,10 +236,10 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         }
         mAllSongHistoryList = mSongHistoryController.getManagedTimeline(mRealm);
         mItemList = createItemList(0, 30);
-        mAdapter.updateDataSet(mItemList);
         if (mLoading != null) {
             mLoading.setVisibility(View.INVISIBLE);
         }
+        mAdapter.updateDataSet(mItemList);
     }
 
     private int calcGoToTopBufferedPosition(int bufferSize) {

@@ -303,10 +303,10 @@ public class RankingFragment extends MediaBrowserListFragment {
                         if (!fragment.isAdded()) {
                             return;
                         }
-                        adapter.updateDataSet(fragment.mItemList);
                         if (fragment.mLoading != null) {
                             fragment.mLoading.setVisibility(View.INVISIBLE);
                         }
+                        adapter.updateDataSet(fragment.mItemList);
                     }
                 });
             } finally {
