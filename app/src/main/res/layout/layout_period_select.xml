@@ -86,4 +86,27 @@
             android:textColor="?android:attr/textColorPrimary"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/period_custom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/period_day"
+        android:layout_marginTop="24sp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/date_picker_from"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/date_picker_to"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"/>
+
+    </LinearLayout>
+
 </RelativeLayout>

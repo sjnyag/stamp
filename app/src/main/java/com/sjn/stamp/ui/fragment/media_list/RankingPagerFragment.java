@@ -26,7 +26,7 @@ public class RankingPagerFragment extends PagerFragment implements PagerFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mPeriod = new PeriodSelectLayout.Period();
+        mPeriod = PeriodSelectLayout.Period.latestWeek();
         setHasOptionsMenu(true);
         return super.onCreateView(inflater, container, savedInstanceState);
     }

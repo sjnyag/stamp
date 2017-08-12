@@ -109,6 +109,7 @@
     <string name="period_yearly">yearly</string>
     <string name="period_monthly">monthly</string>
     <string name="period_dairy">dairy</string>
+    <string name="period_custom">custom</string>
 
     <string name="period_label_total">total</string>
     <string name="period_label_year">%1$s</string>

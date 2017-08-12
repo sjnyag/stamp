@@ -104,6 +104,7 @@
     <string name="period_yearly">年間</string>
     <string name="period_monthly">マンスリー</string>
     <string name="period_dairy">デイリー</string>
+    <string name="period_custom">カスタム</string>
 
     <string name="period_label_total">総合</string>
     <string name="period_label_year">%1$s年</string>

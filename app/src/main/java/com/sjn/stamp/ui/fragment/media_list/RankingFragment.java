@@ -50,7 +50,7 @@ public class RankingFragment extends MediaBrowserListFragment {
 
     private static final String TAG = LogHelper.makeLogTag(RankingFragment.class);
 
-    private PeriodSelectLayout.Period mPeriod = new PeriodSelectLayout.Period();
+    private PeriodSelectLayout.Period mPeriod = PeriodSelectLayout.Period.latestWeek();
     private RankKind mRankKind;
     private SongHistoryController mSongHistoryController;
     private CalculateAsyncTask mAsyncTask;
@@ -219,7 +219,7 @@ public class RankingFragment extends MediaBrowserListFragment {
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            ShareHelper.share(getActivity(), getResources().getString(R.string.share_ranking, period.toString(getResources()), mRankKind.getRankingShareMessage(getResources(), mSongHistoryController, period, songNum)));
+                                            ShareHelper.share(getActivity(), getResources().getString(R.string.share_ranking, periodSelectLayout.getPeriodType().toString(getResources()), mRankKind.getRankingShareMessage(getResources(), mSongHistoryController, period, songNum)));
                                             progressDialog.dismiss();
                                         }
                                     }).start();
