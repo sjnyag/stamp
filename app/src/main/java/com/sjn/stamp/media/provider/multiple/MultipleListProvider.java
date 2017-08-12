@@ -124,7 +124,7 @@ abstract class MultipleListProvider extends ListProvider {
         return MediaItemHelper.createBrowsableItem(MediaIDHelper.createMediaID(null, getProviderMediaId(), key), MediaIDHelper.unescape(key));
     }
 
-    private Map<String, List<MediaMetadataCompat>> getTrackListMap(final Map<String, MediaMetadataCompat> musicListById) {
+    protected Map<String, List<MediaMetadataCompat>> getTrackListMap(final Map<String, MediaMetadataCompat> musicListById) {
         if (mTrackListMap == null || mTrackListMap.isEmpty()) {
             mTrackListMap = createTrackListMap(musicListById);
         }

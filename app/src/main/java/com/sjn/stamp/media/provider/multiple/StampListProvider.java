@@ -49,7 +49,12 @@ public class StampListProvider extends MultipleListProvider {
         return MediaItemHelper.createPlayableItem(MediaItemHelper.updateMediaId(metadata, createHierarchyAwareMediaID(metadata, key)));
     }
 
-    protected String createHierarchyAwareMediaID(MediaMetadataCompat metadata, String key) {
+    @Override
+    protected Map<String, List<MediaMetadataCompat>> getTrackListMap(final Map<String, MediaMetadataCompat> musicListById) {
+        return createTrackListMap(musicListById);
+    }
+
+    private String createHierarchyAwareMediaID(MediaMetadataCompat metadata, String key) {
         return MediaIDHelper.createMediaID(metadata.getDescription().getMediaId(), getProviderMediaId(), key);
     }
 
