@@ -6,12 +6,13 @@ import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.sjn.stamp.R;
 import com.sjn.stamp.utils.TimeHelper;
@@ -56,9 +57,9 @@ public class PeriodSelectLayout extends LinearLayout {
 
     public enum PeriodType {
         TOTAL(0, R.string.period_total, GONE, GONE, GONE, GONE),
-        YEARLY(1, R.string.period_yearly, VISIBLE, GONE, GONE, VISIBLE),
-        MONTHLY(2, R.string.period_monthly, VISIBLE, VISIBLE, GONE, VISIBLE),
-        DAIRY(3, R.string.period_dairy, VISIBLE, VISIBLE, VISIBLE, VISIBLE),
+        YEARLY(1, R.string.period_yearly, VISIBLE, GONE, GONE, GONE),
+        MONTHLY(2, R.string.period_monthly, VISIBLE, VISIBLE, GONE, GONE),
+        DAIRY(3, R.string.period_dairy, VISIBLE, VISIBLE, VISIBLE, GONE),
         CUSTOM(4, R.string.period_custom, GONE, GONE, GONE, VISIBLE);
 
         final public int mValue;
@@ -133,12 +134,16 @@ public class PeriodSelectLayout extends LinearLayout {
 
     private Period mPeriod;
     private PeriodType mPeriodType;
-    private LinearLayout mYearLayout;
-    private LinearLayout mMonthLayout;
-    private LinearLayout mDayLayout;
-    private LinearLayout mCustomLayout;
-    private TextView mDatePickerFrom;
-    private TextView mDatePickerTo;
+    private ViewGroup mYearLayout;
+    private ViewGroup mMonthLayout;
+    private ViewGroup mDayLayout;
+    private ViewGroup mCustomLayout;
+    private EditText mDatePickerFrom;
+    private EditText mDatePickerTo;
+    private Spinner mPeriodTypeSpinner;
+    private Spinner mSpinnerDay;
+    private Spinner mSpinnerMonth;
+    private Spinner mSpinnerYear;
     protected View mLayout;
 
     public PeriodSelectLayout(Context context) {
@@ -158,6 +163,10 @@ public class PeriodSelectLayout extends LinearLayout {
         mMonthLayout = mLayout.findViewById(R.id.period_month);
         mDayLayout = mLayout.findViewById(R.id.period_day);
         mCustomLayout = mLayout.findViewById(R.id.period_custom);
+        mPeriodTypeSpinner = mLayout.findViewById(R.id.period_kind_spinner);
+        mSpinnerDay = mLayout.findViewById(R.id.period_day_spinner);
+        mSpinnerMonth = mLayout.findViewById(R.id.period_month_spinner);
+        mSpinnerYear = mLayout.findViewById(R.id.period_year_spinner);
         mDatePickerFrom = mLayout.findViewById(R.id.date_picker_from);
         mDatePickerFrom.setText(mPeriod.mFrom.toString());
         mDatePickerFrom.setOnClickListener(new OnClickListener() {
@@ -209,13 +218,12 @@ public class PeriodSelectLayout extends LinearLayout {
     }
 
     private void initPeriodTypeSpinner() {
-        final Spinner periodTypeSpinner = mLayout.findViewById(R.id.period_kind);
-        periodTypeSpinner.setAdapter(createSpinnerAdapter(PeriodType.strings(getResources())));
-        periodTypeSpinner.setSelection(mPeriodType.getValue());
-        periodTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mPeriodTypeSpinner.setAdapter(createSpinnerAdapter(PeriodType.strings(getResources())));
+        mPeriodTypeSpinner.setSelection(mPeriodType.getValue());
+        mPeriodTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (periodTypeSpinner.getVisibility() != VISIBLE) {
+                if (mPeriodTypeSpinner.getVisibility() != VISIBLE) {
                     return;
                 }
                 if (PeriodType.of(i) == null) {
@@ -230,6 +238,7 @@ public class PeriodSelectLayout extends LinearLayout {
                 mDayLayout.setVisibility(mPeriodType.mDayVisibility);
                 //noinspection ResourceType
                 mCustomLayout.setVisibility(mPeriodType.mCustomVisibility);
+                updatePeriodBySpinner();
                 onPeriodChange();
             }
 
@@ -243,18 +252,12 @@ public class PeriodSelectLayout extends LinearLayout {
 
     private void initDaySpinner() {
         Integer[] days = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
-        final Spinner spinnerDay = mLayout.findViewById(R.id.period_day_spinner);
-        spinnerDay.setAdapter(createSpinnerAdapter(days));
-        spinnerDay.setSelection(findOr0(days, mPeriod.mTo.getDayOfMonth()));
-        spinnerDay.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mSpinnerDay.setAdapter(createSpinnerAdapter(days));
+        mSpinnerDay.setSelection(findOr0(days, mPeriod.mTo.getDayOfMonth()));
+        mSpinnerDay.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (spinnerDay.getVisibility() != VISIBLE) {
-                    return;
-                }
-                Spinner spinner = (Spinner) adapterView;
-                mPeriod.mFrom = mPeriod.mFrom.withDayOfMonth(Integer.valueOf(spinner.getSelectedItem().toString()));
-                mPeriod.mTo = mPeriod.mTo.withDayOfMonth(Integer.valueOf(spinner.getSelectedItem().toString()));
+                updatePeriodBySpinner();
                 onPeriodChange();
             }
 
@@ -267,18 +270,19 @@ public class PeriodSelectLayout extends LinearLayout {
 
     private void initMonthSpinner() {
         Integer[] months = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-        final Spinner spinnerMonth = mLayout.findViewById(R.id.period_month_spinner);
-        spinnerMonth.setAdapter(createSpinnerAdapter(months));
-        spinnerMonth.setSelection(findOr0(months, mPeriod.mTo.getMonthOfYear()));
-        spinnerMonth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mSpinnerMonth.setAdapter(createSpinnerAdapter(months));
+        mSpinnerMonth.setSelection(findOr0(months, mPeriod.mTo.getMonthOfYear()));
+        mSpinnerMonth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (spinnerMonth.getVisibility() != VISIBLE) {
-                    return;
+                List<Integer> days = new ArrayList<>();
+                int maxDay = mPeriod.mTo.withMonthOfYear(Integer.valueOf(mSpinnerMonth.getSelectedItem().toString())).dayOfMonth().withMaximumValue().getDayOfMonth();
+                for (int day = 1; day <= maxDay; day++) {
+                    days.add(day);
                 }
-                Spinner spinner = (Spinner) adapterView;
-                mPeriod.mFrom = mPeriod.mFrom.withMonthOfYear(Integer.valueOf(spinner.getSelectedItem().toString())).dayOfMonth().withMinimumValue();
-                mPeriod.mTo = mPeriod.mTo.withMonthOfYear(Integer.valueOf(spinner.getSelectedItem().toString())).dayOfMonth().withMaximumValue();
+                mSpinnerDay.setAdapter(createSpinnerAdapter(days.toArray()));
+                mSpinnerDay.setSelection(findOr0(days.toArray(new Integer[days.size()]), mPeriod.mTo.getDayOfMonth()));
+                updatePeriodBySpinner();
                 onPeriodChange();
             }
 
@@ -290,19 +294,13 @@ public class PeriodSelectLayout extends LinearLayout {
     }
 
     private void initYearSpinner() {
-        Integer[] years = {2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023};
-        final Spinner spinnerYear = mLayout.findViewById(R.id.period_year_spinner);
-        spinnerYear.setAdapter(createSpinnerAdapter(years));
-        spinnerYear.setSelection(findOr0(years, mPeriod.mTo.getYear()));
-        spinnerYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        Integer[] years = {2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030};
+        mSpinnerYear.setAdapter(createSpinnerAdapter(years));
+        mSpinnerYear.setSelection(findOr0(years, mPeriod.mTo.getYear()));
+        mSpinnerYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (spinnerYear.getVisibility() != VISIBLE) {
-                    return;
-                }
-                Spinner spinner = (Spinner) adapterView;
-                mPeriod.mFrom = mPeriod.mFrom.withYear(Integer.valueOf(spinner.getSelectedItem().toString())).dayOfYear().withMinimumValue();
-                mPeriod.mTo = mPeriod.mTo.withYear(Integer.valueOf(spinner.getSelectedItem().toString())).dayOfYear().withMaximumValue();
+                updatePeriodBySpinner();
                 onPeriodChange();
             }
 
@@ -317,7 +315,26 @@ public class PeriodSelectLayout extends LinearLayout {
         mDatePickerFrom.setText(mPeriod.mFrom.toString());
         mDatePickerTo.setText(mPeriod.mTo.toString());
         if (mPeriodChangeListener != null) {
-            mPeriodChangeListener.onChange(mPeriod.mFrom, mPeriod.mTo);
+            if (mPeriodType == PeriodType.TOTAL) {
+                mPeriodChangeListener.onChange(null, null);
+            } else {
+                mPeriodChangeListener.onChange(mPeriod.mFrom, mPeriod.mTo);
+            }
+        }
+    }
+
+    private void updatePeriodBySpinner() {
+        if (mYearLayout.getVisibility() == VISIBLE) {
+            mPeriod.mFrom = mPeriod.mFrom.withYear(Integer.valueOf(mSpinnerYear.getSelectedItem().toString())).dayOfYear().withMinimumValue();
+            mPeriod.mTo = mPeriod.mTo.withYear(Integer.valueOf(mSpinnerYear.getSelectedItem().toString())).dayOfYear().withMaximumValue();
+        }
+        if (mMonthLayout.getVisibility() == VISIBLE) {
+            mPeriod.mFrom = mPeriod.mFrom.withMonthOfYear(Integer.valueOf(mSpinnerMonth.getSelectedItem().toString())).dayOfMonth().withMinimumValue();
+            mPeriod.mTo = mPeriod.mTo.withMonthOfYear(Integer.valueOf(mSpinnerMonth.getSelectedItem().toString())).dayOfMonth().withMaximumValue();
+        }
+        if (mDayLayout.getVisibility() == VISIBLE) {
+            mPeriod.mFrom = mPeriod.mFrom.withDayOfMonth(Integer.valueOf(mSpinnerDay.getSelectedItem().toString()));
+            mPeriod.mTo = mPeriod.mTo.withDayOfMonth(Integer.valueOf(mSpinnerDay.getSelectedItem().toString()));
         }
     }
 

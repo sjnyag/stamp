@@ -4,12 +4,35 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <Spinner
+    <LinearLayout
         android:id="@+id/period_kind"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textColor="?android:attr/textColorPrimary"/>
+        android:layout_alignParentEnd="true"
+        android:gravity="right"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:text="@string/period"
+            android:textAlignment="center"
+            android:textColor="?android:attr/textColorPrimary"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
+
+        <Spinner
+            android:id="@+id/period_kind_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="?android:attr/textColorPrimary"/>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/period_year"
@@ -18,20 +41,28 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/period_kind"
         android:layout_marginTop="24sp"
+        android:gravity="right"
         android:orientation="horizontal">
-
-        <Spinner
-            android:id="@+id/period_year_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textColor="?android:attr/textColorPrimary"/>
 
         <TextView
             android:id="@+id/period_year_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="64dp"
+            android:layout_marginRight="16dp"
             android:text="@string/year"
+            android:textAlignment="center"
+            android:textColor="?android:attr/textColorPrimary"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
+
+        <Spinner
+            android:id="@+id/period_year_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textColor="?android:attr/textColorPrimary"/>
     </LinearLayout>
@@ -43,20 +74,28 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/period_year"
         android:layout_marginTop="24sp"
+        android:gravity="right"
         android:orientation="horizontal">
-
-        <Spinner
-            android:id="@+id/period_month_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textColor="?android:attr/textColorPrimary"/>
 
         <TextView
             android:id="@+id/period_month_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="64dp"
+            android:layout_marginRight="16dp"
             android:text="@string/month"
+            android:textAlignment="center"
+            android:textColor="?android:attr/textColorPrimary"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
+
+        <Spinner
+            android:id="@+id/period_month_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textColor="?android:attr/textColorPrimary"/>
     </LinearLayout>
@@ -68,20 +107,28 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/period_month"
         android:layout_marginTop="24sp"
+        android:gravity="right"
         android:orientation="horizontal">
-
-        <Spinner
-            android:id="@+id/period_day_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textColor="?android:attr/textColorPrimary"/>
 
         <TextView
             android:id="@+id/period_day_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="64dp"
+            android:layout_marginRight="16dp"
             android:text="@string/day"
+            android:textAlignment="center"
+            android:textColor="?android:attr/textColorPrimary"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
+
+        <Spinner
+            android:id="@+id/period_day_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textColor="?android:attr/textColorPrimary"/>
     </LinearLayout>
@@ -93,20 +140,42 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/period_day"
         android:layout_marginTop="24sp"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/date_picker_from"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"/>
+            android:hint="@string/from">
 
-        <TextView
-            android:id="@+id/date_picker_to"
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/date_picker_from"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:focusable="false"
+                android:inputType="none"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
+
+        <android.support.design.widget.TextInputLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"/>
+            android:hint="@string/to">
 
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/date_picker_to"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:focusable="false"
+                android:inputType="none"/>
+
+        </android.support.design.widget.TextInputLayout>
     </LinearLayout>
 
 </RelativeLayout>

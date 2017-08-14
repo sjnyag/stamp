@@ -200,4 +200,7 @@
     <string name="empty_message_new">新しく登録された曲が表示されます。対象となる期間はSetting画面から変更できます。</string>
     <string name="choose_stamps">スタンプを選んでください。</string>
     <string name="empty_stamp">まだスタンプが登録されていません。+ボタンからスタンプを登録してください。</string>
+    <string name="period">期間</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
 </resources>
