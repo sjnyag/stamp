@@ -219,7 +219,7 @@ public class RankingFragment extends MediaBrowserListFragment {
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            ShareHelper.share(getActivity(), getResources().getString(R.string.share_ranking, periodSelectLayout.getPeriodType().toString(getResources()), mRankKind.getRankingShareMessage(getResources(), mSongHistoryController, period, songNum)));
+                                            ShareHelper.share(getActivity(), getResources().getString(R.string.share_ranking, periodSelectLayout.getPeriod().toString(getResources()), mRankKind.getRankingShareMessage(getResources(), mSongHistoryController, period, songNum)));
                                             progressDialog.dismiss();
                                         }
                                     }).start();

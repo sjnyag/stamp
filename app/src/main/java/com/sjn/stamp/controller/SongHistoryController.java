@@ -142,15 +142,23 @@ public class SongHistoryController {
     }
 
     public List<RankedSong> getRankedSongList(Realm realm, PeriodSelectLayout.Period period) {
-        return getRankedSongList(realm,
-                period.from() == null ? null : period.from().toDateTimeAtStartOfDay().toDate(),
-                period.to() == null ? null : period.to().toDateTimeAtStartOfDay().plusDays(1).toDate());
+        Date from = period.from() == null ? null : period.from().toDateTimeAtStartOfDay().toDate();
+        Date to = period.to() == null ? null : period.to().toDateTimeAtStartOfDay().plusDays(1).toDate();
+        if (period.getPeriodType() == PeriodSelectLayout.PeriodType.TOTAL) {
+            from = null;
+            to = null;
+        }
+        return getRankedSongList(realm, from, to);
     }
 
     public List<RankedArtist> getRankedArtistList(Realm realm, PeriodSelectLayout.Period period) {
-        return getRankedArtistList(realm,
-                period.from() == null ? null : period.from().toDateTimeAtStartOfDay().toDate(),
-                period.to() == null ? null : period.to().toDateTimeAtStartOfDay().plusDays(1).toDate());
+        Date from = period.from() == null ? null : period.from().toDateTimeAtStartOfDay().toDate();
+        Date to = period.to() == null ? null : period.to().toDateTimeAtStartOfDay().plusDays(1).toDate();
+        if (period.getPeriodType() == PeriodSelectLayout.PeriodType.TOTAL) {
+            from = null;
+            to = null;
+        }
+        return getRankedArtistList(realm, from, to);
     }
 
     private List<RankedSong> getRankedSongList(Realm realm, Date from, Date to) {

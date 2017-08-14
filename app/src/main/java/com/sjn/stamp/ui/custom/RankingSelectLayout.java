@@ -24,7 +24,7 @@ public class RankingSelectLayout extends PeriodSelectLayout {
 
     public RankingSelectLayout(Context context, AttributeSet attr, Period period) {
         super(context, attr, period);
-        final Spinner spinnerSongNum = (Spinner) mLayout.findViewById(R.id.song_num_spinner);
+        final Spinner spinnerSongNum = mLayout.findViewById(R.id.song_num_spinner);
 
         Integer[] songNumList = new Integer[]{
                 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
@@ -44,7 +44,8 @@ public class RankingSelectLayout extends PeriodSelectLayout {
         });
     }
 
-    protected View inflateRootLayout(Context context) {
-        return LayoutInflater.from(context).inflate(R.layout.layout_ranking_select, this);
+    int getResourceId(){
+        return R.layout.layout_ranking_select;
     }
+
 }

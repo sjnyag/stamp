@@ -53,6 +53,7 @@ public class RankingPagerFragment extends PagerFragment implements PagerFragment
                                     if (mAdapter == null) {
                                         return;
                                     }
+                                    setTitle(periodSelectLayout.getPeriod().toString(getResources()));
                                     for (int i = 0; i < mAdapter.getCount(); i++) {
                                         Fragment fragment = mAdapter.getItem(i);
                                         if (fragment != null && fragment instanceof RankingFragment) {
