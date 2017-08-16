@@ -66,7 +66,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
 
     private ProgressDialog mProgressDialog;
     private static final String TAG = LogHelper.makeLogTag(SongListFragment.class);
-    protected boolean mHasDrawTask = true;
+    private CreateListAsyncTask mCreateListAsyncTask;
 
     /**
      * {@link ListFragment}
@@ -108,7 +108,11 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
     public void onMediaBrowserChildrenLoaded(@NonNull String parentId,
                                              @NonNull List<MediaBrowserCompat.MediaItem> children) {
         LogHelper.d(TAG, "onMediaBrowserChildrenLoaded");
-        new CreateListAsyncTask(this, children).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        if (mCreateListAsyncTask != null) {
+            mCreateListAsyncTask.cancel(true);
+        }
+        mCreateListAsyncTask = new CreateListAsyncTask(this, children);
+        mCreateListAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -259,9 +263,6 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                 .showAllHeaders();
         mAdapter.addUserLearnedSelection(savedInstanceState == null);
         initializeFabWithStamp();
-        if (mItemList != null && mItemList.isEmpty()) {
-            mHasDrawTask = false;
-        }
         if (mIsVisibleToUser) {
             notifyFragmentChange();
         }
@@ -277,7 +278,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
 
     synchronized void draw() {
         LogHelper.d(TAG, "draw START");
-        if (!mIsVisibleToUser || !mHasDrawTask) {
+        if (!mIsVisibleToUser) {
             return;
         }
         if (mAdapter == null) {
@@ -295,7 +296,6 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                 mAdapter.updateDataSet(mItemList);
             }
         });
-        mHasDrawTask = false;
         LogHelper.d(TAG, "draw END");
     }
 
@@ -321,6 +321,9 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
     public void onStop() {
         LogHelper.d(TAG, "onStop START");
         super.onStop();
+        if (mCreateListAsyncTask != null) {
+            mCreateListAsyncTask.cancel(true);
+        }
         MusicListObserver.getInstance().removeListener(this);
         LogHelper.d(TAG, "onStop END");
     }
@@ -344,7 +347,6 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                 LogHelper.d(TAG, "CreateListAsyncTask.doInBackground SKIPPED");
                 return null;
             }
-            mFragment.mHasDrawTask = true;
             mFragment.draw();
             LogHelper.d(TAG, "CreateListAsyncTask.doInBackground END");
             return null;
