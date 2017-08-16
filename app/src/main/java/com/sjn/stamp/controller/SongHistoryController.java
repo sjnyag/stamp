@@ -85,6 +85,7 @@ public class SongHistoryController {
             sendNotificationBySongCount(realm, song, playCount);
             sendNotificationByArtistCount(song);
         }
+        new SmartStampController(mContext).calculateAsync(song, playCount, recordType);
         realm.close();
     }
 

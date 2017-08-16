@@ -37,6 +37,15 @@ public class SongController {
         mCategoryStampDao = CategoryStampDao.getInstance();
     }
 
+    public void registerSystemStamp(String stampName, Song song) {
+        Realm realm = RealmHelper.getRealmInstance();
+        SongStamp songStamp = mSongStampDao.newStandalone();
+        songStamp.setName(stampName);
+        songStamp.setSystem(true);
+        mSongStampDao.saveOrAdd(realm, songStamp, song);
+        realm.close();
+    }
+
     public void registerStampList(List<String> stampNameList, String mediaId) {
         if (MediaIDHelper.isTrack(mediaId)) {
             registerSongStampList(

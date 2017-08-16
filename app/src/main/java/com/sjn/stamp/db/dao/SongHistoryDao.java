@@ -23,7 +23,7 @@ public class SongHistoryDao extends BaseDao {
     }
 
     public List<SongHistory> timeline(Realm realm, String recordType) {
-        return realm.where(SongHistory.class).equalTo("recordType", recordType).findAllSorted("recordedAt", Sort.DESCENDING);
+        return findAll(realm, recordType);
     }
 
     public List<SongHistory> where(Realm realm, Date from, Date to, String recordType) {
@@ -72,6 +72,10 @@ public class SongHistoryDao extends BaseDao {
 
     public List<SongHistory> findAll(Realm realm) {
         return realm.where(SongHistory.class).findAll();
+    }
+
+    public List<SongHistory> findAll(Realm realm, String recordType) {
+        return realm.where(SongHistory.class).equalTo("recordType", recordType).findAllSorted("recordedAt", Sort.DESCENDING);
     }
 
     public SongHistory newStandalone() {
