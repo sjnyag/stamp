@@ -107,7 +107,8 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
     @Override
     public void onMediaBrowserChildrenLoaded(@NonNull String parentId,
                                              @NonNull List<MediaBrowserCompat.MediaItem> children) {
-        new CreateListAsyncTask(this, children).execute();
+        LogHelper.d(TAG, "onMediaBrowserChildrenLoaded");
+        new CreateListAsyncTask(this, children).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -330,18 +331,22 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
         final List<MediaBrowserCompat.MediaItem> mSongList;
 
         CreateListAsyncTask(SongListFragment fragment, List<MediaBrowserCompat.MediaItem> songList) {
+            LogHelper.d(TAG, "CreateListAsyncTask");
             this.mFragment = fragment;
             this.mSongList = songList;
         }
 
         @Override
         protected Void doInBackground(Void... params) {
+            LogHelper.d(TAG, "CreateListAsyncTask.doInBackground START");
             mFragment.mItemList = createItemList(mSongList);
             if (mFragment.getActivity() == null) {
+                LogHelper.d(TAG, "CreateListAsyncTask.doInBackground SKIPPED");
                 return null;
             }
             mFragment.mHasDrawTask = true;
             mFragment.draw();
+            LogHelper.d(TAG, "CreateListAsyncTask.doInBackground END");
             return null;
         }
 
