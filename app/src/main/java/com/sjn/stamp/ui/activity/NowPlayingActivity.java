@@ -15,13 +15,10 @@
  */
 package com.sjn.stamp.ui.activity;
 
-import android.app.UiModeManager;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.sjn.stamp.ui.tv.TvPlaybackActivity;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.ShareHelper;
 
@@ -44,15 +41,7 @@ public class NowPlayingActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LogHelper.d(TAG, "onCreate");
-        Intent newIntent;
-        UiModeManager uiModeManager = (UiModeManager) getSystemService(UI_MODE_SERVICE);
-        if (uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION) {
-            LogHelper.d(TAG, "Running on a TV Device");
-            newIntent = new Intent(this, TvPlaybackActivity.class);
-        } else {
-            LogHelper.d(TAG, "Running on a non-TV Device");
-            newIntent = new Intent(this, MusicPlayerListActivity.class);
-        }
+        Intent newIntent = new Intent(this, MusicPlayerListActivity.class);
         if (getIntent() != null) {
             newIntent.setAction(getIntent().getAction());
             newIntent.setData(getIntent().getData());

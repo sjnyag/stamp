@@ -128,7 +128,7 @@ public class SongHistoryController {
         List<MediaMetadataCompat> trackList = new ArrayList<>();
         List<TotalSongHistory> historyList = mTotalSongHistoryDao.getOrderedList(realm);
         for (TotalSongHistory totalSongHistory : historyList) {
-            if (totalSongHistory.getPlayCount() == 0 || trackList.size() > new UserSettingController(mContext).getMostPlayedSongSize()) {
+            if (totalSongHistory.getPlayCount() == 0 || trackList.size() >= new UserSettingController(mContext).getMostPlayedSongSize()) {
                 break;
             }
             trackList.add(MediaItemHelper.convertToMetadata(totalSongHistory.getSong()));
