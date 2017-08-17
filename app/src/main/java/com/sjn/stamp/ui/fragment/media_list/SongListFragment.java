@@ -67,6 +67,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
     private ProgressDialog mProgressDialog;
     private static final String TAG = LogHelper.makeLogTag(SongListFragment.class);
     private CreateListAsyncTask mCreateListAsyncTask;
+    private boolean mHasItemList = false;
 
     /**
      * {@link ListFragment}
@@ -266,11 +267,8 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
         if (mIsVisibleToUser) {
             notifyFragmentChange();
         }
-        if (mItemList == null || mItemList.isEmpty()) {
-            mLoading.setVisibility(View.VISIBLE);
-        } else {
-            mLoading.setVisibility(View.GONE);
-        }
+        mHasItemList = mItemList != null && !mItemList.isEmpty();
+        mLoading.setVisibility(View.VISIBLE);
         draw();
         LogHelper.d(TAG, "onCreateView END");
         return rootView;
@@ -278,10 +276,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
 
     synchronized void draw() {
         LogHelper.d(TAG, "draw START");
-        if (!mIsVisibleToUser) {
-            return;
-        }
-        if (mAdapter == null) {
+        if (!mIsVisibleToUser || mAdapter == null || !mHasItemList) {
             return;
         }
         getActivity().runOnUiThread(new Runnable() {
@@ -347,6 +342,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                 LogHelper.d(TAG, "CreateListAsyncTask.doInBackground SKIPPED");
                 return null;
             }
+            mFragment.mHasItemList = true;
             mFragment.draw();
             LogHelper.d(TAG, "CreateListAsyncTask.doInBackground END");
             return null;
