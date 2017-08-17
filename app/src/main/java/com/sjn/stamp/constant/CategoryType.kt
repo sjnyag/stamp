@@ -10,8 +10,7 @@ enum class CategoryType constructor(val value: String, val key: String) {
 
     companion object {
 
-        fun of(value: String): CategoryType? {
-            return CategoryType.values().firstOrNull { it.value == value }
-        }
+        fun of(value: String?): CategoryType? =
+                CategoryType.values().firstOrNull { it.value == value }
     }
 }

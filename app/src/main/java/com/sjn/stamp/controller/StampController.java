@@ -22,8 +22,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import io.realm.Realm;
 
 public class StampController {
-
+    @SuppressWarnings("unused")
     private static final String TAG = LogHelper.makeLogTag(StampController.class);
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private Context mContext;
     private SongStampDao mSongStampDao;
     private CategoryStampDao mCategoryStampDao;
@@ -113,6 +114,9 @@ public class StampController {
 
     private Map<String, MediaMetadataCompat> createTrackMap(SongStamp songStamp) {
         Map<String, MediaMetadataCompat> trackMap = new ConcurrentHashMap<>();
+        if (songStamp.getSongList() == null) {
+            return trackMap;
+        }
         for (Song song : songStamp.getSongList()) {
             trackMap.put(song.getMediaId(), song.buildMediaMetadataCompat());
         }
@@ -178,7 +182,7 @@ public class StampController {
             return;
         }
         CategoryType categoryType = CategoryType.Companion.of(categoryStamp.getType());
-        if (categoryType == null) {
+        if (categoryType == null || categoryStamp.getValue() == null) {
             return;
         }
         String query = categoryStamp.getValue().toLowerCase(Locale.getDefault());

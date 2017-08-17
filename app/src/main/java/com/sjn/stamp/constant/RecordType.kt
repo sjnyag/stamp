@@ -11,9 +11,7 @@ enum class RecordType(val value: String) {
 
     companion object {
 
-        fun of(value: String): RecordType? {
-            return RecordType.values().firstOrNull { it.value == value }
-        }
+        fun of(value: String): RecordType? = RecordType.values().firstOrNull { it.value == value }
     }
 
 }

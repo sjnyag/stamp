@@ -11,12 +11,8 @@ enum class ShuffleState(val no: Int) : QueueState {
 
     companion object {
 
-        fun of(no: Int): ShuffleState? {
-            return ShuffleState.values().firstOrNull { it.no == no }
-        }
+        fun of(no: Int): ShuffleState? = ShuffleState.values().firstOrNull { it.no == no }
 
-        fun getDefault(): ShuffleState {
-            return NONE
-        }
+        fun getDefault(): ShuffleState = NONE
     }
 }

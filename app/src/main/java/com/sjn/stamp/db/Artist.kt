@@ -20,7 +20,5 @@ open class Artist(
 
     }
 
-    override fun hashCode(): Int {
-        return if (name != null) name!!.hashCode() else 0
-    }
+    override fun hashCode(): Int = if (name != null) name!!.hashCode() else 0
 }

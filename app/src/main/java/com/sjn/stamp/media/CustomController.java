@@ -60,7 +60,7 @@ public class CustomController {
         for (RepeatStateListener repeatStateListener : mRepeatStateListenerSet) {
             repeatStateListener.onRepeatStateChanged(state);
         }
-        UserSettingController userSettingController = new UserSettingController(context);
+        UserSettingController userSettingController = new UserSettingController();
         userSettingController.setRepeatState(state);
     }
 
@@ -69,7 +69,7 @@ public class CustomController {
         for (ShuffleStateListener shuffleStateListener : mShuffleStateListenerSet) {
             shuffleStateListener.onShuffleStateChanged(state);
         }
-        UserSettingController userSettingController = new UserSettingController(context);
+        UserSettingController userSettingController = new UserSettingController();
         userSettingController.setShuffleState(state);
     }
 

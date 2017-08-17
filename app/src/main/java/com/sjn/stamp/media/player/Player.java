@@ -33,7 +33,7 @@ public class Player implements SessionManager.SessionListener {
     private QueueUpdateListener mQueueUpdateListener;
 
     public void restorePreviousState(MusicProvider musicProvider) {
-        UserSettingController userSettingController = new UserSettingController(mContext);
+        UserSettingController userSettingController = new UserSettingController();
         CustomController customController = CustomController.getInstance();
         customController.setRepeatState(mContext, userSettingController.getRepeatState());
         customController.setShuffleState(mContext, userSettingController.getShuffleState());

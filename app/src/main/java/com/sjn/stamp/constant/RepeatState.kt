@@ -12,12 +12,8 @@ enum class RepeatState(val no: Int) : QueueState {
 
     companion object {
 
-        fun of(no: Int): RepeatState? {
-            return RepeatState.values().firstOrNull { it.no == no }
-        }
+        fun of(no: Int): RepeatState? = RepeatState.values().firstOrNull { it.no == no }
 
-        fun getDefault(): RepeatState {
-            return RepeatState.NONE
-        }
+        fun getDefault(): RepeatState = RepeatState.NONE
     }
 }

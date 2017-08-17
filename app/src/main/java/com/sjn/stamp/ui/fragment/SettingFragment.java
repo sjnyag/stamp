@@ -110,7 +110,7 @@ public class SettingFragment extends PreferenceFragmentCompat {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (preference instanceof EditTextPreference) {
-                    ((EditTextPreference) preference).setText(String.valueOf(new UserSettingController(getActivity()).getNewSongDays()));
+                    ((EditTextPreference) preference).setText(String.valueOf(new UserSettingController().getNewSongDays()));
                 }
                 return true;
             }
@@ -121,7 +121,7 @@ public class SettingFragment extends PreferenceFragmentCompat {
                 try {
                     int newSongDays = Integer.parseInt(newValue.toString());
                     if (newSongDays >= 0 && newSongDays <= 999) {
-                        new UserSettingController(getActivity()).setNewSongDays(newSongDays);
+                        new UserSettingController().setNewSongDays(newSongDays);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -134,7 +134,7 @@ public class SettingFragment extends PreferenceFragmentCompat {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (preference instanceof EditTextPreference) {
-                    ((EditTextPreference) preference).setText(String.valueOf(new UserSettingController(getActivity()).getMostPlayedSongSize()));
+                    ((EditTextPreference) preference).setText(String.valueOf(new UserSettingController().getMostPlayedSongSize()));
                 }
                 return true;
             }
@@ -145,7 +145,7 @@ public class SettingFragment extends PreferenceFragmentCompat {
                 try {
                     int mostPlayedSongSize = Integer.parseInt(newValue.toString());
                     if (mostPlayedSongSize >= 0 && mostPlayedSongSize <= 999) {
-                        new UserSettingController(getActivity()).setMostPlayedSongSize(mostPlayedSongSize);
+                        new UserSettingController().setMostPlayedSongSize(mostPlayedSongSize);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

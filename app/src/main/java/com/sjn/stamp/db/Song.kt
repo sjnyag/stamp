@@ -1,10 +1,8 @@
 package com.sjn.stamp.db
 
 import android.content.res.Resources
-import android.media.MediaMetadata
 import android.support.v4.media.MediaMetadataCompat
 import com.sjn.stamp.R
-import com.sjn.stamp.db.dao.ArtistDao
 import com.sjn.stamp.utils.MediaItemHelper
 import io.realm.RealmList
 import io.realm.RealmObject
@@ -45,10 +43,7 @@ open class Song(
         return result
     }
 
-    fun buildMediaMetadataCompat(): MediaMetadataCompat {
-        return MediaItemHelper.convertToMetadata(this)
-    }
-    override fun share(resources: Resources): String {
-        return resources.getString(R.string.share_song, title, artist!!.name)
-    }
+    fun buildMediaMetadataCompat(): MediaMetadataCompat = MediaItemHelper.convertToMetadata(this)
+    override fun share(resources: Resources): String =
+            resources.getString(R.string.share_song, title, artist!!.name)
 }

@@ -15,7 +15,6 @@
  */
 package com.sjn.stamp.ui.fragment.media_list;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -30,8 +29,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -64,7 +61,6 @@ import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
  */
 public class SongListFragment extends MediaBrowserListFragment implements MusicListObserver.Listener {
 
-    private ProgressDialog mProgressDialog;
     private static final String TAG = LogHelper.makeLogTag(SongListFragment.class);
     private CreateListAsyncTask mCreateListAsyncTask;
     private boolean mHasItemList = false;
@@ -141,15 +137,12 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                         Handler handler = new Handler(getActivity().getMainLooper());
                         handler.post(new Runnable() {
                             public void run() {
-                                mProgressDialog = new ProgressDialog(getActivity());
-                                mProgressDialog.setMessage(getString(R.string.message_processing));
-                                mProgressDialog.show();
+                                mLoading.setVisibility(View.VISIBLE);
                             }
                         });
                         return;
                     default:
                         mSwipeRefreshLayout.setRefreshing(false);
-                        return;
                 }
             }
         }, new DialogInterface.OnDismissListener() {
@@ -215,9 +208,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                     if (mSwipeRefreshLayout != null) {
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
-                    if (mProgressDialog != null) {
-                        mProgressDialog.dismiss();
-                    }
+                    mLoading.setVisibility(View.VISIBLE);
                 }
             });
         }
@@ -231,19 +222,19 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
         LogHelper.d(TAG, "onCreateView START" + getMediaId());
         final View rootView = inflater.inflate(R.layout.fragment_list, container, false);
 
-        mLoading = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        mLoading = rootView.findViewById(R.id.progressBar);
         mEmptyView = rootView.findViewById(R.id.empty_view);
-        mFastScroller = (FastScroller) rootView.findViewById(R.id.fast_scroller);
-        mEmptyTextView = (TextView) rootView.findViewById(R.id.empty_text);
+        mFastScroller = rootView.findViewById(R.id.fast_scroller);
+        mEmptyTextView = rootView.findViewById(R.id.empty_text);
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
+        mSwipeRefreshLayout = rootView.findViewById(R.id.refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW);
 
         mAdapter = new SongAdapter(mItemList, this);
         mAdapter.setNotifyChangeOfUnfilteredItems(true)
                 .setAnimationOnScrolling(false);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        mRecyclerView = rootView.findViewById(R.id.recycler_view);
         if (savedInstanceState != null) {
             mListState = savedInstanceState.getParcelable(LIST_STATE_KEY);
         }

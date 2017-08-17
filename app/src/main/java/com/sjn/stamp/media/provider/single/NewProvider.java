@@ -30,7 +30,7 @@ public class NewProvider extends AllProvider {
 
     @Override
     protected List<MediaMetadataCompat> createTrackList(final Map<String, MediaMetadataCompat> musicListById) {
-        return subList(super.createTrackList(musicListById), new UserSettingController(mContext).getNewSongDays());
+        return subList(super.createTrackList(musicListById), new UserSettingController().getNewSongDays());
     }
 
     @Override

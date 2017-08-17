@@ -123,7 +123,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
         onShuffleStateChanged(CustomController.getInstance().getShuffleState());
     }
 
-    public boolean isSameBrowsingCategory(@NonNull String mediaId) {
+    private boolean isSameBrowsingCategory(@NonNull String mediaId) {
         String[] newBrowseHierarchy = MediaIDHelper.getHierarchy(mediaId);
         MediaSessionCompat.QueueItem current = getCurrentMusic();
         if (current == null) {
@@ -138,7 +138,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
     private boolean setCurrentQueueIndex(int index) {
         if (index >= 0 && index < getPlayingQueue().size()) {
             mCurrentIndex = index;
-            UserSettingController userSettingController = new UserSettingController(mContext);
+            UserSettingController userSettingController = new UserSettingController();
             userSettingController.setLastMusicId(MediaIDHelper.extractMusicIDFromMediaID(getCurrentMusic().getDescription().getMediaId()));
             return true;
         }
@@ -249,7 +249,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
             index = QueueHelper.getMusicIndexOnQueue(getPlayingQueue(), initialMediaId);
         }
         if (initialMediaId != null && !initialMediaId.startsWith(MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE)) {
-            UserSettingController userSettingController = new UserSettingController(mContext);
+            UserSettingController userSettingController = new UserSettingController();
             userSettingController.setQueueIdentifyMediaId(initialMediaId);
         }
         setCurrentQueueIndex(Math.max(index, 0));

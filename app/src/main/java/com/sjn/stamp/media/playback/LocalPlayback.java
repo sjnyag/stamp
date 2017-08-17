@@ -308,7 +308,7 @@ class LocalPlayback implements Playback, AudioManager.OnAudioFocusChangeListener
         LogHelper.d(TAG, "configMediaPlayerState. mAudioFocus=", mAudioFocus);
         if (mAudioFocus == AUDIO_NO_FOCUS_NO_DUCK) {
             // If we don't have audio focus and can't duck, we have to pause,
-            if (mState == PlaybackStateCompat.STATE_PLAYING && new UserSettingController(mContext).stopOnAudioLostFocus()) {
+            if (mState == PlaybackStateCompat.STATE_PLAYING && new UserSettingController().stopOnAudioLostFocus()) {
                 pause();
             }
         } else {  // we have audio focus:

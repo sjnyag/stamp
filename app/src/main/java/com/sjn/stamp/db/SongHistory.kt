@@ -9,11 +9,12 @@ import io.realm.annotations.Index
 import io.realm.annotations.PrimaryKey
 import java.util.*
 
+@Suppress("unused")
 open class SongHistory(
         @PrimaryKey var id: Long = 0,
         var song: Song? = null,
         var recordedAt: Date? = null,
-        @Index var recordType: String? = null,
+        @Index private var recordType: String? = null,
         var device: Device? = null,
         var count: Int = 0,
         var latitude: Float = 0.toFloat(),
@@ -30,7 +31,6 @@ open class SongHistory(
         this.count = count
     }
 
-    fun toLabel(resources: Resources): String {
-        return resources.getString(R.string.song_history_label, song!!.title, song!!.artist!!.name, TimeHelper.formatYYYYMMDDHHMMSS(recordedAt))
-    }
+    fun toLabel(resources: Resources): String =
+            resources.getString(R.string.song_history_label, song!!.title, song!!.artist!!.name, TimeHelper.formatYYYYMMDDHHMMSS(recordedAt))
 }
