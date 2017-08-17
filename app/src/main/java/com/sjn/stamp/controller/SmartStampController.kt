@@ -11,10 +11,9 @@ internal class SmartStampController(private val mContext: Context) {
         HEAVY_ROTATION("Heavy Rotation") {
             override fun isTarget(context: Context, song: Song, playCount: Int, recordType: RecordType): Boolean {
                 var result = false
-                val songHistoryDao = SongHistoryDao.getInstance()
                 var counter = 0
                 RealmHelper.getRealmInstance().use { realm ->
-                    val songHistoryList = songHistoryDao.findAll(realm, RecordType.PLAY.value)
+                    val songHistoryList = SongHistoryDao.findAll(realm, RecordType.PLAY.value)
                     for (songHistory in songHistoryList) {
                         if (songHistory.song == null || songHistory.song != song) {
                             break

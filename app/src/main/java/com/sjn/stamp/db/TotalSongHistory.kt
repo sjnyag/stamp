@@ -55,7 +55,7 @@ open class TotalSongHistory(
         }
     }
 
-    fun applyValues(song: Song, playCount: Int, skipCount: Int, completeCount: Int) {
+    private fun applyValues(song: Song, playCount: Int, skipCount: Int, completeCount: Int) {
         this.song = song
         this.playCount = playCount
         this.skipCount = skipCount

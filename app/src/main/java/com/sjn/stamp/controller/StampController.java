@@ -26,8 +26,6 @@ public class StampController {
     private static final String TAG = LogHelper.makeLogTag(StampController.class);
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private Context mContext;
-    private SongStampDao mSongStampDao;
-    private CategoryStampDao mCategoryStampDao;
     private List<Listener> mListenerSet = new ArrayList<>();
 
     public void addListener(Listener listener) {
@@ -40,8 +38,8 @@ public class StampController {
 
     public void remove(String stamp) {
         Realm realm = RealmHelper.getRealmInstance();
-        mSongStampDao.remove(realm, stamp);
-        mCategoryStampDao.remove(realm, stamp);
+        SongStampDao.INSTANCE.remove(realm, stamp);
+        CategoryStampDao.INSTANCE.remove(realm, stamp);
         realm.close();
         notifyStampChange();
     }
@@ -57,15 +55,13 @@ public class StampController {
     }
 
     public StampController(Context context) {
-        mSongStampDao = SongStampDao.getInstance();
-        mCategoryStampDao = CategoryStampDao.getInstance();
         mContext = context;
     }
 
     public List<String> findAll() {
         List<String> stampList = new ArrayList<>();
         Realm realm = RealmHelper.getRealmInstance();
-        for (SongStamp songStamp : mSongStampDao.findAll(realm)) {
+        for (SongStamp songStamp : SongStampDao.INSTANCE.findAll(realm)) {
             stampList.add(songStamp.getName());
         }
         realm.close();
@@ -74,7 +70,7 @@ public class StampController {
 
     public boolean register(String name) {
         Realm realm = RealmHelper.getRealmInstance();
-        boolean result = mSongStampDao.save(realm, name);
+        boolean result = SongStampDao.INSTANCE.save(realm, name);
         realm.close();
         notifyStampChange();
         return result;
@@ -83,11 +79,11 @@ public class StampController {
     public Map<String, List<MediaMetadataCompat>> getAllSongList(final Map<String, MediaMetadataCompat> musicListById) {
         Map<String, Map<String, MediaMetadataCompat>> songStampMap = new ConcurrentHashMap<>();
         Realm realm = RealmHelper.getRealmInstance();
-        for (SongStamp songStamp : mSongStampDao.findAll(realm)) {
+        for (SongStamp songStamp : SongStampDao.INSTANCE.findAll(realm)) {
             put(songStampMap, songStamp.getName(), createTrackMap(songStamp));
         }
         Map<String, Map<CategoryType, List<String>>> stampQueryMap = new ConcurrentHashMap<>();
-        for (CategoryStamp categoryStamp : mCategoryStampDao.findAll(realm)) {
+        for (CategoryStamp categoryStamp : CategoryStampDao.INSTANCE.findAll(realm)) {
             put(stampQueryMap, categoryStamp);
         }
         realm.close();

@@ -5,10 +5,11 @@ import com.sjn.stamp.constant.ShuffleState
 import com.sjn.stamp.utils.MediaIDHelper
 import io.realm.RealmObject
 
+@Suppress("unused")
 open class UserSetting(
         var isAutoLogin: Boolean = false,
-        var repeatState: Int = RepeatState.getDefault().no,
-        var shuffleState: Int = ShuffleState.getDefault().no,
+        private var repeatState: Int = RepeatState.getDefault().no,
+        private var shuffleState: Int = ShuffleState.getDefault().no,
         var queueIdentifyMediaId: String = MediaIDHelper.MEDIA_ID_MUSICS_BY_ALL,
         var lastMusicId: String? = null,
         var stopOnAudioLostFocus: Boolean = false,
@@ -23,16 +24,12 @@ open class UserSetting(
         this.repeatState = repeatState.no
     }
 
-    fun fetchRepeatState(): RepeatState? {
-        return RepeatState.of(repeatState)
-    }
+    fun fetchRepeatState(): RepeatState? = RepeatState.of(repeatState)
 
     fun applyShuffleState(shuffleState: ShuffleState) {
         this.shuffleState = shuffleState.no
     }
 
-    fun fetchShuffleStateValue(): ShuffleState? {
-        return ShuffleState.of(shuffleState)
-    }
+    fun fetchShuffleStateValue(): ShuffleState? = ShuffleState.of(shuffleState)
 
 }

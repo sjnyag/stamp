@@ -7,7 +7,7 @@ import java.util.*
 open class RankedArtist(
         var playCount: Int = 0,
         var artist: Artist? = null,
-        var songCountMap: Map<Song, Int>? = null
+        private var songCountMap: Map<Song, Int>? = null
 ) : Shareable {
 
     override fun share(resources: Resources): String {

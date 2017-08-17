@@ -117,7 +117,7 @@ public class MediaItemHelper {
         song.setTrackSource(metadata.getString(MediaItemHelper.CUSTOM_METADATA_TRACK_SOURCE));
         song.setAlbum(fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ALBUM));
         String artistName = fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ARTIST);
-        Artist artist = ArtistDao.getInstance().newStandalone();
+        Artist artist = ArtistDao.INSTANCE.newStandalone();
         artist.setName(artistName);
         artist.setAlbumArtUri(fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI));
         song.setArtist(artist);
