@@ -4,13 +4,8 @@ import android.content.res.Resources
 import com.sjn.stamp.R
 
 class RankedSong(
-        var playCount: Int = 0,
-        var song: Song? = null
+        var playCount: Int,
+        var song: Song
 ) : Shareable {
-    override fun share(resources: Resources): String {
-        if (song == null) {
-            return ""
-        }
-        return resources.getString(R.string.share_ranked, playCount, song!!.share(resources))
-    }
+    override fun share(resources: Resources): String = resources.getString(R.string.share_ranked, playCount, song.share(resources))
 }

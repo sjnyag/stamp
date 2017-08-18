@@ -8,7 +8,10 @@ import com.sjn.stamp.db.dao.CategoryStampDao
 import com.sjn.stamp.db.dao.SongDao
 import com.sjn.stamp.db.dao.SongStampDao
 import com.sjn.stamp.media.provider.ProviderType
-import com.sjn.stamp.utils.*
+import com.sjn.stamp.utils.LogHelper
+import com.sjn.stamp.utils.MediaIDHelper
+import com.sjn.stamp.utils.MediaRetrieveHelper
+import com.sjn.stamp.utils.RealmHelper
 import java.util.*
 
 class SongController(private val mContext: Context) {
@@ -136,8 +139,7 @@ class SongController(private val mContext: Context) {
         if (track == null) {
             return
         }
-        val song = SongDao.newStandalone()
-        MediaItemHelper.updateSong(song, track)
+        val song = SongDao.newStandalone(track)
         val realm = RealmHelper.getRealmInstance()
         for (stampName in stampNameList) {
             val songStamp = SongStampDao.newStandalone()

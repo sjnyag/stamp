@@ -19,7 +19,7 @@ class PlaylistController(context: Context) {
                 LocalPlaylistHelper.findAllPlaylist(mContentResolver)
             } catch (e: SecurityException) {
                 e.printStackTrace()
-                ConcurrentHashMap()
+                ConcurrentHashMap<String, List<MediaMetadataCompat>>()
             }
 
         }

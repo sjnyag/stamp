@@ -77,17 +77,9 @@ class SongHistoryController(private val mContext: Context) {
         return totalSongHistory
     }
 
-    private fun createDevice(): Device {
-        val device = DeviceDao.newStandalone()
-        device.configure()
-        return device
-    }
+    private fun createDevice(): Device = DeviceDao.newStandalone()
 
-    private fun createSong(track: MediaMetadataCompat): Song {
-        val song = SongDao.newStandalone()
-        MediaItemHelper.updateSong(song, track)
-        return song
-    }
+    private fun createSong(track: MediaMetadataCompat): Song = SongDao.newStandalone(track)
 
     private fun createSongHistory(song: Song, device: Device, recordType: RecordType, date: Date, count: Int): SongHistory {
         val songHistory = SongHistoryDao.newStandalone()

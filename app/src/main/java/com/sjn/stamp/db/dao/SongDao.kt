@@ -1,6 +1,8 @@
 package com.sjn.stamp.db.dao
 
+import android.support.v4.media.MediaMetadataCompat
 import com.sjn.stamp.db.Song
+import com.sjn.stamp.utils.MediaItemHelper
 import io.realm.Realm
 
 @Suppress("unused")
@@ -23,5 +25,5 @@ object SongDao : BaseDao() {
     fun findByMusicId(realm: Realm, musicId: String): Song =
             realm.where(Song::class.java).equalTo("mediaId", musicId).findFirst()
 
-    fun newStandalone(): Song = Song()
+    fun newStandalone(track: MediaMetadataCompat): Song = MediaItemHelper.createSong(track)
 }

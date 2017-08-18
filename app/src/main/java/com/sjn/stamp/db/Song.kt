@@ -11,39 +11,39 @@ import io.realm.annotations.PrimaryKey
 
 open class Song(
         @PrimaryKey var id: Long = 0,
-        @Index var mediaId: String? = null,
-        var trackSource: String? = null,
-        @Index var album: String? = null,
-        var duration: Long? = null,
-        var genre: String? = null,
-        var albumArtUri: String? = null,
-        @Index var title: String? = null,
-        var trackNumber: Long? = null,
-        var numTracks: Long? = null,
-        var dateAdded: String? = null,
-        var songStampList: RealmList<SongStamp>? = null,
-        var artist: Artist? = null
+        @Index var mediaId: String = "",
+        var trackSource: String = "",
+        @Index var album: String = "",
+        var duration: Long? = 0,
+        var genre: String = "",
+        var albumArtUri: String = "",
+        @Index var title: String = "",
+        var trackNumber: Long? = 0,
+        var numTracks: Long? = 0,
+        var dateAdded: String = "",
+        var songStampList: RealmList<SongStamp> = RealmList(),
+        var artist: Artist = Artist()
 ) : RealmObject(), Shareable {
+
+
+    fun buildMediaMetadataCompat(): MediaMetadataCompat = MediaItemHelper.convertToMetadata(this)
+
+    override fun share(resources: Resources): String =
+            resources.getString(R.string.share_song, title, artist.name)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Song) return false
 
-        val song = other as Song?
+        if (title != other.title) return false
+        if (artist != other.artist) return false
 
-        if (if (artist != null) !artist!!.name.equals(song!!.artist!!.name) else song!!.artist != null)
-            return false
-        return if (title != null) title == song.title else song.title == null
-
+        return true
     }
 
     override fun hashCode(): Int {
-        var result = if (artist != null) artist!!.name!!.hashCode() else 0
-        result = 31 * result + if (title != null) title!!.hashCode() else 0
+        var result = title.hashCode()
+        result = 31 * result + artist.hashCode()
         return result
     }
-
-    fun buildMediaMetadataCompat(): MediaMetadataCompat = MediaItemHelper.convertToMetadata(this)
-    override fun share(resources: Resources): String =
-            resources.getString(R.string.share_song, title, artist!!.name)
 }

@@ -12,10 +12,10 @@ import java.util.*
 @Suppress("unused")
 open class SongHistory(
         @PrimaryKey var id: Long = 0,
-        var song: Song? = null,
-        var recordedAt: Date? = null,
-        @Index private var recordType: String? = null,
-        var device: Device? = null,
+        var song: Song = Song(),
+        var recordedAt: Date = Date(),
+        @Index private var recordType: String = "",
+        var device: Device = Device(),
         var count: Int = 0,
         var latitude: Float = 0.toFloat(),
         var longitude: Float = 0.toFloat(),
@@ -23,14 +23,14 @@ open class SongHistory(
         var altitude: Float = 0.toFloat()
 ) : RealmObject() {
 
-    fun applyValues(song: Song?, recordType: RecordType?, device: Device?, date: Date?, count: Int) {
+    fun applyValues(song: Song, recordType: RecordType, device: Device, date: Date, count: Int) {
         this.song = song
-        this.recordType = recordType?.value
+        this.recordType = recordType.value
         this.device = device
         this.recordedAt = date
         this.count = count
     }
 
     fun toLabel(resources: Resources): String =
-            resources.getString(R.string.song_history_label, song!!.title, song!!.artist!!.name, TimeHelper.formatYYYYMMDDHHMMSS(recordedAt))
+            resources.getString(R.string.song_history_label, song.title, song.artist.name, TimeHelper.formatYYYYMMDDHHMMSS(recordedAt))
 }

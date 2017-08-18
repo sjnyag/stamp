@@ -6,14 +6,11 @@ import io.realm.annotations.PrimaryKey
 
 open class Device(
         @PrimaryKey var id: Long = 0,
-        var model: String? = null,
-        var os: String? = null
+        var model: String = "",
+        var os: String = ""
 ) : RealmObject() {
 
-    fun configure() {
-        os = OS_NAME
-        model = Build.MODEL
-    }
+    constructor() : this(model = OS_NAME, os = Build.MODEL)
 
     companion object {
         private val OS_NAME = "android"
