@@ -2,15 +2,18 @@ package com.sjn.stamp.ui.fragment;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -23,6 +26,7 @@ import com.sjn.stamp.utils.RealmHelper;
 public class SettingFragment extends PreferenceFragmentCompat {
 
     private static final String TAG = LogHelper.makeLogTag(SettingFragment.class);
+    private static final int REQUEST_BACKUP = 1;
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -49,17 +53,10 @@ public class SettingFragment extends PreferenceFragmentCompat {
                             case NEGATIVE:
                                 return;
                             case POSITIVE:
-                                ProgressDialog progressDialog = new ProgressDialog(getActivity());
-                                progressDialog.setMessage(getString(R.string.message_processing));
-                                progressDialog.show();
-                                RealmHelper.importBackUp(getActivity());
-                                progressDialog.dismiss();
-                                DialogFacade.createRestartDialog(getActivity(), new MaterialDialog.SingleButtonCallback() {
-                                    @Override
-                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                        getActivity().recreate();
-                                    }
-                                }).show();
+                                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                                intent.setType("*/*");
+                                startActivityForResult(intent, REQUEST_BACKUP);
                         }
                     }
                 }, new DialogInterface.OnDismissListener() {
@@ -170,6 +167,32 @@ public class SettingFragment extends PreferenceFragmentCompat {
         FloatingActionButton mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         if (mFab != null) {
             mFab.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        LogHelper.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
+
+        if (requestCode == REQUEST_BACKUP) {
+            if (resultCode == AppCompatActivity.RESULT_OK) {
+                if (data != null && data.getData() != null && data.getData().getPath().endsWith(".realm")) {
+                    ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                    progressDialog.setMessage(getString(R.string.message_processing));
+                    progressDialog.show();
+                    RealmHelper.importBackUp(getActivity(), data.getData());
+                    progressDialog.dismiss();
+                    DialogFacade.createRestartDialog(getActivity(), new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            getActivity().recreate();
+                        }
+                    }).show();
+                } else {
+                    Toast.makeText(getContext(), R.string.invalid_backup_selected, Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 

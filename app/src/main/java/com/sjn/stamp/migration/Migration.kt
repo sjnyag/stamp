@@ -30,7 +30,7 @@ class Migration : RealmMigration {
             migrateTo4(schema)
             oldVersion++
         }
-        if (oldVersion == newVersion) {
+        if (oldVersion != newVersion) {
             LogHelper.w(TAG, "Realm migration might be failed.")
         }
     }

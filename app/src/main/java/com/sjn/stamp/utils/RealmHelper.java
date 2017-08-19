@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -87,12 +89,32 @@ public class RealmHelper {
 
     }
 
-    public static void importBackUp(final Activity activity) {
+    public static void importBackUp(final Activity activity, Uri uri) {
         checkStoragePermissions(activity);
-        //Restore
-        String restoreFilePath = EXPORT_REALM_PATH + "/" + EXPORT_REALM_FILE_NAME;
-        copyBundledRealmFile(activity, restoreFilePath, IMPORT_REALM_FILE_NAME);
+        //copyBundledRealmFile(activity, EXPORT_REALM_PATH + "/" + EXPORT_REALM_FILE_NAME, IMPORT_REALM_FILE_NAME);
+        copyBundledRealmFile(activity, uri, IMPORT_REALM_FILE_NAME);
         init(activity);
+    }
+
+    private static String copyBundledRealmFile(Activity activity, Uri uri, String outFileName) {
+        try {
+            File file = new File(activity.getApplicationContext().getFilesDir(), outFileName);
+
+            FileOutputStream outputStream = new FileOutputStream(file);
+
+            InputStream inputStream = activity.getContentResolver().openInputStream(uri);
+
+            byte[] buf = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buf)) > 0) {
+                outputStream.write(buf, 0, bytesRead);
+            }
+            outputStream.close();
+            return file.getAbsolutePath();
+        } catch (IOException | java.io.IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private static String copyBundledRealmFile(Activity activity, String oldFilePath, String outFileName) {

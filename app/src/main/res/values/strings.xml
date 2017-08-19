@@ -211,4 +211,5 @@
     <string name="period">Period</string>
     <string name="from">From</string>
     <string name="to">To</string>
+    <string name="invalid_backup_selected">This is invalid.</string>
 </resources>
