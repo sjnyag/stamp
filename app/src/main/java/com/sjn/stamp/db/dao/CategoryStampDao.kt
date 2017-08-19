@@ -24,7 +24,7 @@ object CategoryStampDao : BaseDao() {
         realm.commitTransaction()
     }
 
-    fun save(realm: Realm, name: String?, categoryType: CategoryType, categoryValue: String) {
+    fun save(realm: Realm, name: String?, categoryType: CategoryType, categoryValue: String, isSystem: Boolean) {
         if (name == null || name.isEmpty()) {
             return
         }
@@ -32,8 +32,9 @@ object CategoryStampDao : BaseDao() {
         var categoryStamp: CategoryStamp? = realm.where(CategoryStamp::class.java).equalTo("name", name).equalTo("type", categoryType.value).equalTo("value", categoryValue).findFirst()
         if (categoryStamp == null) {
             categoryStamp = realm.createObject(CategoryStamp::class.java, getAutoIncrementId(realm, CategoryStamp::class.java))
-            categoryStamp!!.name = name
+            categoryStamp.name = name
             categoryStamp.type = categoryType.value
+            categoryStamp.isSystem = isSystem
             categoryStamp.value = categoryValue
         }
         realm.commitTransaction()

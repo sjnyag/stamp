@@ -127,7 +127,7 @@ class SongController(private val mContext: Context) {
         }
         val realm = RealmHelper.getRealmInstance()
         for (stampName in stampNameList) {
-            CategoryStampDao.save(realm, stampName, categoryType, categoryValue)
+            CategoryStampDao.save(realm, stampName, categoryType, categoryValue, false)
         }
         realm.close()
     }
