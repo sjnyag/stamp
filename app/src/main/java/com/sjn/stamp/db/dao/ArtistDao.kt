@@ -16,6 +16,6 @@ object ArtistDao : BaseDao() {
         return artist!!
     }
 
-    fun newStandalone(): Artist = Artist()
+    fun newStandalone(name: String, uri: String): Artist = Artist(name = name, albumArtUri = uri)
 
 }

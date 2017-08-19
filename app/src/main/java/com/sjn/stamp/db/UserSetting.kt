@@ -11,7 +11,7 @@ open class UserSetting(
         private var repeatState: Int = RepeatState.getDefault().no,
         private var shuffleState: Int = ShuffleState.getDefault().no,
         var queueIdentifyMediaId: String = MediaIDHelper.MEDIA_ID_MUSICS_BY_ALL,
-        var lastMusicId: String? = null,
+        var lastMusicId: String = "",
         var stopOnAudioLostFocus: Boolean = false,
         var showAlbumArtOnLockScreen: Boolean = false,
         var autoPlayOnHeadsetConnected: Boolean = false,

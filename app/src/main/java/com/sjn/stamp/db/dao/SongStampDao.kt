@@ -12,28 +12,20 @@ object SongStampDao : BaseDao() {
             realm.where(SongStamp::class.java).findAll().sort("name")
 
     fun saveOrAdd(realm: Realm, rawSongStamp: SongStamp, rawSong: Song) {
-        if (rawSong.mediaId == null) {
-            return
-        }
-        realm.executeTransaction(Realm.Transaction { realm ->
-            val managedSongStamp = realm.where(SongStamp::class.java).equalTo("name", rawSongStamp.name).findFirst()
-            val managedSong = SongDao.findOrCreate(realm, rawSong)
+        realm.executeTransaction(Realm.Transaction { r ->
+            val managedSongStamp = r.where(SongStamp::class.java).equalTo("name", rawSongStamp.name).findFirst()
+            val managedSong = SongDao.findOrCreate(r, rawSong)
             if (managedSongStamp == null) {
-                rawSongStamp.id = getAutoIncrementId(realm, SongStamp::class.java)
+                rawSongStamp.id = getAutoIncrementId(r, SongStamp::class.java)
                 val songList = RealmList<Song>()
                 songList.add(managedSong)
                 rawSongStamp.songList = songList
-                addSongStamp(managedSong, realm.copyToRealm(rawSongStamp))
+                addSongStamp(managedSong, r.copyToRealm(rawSongStamp))
             } else {
-                if (managedSongStamp.songList == null) {
-                    managedSongStamp.songList = RealmList()
-                }
-                for (song in managedSongStamp.songList!!) {
-                    if (managedSong.mediaId == song.mediaId) {
-                        return@Transaction
-                    }
-                }
-                managedSongStamp.songList!!.add(managedSong)
+                managedSongStamp.songList
+                        .filter { managedSong.mediaId == it.mediaId }
+                        .forEach { return@Transaction }
+                managedSongStamp.songList.add(managedSong)
                 addSongStamp(managedSong, managedSongStamp)
             }
         })
@@ -68,13 +60,10 @@ object SongStampDao : BaseDao() {
         if (songStamp?.name == null) {
             return
         }
-        if (song.songStampList == null) {
-            song.songStampList = RealmList()
-        }
-        song.songStampList!!
+        song.songStampList
                 .filter { it.name == songStamp.name }
                 .forEach { return }
-        song.songStampList!!.add(songStamp)
+        song.songStampList.add(songStamp)
     }
 
 }

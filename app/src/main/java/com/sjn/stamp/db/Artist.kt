@@ -6,19 +6,17 @@ import io.realm.annotations.PrimaryKey
 
 open class Artist(
         @PrimaryKey var id: Long = 0,
-        @Index var name: String? = null,
-        var albumArtUri: String? = null
+        @Index var name: String = "",
+        var albumArtUri: String = ""
 ) : RealmObject() {
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Artist) return false
 
-        val artist = other as Artist?
+        if (name != other.name) return false
 
-        return if (name != null) name == artist!!.name else artist!!.name == null
-
+        return true
     }
 
-    override fun hashCode(): Int = if (name != null) name!!.hashCode() else 0
+    override fun hashCode(): Int = name.hashCode()
 }

@@ -10,51 +10,44 @@ object UserSettingDao : BaseDao() {
 
     fun getUserSetting(realm: Realm): UserSetting = findOrCreate(realm)
 
-    fun updateAutoLogin(realm: Realm, isAutoLogin: Boolean) {
-        realm.executeTransactionAsync { realm ->
-            val userSetting = findOrCreate(realm)
-            userSetting.isAutoLogin = isAutoLogin
-        }
-    }
-
     fun updateShuffleState(realm: Realm, shuffleState: ShuffleState) {
-        realm.executeTransactionAsync { realm ->
-            val userSetting = findOrCreate(realm)
+        realm.executeTransactionAsync { r ->
+            val userSetting = findOrCreate(r)
             userSetting.applyShuffleState(shuffleState)
         }
     }
 
     fun updateRepeatState(realm: Realm, repeatState: RepeatState) {
-        realm.executeTransactionAsync { realm ->
-            val userSetting = findOrCreate(realm)
+        realm.executeTransactionAsync { r ->
+            val userSetting = findOrCreate(r)
             userSetting.applyRepeatState(repeatState)
         }
     }
 
     fun updateQueueIdentifyMediaId(realm: Realm, queueIdentifyMediaId: String) {
-        realm.executeTransactionAsync { realm ->
-            val userSetting = findOrCreate(realm)
+        realm.executeTransactionAsync { r ->
+            val userSetting = findOrCreate(r)
             userSetting.queueIdentifyMediaId = queueIdentifyMediaId
         }
     }
 
     fun updateLastMusicId(realm: Realm, lastMusicId: String) {
-        realm.executeTransactionAsync { realm ->
-            val userSetting = findOrCreate(realm)
+        realm.executeTransactionAsync { r ->
+            val userSetting = findOrCreate(r)
             userSetting.lastMusicId = lastMusicId
         }
     }
 
     fun updateNewSongDays(realm: Realm, newSongDays: Int) {
-        realm.executeTransactionAsync { realm ->
-            val userSetting = findOrCreate(realm)
+        realm.executeTransactionAsync { r ->
+            val userSetting = findOrCreate(r)
             userSetting.newSongDays = newSongDays
         }
     }
 
     fun updateMostPlayedSongSize(realm: Realm, mostPlayedSongSize: Int) {
-        realm.executeTransactionAsync { realm ->
-            val userSetting = findOrCreate(realm)
+        realm.executeTransactionAsync { r ->
+            val userSetting = findOrCreate(r)
             userSetting.mostPlayedSongSize = mostPlayedSongSize
         }
     }

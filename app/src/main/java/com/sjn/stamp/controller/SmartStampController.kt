@@ -15,7 +15,7 @@ internal class SmartStampController(private val mContext: Context) {
                 RealmHelper.getRealmInstance().use { realm ->
                     val songHistoryList = SongHistoryDao.findAll(realm, RecordType.PLAY.value)
                     for (songHistory in songHistoryList) {
-                        if (songHistory.song == null || songHistory.song != song) {
+                        if (songHistory.song != song) {
                             break
                         }
                         counter++
@@ -29,7 +29,7 @@ internal class SmartStampController(private val mContext: Context) {
             }
 
             override fun register(context: Context, song: Song, playCount: Int, recordType: RecordType) {
-                registerStamp(context, mStamp)
+                registerStamp(mStamp)
                 val songController = SongController(context)
                 songController.registerSystemStamp(mStamp, song)
             }
@@ -39,7 +39,7 @@ internal class SmartStampController(private val mContext: Context) {
                     false
 
             override fun register(context: Context, song: Song, playCount: Int, recordType: RecordType) {
-                registerStamp(context, mStamp)
+                registerStamp(mStamp)
 
             }
         },
@@ -48,7 +48,7 @@ internal class SmartStampController(private val mContext: Context) {
                     false
 
             override fun register(context: Context, song: Song, playCount: Int, recordType: RecordType) {
-                registerStamp(context, mStamp)
+                registerStamp(mStamp)
 
             }
         };
@@ -57,8 +57,8 @@ internal class SmartStampController(private val mContext: Context) {
 
         abstract fun register(context: Context, song: Song, playCount: Int, recordType: RecordType)
 
-        internal fun registerStamp(context: Context, stamp: String) {
-            val stampController = StampController(context)
+        internal fun registerStamp(stamp: String) {
+            val stampController = StampController()
             stampController.register(stamp)
         }
     }

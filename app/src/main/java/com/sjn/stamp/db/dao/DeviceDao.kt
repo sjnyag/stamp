@@ -10,6 +10,7 @@ object DeviceDao : BaseDao() {
     fun findOrCreate(realm: Realm, rawDevice: Device): Device {
         var device: Device? = realm.where(Device::class.java).equalTo("model", rawDevice.model).equalTo("os", rawDevice.os).findFirst()
         if (device == null) {
+            rawDevice.id = getAutoIncrementId(realm, Device::class.java)
             device = realm.copyToRealm(rawDevice)
         }
         return device!!

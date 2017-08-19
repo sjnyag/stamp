@@ -14,13 +14,15 @@ import android.text.TextUtils;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
-import com.sjn.stamp.db.Artist;
 import com.sjn.stamp.db.Song;
+import com.sjn.stamp.db.SongStamp;
 import com.sjn.stamp.db.dao.ArtistDao;
 
 import org.json.JSONObject;
 
 import java.util.List;
+
+import io.realm.RealmList;
 
 public class MediaItemHelper {
 
@@ -112,22 +114,25 @@ public class MediaItemHelper {
 
     }
 
-    public static void updateSong(Song song, MediaMetadataCompat metadata) {
-        song.setMediaId(metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID));
-        song.setTrackSource(metadata.getString(MediaItemHelper.CUSTOM_METADATA_TRACK_SOURCE));
-        song.setAlbum(fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ALBUM));
-        String artistName = fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ARTIST);
-        Artist artist = ArtistDao.INSTANCE.newStandalone();
-        artist.setName(artistName);
-        artist.setAlbumArtUri(fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI));
-        song.setArtist(artist);
-        song.setDuration(fetchLong(metadata, MediaMetadataCompat.METADATA_KEY_DURATION));
-        song.setGenre(fetchString(metadata, MediaMetadataCompat.METADATA_KEY_GENRE));
-        song.setAlbumArtUri(fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI));
-        song.setTitle(fetchString(metadata, MediaMetadataCompat.METADATA_KEY_TITLE));
-        song.setTrackNumber(fetchLong(metadata, MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER));
-        song.setNumTracks(fetchLong(metadata, MediaMetadataCompat.METADATA_KEY_NUM_TRACKS));
-        song.setDateAdded(fetchString(metadata, MediaMetadataCompat.METADATA_KEY_DATE));
+    public static Song createSong(MediaMetadataCompat metadata) {
+        return new Song(
+                0,
+                metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID),
+                metadata.getString(MediaItemHelper.CUSTOM_METADATA_TRACK_SOURCE),
+                fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ALBUM),
+                fetchLong(metadata, MediaMetadataCompat.METADATA_KEY_DURATION),
+                fetchString(metadata, MediaMetadataCompat.METADATA_KEY_GENRE),
+                fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI),
+                fetchString(metadata, MediaMetadataCompat.METADATA_KEY_TITLE),
+                fetchLong(metadata, MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER),
+                fetchLong(metadata, MediaMetadataCompat.METADATA_KEY_NUM_TRACKS),
+                fetchString(metadata, MediaMetadataCompat.METADATA_KEY_DATE),
+                new RealmList<SongStamp>(),
+                ArtistDao.INSTANCE.newStandalone(
+                        fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ARTIST),
+                        fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI)
+                )
+        );
     }
 
     public static MediaDescriptionCompat convertToDescription(MediaMetadataCompat metadata) {

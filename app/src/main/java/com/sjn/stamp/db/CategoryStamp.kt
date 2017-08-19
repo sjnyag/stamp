@@ -6,7 +6,7 @@ import io.realm.annotations.PrimaryKey
 
 open class CategoryStamp(
         @PrimaryKey var id: Long = 0,
-        @Index var name: String? = null,
-        var value: String? = null,
-        var type: String? = null
+        @Index var name: String = "",
+        var value: String = "",
+        var type: String = ""
 ) : RealmObject()

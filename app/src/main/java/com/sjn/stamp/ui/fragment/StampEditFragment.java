@@ -67,7 +67,7 @@ public class StampEditFragment extends Fragment implements StampEditStateObserve
                 StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.STAMPING);
             }
         });
-        drawStampList(getContext(), new StampController(getContext()).findAll());
+        drawStampList(getContext(), new StampController().findAll());
         return rootView;
     }
 
@@ -115,10 +115,10 @@ public class StampEditFragment extends Fragment implements StampEditStateObserve
                             case NEGATIVE:
                                 return;
                             case POSITIVE:
-                                StampController stampController = new StampController(context);
+                                StampController stampController = new StampController();
                                 stampController.remove(stamp);
                                 mStampListLayout.removeViewWithAnimation(view);
-                                updateEmptyString(new StampController(getContext()).findAll());
+                                updateEmptyString(new StampController().findAll());
                                 break;
                         }
                     }
@@ -164,7 +164,7 @@ public class StampEditFragment extends Fragment implements StampEditStateObserve
     @Override
     public void onNewStampCreated(String stamp) {
         mStampListLayout.addViewWithAnimation(inflateStampView(getContext(), stamp), 1);
-        updateEmptyString(new StampController(getContext()).findAll());
+        updateEmptyString(new StampController().findAll());
     }
 
     @Override

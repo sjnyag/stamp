@@ -7,7 +7,7 @@ import io.realm.annotations.PrimaryKey
 open class TotalSongHistory(
         @PrimaryKey
         var id: Long = 0,
-        var song: Song? = null,
+        var song: Song = Song(),
         var playCount: Int = 0,
         var skipCount: Int = 0,
         var completeCount: Int = 0

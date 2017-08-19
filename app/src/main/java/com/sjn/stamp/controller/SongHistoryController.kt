@@ -66,9 +66,7 @@ class SongHistoryController(private val mContext: Context) {
     }
 
     private fun sendNotificationByArtistCount(song: Song) {
-        song.artist?.let { artist ->
-            ArtistCountAsyncTask(artist.name).execute()
-        }
+        ArtistCountAsyncTask(song.artist.name).execute()
     }
 
     private fun createTotalSongHistory(song: Song, recordType: RecordType): TotalSongHistory {
@@ -77,17 +75,9 @@ class SongHistoryController(private val mContext: Context) {
         return totalSongHistory
     }
 
-    private fun createDevice(): Device {
-        val device = DeviceDao.newStandalone()
-        device.configure()
-        return device
-    }
+    private fun createDevice(): Device = DeviceDao.newStandalone()
 
-    private fun createSong(track: MediaMetadataCompat): Song {
-        val song = SongDao.newStandalone()
-        MediaItemHelper.updateSong(song, track)
-        return song
-    }
+    private fun createSong(track: MediaMetadataCompat): Song = SongDao.newStandalone(track)
 
     private fun createSongHistory(song: Song, device: Device, recordType: RecordType, date: Date, count: Int): SongHistory {
         val songHistory = SongHistoryDao.newStandalone()
@@ -137,12 +127,10 @@ class SongHistoryController(private val mContext: Context) {
         val songCountMap = HashMap<Song, Int>()
         LogHelper.d(TAG, "put songCountMap")
         for (songHistory in historyList) {
-            songHistory.song?.let { song ->
-                if (songCountMap.containsKey(song)) {
-                    songCountMap.put(song, songCountMap[song]!! + 1)
-                } else {
-                    songCountMap.put(song, 1)
-                }
+            if (songCountMap.containsKey(songHistory.song)) {
+                songCountMap.put(songHistory.song, songCountMap[songHistory.song]!! + 1)
+            } else {
+                songCountMap.put(songHistory.song, 1)
             }
         }
         LogHelper.d(TAG, "create rankedSongList")
@@ -164,7 +152,7 @@ class SongHistoryController(private val mContext: Context) {
         val historyList = SongHistoryDao.where(realm, from, to, RecordType.PLAY.value)
         val artistMap = HashMap<Artist, ArtistCounter>()
         for (songHistory in historyList) {
-            ArtistCounter.count(artistMap, songHistory.song?.artist!!, songHistory.song!!)
+            ArtistCounter.count(artistMap, songHistory.song.artist, songHistory.song)
         }
         var rankedArtistList: MutableList<RankedArtist> = ArrayList()
         for ((key, value) in artistMap) {
@@ -216,15 +204,13 @@ class SongHistoryController(private val mContext: Context) {
                 if (NotificationHelper.isSendPlayedNotification(playCount)) {
                     val oldestSongHistory = SongHistoryDao.findOldestByArtist(realm, mArtistName!!)
                     val song = oldestSongHistory.song
-                    if (song != null) {
-                        NotificationHelper.sendPlayedNotification(
-                                mContext,
-                                mArtistName,
-                                song.albumArtUri,
-                                playCount,
-                                oldestSongHistory.recordedAt
-                        )
-                    }
+                    NotificationHelper.sendPlayedNotification(
+                            mContext,
+                            mArtistName,
+                            song.albumArtUri,
+                            playCount,
+                            oldestSongHistory.recordedAt
+                    )
                 }
             } finally {
                 if (realm != null) {
