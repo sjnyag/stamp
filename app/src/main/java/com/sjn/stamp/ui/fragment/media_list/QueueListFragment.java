@@ -5,7 +5,6 @@ import android.support.v4.media.MediaBrowserCompat;
 
 import com.sjn.stamp.R;
 import com.sjn.stamp.media.provider.ProviderType;
-import com.sjn.stamp.ui.activity.DrawerMenu;
 import com.sjn.stamp.ui.item.QueueTitleItem;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
@@ -19,11 +18,11 @@ public class QueueListFragment extends SongListFragment {
     private static final String TAG = LogHelper.makeLogTag(QueueListFragment.class);
 
     public QueueListFragment() {
-        setMediaId(DrawerMenu.QUEUE.getMediaId());
+        setMediaId(MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE);
     }
 
     @Override
-    public String emptyMessage(){
+    public String emptyMessage() {
         return getString(R.string.empty_message_queue);
     }
 

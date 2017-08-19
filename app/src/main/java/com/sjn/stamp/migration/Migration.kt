@@ -7,7 +7,7 @@ class Migration : RealmMigration {
 
     companion object {
         private val TAG = LogHelper.makeLogTag(Migration::class.java)
-        val VERSION = 3
+        val VERSION = 4
     }
 
     override fun migrate(realm: DynamicRealm, version: Long, newVersion: Long) {
@@ -26,12 +26,16 @@ class Migration : RealmMigration {
             migrateTo3(schema)
             oldVersion++
         }
+        if (oldVersion == 3L) {
+            migrateTo4(schema)
+            oldVersion++
+        }
         if (oldVersion == newVersion) {
             LogHelper.w(TAG, "Realm migration might be failed.")
         }
     }
 
-    internal fun migrateTo1(realm: DynamicRealm, schema: RealmSchema) {
+    private fun migrateTo1(realm: DynamicRealm, schema: RealmSchema) {
         val artistSchema = schema.create("Artist")
                 .addField("mId", Long::class.javaPrimitiveType, FieldAttribute.PRIMARY_KEY)
                 .addField("mName", String::class.java, FieldAttribute.INDEXED)
@@ -59,7 +63,7 @@ class Migration : RealmMigration {
                 .renameField("mArtist_new", "mArtist")
     }
 
-    internal fun migrateTo2(schema: RealmSchema) {
+    private fun migrateTo2(schema: RealmSchema) {
         schema.get("Artist")
                 .renameField("mId", "id")
                 .renameField("mName", "name")
@@ -133,8 +137,7 @@ class Migration : RealmMigration {
                 .renameField("mLastMusicId", "lastMusicId")
     }
 
-
-    internal fun migrateTo3(schema: RealmSchema) {
+    private fun migrateTo3(schema: RealmSchema) {
         schema.get("UserSetting")
                 .addField("stopOnAudioLostFocus", Boolean::class.java, FieldAttribute.REQUIRED)
                 .transform({ obj -> obj.setBoolean("stopOnAudioLostFocus", false) })
@@ -148,6 +151,12 @@ class Migration : RealmMigration {
                 .transform({ obj -> obj.setInt("newSongDays", 30) })
                 .addField("mostPlayedSongSize", Int::class.java, FieldAttribute.REQUIRED)
                 .transform({ obj -> obj.setInt("mostPlayedSongSize", 30) })
+    }
+
+    private fun migrateTo4(schema: RealmSchema) {
+        schema.get("CategoryStamp")
+                .addField("isSystem", Boolean::class.java, FieldAttribute.REQUIRED)
+                .transform({ obj -> obj.setBoolean("isSystem", false) })
     }
 
     internal fun getAutoIncrementId(realm: DynamicRealm, clazz: String): Int {

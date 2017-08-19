@@ -14,6 +14,10 @@ import java.util.concurrent.ConcurrentHashMap
 class StampController {
     private val mListenerSet = ArrayList<Listener>()
 
+    interface Listener {
+        fun onStampChange()
+    }
+
     fun addListener(listener: Listener) {
         mListenerSet.add(listener)
     }
@@ -22,16 +26,38 @@ class StampController {
         mListenerSet.remove(listener)
     }
 
-    fun remove(stamp: String) {
-        val realm = RealmHelper.getRealmInstance()
-        SongStampDao.remove(realm, stamp)
-        CategoryStampDao.remove(realm, stamp)
-        realm.close()
+    fun register(name: String, isSystem: Boolean): Boolean {
+        val result = RealmHelper.getRealmInstance().use { realm ->
+            SongStampDao.save(realm, name, isSystem)
+        }
+        notifyStampChange()
+        return result
+    }
+
+    fun remove(stamp: String, isSystem: Boolean) {
+        RealmHelper.getRealmInstance().use { realm ->
+            SongStampDao.remove(realm, stamp, isSystem)
+            CategoryStampDao.remove(realm, stamp, isSystem)
+        }
         notifyStampChange()
     }
 
-    interface Listener {
-        fun onStampChange()
+    fun findAll(): List<String> {
+        return RealmHelper.getRealmInstance().use { realm ->
+            SongStampDao.findAll(realm).map { it.name }
+        }
+    }
+
+    fun createStampMap(musicListById: MutableMap<String, MediaMetadataCompat>, isSystem: Boolean): MutableMap<String, MutableList<MediaMetadataCompat>> {
+        val stampToMap = findSongStamp(isSystem)
+        if (!isSystem) {
+            stampToMap.merge(findCategoryStamp(musicListById))
+        }
+        val stampToList = ConcurrentHashMap<String, MutableList<MediaMetadataCompat>>()
+        for ((key, value) in stampToMap) {
+            stampToList.put(key, ArrayList(value.values))
+        }
+        return stampToList
     }
 
     internal fun notifyStampChange() {
@@ -40,71 +66,48 @@ class StampController {
         }
     }
 
-    fun findAll(): List<String> {
-        val realm = RealmHelper.getRealmInstance()
-        val stampList = SongStampDao.findAll(realm).map { it.name }
-        realm.close()
-        return stampList
-    }
-
-    fun register(name: String): Boolean {
-        val realm = RealmHelper.getRealmInstance()
-        val result = SongStampDao.save(realm, name)
-        realm.close()
-        notifyStampChange()
-        return result
-    }
-
-    fun getAllSongList(musicListById: MutableMap<String, MediaMetadataCompat>): MutableMap<String, MutableList<MediaMetadataCompat>> {
+    private fun findSongStamp(isSystem: Boolean): MutableMap<String, MutableMap<String, MediaMetadataCompat>> {
         val songStampMap = ConcurrentHashMap<String, MutableMap<String, MediaMetadataCompat>>()
-        val realm = RealmHelper.getRealmInstance()
-        for (songStamp in SongStampDao.findAll(realm)) {
-            put(songStampMap, songStamp.name, createTrackMap(songStamp))
-        }
-        val stampQueryMap = ConcurrentHashMap<String, MutableMap<CategoryType, MutableList<String>>>()
-        for (categoryStamp in CategoryStampDao.findAll(realm)) {
-            put(stampQueryMap, categoryStamp)
-        }
-        realm.close()
-
-        val categoryStampMap = searchMusic(musicListById, stampQueryMap)
-        merge(songStampMap, categoryStampMap)
-
-        val stampSongMap = ConcurrentHashMap<String, MutableList<MediaMetadataCompat>>()
-        for ((key, value) in songStampMap) {
-            stampSongMap.put(key, ArrayList(value.values))
-        }
-        return stampSongMap
-    }
-
-    private fun merge(songStampMap: MutableMap<String, MutableMap<String, MediaMetadataCompat>>, categoryStampMap: MutableMap<String, MutableMap<String, MediaMetadataCompat>>) {
-        for (stamp in categoryStampMap.keys) {
-            if (songStampMap.containsKey(stamp)) {
-                songStampMap[stamp]?.putAll(categoryStampMap[stamp]!!)
-            } else {
-                songStampMap.put(stamp, categoryStampMap[stamp]!!)
+        RealmHelper.getRealmInstance().use { realm ->
+            for (songStamp in SongStampDao.findAll(realm, isSystem)) {
+                songStampMap.putSongMap(songStamp.name, songStamp.songMap())
             }
         }
+        return songStampMap
     }
 
-    private fun createTrackMap(songStamp: SongStamp): MutableMap<String, MediaMetadataCompat> {
-        val trackMap = ConcurrentHashMap<String, MediaMetadataCompat>()
-        for (song in songStamp.songList) {
-            trackMap.put(song.mediaId, song.buildMediaMetadataCompat())
+    private fun findCategoryStamp(musicListById: MutableMap<String, MediaMetadataCompat>): MutableMap<String, MutableMap<String, MediaMetadataCompat>> {
+        val stampQueryMap = ConcurrentHashMap<String, MutableMap<CategoryType, MutableList<String>>>()
+        RealmHelper.getRealmInstance().use { realm ->
+            for (categoryStamp in CategoryStampDao.findAll(realm)) {
+                stampQueryMap.putCategoryStamp(categoryStamp)
+            }
         }
-        return trackMap
+        return stampQueryMap.executeQuery(musicListById)
     }
 
-    private fun searchMusic(musicListById: MutableMap<String, MediaMetadataCompat>?, queryMap: MutableMap<String, MutableMap<CategoryType, MutableList<String>>>?): MutableMap<String, MutableMap<String, MediaMetadataCompat>> {
+    private fun MutableMap<String, MutableMap<String, MediaMetadataCompat>>.merge(newMap: MutableMap<String, MutableMap<String, MediaMetadataCompat>>): MutableMap<String, MutableMap<String, MediaMetadataCompat>> {
+        for ((key, value) in newMap) {
+            if (containsKey(key)) {
+                this[key]?.putAll(value)
+            } else {
+                put(key, value)
+            }
+        }
+        return this
+    }
+
+    /*
+        'favorite' ->  {'mediaId_1' -> song1, 'mediaId_2' -> song2}
+        'recent'   ->  {'mediaId_1' -> song1, 'mediaId_2' -> song2}
+     */
+    private fun MutableMap<String, MutableMap<CategoryType, MutableList<String>>>.executeQuery(musicListById: MutableMap<String, MediaMetadataCompat>): MutableMap<String, MutableMap<String, MediaMetadataCompat>> {
         val result = ConcurrentHashMap<String, MutableMap<String, MediaMetadataCompat>>()
-        if (musicListById == null || queryMap == null) {
-            return result
-        }
-        for (track in musicListById.values) {
-            for ((key, value) in queryMap) {
-                for ((key1, value1) in value) {
-                    if (value1.contains(track.getString(key1.key).toLowerCase(Locale.getDefault()))) {
-                        put(result, key, track)
+        for (song in musicListById.values) {
+            for ((stampName, categoryQueryMap) in this) {
+                for ((categoryType, queryList) in categoryQueryMap) {
+                    if (queryList.contains(song.getString(categoryType.key).toLowerCase(Locale.getDefault()))) {
+                        result.putSong(stampName, song)
                     }
                 }
             }
@@ -112,54 +115,66 @@ class StampController {
         return result
     }
 
-    private fun put(stampMap: MutableMap<String, MutableMap<String, MediaMetadataCompat>>?, stampName: String, track: MediaMetadataCompat) {
-        if (stampMap == null) {
-            return
-        }
-        if (stampMap.containsKey(stampName) && !stampMap[stampName]!!.isEmpty()) {
-            stampMap[stampName]?.put(track.description.mediaId!!, track)
+    /*
+        'favorite' ->  {'mediaId_1' -> song1, 'mediaId_2' -> song2}
+        'recent'   ->  {'mediaId_1' -> song1, 'mediaId_2' -> song2}
+     */
+    private fun MutableMap<String, MutableMap<String, MediaMetadataCompat>>.putSong(stampName: String, song: MediaMetadataCompat) {
+        if (this.containsKey(stampName) && !this[stampName]!!.isEmpty()) {
+            this[stampName]?.put(song.description.mediaId!!, song)
         } else {
-            val trackMap = ConcurrentHashMap<String, MediaMetadataCompat>()
-            trackMap.put(track.description.mediaId!!, track)
-            stampMap.put(stampName, trackMap)
+            val songMap = ConcurrentHashMap<String, MediaMetadataCompat>()
+            songMap.put(song.description.mediaId!!, song)
+            this.put(stampName, songMap)
         }
     }
 
-    private fun put(stampMap: MutableMap<String, MutableMap<String, MediaMetadataCompat>>?, stampName: String, trackMap: MutableMap<String, MediaMetadataCompat>?) {
-        if (stampMap == null || trackMap == null) {
-            return
-        }
-        if (stampMap.containsKey(stampName)) {
-            stampMap[stampName]?.putAll(trackMap)
+    /*
+        'favorite' ->  {'mediaId_1' -> song1, 'mediaId_2' -> song2}
+        'recent'   ->  {'mediaId_1' -> song1, 'mediaId_2' -> song2}
+     */
+    private fun MutableMap<String, MutableMap<String, MediaMetadataCompat>>.putSongMap(stampName: String, songMap: MutableMap<String, MediaMetadataCompat>) {
+        if (this.containsKey(stampName)) {
+            this[stampName]?.putAll(songMap)
         } else {
-            stampMap.put(stampName, trackMap)
+            this.put(stampName, songMap)
         }
     }
 
-    private fun put(stampQueryMap: MutableMap<String, MutableMap<CategoryType, MutableList<String>>>?, categoryStamp: CategoryStamp?) {
-        if (stampQueryMap == null || categoryStamp == null) {
-            return
-        }
-        if (stampQueryMap.containsKey(categoryStamp.name)) {
-            putQuery(stampQueryMap[categoryStamp.name], categoryStamp)
+    /*
+        'favorite' ->  {CategoryType.ALBUM -> ['title1', 'title2'], CategoryType.ARTIST -> ['artist1', 'artist2']}
+        'recent'   ->  {CategoryType.ALBUM -> ['title3', 'title4'], CategoryType.ARTIST -> ['artist5', 'artist6']}
+     */
+    private fun MutableMap<String, MutableMap<CategoryType, MutableList<String>>>.putCategoryStamp(categoryStamp: CategoryStamp) {
+        if (this.containsKey(categoryStamp.name)) {
+            this[categoryStamp.name]?.putQuery(categoryStamp)
         } else {
             val queryMap = ConcurrentHashMap<CategoryType, MutableList<String>>()
-            putQuery(queryMap, categoryStamp)
-            stampQueryMap.put(categoryStamp.name, queryMap)
+            queryMap.putQuery(categoryStamp)
+            this.put(categoryStamp.name, queryMap)
         }
     }
 
-    private fun putQuery(queryMap: MutableMap<CategoryType, MutableList<String>>?, categoryStamp: CategoryStamp?) {
-        if (queryMap == null || categoryStamp == null) {
-            return
-        }
+    /*
+        CategoryType.ALBUM  -> ['title1', 'title2']
+        CategoryType.ARTIST -> ['artist1', 'artist2']
+     */
+    private fun MutableMap<CategoryType, MutableList<String>>.putQuery(categoryStamp: CategoryStamp) {
         val categoryType = CategoryType.of(categoryStamp.type) ?: return
         val query = categoryStamp.value.toLowerCase(Locale.getDefault())
-        if (queryMap.containsKey(categoryType) && !queryMap[categoryType]!!.isEmpty()) {
-            queryMap[categoryType]!!.add(query)
+        if (this.containsKey(categoryType) && !this[categoryType]!!.isEmpty()) {
+            this[categoryType]?.add(query)
         } else {
-            queryMap.put(categoryType, ArrayList(listOf(query)))
+            this.put(categoryType, ArrayList(listOf(query)))
         }
+    }
+
+    private fun SongStamp.songMap(): MutableMap<String, MediaMetadataCompat> {
+        val songMap = ConcurrentHashMap<String, MediaMetadataCompat>()
+        for (song in this.songList) {
+            songMap.put(song.mediaId, song.buildMediaMetadataCompat())
+        }
+        return songMap
     }
 
     companion object {

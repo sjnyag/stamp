@@ -108,40 +108,6 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
         TextView mCountView;
         TextView mOrderView;
         ViewGroup mStampListLayout;
-        View.OnClickListener mOnNewStamp = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                StampEditStateObserver stampEditStateObserver = StampEditStateObserver.getInstance();
-                final String mediaId = (String) v.getTag(R.id.text_view_new_stamp_media_id);
-                SongController songController = new SongController(mContext);
-                songController.registerStampList(stampEditStateObserver.getSelectedStampList(), mediaId);
-                ((Activity) mContext).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateStampList(mediaId);
-                    }
-                });
-            }
-        };
-
-        View.OnClickListener mOnRemoveStamp = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String mediaId = (String) v.getTag(R.id.text_view_remove_stamp_media_id);
-                final String stampName = (String) v.getTag(R.id.text_view_remove_stamp_stamp_name);
-                SongController songController = new SongController(mContext);
-                songController.removeStamp(stampName, mediaId);
-
-                if (mContext instanceof Activity) {
-                    ((Activity) mContext).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateStampList(mediaId);
-                        }
-                    });
-                }
-            }
-        };
 
         public void updateStampList(String artistName) {
             /*

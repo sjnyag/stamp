@@ -8,11 +8,12 @@ import com.sjn.stamp.R;
 import com.sjn.stamp.constant.CategoryType;
 import com.sjn.stamp.media.provider.multiple.GenreListProvider;
 import com.sjn.stamp.media.provider.multiple.PlaylistProvider;
+import com.sjn.stamp.media.provider.multiple.SmartStampListProvider;
 import com.sjn.stamp.media.provider.single.TopSongProvider;
 import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.media.provider.multiple.AlbumListProvider;
 import com.sjn.stamp.media.provider.multiple.ArtistListProvider;
-import com.sjn.stamp.media.provider.multiple.StampListProvider;
+import com.sjn.stamp.media.provider.multiple.MyStampListProvider;
 import com.sjn.stamp.media.provider.single.AllProvider;
 import com.sjn.stamp.media.provider.single.NewProvider;
 import com.sjn.stamp.media.provider.single.QueueProvider;
@@ -52,10 +53,21 @@ public enum ProviderType {
             return CategoryType.GENRE;
         }
     },
-    STAMP(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_STAMP, R.string.no_items) {
+    MY_STAMP(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_MY_STAMP, R.string.no_items) {
         @Override
         public ListProvider newProvider(Context context) {
-            return new StampListProvider(context);
+            return new MyStampListProvider(context);
+        }
+
+        @Override
+        public CategoryType getCategoryType() {
+            return null;
+        }
+    },
+    SMART_STAMP(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_SMART_STAMP, R.string.no_items) {
+        @Override
+        public ListProvider newProvider(Context context) {
+            return new SmartStampListProvider(context);
         }
 
         @Override

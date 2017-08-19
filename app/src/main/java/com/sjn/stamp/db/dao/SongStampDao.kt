@@ -11,6 +11,9 @@ object SongStampDao : BaseDao() {
     fun findAll(realm: Realm): List<SongStamp> =
             realm.where(SongStamp::class.java).findAll().sort("name")
 
+    fun findAll(realm: Realm, isSystem: Boolean): List<SongStamp> =
+            realm.where(SongStamp::class.java).equalTo("isSystem", isSystem).findAll().sort("name")
+
     fun saveOrAdd(realm: Realm, rawSongStamp: SongStamp, rawSong: Song) {
         realm.executeTransaction(Realm.Transaction { r ->
             val managedSongStamp = r.where(SongStamp::class.java).equalTo("name", rawSongStamp.name).findFirst()
@@ -31,23 +34,23 @@ object SongStampDao : BaseDao() {
         })
     }
 
-    fun remove(realm: Realm, name: String) {
+    fun remove(realm: Realm, name: String, isSystem: Boolean) {
         realm.beginTransaction()
-        realm.where(SongStamp::class.java).equalTo("name", name).findAll().deleteAllFromRealm()
+        realm.where(SongStamp::class.java).equalTo("name", name).equalTo("isSystem", isSystem).findAll().deleteAllFromRealm()
         realm.commitTransaction()
     }
 
-    fun save(realm: Realm, name: String?): Boolean {
+    fun save(realm: Realm, name: String, isSystem: Boolean): Boolean {
         var result = false
-        if (name == null || name.isEmpty()) {
+        if (name.isEmpty()) {
             return false
         }
         realm.beginTransaction()
-        var songStamp: SongStamp? = realm.where(SongStamp::class.java).equalTo("name", name).findFirst()
+        var songStamp: SongStamp? = realm.where(SongStamp::class.java).equalTo("name", name).equalTo("isSystem", isSystem).findFirst()
         if (songStamp == null) {
             songStamp = realm.createObject(SongStamp::class.java, getAutoIncrementId(realm, SongStamp::class.java))
             songStamp!!.name = name
-            songStamp.isSystem = false
+            songStamp.isSystem = isSystem
             result = true
         }
         realm.commitTransaction()

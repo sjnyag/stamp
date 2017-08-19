@@ -8,69 +8,58 @@ import com.sjn.stamp.ui.fragment.media_list.AllSongPagerFragment;
 import com.sjn.stamp.ui.fragment.media_list.QueueListFragment;
 import com.sjn.stamp.ui.fragment.media_list.RankingPagerFragment;
 import com.sjn.stamp.ui.fragment.media_list.SongListFragment;
+import com.sjn.stamp.ui.fragment.media_list.StampPagerFragment;
 import com.sjn.stamp.ui.fragment.media_list.TimelineFragment;
 import com.sjn.stamp.utils.MediaIDHelper;
 
 public enum DrawerMenu {
-    HOME(R.id.navigation_home, null) {
+    HOME(R.id.navigation_home) {
         @Override
         Fragment getFragment() {
             return new AllSongPagerFragment();
         }
     },
-    TIMELINE(R.id.navigation_timeline, MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE) {
+    TIMELINE(R.id.navigation_timeline) {
         @Override
         Fragment getFragment() {
             return new TimelineFragment();
         }
     },
-    QUEUE(R.id.navigation_queue, MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE) {
+    QUEUE(R.id.navigation_queue) {
         @Override
         Fragment getFragment() {
             return new QueueListFragment();
         }
     },
-    STAMP(R.id.navigation_stamp, MediaIDHelper.MEDIA_ID_MUSICS_BY_STAMP) {
+    STAMP(R.id.navigation_stamp) {
         @Override
-        SongListFragment getFragment() {
-            return getDefaultFragment(mMediaId);
+        Fragment getFragment() {
+            return new StampPagerFragment();
         }
     },
-    RANKING(R.id.navigation_ranking, null) {
+    RANKING(R.id.navigation_ranking) {
         @Override
         Fragment getFragment() {
             return new RankingPagerFragment();
         }
     },
-    SETTING(R.id.navigation_setting, null) {
+    SETTING(R.id.navigation_setting) {
         @Override
         Fragment getFragment() {
             return new SettingFragment();
         }
     },;
     final int mMenuId;
-    final String mMediaId;
 
-    DrawerMenu(int menuId, String mediaId) {
+    DrawerMenu(int menuId) {
         mMenuId = menuId;
-        mMediaId = mediaId;
     }
 
     public int getMenuId() {
         return mMenuId;
     }
 
-    public String getMediaId() {
-        return mMediaId;
-    }
-
     abstract Fragment getFragment();
-
-    private static SongListFragment getDefaultFragment(String mediaId) {
-        SongListFragment songListFragment = new SongListFragment();
-        songListFragment.setMediaId(mediaId);
-        return songListFragment;
-    }
 
     public static DrawerMenu of(long menuId) {
         for (DrawerMenu drawerMenu : DrawerMenu.values()) {

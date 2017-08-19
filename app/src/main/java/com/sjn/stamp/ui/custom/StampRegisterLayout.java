@@ -36,7 +36,7 @@ public class StampRegisterLayout extends RelativeLayout {
                     return;
                 }
                 String stampName = stampInput.getText().toString();
-                if (new StampController().register(stampName)) {
+                if (new StampController().register(stampName, false)) {
                     StampEditStateObserver.getInstance().notifyAllStampChange(stampName);
                     stampInput.setText("");
                 }

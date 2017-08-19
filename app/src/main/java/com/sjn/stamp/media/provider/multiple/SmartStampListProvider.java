@@ -12,9 +12,9 @@ import com.sjn.stamp.utils.MediaItemHelper;
 import java.util.List;
 import java.util.Map;
 
-public class StampListProvider extends MultipleListProvider {
+public class SmartStampListProvider extends MultipleListProvider {
 
-    public StampListProvider(Context context) {
+    public SmartStampListProvider(Context context) {
         super(context);
     }
 
@@ -25,7 +25,7 @@ public class StampListProvider extends MultipleListProvider {
 
     @Override
     protected String getProviderMediaId() {
-        return MediaIDHelper.MEDIA_ID_MUSICS_BY_STAMP;
+        return MediaIDHelper.MEDIA_ID_MUSICS_BY_SMART_STAMP;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class StampListProvider extends MultipleListProvider {
     @Override
     protected Map<String, List<MediaMetadataCompat>> createTrackListMap(final Map<String, MediaMetadataCompat> musicListById) {
         StampController stampController = new StampController();
-        return stampController.getAllSongList(musicListById);
+        return stampController.createStampMap(musicListById, true);
     }
 
     @Override

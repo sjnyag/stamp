@@ -59,7 +59,7 @@ internal class SmartStampController(private val mContext: Context) {
 
         internal fun registerStamp(stamp: String) {
             val stampController = StampController()
-            stampController.register(stamp)
+            stampController.register(stamp, true)
         }
     }
 

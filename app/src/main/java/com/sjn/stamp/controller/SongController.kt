@@ -57,7 +57,7 @@ class SongController(private val mContext: Context) {
 
     fun findStampsByMusicId(musicId: String): List<String> = findSongStampListByMusicId(musicId)
 
-    fun removeStamp(stampName: String, mediaId: String) {
+    fun removeStamp(stampName: String, mediaId: String, isSystem: Boolean) {
         if (MediaIDHelper.isTrack(mediaId)) {
             removeSongStamp(stampName, mediaId)
         } else {
@@ -65,15 +65,15 @@ class SongController(private val mContext: Context) {
             if (hierarchy.size <= 1) {
                 return
             }
-            removeCategoryStamp(stampName, ProviderType.of(hierarchy[0]).categoryType, hierarchy[1])
+            removeCategoryStamp(stampName, ProviderType.of(hierarchy[0]).categoryType, hierarchy[1], isSystem)
         }
         val stampController = StampController()
         stampController.notifyStampChange()
     }
 
-    private fun removeCategoryStamp(stampName: String, categoryType: CategoryType, categoryValue: String) {
+    private fun removeCategoryStamp(stampName: String, categoryType: CategoryType, categoryValue: String, isSystem: Boolean) {
         val realm = RealmHelper.getRealmInstance()
-        CategoryStampDao.remove(realm, stampName, categoryType, categoryValue)
+        CategoryStampDao.remove(realm, stampName, categoryType, categoryValue, isSystem)
         realm.close()
     }
 

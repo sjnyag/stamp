@@ -118,7 +118,7 @@ public class RankedSongItem extends AbstractItem<RankedSongItem.SimpleViewHolder
                 final String mediaId = (String) v.getTag(R.id.text_view_remove_stamp_media_id);
                 final String stampName = (String) v.getTag(R.id.text_view_remove_stamp_stamp_name);
                 SongController songController = new SongController(mContext);
-                songController.removeStamp(stampName, mediaId);
+                songController.removeStamp(stampName, mediaId, false);
 
                 if (mContext instanceof Activity) {
                     ((Activity) mContext).runOnUiThread(new Runnable() {

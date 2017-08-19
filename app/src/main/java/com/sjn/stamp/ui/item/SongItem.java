@@ -189,7 +189,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
                 final String mediaId = (String) v.getTag(R.id.text_view_remove_stamp_media_id);
                 final String stampName = (String) v.getTag(R.id.text_view_remove_stamp_stamp_name);
                 SongController songController = new SongController(mActivity);
-                songController.removeStamp(stampName, mediaId);
+                songController.removeStamp(stampName, mediaId, false);
 
                 mActivity.runOnUiThread(new Runnable() {
                     @Override

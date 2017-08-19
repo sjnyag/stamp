@@ -44,7 +44,8 @@ public class MediaIDHelper {
     public static final String MEDIA_ID_MUSICS_BY_ALBUM = "__BY_ALBUM__";
     public static final String MEDIA_ID_MUSICS_BY_ALL = "__BY_ALL__";
     public static final String MEDIA_ID_MUSICS_BY_QUEUE = "__BY_QUEUE__";
-    public static final String MEDIA_ID_MUSICS_BY_STAMP = "__BY_STAMP__";
+    public static final String MEDIA_ID_MUSICS_BY_MY_STAMP = "__BY_MY_STAMP__";
+    public static final String MEDIA_ID_MUSICS_BY_SMART_STAMP = "__BY_SMART_STAMP__";
     public static final String MEDIA_ID_MUSICS_BY_PLAYLIST = "__BY_PLAYLIST__";
     public static final String MEDIA_ID_MUSICS_BY_PLAYLIST_LIST = "__BY_PLAYLIST__";
     public static final String MEDIA_ID_MUSICS_BY_NEW = "__BY_NEW__";

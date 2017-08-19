@@ -134,12 +134,6 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                     case POSITIVE:
                         mListener.destroyActionModeIfCan();
                         mMediaBrowsable.sendCustomAction(MusicService.Companion.getCUSTOM_ACTION_RELOAD_MUSIC_PROVIDER(), null, null);
-                        Handler handler = new Handler(getActivity().getMainLooper());
-                        handler.post(new Runnable() {
-                            public void run() {
-                                mLoading.setVisibility(View.VISIBLE);
-                            }
-                        });
                         return;
                     default:
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -208,7 +202,6 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                     if (mSwipeRefreshLayout != null) {
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
-                    mLoading.setVisibility(View.VISIBLE);
                 }
             });
         }
