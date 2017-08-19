@@ -111,6 +111,7 @@ public class DialogFacade {
         dataSet.add(Licenses.noContent("Firebase", "Google Inc.", "https://firebase.google.com/terms/"));
         dataSet.add(Licenses.fromGitHub("google/guava", LICENSE_APACHE_V2));
         dataSet.add(Licenses.fromGitHubMIT("bowyer-app/FabTransitionLayout"));
+        dataSet.add(Licenses.fromGitHubApacheV2("KeepSafe/TapTargetView"));
         dataSet.add(Licenses.fromGitHubMIT("afollestad/material-dialogs"));
         dataSet.add(Licenses.fromGitHubApacheV2("vajro/MaterialDesignLibrary"));
         dataSet.add(Licenses.fromGitHubMIT("ozodrukh/CircularReveal"));

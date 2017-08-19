@@ -21,7 +21,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bowyer.app.fabtransitionlayout.BottomSheetLayout;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.sjn.stamp.R;
+import com.sjn.stamp.controller.StampController;
 import com.sjn.stamp.ui.SongAdapter;
 import com.sjn.stamp.ui.item.ProgressItem;
 import com.sjn.stamp.ui.observer.StampEditStateObserver;
@@ -289,9 +292,41 @@ public abstract class ListFragment extends Fragment implements
                 if (mBottomSheetLayout.isFabExpanded()) {
                     mBottomSheetLayout.contractFab();
                 }
+                if (new StampController().findAll().isEmpty()) {
+                    showTapTargetView();
+                }
                 break;
         }
         mAdapter.notifyDataSetChanged();
+    }
+
+    private void showTapTargetView() {
+        /*
+
+                new TapTargetSequence(getActivity())
+                        .targets(
+                                TapTarget.forView(getActivity().findViewById(R.id.text_view_new_stamp_media_id), "Gonna"),
+                                TapTarget.forView(getActivity().findViewById(R.id.text_view_new_stamp_media_id), "You", "Up"))
+                        .listener(new TapTargetSequence.Listener() {
+                            // This listener will tell us when interesting(tm) events happen in regards
+                            // to the sequence
+                            @Override
+                            public void onSequenceFinish() {
+                                // Yay
+                            }
+
+                            @Override
+                            public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+
+                            }
+
+                            @Override
+                            public void onSequenceCanceled(TapTarget lastTarget) {
+                                // Boo
+                            }
+                        }).start();
+         */
+        //TapTargetView.showFor(getActivity(), TapTarget.forView(getActivity().findViewById(R.id.fab), "This is a target", "We have the best targets, believe me"));
     }
 
     public String emptyMessage() {

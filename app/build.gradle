@@ -88,6 +88,7 @@ dependencies {
     compile 'com.google.firebase:firebase-crash:9.4.0'
     compile 'com.google.guava:guava:20.0'
     compile 'com.bowyer.app:fabtransitionlayout:0.4.0@aar'
+    compile 'com.getkeepsafe.taptargetview:taptargetview:1.9.1'
     compile('com.github.afollestad.material-dialogs:core:0.8.5.8@aar') {
         transitive = true
     }
