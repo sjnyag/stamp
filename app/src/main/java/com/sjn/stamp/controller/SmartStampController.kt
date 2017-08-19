@@ -13,7 +13,7 @@ internal class SmartStampController(private val mContext: Context) {
                 var result = false
                 var counter = 0
                 RealmHelper.getRealmInstance().use { realm ->
-                    val songHistoryList = SongHistoryDao.findAll(realm, RecordType.PLAY.value)
+                    val songHistoryList = SongHistoryDao.findAll(realm, RecordType.PLAY.databaseValue)
                     for (songHistory in songHistoryList) {
                         if (songHistory.song != song) {
                             break

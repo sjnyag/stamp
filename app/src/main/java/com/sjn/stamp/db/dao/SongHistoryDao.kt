@@ -23,13 +23,13 @@ object SongHistoryDao : BaseDao() {
     }
 
     fun findPlayRecordByArtist(realm: Realm, artistName: String): List<SongHistory> =
-            realm.where(SongHistory::class.java).equalTo("recordType", RecordType.PLAY.value).equalTo("song.artist.name", artistName).findAll()
+            realm.where(SongHistory::class.java).equalTo("recordType", RecordType.PLAY.databaseValue).equalTo("song.artist.name", artistName).findAll()
 
     fun findOldestByArtist(realm: Realm, artistName: String): SongHistory =
-            realm.where(SongHistory::class.java).equalTo("recordType", RecordType.PLAY.value).equalTo("song.artist.name", artistName).findAllSorted("recordedAt", Sort.ASCENDING).first()
+            realm.where(SongHistory::class.java).equalTo("recordType", RecordType.PLAY.databaseValue).equalTo("song.artist.name", artistName).findAllSorted("recordedAt", Sort.ASCENDING).first()
 
     fun findOldest(realm: Realm, song: Song): SongHistory =
-            realm.where(SongHistory::class.java).equalTo("song.mediaId", song.mediaId).equalTo("recordType", RecordType.PLAY.value).findAllSorted("recordedAt", Sort.ASCENDING).first()
+            realm.where(SongHistory::class.java).equalTo("song.mediaId", song.mediaId).equalTo("recordType", RecordType.PLAY.databaseValue).findAllSorted("recordedAt", Sort.ASCENDING).first()
 
     fun save(realm: Realm, songHistory: SongHistory) {
         realm.executeTransaction { r ->

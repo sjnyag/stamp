@@ -98,7 +98,7 @@ class SongHistoryController(private val mContext: Context) {
         }
 
     fun getManagedTimeline(realm: Realm): List<SongHistory> =
-            SongHistoryDao.timeline(realm, RecordType.PLAY.value)
+            SongHistoryDao.timeline(realm, RecordType.PLAY.databaseValue)
 
     fun getRankedSongList(realm: Realm, period: PeriodSelectLayout.Period): List<RankedSong> {
         var from: Date? = if (period.from() == null) null else period.from().toDateTimeAtStartOfDay().toDate()
@@ -123,7 +123,7 @@ class SongHistoryController(private val mContext: Context) {
     private fun getRankedSongList(realm: Realm, from: Date?, to: Date?): List<RankedSong> {
         LogHelper.d(TAG, "getRankedSongList start")
         LogHelper.d(TAG, "calc historyList")
-        val historyList = SongHistoryDao.where(realm, from, to, RecordType.PLAY.value)
+        val historyList = SongHistoryDao.where(realm, from, to, RecordType.PLAY.databaseValue)
         val songCountMap = HashMap<Song, Int>()
         LogHelper.d(TAG, "put songCountMap")
         for (songHistory in historyList) {
@@ -149,7 +149,7 @@ class SongHistoryController(private val mContext: Context) {
 
     private fun getRankedArtistList(realm: Realm, from: Date?, to: Date?): List<RankedArtist> {
         LogHelper.d(TAG, "getRankedArtistList start")
-        val historyList = SongHistoryDao.where(realm, from, to, RecordType.PLAY.value)
+        val historyList = SongHistoryDao.where(realm, from, to, RecordType.PLAY.databaseValue)
         val artistMap = HashMap<Artist, ArtistCounter>()
         for (songHistory in historyList) {
             ArtistCounter.count(artistMap, songHistory.song.artist, songHistory.song)

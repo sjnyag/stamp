@@ -1,6 +1,6 @@
 package com.sjn.stamp.constant
 
-enum class RecordType(val value: String) {
+enum class RecordType(val databaseValue: String) {
     PLAY("play"),
     SKIP("skip"),
     START("start"),
@@ -10,8 +10,7 @@ enum class RecordType(val value: String) {
         get() = this.toString()
 
     companion object {
-
-        fun of(value: String): RecordType? = RecordType.values().firstOrNull { it.value == value }
+        fun of(databaseValue: String): RecordType? = RecordType.values().firstOrNull { it.databaseValue == databaseValue }
     }
 
 }

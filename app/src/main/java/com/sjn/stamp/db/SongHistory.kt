@@ -25,7 +25,7 @@ open class SongHistory(
 
     fun applyValues(song: Song, recordType: RecordType, device: Device, date: Date, count: Int) {
         this.song = song
-        this.recordType = recordType.value
+        this.recordType = recordType.databaseValue
         this.device = device
         this.recordedAt = date
         this.count = count
