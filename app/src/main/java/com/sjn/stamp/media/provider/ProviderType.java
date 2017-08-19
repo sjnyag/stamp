@@ -6,17 +6,17 @@ import android.support.v4.media.MediaMetadataCompat;
 
 import com.sjn.stamp.R;
 import com.sjn.stamp.constant.CategoryType;
-import com.sjn.stamp.media.provider.multiple.GenreListProvider;
-import com.sjn.stamp.media.provider.multiple.PlaylistProvider;
-import com.sjn.stamp.media.provider.multiple.SmartStampListProvider;
-import com.sjn.stamp.media.provider.single.TopSongProvider;
-import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.media.provider.multiple.AlbumListProvider;
 import com.sjn.stamp.media.provider.multiple.ArtistListProvider;
+import com.sjn.stamp.media.provider.multiple.GenreListProvider;
 import com.sjn.stamp.media.provider.multiple.MyStampListProvider;
+import com.sjn.stamp.media.provider.multiple.PlaylistProvider;
+import com.sjn.stamp.media.provider.multiple.SmartStampListProvider;
 import com.sjn.stamp.media.provider.single.AllProvider;
 import com.sjn.stamp.media.provider.single.NewProvider;
 import com.sjn.stamp.media.provider.single.QueueProvider;
+import com.sjn.stamp.media.provider.single.TopSongProvider;
+import com.sjn.stamp.utils.MediaIDHelper;
 
 
 public enum ProviderType {
@@ -53,7 +53,7 @@ public enum ProviderType {
             return CategoryType.GENRE;
         }
     },
-    MY_STAMP(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_MY_STAMP, R.string.no_items) {
+    MY_STAMP(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_MY_STAMP, R.string.empty_message_my_stamp) {
         @Override
         public ListProvider newProvider(Context context) {
             return new MyStampListProvider(context);
@@ -64,7 +64,7 @@ public enum ProviderType {
             return null;
         }
     },
-    SMART_STAMP(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_SMART_STAMP, R.string.no_items) {
+    SMART_STAMP(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_SMART_STAMP, R.string.empty_message_smart_stamp) {
         @Override
         public ListProvider newProvider(Context context) {
             return new SmartStampListProvider(context);
@@ -144,7 +144,7 @@ public enum ProviderType {
 
     public abstract CategoryType getCategoryType();
 
-    public String getEmptyMessage(Resources resources){
+    public String getEmptyMessage(Resources resources) {
         return resources.getString(mEmptyMessageResourceId);
     }
 
