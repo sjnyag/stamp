@@ -15,11 +15,11 @@ object TotalSongHistoryDao : BaseDao() {
         val playCount: Int
         realm.beginTransaction()
         val totalSongHistory = realm.where(TotalSongHistory::class.java)
-                .equalTo("song.mediaId", rawTotalSongHistory.song!!.mediaId)
+                .equalTo("song.mediaId", rawTotalSongHistory.song.mediaId)
                 .findFirst()
         if (totalSongHistory == null) {
             rawTotalSongHistory.id = getAutoIncrementId(realm, TotalSongHistory::class.java)
-            rawTotalSongHistory.song = SongDao.findOrCreate(realm, rawTotalSongHistory.song!!)
+            rawTotalSongHistory.song = SongDao.findOrCreate(realm, rawTotalSongHistory.song)
             realm.insert(rawTotalSongHistory)
             playCount = rawTotalSongHistory.playCount
         } else {
@@ -40,11 +40,11 @@ object TotalSongHistoryDao : BaseDao() {
             return
         }
         var totalSongHistory: TotalSongHistory? = realm.where(TotalSongHistory::class.java)
-                .equalTo("song.mediaId", songHistory.song!!.mediaId)
+                .equalTo("song.mediaId", songHistory.song.mediaId)
                 .findFirst()
         if (totalSongHistory == null) {
             totalSongHistory = realm.createObject(TotalSongHistory::class.java, getAutoIncrementId(realm, TotalSongHistory::class.java))
-            totalSongHistory!!.song = SongDao.findOrCreate(realm, songHistory.song!!)
+            totalSongHistory!!.song = SongDao.findOrCreate(realm, songHistory.song)
         }
         totalSongHistory.updatePlayCountIfOver(playCount)
         totalSongHistory.updateSkipCountIfOver(skipCount)

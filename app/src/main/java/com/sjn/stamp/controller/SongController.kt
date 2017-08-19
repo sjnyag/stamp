@@ -12,6 +12,7 @@ import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaIDHelper
 import com.sjn.stamp.utils.MediaRetrieveHelper
 import com.sjn.stamp.utils.RealmHelper
+import io.realm.Realm
 import java.util.*
 
 class SongController(private val mContext: Context) {
@@ -39,7 +40,7 @@ class SongController(private val mContext: Context) {
             }
             registerCategoryStampList(stampNameList, ProviderType.of(hierarchy[0]).categoryType, hierarchy[1])
         }
-        val stampController = StampController(mContext)
+        val stampController = StampController()
         stampController.notifyStampChange()
     }
 
@@ -66,7 +67,7 @@ class SongController(private val mContext: Context) {
             }
             removeCategoryStamp(stampName, ProviderType.of(hierarchy[0]).categoryType, hierarchy[1])
         }
-        val stampController = StampController(mContext)
+        val stampController = StampController()
         stampController.notifyStampChange()
     }
 
@@ -79,27 +80,25 @@ class SongController(private val mContext: Context) {
     private fun removeSongStamp(stampName: String, mediaId: String) {
         //TODO: cache
         val musicId = MediaIDHelper.extractMusicIDFromMediaID(mediaId)
-        val realm = RealmHelper.getRealmInstance()
-        val song = SongDao.findByMusicId(realm, musicId)
-        val list = song.songStampList
-        if (list != null) {
-            for (songStamp in list) {
-                if (songStamp.name != null && songStamp.name == stampName) {
-                    realm.beginTransaction()
-                    val songList = songStamp.songList
-                    songList?.remove(song)
-                    song.songStampList!!.remove(songStamp)
-                    realm.commitTransaction()
-                    break
+        RealmHelper.getRealmInstance().use { realm: Realm ->
+            SongDao.findByMusicId(realm, musicId)?.let { song ->
+                for (songStamp in song.songStampList) {
+                    if (songStamp.name == stampName) {
+                        realm.beginTransaction()
+                        val songList = songStamp.songList
+                        songList.remove(song)
+                        song.songStampList.remove(songStamp)
+                        realm.commitTransaction()
+                        break
+                    }
                 }
             }
         }
-        realm.close()
     }
 
     private fun findCategoryStampList(categoryType: CategoryType, categoryValue: String): List<String> {
         val realm = RealmHelper.getRealmInstance()
-        val stampList = CategoryStampDao.findCategoryStampList(realm, categoryType, categoryValue).map { it.name!! }
+        val stampList = CategoryStampDao.findCategoryStampList(realm, categoryType, categoryValue).map { it.name }
         realm.close()
         return stampList
     }
@@ -112,15 +111,13 @@ class SongController(private val mContext: Context) {
 
     private fun findSongStampListByMusicId(musicId: String): List<String> {
         val stampList = ArrayList<String>()
-        val realm = RealmHelper.getRealmInstance()
-        val song = SongDao.findByMusicId(realm, musicId)
-        val list = song.songStampList
-        if (list != null) {
-            for (songStamp in list) {
-                songStamp.name?.let { s -> stampList.add(s) }
+        RealmHelper.getRealmInstance().use { realm: Realm ->
+            SongDao.findByMusicId(realm, musicId)?.let { song ->
+                for (songStamp in song.songStampList) {
+                    songStamp.name.let { s -> stampList.add(s) }
+                }
             }
         }
-        realm.close()
         return stampList
     }
 

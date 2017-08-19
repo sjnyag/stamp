@@ -18,7 +18,5 @@ open class Artist(
         return true
     }
 
-    override fun hashCode(): Int {
-        return name.hashCode()
-    }
+    override fun hashCode(): Int = name.hashCode()
 }

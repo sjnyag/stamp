@@ -32,19 +32,17 @@ object SongHistoryDao : BaseDao() {
             realm.where(SongHistory::class.java).equalTo("song.mediaId", song.mediaId).equalTo("recordType", RecordType.PLAY.value).findAllSorted("recordedAt", Sort.ASCENDING).first()
 
     fun save(realm: Realm, songHistory: SongHistory) {
-        realm.executeTransaction { realm ->
-            songHistory.id = getAutoIncrementId(realm, SongHistory::class.java)
-            songHistory.device = DeviceDao.findOrCreate(realm, songHistory.device!!)
-            songHistory.song = SongDao.findOrCreate(realm, songHistory.song!!)
-            realm.insert(songHistory)
+        realm.executeTransaction { r ->
+            songHistory.id = getAutoIncrementId(r, SongHistory::class.java)
+            songHistory.device = DeviceDao.findOrCreate(r, songHistory.device)
+            songHistory.song = SongDao.findOrCreate(r, songHistory.song)
+            r.insert(songHistory)
         }
     }
 
     fun remove(realm: Realm, id: Long) {
-        realm.executeTransactionAsync { realm -> realm.where(SongHistory::class.java).equalTo("id", id).findFirst().deleteFromRealm() }
+        realm.executeTransactionAsync { r -> r.where(SongHistory::class.java).equalTo("id", id).findFirst().deleteFromRealm() }
     }
-
-    fun findAll(realm: Realm): List<SongHistory> = realm.where(SongHistory::class.java).findAll()
 
     fun findAll(realm: Realm, recordType: String): List<SongHistory> =
             realm.where(SongHistory::class.java).equalTo("recordType", recordType).findAllSorted("recordedAt", Sort.DESCENDING)

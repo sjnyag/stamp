@@ -40,7 +40,7 @@ public class StampListProvider extends MultipleListProvider {
 
     @Override
     protected Map<String, List<MediaMetadataCompat>> createTrackListMap(final Map<String, MediaMetadataCompat> musicListById) {
-        StampController stampController = new StampController(mContext);
+        StampController stampController = new StampController();
         return stampController.getAllSongList(musicListById);
     }
 
