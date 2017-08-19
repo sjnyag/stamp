@@ -21,6 +21,7 @@ import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class PeriodSelectLayout extends LinearLayout {
@@ -57,16 +58,29 @@ public class PeriodSelectLayout extends LinearLayout {
             }
         }
 
-        public PeriodType getPeriodType(){
+        public PeriodType getPeriodType() {
             return mPeriodType;
         }
 
-        public LocalDate from() {
-            return mFrom;
+        public Date from() {
+            if (getPeriodType() == PeriodType.TOTAL) {
+                return null;
+            }
+            if (mFrom == null) {
+                return null;
+            }
+            return mFrom.toDateTimeAtStartOfDay().toDate();
         }
 
-        public LocalDate to() {
-            return mTo;
+
+        public Date to() {
+            if (getPeriodType() == PeriodType.TOTAL) {
+                return null;
+            }
+            if (mTo == null) {
+                return null;
+            }
+            return mTo.toDateTimeAtStartOfDay().plusDays(1).toDate();
         }
     }
 
@@ -201,7 +215,7 @@ public class PeriodSelectLayout extends LinearLayout {
         initYearSpinner();
     }
 
-    int getResourceId(){
+    int getResourceId() {
         return R.layout.layout_period_select;
     }
 

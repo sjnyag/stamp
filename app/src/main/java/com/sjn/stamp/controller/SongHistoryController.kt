@@ -19,49 +19,65 @@ import java.util.*
 
 class SongHistoryController(private val mContext: Context) {
 
-    fun deleteSongHistory(songHistoryId: Long) {
-        val realm = RealmHelper.getRealmInstance()
-        SongHistoryDao.remove(realm, songHistoryId)
-        realm.close()
-    }
-
-    fun onPlay(track: MediaMetadataCompat, date: Date) {
-        LogHelper.d(TAG, "insertPLAY ", track.description.title)
-        registerHistory(track, RecordType.PLAY, date)
-    }
-
-    fun onSkip(track: MediaMetadataCompat, date: Date) {
-        LogHelper.d(TAG, "insertSKIP ", track.description.title)
-        registerHistory(track, RecordType.SKIP, date)
-    }
-
-    fun onStart(track: MediaMetadataCompat, date: Date) {
-        LogHelper.d(TAG, "insertSTART ", track.description.title)
-        registerHistory(track, RecordType.START, date)
-    }
-
-    fun onComplete(track: MediaMetadataCompat, date: Date) {
-        LogHelper.d(TAG, "insertComplete ", track.description.title)
-        registerHistory(track, RecordType.COMPLETE, date)
-    }
-
-    private fun registerHistory(track: MediaMetadataCompat, recordType: RecordType, date: Date) {
-        val song = createSong(track)
-        val realm = RealmHelper.getRealmInstance()
-        val playCount = TotalSongHistoryDao.saveOrIncrement(realm, createTotalSongHistory(song, recordType))
-        SongHistoryDao.save(realm, createSongHistory(song, createDevice(), recordType, date, playCount))
-        if (recordType === RecordType.PLAY) {
-            sendNotificationBySongCount(realm, song, playCount)
-            sendNotificationByArtistCount(song)
+    val topSongList: List<MediaMetadataCompat>
+        get() {
+            return RealmHelper.getRealmInstance().use { realm ->
+                val songList = ArrayList<MediaMetadataCompat>()
+                TotalSongHistoryDao.getOrderedList(realm)
+                        .takeWhile { !(it.playCount == 0 || songList.size >= UserSettingController().mostPlayedSongSize) }
+                        .forEach { songList.add(MediaItemHelper.convertToMetadata(it.song)) }
+                songList
+            }
         }
-        SmartStampController(mContext).calculateAsync(createSong(track), playCount, recordType)
-        realm.close()
+
+    fun onPlay(song: MediaMetadataCompat, date: Date) {
+        LogHelper.d(TAG, "insertPLAY ", song.description.title)
+        register(song, RecordType.PLAY, date)
+    }
+
+    fun onSkip(song: MediaMetadataCompat, date: Date) {
+        LogHelper.d(TAG, "insertSKIP ", song.description.title)
+        register(song, RecordType.SKIP, date)
+    }
+
+    fun onStart(song: MediaMetadataCompat, date: Date) {
+        LogHelper.d(TAG, "insertSTART ", song.description.title)
+        register(song, RecordType.START, date)
+    }
+
+    fun onComplete(song: MediaMetadataCompat, date: Date) {
+        LogHelper.d(TAG, "insertComplete ", song.description.title)
+        register(song, RecordType.COMPLETE, date)
+    }
+
+    fun delete(songHistoryId: Long) {
+        RealmHelper.getRealmInstance().use { realm ->
+            SongHistoryDao.remove(realm, songHistoryId)
+        }
+    }
+
+    fun getManagedTimeline(realm: Realm): List<SongHistory> = SongHistoryDao.timeline(realm, RecordType.PLAY.databaseValue)
+
+    fun getRankedSongList(realm: Realm, period: PeriodSelectLayout.Period): List<RankedSong> = getRankedSongList(realm, period.from(), period.to(), 30)
+
+    fun getRankedArtistList(realm: Realm, period: PeriodSelectLayout.Period): List<RankedArtist> = getRankedArtistList(realm, period.from(), period.to(), 30)
+
+    private fun register(metadata: MediaMetadataCompat, recordType: RecordType, date: Date) {
+        val song = createSong(metadata)
+        RealmHelper.getRealmInstance().use { realm ->
+            val playCount = TotalSongHistoryDao.saveOrIncrement(realm, createTotalSongHistory(song, recordType))
+            SongHistoryDao.save(realm, createSongHistory(song, createDevice(), recordType, date, playCount))
+            if (recordType === RecordType.PLAY) {
+                sendNotificationBySongCount(realm, song, playCount)
+                sendNotificationByArtistCount(song)
+            }
+            SmartStampController(mContext).calculateAsync(createSong(metadata), playCount, recordType)
+        }
     }
 
     private fun sendNotificationBySongCount(realm: Realm, song: Song, playCount: Int) {
         if (NotificationHelper.isSendPlayedNotification(playCount)) {
-            val oldestSongHistory = SongHistoryDao.findOldest(realm, song)
-            NotificationHelper.sendPlayedNotification(mContext, song.title, song.albumArtUri, playCount, oldestSongHistory.recordedAt)
+            NotificationHelper.sendPlayedNotification(mContext, song.title, song.albumArtUri, playCount, SongHistoryDao.findOldest(realm, song).recordedAt)
         }
     }
 
@@ -69,64 +85,20 @@ class SongHistoryController(private val mContext: Context) {
         ArtistCountAsyncTask(song.artist.name).execute()
     }
 
-    private fun createTotalSongHistory(song: Song, recordType: RecordType): TotalSongHistory {
-        val totalSongHistory = TotalSongHistoryDao.newStandalone()
-        totalSongHistory.parseSongQueue(song, recordType)
-        return totalSongHistory
-    }
+    private fun createTotalSongHistory(song: Song, recordType: RecordType): TotalSongHistory = TotalSongHistoryDao.newStandalone().applySongQueue(song, recordType)
 
     private fun createDevice(): Device = DeviceDao.newStandalone()
 
-    private fun createSong(track: MediaMetadataCompat): Song = SongDao.newStandalone(track)
+    private fun createSong(song: MediaMetadataCompat): Song = SongDao.newStandalone(song)
 
-    private fun createSongHistory(song: Song, device: Device, recordType: RecordType, date: Date, count: Int): SongHistory {
-        val songHistory = SongHistoryDao.newStandalone()
-        songHistory.applyValues(song, recordType, device, date, count)
-        return songHistory
-    }
+    private fun createSongHistory(song: Song, device: Device, recordType: RecordType, date: Date, count: Int): SongHistory = SongHistoryDao.newStandalone().applyValues(song, recordType, device, date, count)
 
-    val topSongList: List<MediaMetadataCompat>
-        get() {
-            val realm = RealmHelper.getRealmInstance()
-            val trackList = ArrayList<MediaMetadataCompat>()
-            val historyList = TotalSongHistoryDao.getOrderedList(realm)
-            historyList
-                    .takeWhile { !(it.playCount == 0 || trackList.size >= UserSettingController().mostPlayedSongSize) }
-                    .forEach { trackList.add(MediaItemHelper.convertToMetadata(it.song)) }
-            realm.close()
-            return trackList
-        }
-
-    fun getManagedTimeline(realm: Realm): List<SongHistory> =
-            SongHistoryDao.timeline(realm, RecordType.PLAY.databaseValue)
-
-    fun getRankedSongList(realm: Realm, period: PeriodSelectLayout.Period): List<RankedSong> {
-        var from: Date? = if (period.from() == null) null else period.from().toDateTimeAtStartOfDay().toDate()
-        var to: Date? = if (period.to() == null) null else period.to().toDateTimeAtStartOfDay().plusDays(1).toDate()
-        if (period.periodType == PeriodSelectLayout.PeriodType.TOTAL) {
-            from = null
-            to = null
-        }
-        return getRankedSongList(realm, from, to)
-    }
-
-    fun getRankedArtistList(realm: Realm, period: PeriodSelectLayout.Period): List<RankedArtist> {
-        var from: Date? = if (period.from() == null) null else period.from().toDateTimeAtStartOfDay().toDate()
-        var to: Date? = if (period.to() == null) null else period.to().toDateTimeAtStartOfDay().plusDays(1).toDate()
-        if (period.periodType == PeriodSelectLayout.PeriodType.TOTAL) {
-            from = null
-            to = null
-        }
-        return getRankedArtistList(realm, from, to)
-    }
-
-    private fun getRankedSongList(realm: Realm, from: Date?, to: Date?): List<RankedSong> {
+    private fun getRankedSongList(realm: Realm, from: Date?, to: Date?, count: Int): List<RankedSong> {
         LogHelper.d(TAG, "getRankedSongList start")
         LogHelper.d(TAG, "calc historyList")
-        val historyList = SongHistoryDao.where(realm, from, to, RecordType.PLAY.databaseValue)
         val songCountMap = HashMap<Song, Int>()
         LogHelper.d(TAG, "put songCountMap")
-        for (songHistory in historyList) {
+        for (songHistory in SongHistoryDao.where(realm, from, to, RecordType.PLAY.databaseValue)) {
             if (songCountMap.containsKey(songHistory.song)) {
                 songCountMap.put(songHistory.song, songCountMap[songHistory.song]!! + 1)
             } else {
@@ -140,14 +112,14 @@ class SongHistoryController(private val mContext: Context) {
         }
         LogHelper.d(TAG, "sort rankedSongList")
         Collections.sort(rankedSongList) { t1, t2 -> t2.playCount - t1.playCount }
-        if (rankedSongList.size > 30) {
-            rankedSongList = rankedSongList.subList(0, 30)
+        if (rankedSongList.size > count) {
+            rankedSongList = rankedSongList.subList(0, count)
         }
         LogHelper.d(TAG, "getRankedSongList end")
         return rankedSongList
     }
 
-    private fun getRankedArtistList(realm: Realm, from: Date?, to: Date?): List<RankedArtist> {
+    private fun getRankedArtistList(realm: Realm, from: Date?, to: Date?, count: Int): List<RankedArtist> {
         LogHelper.d(TAG, "getRankedArtistList start")
         val historyList = SongHistoryDao.where(realm, from, to, RecordType.PLAY.databaseValue)
         val artistMap = HashMap<Artist, ArtistCounter>()
@@ -159,8 +131,8 @@ class SongHistoryController(private val mContext: Context) {
             rankedArtistList.add(RankedArtist(value.mCount, key, value.mSongCountMap))
         }
         Collections.sort(rankedArtistList) { t1, t2 -> t2.playCount - t1.playCount }
-        if (rankedArtistList.size > 30) {
-            rankedArtistList = rankedArtistList.subList(0, 30)
+        if (rankedArtistList.size > count) {
+            rankedArtistList = rankedArtistList.subList(0, count)
         }
         LogHelper.d(TAG, "getRankedArtistList end")
         return rankedArtistList
@@ -192,30 +164,16 @@ class SongHistoryController(private val mContext: Context) {
         }
     }
 
-    private inner class ArtistCountAsyncTask internal constructor(internal var mArtistName: String?) : AsyncTask<Void, Void, Void>() {
+    private inner class ArtistCountAsyncTask internal constructor(internal var mArtistName: String) : AsyncTask<Void, Void, Void>() {
 
         override fun doInBackground(vararg params: Void): Void? {
-            var realm: Realm? = null
-            try {
-                realm = RealmHelper.getRealmInstance()
-
-                val historyList = SongHistoryDao.findPlayRecordByArtist(realm, mArtistName!!)
-                val playCount = historyList.size
-                if (NotificationHelper.isSendPlayedNotification(playCount)) {
-                    val oldestSongHistory = SongHistoryDao.findOldestByArtist(realm, mArtistName!!)
-                    val song = oldestSongHistory.song
-                    NotificationHelper.sendPlayedNotification(
-                            mContext,
-                            mArtistName,
-                            song.albumArtUri,
-                            playCount,
-                            oldestSongHistory.recordedAt
-                    )
+            RealmHelper.getRealmInstance().use { realm ->
+                val historyList = SongHistoryDao.findPlayRecordByArtist(realm, mArtistName)
+                if (!NotificationHelper.isSendPlayedNotification(historyList.size)) {
+                    return null
                 }
-            } finally {
-                if (realm != null) {
-                    realm.close()
-                }
+                val oldestSongHistory = SongHistoryDao.findOldestByArtist(realm, mArtistName)
+                NotificationHelper.sendPlayedNotification(mContext, mArtistName, oldestSongHistory.song.albumArtUri, historyList.size, oldestSongHistory.recordedAt)
             }
             return null
         }

@@ -23,12 +23,13 @@ open class SongHistory(
         var altitude: Float = 0.toFloat()
 ) : RealmObject() {
 
-    fun applyValues(song: Song, recordType: RecordType, device: Device, date: Date, count: Int) {
+    fun applyValues(song: Song, recordType: RecordType, device: Device, date: Date, count: Int): SongHistory {
         this.song = song
         this.recordType = recordType.databaseValue
         this.device = device
         this.recordedAt = date
         this.count = count
+        return this
     }
 
     fun toLabel(resources: Resources): String =

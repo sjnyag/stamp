@@ -46,13 +46,14 @@ open class TotalSongHistory(
         this.completeCount += completeCount
     }
 
-    fun parseSongQueue(song: Song, recordType: RecordType) {
+    fun applySongQueue(song: Song, recordType: RecordType): TotalSongHistory {
         when (recordType) {
             RecordType.PLAY -> applyValues(song, 1, 0, 0)
             RecordType.SKIP -> applyValues(song, 0, 1, 0)
             RecordType.COMPLETE -> applyValues(song, 0, 0, 1)
             else -> applyValues(song, 0, 0, 0)
         }
+        return this
     }
 
     private fun applyValues(song: Song, playCount: Int, skipCount: Int, completeCount: Int) {

@@ -31,7 +31,7 @@ internal class SmartStampController(private val mContext: Context) {
             override fun register(context: Context, song: Song, playCount: Int, recordType: RecordType) {
                 registerStamp(mStamp)
                 val songController = SongController(context)
-                songController.registerSystemStamp(mStamp, song)
+                songController.registerStamp(mStamp, song, true)
             }
         },
         ARTIST_BEST("Artist Best") {

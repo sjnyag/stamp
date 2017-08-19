@@ -57,7 +57,7 @@ object SongStampDao : BaseDao() {
         return result
     }
 
-    fun newStandalone(): SongStamp = SongStamp()
+    fun newStandalone(name: String, isSystem: Boolean): SongStamp = SongStamp(name = name, isSystem = isSystem)
 
     private fun addSongStamp(song: Song, songStamp: SongStamp?) {
         if (songStamp?.name == null) {

@@ -7,60 +7,52 @@ import com.sjn.stamp.utils.RealmHelper
 
 class UserSettingController {
 
-    var shuffleState: ShuffleState?
+    var shuffleState: ShuffleState
         get() {
-            val realm = RealmHelper.getRealmInstance()
-            val userSetting = UserSettingDao.getUserSetting(realm)
-            val shuffleState = userSetting.fetchShuffleStateValue()
-            realm.close()
-            return shuffleState
+            return RealmHelper.getRealmInstance().use { realm ->
+                UserSettingDao.getUserSetting(realm).fetchShuffleStateValue()
+            }
         }
         set(shuffleState) {
-            val realm = RealmHelper.getRealmInstance()
-            UserSettingDao.updateShuffleState(realm, shuffleState!!)
-            realm.close()
+            RealmHelper.getRealmInstance().use { realm ->
+                UserSettingDao.updateShuffleState(realm, shuffleState)
+            }
         }
 
-    var repeatState: RepeatState?
+    var repeatState: RepeatState
         get() {
-            val realm = RealmHelper.getRealmInstance()
-            val userSetting = UserSettingDao.getUserSetting(realm)
-            val repeatState = userSetting.fetchRepeatState()
-            realm.close()
-            return repeatState
+            return RealmHelper.getRealmInstance().use { realm ->
+                UserSettingDao.getUserSetting(realm).fetchRepeatState()
+            }
         }
         set(repeatState) {
-            val realm = RealmHelper.getRealmInstance()
-            UserSettingDao.updateRepeatState(realm, repeatState!!)
-            realm.close()
+            return RealmHelper.getRealmInstance().use { realm ->
+                UserSettingDao.updateRepeatState(realm, repeatState)
+            }
         }
 
     var queueIdentifyMediaId: String
         get() {
-            val realm = RealmHelper.getRealmInstance()
-            val userSetting = UserSettingDao.getUserSetting(realm)
-            val queueIdentifyMediaId = userSetting.queueIdentifyMediaId
-            realm.close()
-            return queueIdentifyMediaId
+            return RealmHelper.getRealmInstance().use { realm ->
+                UserSettingDao.getUserSetting(realm).queueIdentifyMediaId
+            }
         }
         set(queueIdentifyMediaId) {
-            val realm = RealmHelper.getRealmInstance()
-            UserSettingDao.updateQueueIdentifyMediaId(realm, queueIdentifyMediaId)
-            realm.close()
+            return RealmHelper.getRealmInstance().use { realm ->
+                UserSettingDao.updateQueueIdentifyMediaId(realm, queueIdentifyMediaId)
+            }
         }
 
-    var lastMusicId: String?
+    var lastMusicId: String
         get() {
-            val realm = RealmHelper.getRealmInstance()
-            val userSetting = UserSettingDao.getUserSetting(realm)
-            val lastMusicId = userSetting.lastMusicId
-            realm.close()
-            return lastMusicId
+            return RealmHelper.getRealmInstance().use { realm ->
+                UserSettingDao.getUserSetting(realm).lastMusicId
+            }
         }
         set(lastMediaId) {
-            val realm = RealmHelper.getRealmInstance()
-            UserSettingDao.updateLastMusicId(realm, lastMediaId!!)
-            realm.close()
+            return RealmHelper.getRealmInstance().use { realm ->
+                UserSettingDao.updateLastMusicId(realm, lastMediaId)
+            }
         }
 
     fun stopOnAudioLostFocus(): Boolean = false
@@ -74,29 +66,25 @@ class UserSettingController {
 
     var newSongDays: Int
         get() {
-            val realm = RealmHelper.getRealmInstance()
-            val userSetting = UserSettingDao.getUserSetting(realm)
-            val newSongDays = userSetting.newSongDays
-            realm.close()
-            return newSongDays
+            return RealmHelper.getRealmInstance().use { realm ->
+                UserSettingDao.getUserSetting(realm).newSongDays
+            }
         }
         set(newSongDays) {
-            val realm = RealmHelper.getRealmInstance()
-            UserSettingDao.updateNewSongDays(realm, newSongDays)
-            realm.close()
+            RealmHelper.getRealmInstance().use { realm ->
+                UserSettingDao.updateNewSongDays(realm, newSongDays)
+            }
         }
 
     var mostPlayedSongSize: Int
         get() {
-            val realm = RealmHelper.getRealmInstance()
-            val userSetting = UserSettingDao.getUserSetting(realm)
-            val topSongSize = userSetting.mostPlayedSongSize
-            realm.close()
-            return topSongSize
+            return RealmHelper.getRealmInstance().use { realm ->
+                UserSettingDao.getUserSetting(realm).mostPlayedSongSize
+            }
         }
         set(mostPlayedSongSize) {
-            val realm = RealmHelper.getRealmInstance()
-            UserSettingDao.updateMostPlayedSongSize(realm, mostPlayedSongSize)
-            realm.close()
+            RealmHelper.getRealmInstance().use { realm ->
+                UserSettingDao.updateMostPlayedSongSize(realm, mostPlayedSongSize)
+            }
         }
 }

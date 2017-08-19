@@ -79,7 +79,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
     @Override
     public void delete(Context context) {
         SongHistoryController controller = new SongHistoryController(context);
-        controller.deleteSongHistory(mSongHistoryId);
+        controller.delete(mSongHistoryId);
     }
 
     @Override
@@ -157,7 +157,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
                 StampEditStateObserver stampEditStateObserver = StampEditStateObserver.getInstance();
                 final String mediaId = (String) v.getTag(R.id.text_view_new_stamp_media_id);
                 SongController songController = new SongController(mContext);
-                songController.registerStampList(stampEditStateObserver.getSelectedStampList(), mediaId);
+                songController.registerStampList(stampEditStateObserver.getSelectedStampList(), mediaId, false);
                 ((Activity) mContext).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

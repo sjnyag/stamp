@@ -173,7 +173,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
                 StampEditStateObserver stampEditStateObserver = StampEditStateObserver.getInstance();
                 final String mediaId = (String) v.getTag(R.id.text_view_new_stamp_media_id);
                 SongController songController = new SongController(mActivity);
-                songController.registerStampList(stampEditStateObserver.getSelectedStampList(), mediaId);
+                songController.registerStampList(stampEditStateObserver.getSelectedStampList(), mediaId, false);
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

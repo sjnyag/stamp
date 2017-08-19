@@ -24,12 +24,12 @@ open class UserSetting(
         this.repeatState = repeatState.no
     }
 
-    fun fetchRepeatState(): RepeatState? = RepeatState.of(repeatState)
+    fun fetchRepeatState(): RepeatState = RepeatState.of(repeatState)
 
     fun applyShuffleState(shuffleState: ShuffleState) {
         this.shuffleState = shuffleState.no
     }
 
-    fun fetchShuffleStateValue(): ShuffleState? = ShuffleState.of(shuffleState)
+    fun fetchShuffleStateValue(): ShuffleState = ShuffleState.of(shuffleState)
 
 }
