@@ -198,7 +198,7 @@
     <string name="empty_message_ranking">再生履歴に応じたランキングが表示されます。</string>
     <string name="empty_message_timeline">再生履歴に応じたタイムラインが表示されます。</string>
     <string name="empty_message_queue">現在再生中のキューが表示されます。キューはHome画面から選択できます。</string>
-    <string name="empty_message_most_played">再生数が多い曲が表示されます。対象となる期間はSetting画面から変更できます。</string>
+    <string name="empty_message_most_played">再生数が多い曲が表示されます。対象となる曲数はSetting画面から変更できます。</string>
     <string name="empty_message_playlist">Androidに登録されているプレイリストが表示されます。</string>
     <string name="empty_message_new">新しく登録された曲が表示されます。対象となる期間はSetting画面から変更できます。</string>
     <string name="empty_message_my_stamp">登録したスタンプが表示されます。スタンプはHome画面の右下のボタンから作成できます。</string>
