@@ -33,6 +33,7 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.sjn.stamp.R;
+import com.sjn.stamp.utils.AnalyticsHelper;
 import com.sjn.stamp.utils.LogHelper;
 
 public abstract class DrawerActivity extends BaseActivity implements FragmentManager.OnBackStackChangedListener {
@@ -262,6 +263,7 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        AnalyticsHelper.trackScreen(DrawerActivity.this, DrawerMenu.of(drawerItem.getIdentifier()));
                         setNextDrawerMenu(drawerItem);
                         return false;
                     }

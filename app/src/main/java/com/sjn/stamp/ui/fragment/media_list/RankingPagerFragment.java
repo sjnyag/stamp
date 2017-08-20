@@ -15,6 +15,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.sjn.stamp.R;
 import com.sjn.stamp.ui.custom.PeriodSelectLayout;
+import com.sjn.stamp.utils.AnalyticsHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,7 @@ public class RankingPagerFragment extends PagerFragment implements PagerFragment
                                         return;
                                     }
                                     setTitle(periodSelectLayout.getPeriod().toString(getResources()));
+                                    AnalyticsHelper.trackRankingTerm(getContext(),periodSelectLayout.getPeriod().from(),periodSelectLayout.getPeriod().to() );
                                     for (int i = 0; i < mAdapter.getCount(); i++) {
                                         Fragment fragment = mAdapter.getItem(i);
                                         if (fragment != null && fragment instanceof RankingFragment) {

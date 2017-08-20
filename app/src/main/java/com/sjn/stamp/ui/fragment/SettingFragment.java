@@ -20,6 +20,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.sjn.stamp.R;
 import com.sjn.stamp.controller.UserSettingController;
 import com.sjn.stamp.ui.DialogFacade;
+import com.sjn.stamp.utils.AnalyticsHelper;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.RealmHelper;
 
@@ -53,6 +54,7 @@ public class SettingFragment extends PreferenceFragmentCompat {
                             case NEGATIVE:
                                 return;
                             case POSITIVE:
+                                AnalyticsHelper.trackSetting(getContext(), "import_backup");
                                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                                 intent.setType("*/*");
@@ -71,7 +73,6 @@ public class SettingFragment extends PreferenceFragmentCompat {
         findPreference("export_backup").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-
                 DialogFacade.createConfirmDialog(getActivity(), R.string.dialog_confirm_export, new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -79,6 +80,7 @@ public class SettingFragment extends PreferenceFragmentCompat {
                             case NEGATIVE:
                                 return;
                             case POSITIVE:
+                                AnalyticsHelper.trackSetting(getContext(), "export_backup");
                                 ProgressDialog progressDialog = new ProgressDialog(getActivity());
                                 progressDialog.setMessage(getString(R.string.message_processing));
                                 progressDialog.show();
@@ -98,6 +100,7 @@ public class SettingFragment extends PreferenceFragmentCompat {
         findPreference("licence").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
+                AnalyticsHelper.trackSetting(getContext(), "licence");
                 DialogFacade.createLicenceDialog(getActivity()).show();
                 return true;
             }
@@ -115,6 +118,7 @@ public class SettingFragment extends PreferenceFragmentCompat {
         findPreference("setting_songs_new_song_days").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
+                AnalyticsHelper.trackSetting(getContext(), "setting_songs_new_song_days", newValue.toString());
                 try {
                     int newSongDays = Integer.parseInt(newValue.toString());
                     if (newSongDays >= 0 && newSongDays <= 999) {
@@ -139,6 +143,7 @@ public class SettingFragment extends PreferenceFragmentCompat {
         findPreference("setting_songs_most_played_song_size").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
+                AnalyticsHelper.trackSetting(getContext(), "setting_songs_most_played_song_size", newValue.toString());
                 try {
                     int mostPlayedSongSize = Integer.parseInt(newValue.toString());
                     if (mostPlayedSongSize >= 0 && mostPlayedSongSize <= 999) {

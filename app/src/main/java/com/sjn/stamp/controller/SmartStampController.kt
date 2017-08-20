@@ -29,7 +29,7 @@ internal class SmartStampController(private val mContext: Context) {
             }
 
             override fun register(context: Context, song: Song, playCount: Int, recordType: RecordType) {
-                registerStamp(mStamp)
+                registerStamp(mStamp, context)
                 val songController = SongController(context)
                 songController.registerStamp(mStamp, song, true)
             }
@@ -39,7 +39,7 @@ internal class SmartStampController(private val mContext: Context) {
                     false
 
             override fun register(context: Context, song: Song, playCount: Int, recordType: RecordType) {
-                registerStamp(mStamp)
+                registerStamp(mStamp, context)
 
             }
         },
@@ -48,7 +48,7 @@ internal class SmartStampController(private val mContext: Context) {
                     false
 
             override fun register(context: Context, song: Song, playCount: Int, recordType: RecordType) {
-                registerStamp(mStamp)
+                registerStamp(mStamp, context)
 
             }
         };
@@ -57,8 +57,8 @@ internal class SmartStampController(private val mContext: Context) {
 
         abstract fun register(context: Context, song: Song, playCount: Int, recordType: RecordType)
 
-        internal fun registerStamp(stamp: String) {
-            val stampController = StampController()
+        internal fun registerStamp(stamp: String, context: Context) {
+            val stampController = StampController(context)
             stampController.register(stamp, true)
         }
     }

@@ -1,17 +1,19 @@
 package com.sjn.stamp.controller
 
+import android.content.Context
 import android.support.v4.media.MediaMetadataCompat
 import com.sjn.stamp.constant.CategoryType
 import com.sjn.stamp.db.CategoryStamp
 import com.sjn.stamp.db.SongStamp
 import com.sjn.stamp.db.dao.CategoryStampDao
 import com.sjn.stamp.db.dao.SongStampDao
+import com.sjn.stamp.utils.AnalyticsHelper
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.RealmHelper
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-class StampController {
+class StampController(private val mContext: Context) {
     private val mListenerSet = ArrayList<Listener>()
 
     interface Listener {
@@ -27,6 +29,7 @@ class StampController {
     }
 
     fun register(name: String, isSystem: Boolean): Boolean {
+        AnalyticsHelper.trackStamp(mContext, name)
         val result = RealmHelper.getRealmInstance().use { realm ->
             SongStampDao.save(realm, name, isSystem)
         }

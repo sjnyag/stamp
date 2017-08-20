@@ -34,6 +34,7 @@ import com.sjn.stamp.media.CustomController;
 import com.sjn.stamp.media.MediaLogger;
 import com.sjn.stamp.media.QueueManager;
 import com.sjn.stamp.media.provider.MusicProvider;
+import com.sjn.stamp.utils.AnalyticsHelper;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.MediaItemHelper;
@@ -363,6 +364,7 @@ public class PlaybackManager implements Playback.Callback, MediaLogger.Listener 
         public void onPlayFromMediaId(String mediaId, Bundle extras) {
             mMediaLogger.onSkip(getCurrentMedia(), getCurrentPosition());
             LogHelper.d(TAG, "playFromMediaId mediaId:", mediaId, "  extras=", extras);
+            AnalyticsHelper.trackCategory(mContext, mediaId);
             mQueueManager.setQueueFromMusic(mediaId);
             handlePlayRequest();
         }

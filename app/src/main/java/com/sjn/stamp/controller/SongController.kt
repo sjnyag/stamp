@@ -39,7 +39,7 @@ class SongController(private val mContext: Context) {
             }
             registerCategoryStampList(stampNameList, ProviderType.of(hierarchy[0]).categoryType, hierarchy[1], isSystem)
         }
-        StampController().notifyStampChange()
+        StampController(mContext).notifyStampChange()
     }
 
     fun removeStamp(stampName: String, mediaId: String, isSystem: Boolean) {
@@ -52,7 +52,7 @@ class SongController(private val mContext: Context) {
             }
             removeCategoryStamp(stampName, ProviderType.of(hierarchy[0]).categoryType, hierarchy[1], isSystem)
         }
-        StampController().notifyStampChange()
+        StampController(mContext).notifyStampChange()
     }
 
     fun findStampsByMediaId(mediaId: String): List<String> {
