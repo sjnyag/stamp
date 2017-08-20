@@ -13,22 +13,25 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bowyer.app.fabtransitionlayout.BottomSheetLayout;
-import com.getkeepsafe.taptargetview.TapTarget;
-import com.getkeepsafe.taptargetview.TapTargetView;
 import com.sjn.stamp.R;
-import com.sjn.stamp.controller.StampController;
 import com.sjn.stamp.ui.SongAdapter;
 import com.sjn.stamp.ui.item.ProgressItem;
+import com.sjn.stamp.ui.item.SongItem;
 import com.sjn.stamp.ui.observer.StampEditStateObserver;
 import com.sjn.stamp.utils.LogHelper;
+import com.sjn.stamp.utils.SpotlightHelper;
+import com.takusemba.spotlight.SimpleTarget;
+import com.takusemba.spotlight.Spotlight;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -292,41 +295,33 @@ public abstract class ListFragment extends Fragment implements
                 if (mBottomSheetLayout.isFabExpanded()) {
                     mBottomSheetLayout.contractFab();
                 }
-                if (new StampController().findAll().isEmpty()) {
-                    showTapTargetView();
+                if (mIsVisibleToUser && !SpotlightHelper.isShown(getActivity(), SpotlightHelper.KEY_STAMP_ADD)) {
+                    showSpotlight();
                 }
                 break;
         }
         mAdapter.notifyDataSetChanged();
     }
 
-    private void showTapTargetView() {
-        /*
-
-                new TapTargetSequence(getActivity())
-                        .targets(
-                                TapTarget.forView(getActivity().findViewById(R.id.text_view_new_stamp_media_id), "Gonna"),
-                                TapTarget.forView(getActivity().findViewById(R.id.text_view_new_stamp_media_id), "You", "Up"))
-                        .listener(new TapTargetSequence.Listener() {
-                            // This listener will tell us when interesting(tm) events happen in regards
-                            // to the sequence
-                            @Override
-                            public void onSequenceFinish() {
-                                // Yay
-                            }
-
-                            @Override
-                            public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
-
-                            }
-
-                            @Override
-                            public void onSequenceCanceled(TapTarget lastTarget) {
-                                // Boo
-                            }
-                        }).start();
-         */
-        //TapTargetView.showFor(getActivity(), TapTarget.forView(getActivity().findViewById(R.id.fab), "This is a target", "We have the best targets, believe me"));
+    private void showSpotlight() {
+        LinearLayoutManager layoutManager = ((LinearLayoutManager) mRecyclerView.getLayoutManager());
+        RecyclerView.ViewHolder view = mRecyclerView.findViewHolderForAdapterPosition(layoutManager.findFirstVisibleItemPosition());
+        if (view != null && view instanceof SongItem.SimpleViewHolder) {
+            View addStampView = ((SongItem.SimpleViewHolder) view).getShowTapTargetView();
+            if (addStampView != null) {
+                Spotlight.with(getActivity())
+                        .setDuration(200L)
+                        .setAnimation(new DecelerateInterpolator(2f))
+                        .setTargets(new SimpleTarget.Builder(getActivity())
+                                .setPoint(addStampView)
+                                .setRadius(120f)
+                                .setTitle(getString(R.string.spotlight_stamp_add_title))
+                                .setDescription(getString(R.string.spotlight_stamp_add_description))
+                                .build())
+                        .start();
+                SpotlightHelper.setShown(getActivity(), SpotlightHelper.KEY_STAMP_ADD);
+            }
+        }
     }
 
     public String emptyMessage() {

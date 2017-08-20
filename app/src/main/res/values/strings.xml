@@ -178,10 +178,10 @@
     <string name="dialog_restart_title">Restart</string>
     <string name="dialog_restart_content">Restart to reflect the backup.</string>
     <string name="dialog_delete_stamp_title">Delete stamp</string>
-    <string name="dialog_delete_stamp_content">Do you want to delete stamp「%1$s」？</string>
+    <string name="dialog_delete_stamp_content">Do you want to delete stamp [%1$s] ?</string>
     <string name="dialog_lets_play_title">You do not have music play history yet.</string>
     <string name="dialog_delete_history_title">Delete playback</string>
-    <string name="dialog_delete_history_content">Do you want to delete playback「%1$s」？</string>
+    <string name="dialog_delete_history_content">Do you want to delete playback [%1$s] ?</string>
     <string name="dialog_reload_music_title">Reload music</string>
     <string name="dialog_reload_music_content">Reload all music in android ?（ It will take some time depending on file storage.）</string>
     <string name="month">month</string>
@@ -214,4 +214,6 @@
     <string name="from">From</string>
     <string name="to">To</string>
     <string name="invalid_backup_selected">This is invalid.</string>
+     <string name="spotlight_stamp_add_title">Tap [Add] button</string>
+     <string name="spotlight_stamp_add_description">You can press selected stamps to your song by this button.</string>
 </resources>
