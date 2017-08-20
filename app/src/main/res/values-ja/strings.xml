@@ -209,4 +209,7 @@
     <string name="from">From</string>
     <string name="to">To</string>
     <string name="invalid_backup_selected">このファイルはインポートできません。</string>
+
+    <string name="spotlight_stamp_add_title">「Add」ボタンをタップ</string>
+    <string name="spotlight_stamp_add_description">このボタンで選択したスタンプを押すことができます。</string>
 </resources>

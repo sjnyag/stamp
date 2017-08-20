@@ -64,7 +64,12 @@ public class StampEditFragment extends Fragment implements StampEditStateObserve
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.STAMPING);
+                StampEditStateObserver stampEditStateObserver = StampEditStateObserver.getInstance();
+                StampEditStateObserver.State state = StampEditStateObserver.State.STAMPING;
+                if (stampEditStateObserver.getSelectedStampList() == null || stampEditStateObserver.getSelectedStampList().isEmpty()) {
+                    state = StampEditStateObserver.State.NO_EDIT;
+                }
+                StampEditStateObserver.getInstance().notifyStateChange(state);
             }
         });
         drawStampList(getContext(), new StampController().findAll());

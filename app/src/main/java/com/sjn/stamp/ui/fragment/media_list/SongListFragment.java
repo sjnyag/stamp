@@ -63,7 +63,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
 
     private static final String TAG = LogHelper.makeLogTag(SongListFragment.class);
     private CreateListAsyncTask mCreateListAsyncTask;
-    private boolean mHasItemList = false;
+    private int mLoadingVisibility = View.VISIBLE;
 
     /**
      * {@link ListFragment}
@@ -251,8 +251,6 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
         if (mIsVisibleToUser) {
             notifyFragmentChange();
         }
-        mHasItemList = mItemList != null && !mItemList.isEmpty();
-        mLoading.setVisibility(View.VISIBLE);
         draw();
         LogHelper.d(TAG, "onCreateView END");
         return rootView;
@@ -260,7 +258,8 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
 
     synchronized void draw() {
         LogHelper.d(TAG, "draw START");
-        if (!mIsVisibleToUser || mAdapter == null || !mHasItemList) {
+        LogHelper.d(TAG, "mIsVisibleToUser: ", mIsVisibleToUser);
+        if (!mIsVisibleToUser || mAdapter == null) {
             return;
         }
         getActivity().runOnUiThread(new Runnable() {
@@ -270,7 +269,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                     return;
                 }
                 if (mLoading != null) {
-                    mLoading.setVisibility(View.INVISIBLE);
+                    mLoading.setVisibility(mLoadingVisibility);
                 }
                 mAdapter.updateDataSet(mItemList);
             }
@@ -326,7 +325,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                 LogHelper.d(TAG, "CreateListAsyncTask.doInBackground SKIPPED");
                 return null;
             }
-            mFragment.mHasItemList = true;
+            mFragment.mLoadingVisibility = View.GONE;
             mFragment.draw();
             LogHelper.d(TAG, "CreateListAsyncTask.doInBackground END");
             return null;

@@ -156,7 +156,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
                 mSubTitle != null && mSubTitle.toLowerCase().trim().contains(constraint);
     }
 
-    static final class SimpleViewHolder extends LongClickDisableViewHolder {
+    public static final class SimpleViewHolder extends LongClickDisableViewHolder {
 
         String mMediaId;
         ImageView mAlbumArtView;
@@ -290,6 +290,9 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
             }
         }
 
+        public TextView getShowTapTargetView() {
+            return (TextView) mStampListLayout.getChildAt(0);
+        }
     }
 
     @Override

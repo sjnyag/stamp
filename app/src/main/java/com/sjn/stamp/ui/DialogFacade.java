@@ -115,6 +115,7 @@ public class DialogFacade {
         dataSet.add(Licenses.fromGitHubApacheV2("vajro/MaterialDesignLibrary"));
         dataSet.add(Licenses.fromGitHubMIT("ozodrukh/CircularReveal"));
         dataSet.add(Licenses.fromGitHubApacheV2("sjnyag/AnimationWrapLayout"));
+        dataSet.add(Licenses.fromGitHubApacheV2("TakuSemba/Spotlight"));
         dataSet.add(Licenses.fromGitHubApacheV2("jakewharton/DiskLruCache"));
         dataSet.add(Licenses.fromGitHubApacheV2("mikepenz/MaterialDrawer"));
         dataSet.add(Licenses.fromGitHubBSD("NanoHttpd/nanohttpd"));
