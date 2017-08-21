@@ -20,7 +20,7 @@ android {
 
     defaultConfig {
         applicationId "com.sjn.stamp"
-        minSdkVersion 17
+        minSdkVersion 19
         targetSdkVersion 26
         versionCode stampVersionCode
         versionName stampVersionName
