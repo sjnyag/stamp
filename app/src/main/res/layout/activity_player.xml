@@ -67,7 +67,7 @@
                 android:layout_height="match_parent"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-            <android.support.design.widget.FloatingActionButton
+            <com.sjn.stamp.ui.custom.Fab
                 android:id="@+id/fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -79,22 +79,37 @@
                 app:layout_behavior="com.sjn.stamp.ui.ScrollAwareFABBehavior"
                 app:rippleColor="@color/primary"/>
 
-            <com.bowyer.app.fabtransitionlayout.BottomSheetLayout
-                android:id="@+id/bottom_sheet"
+            <!-- Overlay that dims the screen -->
+            <com.gordonwong.materialsheetfab.DimOverlayFrameLayout
+                android:id="@+id/overlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <!-- Circular reveal container for the sheet -->
+            <io.codetail.widget.RevealLinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="bottom"
-                app:ft_container_gravity="center">
-
-                <fragment
-                    android:id="@+id/fragment_stamp_list"
-                    android:name="com.sjn.stamp.ui.fragment.StampEditFragment"
+                android:gravity="end|bottom"
+                android:orientation="vertical">
+                <!-- Sheet that contains your items -->
+                <android.support.v7.widget.CardView
+                    android:id="@+id/fab_sheet"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:background="@color/background"/>
+                    android:layout_height="wrap_content">
 
-            </com.bowyer.app.fabtransitionlayout.BottomSheetLayout>
+                    <fragment
+                        android:id="@+id/fragment_stamp_list"
+                        android:name="com.sjn.stamp.ui.fragment.StampEditFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/background"/>
+
+                </android.support.v7.widget.CardView>
+
+
+            </io.codetail.widget.RevealLinearLayout>
+
 
         </android.support.design.widget.CoordinatorLayout>
 

@@ -9,8 +9,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,9 +22,10 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bowyer.app.fabtransitionlayout.BottomSheetLayout;
 import com.sjn.stamp.R;
 import com.sjn.stamp.ui.SongAdapter;
+import com.sjn.stamp.ui.custom.CenteredMaterialSheetFab;
+import com.sjn.stamp.ui.custom.Fab;
 import com.sjn.stamp.ui.item.ProgressItem;
 import com.sjn.stamp.ui.item.SongItem;
 import com.sjn.stamp.ui.observer.StampEditStateObserver;
@@ -57,14 +58,13 @@ public abstract class ListFragment extends Fragment implements
     protected RecyclerView mRecyclerView;
     protected SongAdapter mAdapter;
 
-
     protected ProgressBar mLoading;
     protected View mEmptyView;
     protected TextView mEmptyTextView;
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     protected FastScroller mFastScroller;
-    protected FloatingActionButton mFab;
-    protected BottomSheetLayout mBottomSheetLayout;
+    protected Fab mFab;
+    protected CenteredMaterialSheetFab mCenteredMaterialSheetFab;
     protected ProgressItem mProgressItem = new ProgressItem();
 
     protected FragmentInteractionListener mListener;
@@ -111,8 +111,8 @@ public abstract class ListFragment extends Fragment implements
     };
 
     private void openStampEdit() {
-        if (!mBottomSheetLayout.isFabExpanded()) {
-            mBottomSheetLayout.expandFab();
+        if (!mCenteredMaterialSheetFab.isSheetVisible()) {
+            mCenteredMaterialSheetFab.showSheet();
         }
         mFab.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
         mFab.setImageResource(R.drawable.ic_full_cancel);
@@ -121,8 +121,8 @@ public abstract class ListFragment extends Fragment implements
 
 
     private void closeStampEdit() {
-        if (mBottomSheetLayout.isFabExpanded()) {
-            mBottomSheetLayout.contractFab();
+        if (mCenteredMaterialSheetFab.isSheetVisible()) {
+            mCenteredMaterialSheetFab.hideSheet();
         }
         mFab.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
         mFab.setImageResource(R.drawable.ic_stamp);
@@ -227,8 +227,12 @@ public abstract class ListFragment extends Fragment implements
     }
 
     protected void initializeFab(int resourceId, ColorStateList color, View.OnClickListener onClickListener) {
-        mBottomSheetLayout = (BottomSheetLayout) getActivity().findViewById(R.id.bottom_sheet);
-        mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        mFab = getActivity().findViewById(R.id.fab);
+        View sheetView = getActivity().findViewById(R.id.fab_sheet);
+        View overlay = getActivity().findViewById(R.id.overlay);
+        int sheetColor = ContextCompat.getColor(getActivity(), R.color.background);
+        int fabColor = ContextCompat.getColor(getActivity(), R.color.fab_color);
+        mCenteredMaterialSheetFab = new CenteredMaterialSheetFab<>(mFab, sheetView, overlay, sheetColor, fabColor);
         mFab.setVisibility(View.VISIBLE);
         if (Integer.valueOf(resourceId).equals(mFab.getTag(R.id.fab_type))) {
             return;
@@ -242,8 +246,6 @@ public abstract class ListFragment extends Fragment implements
                 .alpha(1f).setDuration(100)
                 .setStartDelay(300L)
                 .start();
-
-        mBottomSheetLayout.setFab(mFab);
     }
 
     protected void initializeFabWithStamp() {
@@ -292,8 +294,8 @@ public abstract class ListFragment extends Fragment implements
                 closeStampEdit();
                 break;
             case STAMPING:
-                if (mBottomSheetLayout.isFabExpanded()) {
-                    mBottomSheetLayout.contractFab();
+                if (mCenteredMaterialSheetFab.isSheetVisible()) {
+                    mCenteredMaterialSheetFab.hideSheet();
                 }
                 if (mIsVisibleToUser && !SpotlightHelper.isShown(getActivity(), SpotlightHelper.KEY_STAMP_ADD)) {
                     showSpotlight();

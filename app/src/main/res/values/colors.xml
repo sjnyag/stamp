@@ -40,6 +40,8 @@
     <color name="color_5">#0028F9</color>
     <color name="color_6">#3A24C2</color>
     <color name="color_7">#592EFA</color>
+    <color name="fab_sheet_color">#592EFA</color>
+    <color name="fab_color">#FFFFFF</color>
 
     <color name="material_color_orange_500">#ff9800</color>
 </resources>
