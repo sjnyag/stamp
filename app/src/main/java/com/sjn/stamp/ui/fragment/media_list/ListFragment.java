@@ -228,11 +228,6 @@ public abstract class ListFragment extends Fragment implements
 
     protected void initializeFab(int resourceId, ColorStateList color, View.OnClickListener onClickListener) {
         mFab = getActivity().findViewById(R.id.fab);
-        View sheetView = getActivity().findViewById(R.id.fab_sheet);
-        View overlay = getActivity().findViewById(R.id.overlay);
-        int sheetColor = ContextCompat.getColor(getActivity(), R.color.background);
-        int fabColor = ContextCompat.getColor(getActivity(), R.color.fab_color);
-        mCenteredMaterialSheetFab = new CenteredMaterialSheetFab<>(mFab, sheetView, overlay, sheetColor, fabColor);
         mFab.setVisibility(View.VISIBLE);
         if (Integer.valueOf(resourceId).equals(mFab.getTag(R.id.fab_type))) {
             return;
@@ -250,6 +245,11 @@ public abstract class ListFragment extends Fragment implements
 
     protected void initializeFabWithStamp() {
         initializeFab(R.drawable.ic_stamp, ColorStateList.valueOf(Color.WHITE), startStampEdit);
+        View sheetView = getActivity().findViewById(R.id.fab_sheet);
+        View overlay = getActivity().findViewById(R.id.overlay);
+        int sheetColor = ContextCompat.getColor(getActivity(), R.color.background);
+        int fabColor = ContextCompat.getColor(getActivity(), R.color.fab_color);
+        mCenteredMaterialSheetFab = new CenteredMaterialSheetFab<>(mFab, sheetView, overlay, sheetColor, fabColor);
     }
 
     public void performFabAction() {
