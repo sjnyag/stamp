@@ -272,6 +272,11 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                     mLoading.setVisibility(mLoadingVisibility);
                 }
                 mAdapter.updateDataSet(mItemList);
+                if (mItemList.isEmpty()) {
+                    hideFab();
+                } else {
+                    showFab();
+                }
             }
         });
         LogHelper.d(TAG, "draw END");

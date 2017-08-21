@@ -240,6 +240,11 @@ public class TimelineFragment extends MediaBrowserListFragment implements
             mLoading.setVisibility(View.INVISIBLE);
         }
         mAdapter.updateDataSet(mItemList);
+        if (mItemList.isEmpty()) {
+            hideFab();
+        } else {
+            showFab();
+        }
     }
 
     private int calcGoToTopBufferedPosition(int bufferSize) {
