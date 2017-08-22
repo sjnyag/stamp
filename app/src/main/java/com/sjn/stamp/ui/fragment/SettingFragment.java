@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
@@ -160,9 +161,12 @@ public class SettingFragment extends PreferenceFragmentCompat {
     @Override
     public void onStart() {
         super.onStart();
-        FloatingActionButton mFab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-        if (mFab != null) {
-            mFab.setVisibility(View.GONE);
+        FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        if (fab != null) {
+            ViewCompat.animate(fab)
+                    .scaleX(0f).scaleY(0f)
+                    .alpha(0f).setDuration(100)
+                    .start();
         }
     }
 

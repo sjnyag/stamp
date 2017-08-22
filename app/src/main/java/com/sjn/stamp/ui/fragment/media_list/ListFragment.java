@@ -117,6 +117,7 @@ public abstract class ListFragment extends Fragment implements
         }
         mFab.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
         mFab.setImageResource(R.drawable.ic_full_cancel);
+        mFab.setTag(R.id.fab_type, R.drawable.ic_full_cancel);
         mFab.setOnClickListener(stopStampEdit);
     }
 
@@ -127,6 +128,7 @@ public abstract class ListFragment extends Fragment implements
         }
         mFab.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
         mFab.setImageResource(R.drawable.ic_stamp);
+        mFab.setTag(R.id.fab_type, R.drawable.ic_stamp);
         mFab.setOnClickListener(startStampEdit);
     }
 
@@ -294,6 +296,9 @@ public abstract class ListFragment extends Fragment implements
     public void onStop() {
         LogHelper.d(TAG, "onStop START");
         super.onStop();
+        if (mCenteredMaterialSheetFab != null && mCenteredMaterialSheetFab.isSheetVisible()) {
+            mCenteredMaterialSheetFab.hideSheet();
+        }
         StampEditStateObserver.getInstance().removeListener(this);
         LogHelper.d(TAG, "onStop END");
     }
@@ -321,7 +326,7 @@ public abstract class ListFragment extends Fragment implements
                 closeStampEdit();
                 break;
             case STAMPING:
-                if (mCenteredMaterialSheetFab.isSheetVisible()) {
+                if (mCenteredMaterialSheetFab != null && mCenteredMaterialSheetFab.isSheetVisible()) {
                     mCenteredMaterialSheetFab.hideSheet();
                 }
                 if (mIsVisibleToUser && !SpotlightHelper.isShown(getActivity(), SpotlightHelper.KEY_STAMP_ADD)) {
