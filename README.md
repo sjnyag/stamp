@@ -1,12 +1,16 @@
 # Stamp
 ![Build Status](https://www.bitrise.io/app/2aaea794417a13a8/status.svg?token=2ZKZnFpFMhdn8084URutMQ&branch=master)
 
-Most personal Music player
+Most personal music player
 
-<a href='https://play.google.com/store/apps/details?id=com.sjn.stamp&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height=90px/></a>
+<img src="./playstore-icon.png" width=100px><a href='https://play.google.com/store/apps/details?id=com.sjn.stamp&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height=90px/></a>
 
-![stamp icon][1]
 
+
+## Screenshots
+|Player|Timeline|Ranking|Drawer|Stamp|Setting|
+|---|---|---|---|---|---|
+|![](https://raw.githubusercontent.com/sjnyag/stamp/image/Screenshot1.png)|![](https://raw.githubusercontent.com/sjnyag/stamp/image/Screenshot2.png)|![](https://raw.githubusercontent.com/sjnyag/stamp/image/Screenshot3.png)|![](https://raw.githubusercontent.com/sjnyag/stamp/image/Screenshot4.png)|![](https://raw.githubusercontent.com/sjnyag/stamp/image/Screenshot5.png)|![](https://raw.githubusercontent.com/sjnyag/stamp/image/Screenshot6.png)|
 
 ## Features
 - Material design
@@ -34,4 +38,3 @@ License
    limitations under the License.
 ```
 
-[1]: ./playstore-icon.png
