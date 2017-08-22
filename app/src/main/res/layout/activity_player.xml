@@ -83,7 +83,8 @@
             <com.gordonwong.materialsheetfab.DimOverlayFrameLayout
                 android:id="@+id/overlay"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
 
             <!-- Circular reveal container for the sheet -->
             <io.codetail.widget.RevealLinearLayout
@@ -95,7 +96,8 @@
                 <android.support.v7.widget.CardView
                     android:id="@+id/fab_sheet"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
 
                     <fragment
                         android:id="@+id/fragment_stamp_list"

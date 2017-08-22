@@ -233,6 +233,7 @@ public abstract class ListFragment extends Fragment implements
         if (Integer.valueOf(resourceId).equals(mFab.getTag(R.id.fab_type))) {
             return;
         }
+        StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.NO_EDIT);
         mFab.setTag(R.id.fab_type, resourceId);
         mFab.setImageResource(resourceId);
         mFab.setBackgroundTintList(color);
@@ -247,30 +248,32 @@ public abstract class ListFragment extends Fragment implements
     protected void initializeFabWithStamp() {
         initializeFab(R.drawable.ic_stamp, ColorStateList.valueOf(Color.WHITE), startStampEdit);
         View sheetView = getActivity().findViewById(R.id.fab_sheet);
+        sheetView.setVisibility(View.VISIBLE);
         View overlay = getActivity().findViewById(R.id.overlay);
+        overlay.setVisibility(View.VISIBLE);
         int sheetColor = ContextCompat.getColor(getActivity(), R.color.background);
         int fabColor = ContextCompat.getColor(getActivity(), R.color.fab_color);
         mCenteredMaterialSheetFab = new CenteredMaterialSheetFab<>(mFab, sheetView, overlay, sheetColor, fabColor);
         mCenteredMaterialSheetFab.setEventListener(new MaterialSheetFabEventListener() {
             @Override
             public void onShowSheet() {
-                StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.EDITING);
             }
 
             @Override
             public void onSheetShown() {
+                StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.EDITING);
             }
 
             @Override
             public void onHideSheet() {
+            }
+
+            public void onSheetHidden() {
                 StampEditStateObserver.State state = StampEditStateObserver.State.STAMPING;
                 if (StampEditStateObserver.getInstance().getSelectedStampList() == null || StampEditStateObserver.getInstance().getSelectedStampList().isEmpty()) {
                     state = StampEditStateObserver.State.NO_EDIT;
                 }
                 StampEditStateObserver.getInstance().notifyStateChange(state);
-            }
-
-            public void onSheetHidden() {
             }
         });
     }
@@ -292,9 +295,6 @@ public abstract class ListFragment extends Fragment implements
         LogHelper.d(TAG, "onStop START");
         super.onStop();
         StampEditStateObserver.getInstance().removeListener(this);
-        if (mCenteredMaterialSheetFab != null && mCenteredMaterialSheetFab.isSheetVisible()) {
-            mCenteredMaterialSheetFab.hideSheet();
-        }
         LogHelper.d(TAG, "onStop END");
     }
 
