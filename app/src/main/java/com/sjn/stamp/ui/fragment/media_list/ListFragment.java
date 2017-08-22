@@ -22,6 +22,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.gordonwong.materialsheetfab.MaterialSheetFabEventListener;
 import com.sjn.stamp.R;
 import com.sjn.stamp.ui.SongAdapter;
 import com.sjn.stamp.ui.custom.CenteredMaterialSheetFab;
@@ -250,6 +251,28 @@ public abstract class ListFragment extends Fragment implements
         int sheetColor = ContextCompat.getColor(getActivity(), R.color.background);
         int fabColor = ContextCompat.getColor(getActivity(), R.color.fab_color);
         mCenteredMaterialSheetFab = new CenteredMaterialSheetFab<>(mFab, sheetView, overlay, sheetColor, fabColor);
+        mCenteredMaterialSheetFab.setEventListener(new MaterialSheetFabEventListener() {
+            @Override
+            public void onShowSheet() {
+                StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.EDITING);
+            }
+
+            @Override
+            public void onSheetShown() {
+            }
+
+            @Override
+            public void onHideSheet() {
+                StampEditStateObserver.State state = StampEditStateObserver.State.STAMPING;
+                if (StampEditStateObserver.getInstance().getSelectedStampList() == null || StampEditStateObserver.getInstance().getSelectedStampList().isEmpty()) {
+                    state = StampEditStateObserver.State.NO_EDIT;
+                }
+                StampEditStateObserver.getInstance().notifyStateChange(state);
+            }
+
+            public void onSheetHidden() {
+            }
+        });
     }
 
     public void performFabAction() {
@@ -269,6 +292,9 @@ public abstract class ListFragment extends Fragment implements
         LogHelper.d(TAG, "onStop START");
         super.onStop();
         StampEditStateObserver.getInstance().removeListener(this);
+        if (mCenteredMaterialSheetFab != null && mCenteredMaterialSheetFab.isSheetVisible()) {
+            mCenteredMaterialSheetFab.hideSheet();
+        }
         LogHelper.d(TAG, "onStop END");
     }
 
@@ -286,6 +312,7 @@ public abstract class ListFragment extends Fragment implements
      */
     @Override
     public void onStampStateChange(StampEditStateObserver.State state) {
+        LogHelper.d(TAG, "onStampStateChange: ", state);
         switch (state) {
             case EDITING:
                 openStampEdit();
