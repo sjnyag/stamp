@@ -29,6 +29,7 @@ import java.util.List;
 
 public class StampEditFragment extends Fragment implements StampEditStateObserver.Listener {
 
+    @SuppressWarnings(value = "unused")
     private static final String TAG = LogHelper.makeLogTag(StampEditFragment.class);
     private AnimationWrapLayout mStampListLayout;
     private ButtonFloatSmall mRegisterButton;
@@ -37,8 +38,8 @@ public class StampEditFragment extends Fragment implements StampEditStateObserve
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stamp_edit, container, false);
-        mStampListLayout = (AnimationWrapLayout) rootView.findViewById(R.id.stamp_list_layout);
-        mEmptyString = (TextView) rootView.findViewById(R.id.stamp_list_empty);
+        mStampListLayout = rootView.findViewById(R.id.stamp_list_layout);
+        mEmptyString = rootView.findViewById(R.id.stamp_list_empty);
 
         final StampRegisterLayout stampRegisterLayout = new StampRegisterLayout(getActivity(), null);
         mRegisterButton = (ButtonFloatSmall) LayoutInflater.from(getContext()).inflate(R.layout.add_stamp_button, null);
@@ -60,7 +61,7 @@ public class StampEditFragment extends Fragment implements StampEditStateObserve
                         .show();
             }
         });
-        final Button okButton = (Button) rootView.findViewById(R.id.button_ok);
+        final Button okButton = rootView.findViewById(R.id.button_ok);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,7 +73,7 @@ public class StampEditFragment extends Fragment implements StampEditStateObserve
                 StampEditStateObserver.getInstance().notifyStateChange(state);
             }
         });
-        drawStampList(getContext(), new StampController(getContext()).findAll());
+        drawStampList(getContext(), new StampController(getContext()).findAllMyStamps());
         return rootView;
     }
 

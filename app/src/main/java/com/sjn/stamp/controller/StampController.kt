@@ -51,6 +51,12 @@ class StampController(private val mContext: Context) {
         }
     }
 
+    fun findAllMyStamps(): List<String> {
+        return RealmHelper.getRealmInstance().use { realm ->
+            SongStampDao.findAll(realm, false).map { it.name }
+        }
+    }
+
     fun createStampMap(musicListById: MutableMap<String, MediaMetadataCompat>, isSystem: Boolean): MutableMap<String, MutableList<MediaMetadataCompat>> {
         val stampToMap = findSongStamp(isSystem)
         if (!isSystem) {
