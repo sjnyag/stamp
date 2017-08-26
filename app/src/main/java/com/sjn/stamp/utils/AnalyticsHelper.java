@@ -58,8 +58,12 @@ public class AnalyticsHelper {
 
     public static void trackRankingTerm(Context context, Date start, Date end) {
         Bundle payload = new Bundle();
-        payload.putString(FirebaseAnalytics.Param.START_DATE, start.toString());
-        payload.putString(FirebaseAnalytics.Param.END_DATE, end.toString());
+        if(start != null) {
+            payload.putString(FirebaseAnalytics.Param.START_DATE, start.toString());
+        }
+        if(end != null) {
+            payload.putString(FirebaseAnalytics.Param.END_DATE, end.toString());
+        }
         FirebaseAnalytics.getInstance(context).logEvent(CHANGE_RANKING_TERM, payload);
     }
 }
