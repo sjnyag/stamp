@@ -17,16 +17,12 @@
 package com.sjn.stamp.utils;
 
 import android.app.Activity;
-import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.text.TextUtils;
 
 import com.sjn.stamp.constant.CategoryType;
 import com.sjn.stamp.media.provider.ProviderType;
-import com.sjn.stamp.ui.observer.MediaControllerObserver;
 
 import java.util.Arrays;
 
@@ -51,6 +47,7 @@ public class MediaIDHelper {
     public static final String MEDIA_ID_MUSICS_BY_NEW = "__BY_NEW__";
     public static final String MEDIA_ID_MUSICS_BY_MOST_PLAYED = "__BY_MOST_PLAYED__";
     public static final String MEDIA_ID_MUSICS_BY_DIRECT = "__BY_DIRECT__";
+    public static final String MEDIA_ID_MUSICS_BY_TIMELINE = "__BY_TIMELINE__";
 
     private static final char CATEGORY_SEPARATOR = '/';
     private static final char LEAF_SEPARATOR = '|';
@@ -102,6 +99,15 @@ public class MediaIDHelper {
                         category.indexOf(CATEGORY_SEPARATOR) < 0 &&
                                 category.indexOf(LEAF_SEPARATOR) < 0
                 );
+    }
+
+    public static Long resolveMusicId(String musicIdOrMediaId) {
+        String musicId = (MediaIDHelper.isTrack(musicIdOrMediaId)) ? MediaIDHelper.extractMusicIDFromMediaID(musicIdOrMediaId) : musicIdOrMediaId;
+        try {
+            return java.lang.Long.valueOf(musicId);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     /**

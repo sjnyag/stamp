@@ -60,7 +60,10 @@ public class MediaRetrieveHelper {
         return PermissionHelper.hasPermission(context, MediaRetrieveHelper.PERMISSIONS);
     }
 
-    public static MediaMetadataCompat findByMusicId(Context context, long musicId, PermissionRequiredCallback callback) {
+    public static MediaMetadataCompat findByMusicId(Context context, Long musicId, PermissionRequiredCallback callback) {
+        if (musicId == null) {
+            return null;
+        }
         if (!MediaRetrieveHelper.hasPermission(context) && callback != null) {
             callback.onPermissionRequired();
             return null;
@@ -206,7 +209,7 @@ public class MediaRetrieveHelper {
         }
 
         private MediaMetadataCompat buildMediaMetadataCompat() {
-            return MediaItemHelper.createMetadata(mMusicId, mSource, mAlbum, mArtist,mGenre, mDuration, mAlbumArtUri, mTitle, mTrackNumber, mTotalTrackCount, mDateAdded);
+            return MediaItemHelper.createMetadata(mMusicId, mSource, mAlbum, mArtist, mGenre, mDuration, mAlbumArtUri, mTitle, mTrackNumber, mTotalTrackCount, mDateAdded);
         }
     }
 

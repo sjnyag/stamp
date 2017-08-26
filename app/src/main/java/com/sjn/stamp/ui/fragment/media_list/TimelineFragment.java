@@ -33,6 +33,7 @@ import com.sjn.stamp.ui.item.AbstractItem;
 import com.sjn.stamp.ui.item.DateHeaderItem;
 import com.sjn.stamp.ui.item.SongHistoryItem;
 import com.sjn.stamp.utils.LogHelper;
+import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.RealmHelper;
 import com.sjn.stamp.utils.ViewHelper;
 
@@ -118,7 +119,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         LogHelper.d(TAG, "onItemClick ");
         AbstractFlexibleItem item = mAdapter.getItem(position);
         if (item instanceof SongHistoryItem) {
-            mMediaBrowsable.onMediaItemSelected(((SongHistoryItem) item).getMediaId());
+            mMediaBrowsable.onMediaItemSelected(MediaIDHelper.extractMusicIDFromMediaID(((SongHistoryItem) item).getMediaId()));
         }
         return false;
     }

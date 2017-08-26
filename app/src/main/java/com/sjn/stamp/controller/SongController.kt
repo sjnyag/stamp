@@ -25,14 +25,9 @@ class SongController(private val mContext: Context) {
     }
 
     fun registerStampList(stampNameList: List<String>, mediaId: String, isSystem: Boolean) {
-        if (MediaIDHelper.isTrack(mediaId)) {
-            registerSongStampList(
-                    stampNameList,
-                    MediaRetrieveHelper.findByMusicId(
-                            mContext,
-                            java.lang.Long.valueOf(MediaIDHelper.extractMusicIDFromMediaID(mediaId))!!
-                    ) { },
-                    isSystem)
+        val song = findSongByMusicIdOrMediaId(mediaId)
+        if (song != null) {
+            registerSongStampList(stampNameList, song, isSystem)
         } else {
             val hierarchy = MediaIDHelper.getHierarchy(mediaId)
             if (hierarchy.size <= 1) {
@@ -62,7 +57,7 @@ class SongController(private val mContext: Context) {
         } else {
             val hierarchy = MediaIDHelper.getHierarchy(mediaId)
             if (hierarchy.size <= 1) {
-                ArrayList<Stamp>()
+                ArrayList()
             } else {
                 findCategoryStampList(ProviderType.of(hierarchy[0]).categoryType, hierarchy[1])
             }
@@ -125,6 +120,16 @@ class SongController(private val mContext: Context) {
             }
         }
         return stampList
+    }
+
+    private fun findSongByMusicIdOrMediaId(musicIdOrMediaId: String): MediaMetadataCompat? {
+        val musicId = if (MediaIDHelper.isTrack(musicIdOrMediaId)) MediaIDHelper.extractMusicIDFromMediaID(musicIdOrMediaId) else musicIdOrMediaId
+        val longMusicId = try {
+            java.lang.Long.valueOf(musicId)
+        } catch (e: NumberFormatException) {
+            return null
+        }
+        return MediaRetrieveHelper.findByMusicId(mContext, longMusicId) { }
     }
 
     companion object {

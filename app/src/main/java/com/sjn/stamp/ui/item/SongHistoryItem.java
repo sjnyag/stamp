@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.sjn.stamp.R;
 import com.sjn.stamp.controller.SongHistoryController;
 import com.sjn.stamp.db.SongHistory;
+import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.TimeHelper;
 import com.sjn.stamp.utils.ViewHelper;
 
@@ -62,7 +63,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
         setDraggable(true);
         setSwipeable(true);
         mSongHistoryId = songHistory.getId();
-        mMediaId = songHistory.getSong().getMediaId();
+        mMediaId = MediaIDHelper.createMediaID(songHistory.getSong().getMediaId(), MediaIDHelper.MEDIA_ID_MUSICS_BY_TIMELINE);
         mArtistName = songHistory.getSong().getArtist().getName();
         mRecordedAt = songHistory.getRecordedAt();
         mTitle = songHistory.getSong().getTitle();
