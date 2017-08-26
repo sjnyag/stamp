@@ -8,6 +8,8 @@ import com.sjn.stamp.ui.activity.DrawerMenu;
 
 import java.util.Date;
 
+import static com.sjn.stamp.utils.MediaIDHelper.getHierarchy;
+
 public class AnalyticsHelper {
     private static final String CREATE_STAMP = "create_stamp";
     private static final String PLAY_CATEGORY = "play_category";
@@ -16,11 +18,12 @@ public class AnalyticsHelper {
     private static final String CHANGE_RANKING_TERM = "change_ranking_term";
 
     public static void trackCategory(Context context, String mediaId) {
-        String category = MediaIDHelper.extractBrowseCategoryValueFromMediaID(mediaId);
-        if (category == null) {
+        Bundle payload = new Bundle();
+        String[] hierarchy = getHierarchy(mediaId);
+        if (hierarchy.length < 1) {
             return;
         }
-        Bundle payload = new Bundle();
+        String category = hierarchy[0];
         payload.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, category);
         FirebaseAnalytics.getInstance(context).logEvent(PLAY_CATEGORY, payload);
     }
