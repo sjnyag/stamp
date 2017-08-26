@@ -13,9 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sjn.stamp.R;
-import com.sjn.stamp.controller.SongController;
-import com.sjn.stamp.ui.observer.StampEditStateObserver;
-import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.ViewHelper;
 
 import java.io.Serializable;
@@ -35,16 +32,8 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
         return mPlayCount;
     }
 
-    public String getMostPlayedSongTitle() {
-        return mMostPlayedSongTitle;
-    }
-
     public String getArtistName() {
         return mArtistName;
-    }
-
-    public String getArtUrl() {
-        return mArtUrl;
     }
 
     private int mOrder;
@@ -90,7 +79,6 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
         if (mArtUrl != null) {
             ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, mArtUrl, mArtistName);
         }
-        holder.updateStampList(mArtistName);
     }
 
     @Override
@@ -107,45 +95,14 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
         View mFrontView;
         TextView mCountView;
         TextView mOrderView;
-        ViewGroup mStampListLayout;
-
-        public void updateStampList(String artistName) {
-            /*
-            if (!StampEditStateObserver.getInstance().isStampMode()) {
-                mStampListLayout.setVisibility(View.GONE);
-                return;
-            }
-            mStampListLayout.setVisibility(View.VISIBLE);
-            if (mStampListLayout != null && isStampMedia(mediaId)) {
-                mStampListLayout.removeAllViews();
-                TextView addView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.text_view_new_stamp, null);
-                addView.setTag(R.id.text_view_new_stamp_media_id, mediaId);
-                addView.setOnClickListener(mOnNewStamp);
-                mStampListLayout.addView(addView);
-                SongController songController = new SongController(mContext);
-                for (String stampName : songController.findStampsByMediaId(mediaId)) {
-                    TextView textView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.text_view_remove_stamp, null);
-                    textView.setText("- " + stampName);
-                    textView.setTag(R.id.text_view_remove_stamp_stamp_name, stampName);
-                    textView.setTag(R.id.text_view_remove_stamp_media_id, mediaId);
-                    textView.setOnClickListener(mOnRemoveStamp);
-                    mStampListLayout.addView(textView);
-                }
-            }
-            */
-        }
-
-        private boolean isStampMedia(String mediaId) {
-            return MediaIDHelper.getCategoryType(mediaId) != null || MediaIDHelper.isTrack(mediaId);
-        }
 
         SimpleViewHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter);
             this.mContext = view.getContext();
 
-            this.mTitle = (TextView) view.findViewById(R.id.title);
-            this.mSubtitle = (TextView) view.findViewById(R.id.subtitle);
-            this.mAlbumArtView = (ImageView) view.findViewById(R.id.image);
+            this.mTitle = view.findViewById(R.id.title);
+            this.mSubtitle = view.findViewById(R.id.subtitle);
+            this.mAlbumArtView = view.findViewById(R.id.image);
             this.mAlbumArtView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -157,9 +114,8 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
             });
 
             this.mFrontView = view.findViewById(R.id.front_view);
-            this.mCountView = (TextView) view.findViewById(R.id.count);
-            this.mOrderView = (TextView) view.findViewById(R.id.order);
-            this.mStampListLayout = (ViewGroup) view.findViewById(R.id.stamp_info);
+            this.mCountView = view.findViewById(R.id.count);
+            this.mOrderView = view.findViewById(R.id.order);
         }
 
         @Override

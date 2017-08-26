@@ -92,8 +92,8 @@ public class DateHeaderItem extends AbstractHeaderItem<DateHeaderItem.HeaderView
 
         HeaderViewHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter, true);//True for sticky
-            mTitle = (TextView) view.findViewById(R.id.title);
-            mSubtitle = (TextView) view.findViewById(R.id.subtitle);
+            mTitle = view.findViewById(R.id.title);
+            mSubtitle = view.findViewById(R.id.subtitle);
         }
     }
 

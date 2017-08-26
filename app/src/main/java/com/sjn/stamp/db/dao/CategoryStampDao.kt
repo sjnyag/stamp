@@ -29,7 +29,7 @@ object CategoryStampDao : BaseDao() {
             return
         }
         realm.beginTransaction()
-        var categoryStamp: CategoryStamp? = realm.where(CategoryStamp::class.java).equalTo("name", name).equalTo("type", categoryType.databaseValue).equalTo("value", categoryValue).findFirst()
+        var categoryStamp: CategoryStamp? = realm.where(CategoryStamp::class.java).equalTo("name", name).equalTo("type", categoryType.databaseValue).equalTo("value", categoryValue).equalTo("isSystem", isSystem).findFirst()
         if (categoryStamp == null) {
             categoryStamp = realm.createObject(CategoryStamp::class.java, getAutoIncrementId(realm, CategoryStamp::class.java))
             categoryStamp.name = name

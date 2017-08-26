@@ -16,7 +16,7 @@ object SongStampDao : BaseDao() {
 
     fun saveOrAdd(realm: Realm, rawSongStamp: SongStamp, rawSong: Song) {
         realm.executeTransaction(Realm.Transaction { r ->
-            val managedSongStamp = r.where(SongStamp::class.java).equalTo("name", rawSongStamp.name).findFirst()
+            val managedSongStamp = r.where(SongStamp::class.java).equalTo("name", rawSongStamp.name).equalTo("isSystem", rawSongStamp.isSystem).findFirst()
             val managedSong = SongDao.findOrCreate(r, rawSong)
             if (managedSongStamp == null) {
                 rawSongStamp.id = getAutoIncrementId(r, SongStamp::class.java)

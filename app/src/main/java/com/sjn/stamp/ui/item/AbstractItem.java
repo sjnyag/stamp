@@ -17,10 +17,8 @@ public abstract class AbstractItem<VH extends FlexibleViewHolder>
     protected String id;
     protected String title;
     protected String subtitle = "";
-    /* number of times this item has been refreshed */
-    protected int updates;
 
-    public AbstractItem(String id) {
+    AbstractItem(String id) {
         this.id = id;
     }
 
@@ -64,14 +62,6 @@ public abstract class AbstractItem<VH extends FlexibleViewHolder>
 
     public void setSubtitle(String subtitle) {
         this.subtitle = subtitle;
-    }
-
-    public int getUpdates() {
-        return updates;
-    }
-
-    public void increaseUpdates() {
-        this.updates++;
     }
 
     @Override

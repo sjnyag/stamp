@@ -89,8 +89,8 @@ public class ProgressItem extends AbstractFlexibleItem<ProgressItem.ProgressView
 
         ProgressViewHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter);
-            progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
-            progressMessage = (TextView) view.findViewById(R.id.progress_message);
+            progressBar = view.findViewById(R.id.progress_bar);
+            progressMessage = view.findViewById(R.id.progress_message);
         }
 
         @Override

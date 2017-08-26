@@ -8,11 +8,11 @@ import eu.davidea.viewholders.FlexibleViewHolder;
 
 class LongClickDisableViewHolder extends FlexibleViewHolder {
 
-    public LongClickDisableViewHolder(View view, FlexibleAdapter adapter) {
+    LongClickDisableViewHolder(View view, FlexibleAdapter adapter) {
         super(view, adapter);
     }
 
-    public LongClickDisableViewHolder(View view, FlexibleAdapter adapter, boolean stickyHeader) {
+    LongClickDisableViewHolder(View view, FlexibleAdapter adapter, boolean stickyHeader) {
         super(view, adapter, stickyHeader);
     }
 

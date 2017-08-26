@@ -20,8 +20,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -158,19 +156,19 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         mSongHistoryController = new SongHistoryController(getContext());
         mRealm = RealmHelper.getRealmInstance();
 
-        mLoading = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        mLoading = rootView.findViewById(R.id.progressBar);
         mEmptyView = rootView.findViewById(R.id.empty_view);
-        mFastScroller = (FastScroller) rootView.findViewById(R.id.fast_scroller);
-        mEmptyTextView = (TextView) rootView.findViewById(R.id.empty_text);
+        mFastScroller = rootView.findViewById(R.id.fast_scroller);
+        mEmptyTextView = rootView.findViewById(R.id.empty_text);
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
+        mSwipeRefreshLayout = rootView.findViewById(R.id.refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW);
 
         mAdapter = new SongAdapter(mItemList, this);
         mAdapter.setNotifyChangeOfUnfilteredItems(true)
                 .setAnimationOnScrolling(false);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        mRecyclerView = rootView.findViewById(R.id.recycler_view);
         if (savedInstanceState != null) {
             mListState = savedInstanceState.getParcelable(LIST_STATE_KEY);
         }
@@ -264,8 +262,8 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         return new DateHeaderItem(songHistory.getRecordedAt());
     }
 
-    public static SongHistoryItem newSimpleItem(SongHistory songHistory, IHeader header, Resources resources) {
-        SongHistoryItem item = new SongHistoryItem(songHistory, (DateHeaderItem) header, resources);
+    public SongHistoryItem newSimpleItem(SongHistory songHistory, IHeader header, Resources resources) {
+        SongHistoryItem item = new SongHistoryItem(songHistory, (DateHeaderItem) header, resources, getActivity());
         item.setTitle(songHistory.getSong().getTitle());
         return item;
     }

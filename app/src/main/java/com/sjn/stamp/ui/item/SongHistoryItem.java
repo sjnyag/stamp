@@ -14,10 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sjn.stamp.R;
-import com.sjn.stamp.controller.SongController;
 import com.sjn.stamp.controller.SongHistoryController;
 import com.sjn.stamp.db.SongHistory;
-import com.sjn.stamp.ui.observer.StampEditStateObserver;
 import com.sjn.stamp.utils.TimeHelper;
 import com.sjn.stamp.utils.ViewHelper;
 
@@ -44,19 +42,20 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
         implements ISectionable<SongHistoryItem.SimpleViewHolder, DateHeaderItem>, IFilterable, Serializable {
 
     /* The header of this item */
-    DateHeaderItem header;
+    private DateHeaderItem header;
 
     public String getMediaId() {
         return mMediaId;
     }
 
-    String mMediaId;
+    private String mMediaId;
     private String mArtistName;
     private Date mRecordedAt;
     private String mTitle;
     private String mAlbumArtUri;
     private String mLabel;
     private long mSongHistoryId;
+    private Activity mActivity;
 
     private SongHistoryItem(SongHistory songHistory, Resources resources) {
         super(String.valueOf(songHistory.getId()));
@@ -71,9 +70,10 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
         mLabel = songHistory.toLabel(resources);
     }
 
-    public SongHistoryItem(SongHistory songHistory, DateHeaderItem header, Resources resources) {
+    public SongHistoryItem(SongHistory songHistory, DateHeaderItem header, Resources resources, Activity activity) {
         this(songHistory, resources);
         this.header = header;
+        this.mActivity = activity;
     }
 
     @Override
@@ -104,7 +104,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
 
     @Override
     public SimpleViewHolder createViewHolder(FlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent) {
-        return new SimpleViewHolder(inflater.inflate(getLayoutRes(), parent, false), adapter);
+        return new SimpleViewHolder(inflater.inflate(getLayoutRes(), parent, false), adapter, mActivity);
     }
 
     @Override
@@ -142,59 +142,22 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
         }
     }
 
-    static final class SimpleViewHolder extends LongClickDisableViewHolder {
+    static final class SimpleViewHolder extends StampContainsViewHolder {
 
         ImageView mAlbumArtView;
         TextView mTitle;
         TextView mSubtitle;
-        Context mContext;
         View frontView;
         TextView mDate;
-        ViewGroup mStampListLayout;
-        View.OnClickListener mOnNewStamp = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                StampEditStateObserver stampEditStateObserver = StampEditStateObserver.getInstance();
-                final String mediaId = (String) v.getTag(R.id.text_view_new_stamp_media_id);
-                SongController songController = new SongController(mContext);
-                songController.registerStampList(stampEditStateObserver.getSelectedStampList(), mediaId, false);
-                ((Activity) mContext).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateStampList(mediaId);
-                    }
-                });
-            }
-        };
 
-        View.OnClickListener mOnRemoveStamp = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String mediaId = (String) v.getTag(R.id.text_view_remove_stamp_media_id);
-                final String stampName = (String) v.getTag(R.id.text_view_remove_stamp_stamp_name);
-                SongController songController = new SongController(mContext);
-                songController.removeStamp(stampName, mediaId, false);
 
-                if (mContext instanceof Activity) {
-                    ((Activity) mContext).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateStampList(mediaId);
-                        }
-                    });
-                }
-            }
-        };
-
-        SimpleViewHolder(View view, FlexibleAdapter adapter) {
-            super(view, adapter);
-            this.mContext = view.getContext();
-            this.mTitle = (TextView) view.findViewById(R.id.title);
-            this.mSubtitle = (TextView) view.findViewById(R.id.subtitle);
-            this.mAlbumArtView = (ImageView) view.findViewById(R.id.image);
+        SimpleViewHolder(View view, FlexibleAdapter adapter, Activity activity) {
+            super(view, adapter, activity);
+            this.mTitle = view.findViewById(R.id.title);
+            this.mSubtitle = view.findViewById(R.id.subtitle);
+            this.mAlbumArtView = view.findViewById(R.id.image);
             this.frontView = view.findViewById(R.id.front_view);
-            this.mDate = (TextView) view.findViewById(R.id.date);
-            this.mStampListLayout = (ViewGroup) view.findViewById(R.id.stamp_info);
+            this.mDate = view.findViewById(R.id.date);
         }
 
         @Override
@@ -234,28 +197,9 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
             }
         }
 
-        void updateStampList(String mediaId) {
-            if (!StampEditStateObserver.getInstance().isStampMode()) {
-                mStampListLayout.setVisibility(View.GONE);
-                return;
-            }
-            mStampListLayout.setVisibility(View.VISIBLE);
-            if (mStampListLayout != null) {
-                mStampListLayout.removeAllViews();
-                TextView addView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.text_view_new_stamp, null);
-                addView.setTag(R.id.text_view_new_stamp_media_id, mediaId);
-                addView.setOnClickListener(mOnNewStamp);
-                mStampListLayout.addView(addView);
-                SongController songController = new SongController(mContext);
-                for (String stampName : songController.findStampsByMusicId(mediaId)) {
-                    TextView textView = (TextView) LayoutInflater.from(mContext).inflate(R.layout.text_view_remove_stamp, null);
-                    textView.setText(mTitle.getContext().getString(R.string.stamp_delete, stampName));
-                    textView.setTag(R.id.text_view_remove_stamp_stamp_name, stampName);
-                    textView.setTag(R.id.text_view_remove_stamp_media_id, mediaId);
-                    textView.setOnClickListener(mOnRemoveStamp);
-                    mStampListLayout.addView(textView);
-                }
-            }
+        @Override
+        protected boolean isStampMedia(String mediaId) {
+            return true;
         }
     }
 

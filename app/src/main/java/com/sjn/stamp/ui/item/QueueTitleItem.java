@@ -61,13 +61,13 @@ public class QueueTitleItem extends AbstractItem<QueueTitleItem.LayoutViewHolder
 
     static class LayoutViewHolder extends LongClickDisableViewHolder {
 
-        public TextView mTitle;
+        TextView mTitle;
         TextView mSubtitle;
 
         LayoutViewHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter, true);
-            mTitle = (TextView) view.findViewById(R.id.title);
-            mSubtitle = (TextView) view.findViewById(R.id.subtitle);
+            mTitle = view.findViewById(R.id.title);
+            mSubtitle = view.findViewById(R.id.subtitle);
         }
 
         @Override
