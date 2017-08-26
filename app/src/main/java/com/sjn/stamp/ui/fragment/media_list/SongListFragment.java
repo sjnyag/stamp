@@ -287,6 +287,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
         LogHelper.d(TAG, "onStart START");
         super.onStart();
         MusicListObserver.getInstance().addListener(this);
+        mAdapter.notifyDataSetChanged();
         LogHelper.d(TAG, "onStart END");
     }
 
