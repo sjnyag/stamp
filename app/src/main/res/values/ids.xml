@@ -19,6 +19,7 @@
     <item type="id" name="text_view_new_stamp_media_id"/>
     <item type="id" name="text_view_remove_stamp_stamp_name"/>
     <item type="id" name="text_view_remove_stamp_media_id"/>
+    <item type="id" name="text_view_remove_stamp_is_system"/>
     <item type="id" name="media_item_view_holder_type"/>
     <item type="id" name="fab_type"/>
 </resources>

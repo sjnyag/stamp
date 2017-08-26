@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.sjn.stamp.R;
 import com.sjn.stamp.controller.SongController;
+import com.sjn.stamp.db.Stamp;
 import com.sjn.stamp.ui.observer.StampEditStateObserver;
 import com.sjn.stamp.utils.MediaIDHelper;
 
@@ -41,11 +42,13 @@ class StampContainsViewHolder extends LongClickDisableViewHolder {
             addView.setOnClickListener(mOnNewStamp);
             mStampListLayout.addView(addView);
             SongController songController = new SongController(mActivity);
-            for (String stampName : songController.findStampsByMediaId(mediaId)) {
-                TextView textView = (TextView) LayoutInflater.from(mActivity).inflate(R.layout.text_view_remove_stamp, null);
-                textView.setText(mActivity.getString(R.string.stamp_delete, stampName));
-                textView.setTag(R.id.text_view_remove_stamp_stamp_name, stampName);
+            for (Stamp stamp : songController.findStampsByMediaId(mediaId)) {
+                int stampResource = stamp.isSystem() ? R.layout.text_view_remove_smart_stamp : R.layout.text_view_remove_stamp;
+                TextView textView = (TextView) LayoutInflater.from(mActivity).inflate(stampResource, null);
+                textView.setText(mActivity.getString(R.string.stamp_delete, stamp.getName()));
+                textView.setTag(R.id.text_view_remove_stamp_stamp_name, stamp.getName());
                 textView.setTag(R.id.text_view_remove_stamp_media_id, mediaId);
+                textView.setTag(R.id.text_view_remove_stamp_is_system, stamp.isSystem());
                 textView.setOnClickListener(mOnRemoveStamp);
                 mStampListLayout.addView(textView);
             }
@@ -77,8 +80,9 @@ class StampContainsViewHolder extends LongClickDisableViewHolder {
         public void onClick(View v) {
             final String mediaId = (String) v.getTag(R.id.text_view_remove_stamp_media_id);
             final String stampName = (String) v.getTag(R.id.text_view_remove_stamp_stamp_name);
+            final boolean isSystem = (Boolean) v.getTag(R.id.text_view_remove_stamp_is_system);
             SongController songController = new SongController(mActivity);
-            songController.removeStamp(stampName, mediaId, false);
+            songController.removeStamp(stampName, mediaId, isSystem);
 
             mActivity.runOnUiThread(new Runnable() {
                 @Override
