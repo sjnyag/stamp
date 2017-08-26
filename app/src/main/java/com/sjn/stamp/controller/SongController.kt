@@ -18,6 +18,11 @@ import java.util.*
 
 class SongController(private val mContext: Context) {
 
+
+    fun registerStampWithoutTransaction(realm: Realm, stampName: String, song: Song, isSystem: Boolean) {
+        SongStampDao.saveOrAddWithoutTransaction(realm, SongStampDao.newStandalone(name = stampName, isSystem = isSystem), song)
+    }
+
     fun registerStamp(stampName: String, song: Song, isSystem: Boolean) {
         RealmHelper.getRealmInstance().use { realm ->
             SongStampDao.saveOrAdd(realm, SongStampDao.newStandalone(name = stampName, isSystem = isSystem), song)

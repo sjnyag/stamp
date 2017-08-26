@@ -15,23 +15,25 @@ object SongStampDao : BaseDao() {
             realm.where(SongStamp::class.java).equalTo("isSystem", isSystem).findAll().sort("name")
 
     fun saveOrAdd(realm: Realm, rawSongStamp: SongStamp, rawSong: Song) {
-        realm.executeTransaction(Realm.Transaction { r ->
-            val managedSongStamp = r.where(SongStamp::class.java).equalTo("name", rawSongStamp.name).equalTo("isSystem", rawSongStamp.isSystem).findFirst()
-            val managedSong = SongDao.findOrCreate(r, rawSong)
-            if (managedSongStamp == null) {
-                rawSongStamp.id = getAutoIncrementId(r, SongStamp::class.java)
-                val songList = RealmList<Song>()
-                songList.add(managedSong)
-                rawSongStamp.songList = songList
-                addSongStamp(managedSong, r.copyToRealm(rawSongStamp))
-            } else {
-                managedSongStamp.songList
-                        .filter { managedSong.mediaId == it.mediaId }
-                        .forEach { return@Transaction }
-                managedSongStamp.songList.add(managedSong)
-                addSongStamp(managedSong, managedSongStamp)
-            }
-        })
+        realm.executeTransaction { r -> saveOrAddWithoutTransaction(r, rawSongStamp, rawSong) }
+    }
+
+    fun saveOrAddWithoutTransaction(realm: Realm, rawSongStamp: SongStamp, rawSong: Song) {
+        val managedSongStamp = realm.where(SongStamp::class.java).equalTo("name", rawSongStamp.name).equalTo("isSystem", rawSongStamp.isSystem).findFirst()
+        val managedSong = SongDao.findOrCreate(realm, rawSong)
+        if (managedSongStamp == null) {
+            rawSongStamp.id = getAutoIncrementId(realm, SongStamp::class.java)
+            val songList = RealmList<Song>()
+            songList.add(managedSong)
+            rawSongStamp.songList = songList
+            addSongStamp(managedSong, realm.copyToRealm(rawSongStamp))
+        } else {
+            managedSongStamp.songList
+                    .filter { managedSong.mediaId == it.mediaId }
+                    .forEach { return }
+            managedSongStamp.songList.add(managedSong)
+            addSongStamp(managedSong, managedSongStamp)
+        }
     }
 
     fun remove(realm: Realm, name: String, isSystem: Boolean) {

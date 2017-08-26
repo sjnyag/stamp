@@ -10,6 +10,7 @@ import com.sjn.stamp.db.dao.SongStampDao
 import com.sjn.stamp.utils.AnalyticsHelper
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.RealmHelper
+import io.realm.Realm
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -43,6 +44,16 @@ class StampController(private val mContext: Context) {
             CategoryStampDao.remove(realm, stamp, isSystem)
         }
         notifyStampChange()
+    }
+
+    fun remove(realm: Realm, stamp: String, isSystem: Boolean) {
+        SongStampDao.remove(realm, stamp, isSystem)
+        CategoryStampDao.remove(realm, stamp, isSystem)
+    }
+
+    fun removeWithoutTransaction(realm: Realm, stamp: String, isSystem: Boolean) {
+        realm.where(SongStamp::class.java).equalTo("name", stamp).equalTo("isSystem", isSystem).findAll().deleteAllFromRealm()
+        realm.where(CategoryStamp::class.java).equalTo("name", stamp).equalTo("isSystem", isSystem).findAll().deleteAllFromRealm()
     }
 
     fun findAll(): List<String> {

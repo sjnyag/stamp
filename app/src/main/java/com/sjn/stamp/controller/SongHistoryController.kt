@@ -93,7 +93,7 @@ class SongHistoryController(private val mContext: Context) {
 
     private fun createSongHistory(song: Song, device: Device, recordType: RecordType, date: Date, count: Int): SongHistory = SongHistoryDao.newStandalone().applyValues(song, recordType, device, date, count)
 
-    private fun getRankedSongList(realm: Realm, from: Date?, to: Date?, count: Int): List<RankedSong> {
+    private fun getRankedSongList(realm: Realm, from: Date?, to: Date?, count: Int?): List<RankedSong> {
         LogHelper.d(TAG, "getRankedSongList start")
         LogHelper.d(TAG, "calc historyList")
         val songCountMap = HashMap<Song, Int>()
@@ -112,14 +112,16 @@ class SongHistoryController(private val mContext: Context) {
         }
         LogHelper.d(TAG, "sort rankedSongList")
         Collections.sort(rankedSongList) { t1, t2 -> t2.playCount - t1.playCount }
-        if (rankedSongList.size > count) {
-            rankedSongList = rankedSongList.subList(0, count)
+        count?.let {
+            if (rankedSongList.size > count) {
+                rankedSongList = rankedSongList.subList(0, count)
+            }
         }
         LogHelper.d(TAG, "getRankedSongList end")
         return rankedSongList
     }
 
-    private fun getRankedArtistList(realm: Realm, from: Date?, to: Date?, count: Int): List<RankedArtist> {
+    fun getRankedArtistList(realm: Realm, from: Date?, to: Date?, count: Int?): List<RankedArtist> {
         LogHelper.d(TAG, "getRankedArtistList start")
         val historyList = SongHistoryDao.where(realm, from, to, RecordType.PLAY.databaseValue)
         val artistMap = HashMap<Artist, ArtistCounter>()
@@ -131,8 +133,10 @@ class SongHistoryController(private val mContext: Context) {
             rankedArtistList.add(RankedArtist(value.mCount, key, value.mSongCountMap))
         }
         Collections.sort(rankedArtistList) { t1, t2 -> t2.playCount - t1.playCount }
-        if (rankedArtistList.size > count) {
-            rankedArtistList = rankedArtistList.subList(0, count)
+        count?.let {
+            if (rankedArtistList.size > count) {
+                rankedArtistList = rankedArtistList.subList(0, count)
+            }
         }
         LogHelper.d(TAG, "getRankedArtistList end")
         return rankedArtistList

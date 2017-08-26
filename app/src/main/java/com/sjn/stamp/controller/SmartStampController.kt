@@ -36,11 +36,24 @@ internal class SmartStampController(private val mContext: Context) {
         },
         ARTIST_BEST("Artist Best") {
             override fun isTarget(context: Context, song: Song, playCount: Int, recordType: RecordType): Boolean =
-                    false
+                    true
 
             override fun register(context: Context, song: Song, playCount: Int, recordType: RecordType) {
+                val stampController = StampController(context)
+                val songController = SongController(context)
                 registerStamp(mStamp, context)
-
+                RealmHelper.getRealmInstance().use { realm ->
+                    realm.executeTransaction { r ->
+                        stampController.removeWithoutTransaction(r, mStamp, true)
+                        val artistList = SongHistoryController(context).getRankedArtistList(r, null, null, null)
+                        artistList.forEach { artist ->
+                            artist.orderedSongList().filter { it.playCount >= 10 }.take(3).forEach { rankedSong ->
+                                songController.registerStampWithoutTransaction(realm, mStamp, rankedSong.song, true)
+                            }
+                        }
+                    }
+                    stampController.notifyStampChange()
+                }
             }
         },
         BREAK_SONG("Break Song") {
