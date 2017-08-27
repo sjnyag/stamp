@@ -129,6 +129,17 @@ public enum ProviderType {
         public CategoryType getCategoryType() {
             return null;
         }
+    },
+    RANKING(MediaMetadataCompat.METADATA_KEY_GENRE, MediaIDHelper.MEDIA_ID_MUSICS_BY_RANKING, R.string.no_items) {
+        @Override
+        public ListProvider newProvider(Context context) {
+            return null;
+        }
+
+        @Override
+        public CategoryType getCategoryType() {
+            return null;
+        }
     },;
     final String mMediaKey;
     final String mKeyId;

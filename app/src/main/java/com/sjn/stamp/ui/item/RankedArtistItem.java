@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.media.MediaMetadataCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -41,16 +42,22 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
     private String mMostPlayedSongTitle;
     private String mArtistName;
     private String mArtUrl;
+    private MediaMetadataCompat mTrack;
 
-    public RankedArtistItem(String mostPlayedSongTitle, String artistName, String artUrl, int playCount, int order) {
+    public RankedArtistItem(MediaMetadataCompat track, String artistName, String artUrl, int playCount, int order) {
         super(artistName);
         setDraggable(true);
         setSwipeable(true);
-        mMostPlayedSongTitle = mostPlayedSongTitle;
+        mTrack = track;
+        mMostPlayedSongTitle = track.getDescription().getTitle().toString();
         mArtistName = artistName;
         mArtUrl = artUrl;
         mOrder = order;
         mPlayCount = playCount;
+    }
+
+    public MediaMetadataCompat getTrack() {
+        return mTrack;
     }
 
     @Override

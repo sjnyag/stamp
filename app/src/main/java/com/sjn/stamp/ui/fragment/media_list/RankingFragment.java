@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -15,12 +16,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
+import com.sjn.stamp.MusicService;
 import com.sjn.stamp.R;
 import com.sjn.stamp.controller.SongHistoryController;
 import com.sjn.stamp.db.RankedArtist;
@@ -28,13 +25,13 @@ import com.sjn.stamp.db.RankedSong;
 import com.sjn.stamp.db.Shareable;
 import com.sjn.stamp.ui.SongAdapter;
 import com.sjn.stamp.ui.custom.PeriodSelectLayout;
-import com.sjn.stamp.ui.custom.RankingSelectLayout;
 import com.sjn.stamp.ui.item.RankedArtistItem;
 import com.sjn.stamp.ui.item.RankedSongItem;
 import com.sjn.stamp.utils.LogHelper;
+import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.MediaItemHelper;
+import com.sjn.stamp.utils.QueueHelper;
 import com.sjn.stamp.utils.RealmHelper;
-import com.sjn.stamp.utils.ShareHelper;
 import com.sjn.stamp.utils.ViewHelper;
 
 import java.util.ArrayList;
@@ -45,6 +42,8 @@ import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager;
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 import io.realm.Realm;
+
+import static com.sjn.stamp.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_RANKING;
 
 public class RankingFragment extends MediaBrowserListFragment {
 
@@ -152,21 +151,21 @@ public class RankingFragment extends MediaBrowserListFragment {
         setHasOptionsMenu(false);
         final View rootView = inflater.inflate(R.layout.fragment_list, container, false);
         mRankKind = parseArgRankKind();
-        mLoading = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        mLoading = rootView.findViewById(R.id.progressBar);
         mSongHistoryController = new SongHistoryController(getContext());
 
         mEmptyView = rootView.findViewById(R.id.empty_view);
-        mFastScroller = (FastScroller) rootView.findViewById(R.id.fast_scroller);
-        mEmptyTextView = (TextView) rootView.findViewById(R.id.empty_text);
+        mFastScroller = rootView.findViewById(R.id.fast_scroller);
+        mEmptyTextView = rootView.findViewById(R.id.empty_text);
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
+        mSwipeRefreshLayout = rootView.findViewById(R.id.refresh);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW);
 
         mAdapter = new SongAdapter(mItemList, this);
         mAdapter.setNotifyChangeOfUnfilteredItems(true)
                 .setAnimationOnScrolling(false);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        mRecyclerView = rootView.findViewById(R.id.recycler_view);
         if (savedInstanceState != null) {
             mListState = savedInstanceState.getParcelable(LIST_STATE_KEY);
         }
@@ -199,36 +198,60 @@ public class RankingFragment extends MediaBrowserListFragment {
         //.setEndlessTargetCount(15) //Endless is automatically disabled if totalItems >= 15
         //.setEndlessScrollThreshold(1); //Default=1
         //.setEndlessScrollListener(this, mProgressItem);
-        initializeFab(R.drawable.ic_share, ColorStateList.valueOf(Color.WHITE), new View.OnClickListener() {
+//        initializeFab(R.drawable.ic_share, ColorStateList.valueOf(Color.WHITE), new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (getActivity() != null) {
+//                    final RankingSelectLayout periodSelectLayout = new RankingSelectLayout(getActivity(), null, mPeriod);
+//                    new MaterialDialog.Builder(getContext())
+//                            .title(getString(R.string.dialog_ranking_target))
+//                            .customView(periodSelectLayout, true)
+//                            .positiveText(R.string.dialog_ok)
+//                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                                @Override
+//                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                                    final PeriodSelectLayout.Period period = periodSelectLayout.getPeriod();
+//                                    final int songNum = periodSelectLayout.getSongNum();
+//                                    final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+//                                    progressDialog.setMessage(getString(R.string.message_processing));
+//                                    progressDialog.show();
+//                                    new Thread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            ShareHelper.share(getActivity(), getResources().getString(R.string.share_ranking, periodSelectLayout.getPeriod().toString(getResources()), mRankKind.getRankingShareMessage(getResources(), mSongHistoryController, period, songNum)));
+//                                            progressDialog.dismiss();
+//                                        }
+//                                    }).start();
+//                                }
+//                            })
+//                            .contentColorRes(android.R.color.white)
+//                            .backgroundColorRes(R.color.material_blue_grey_800)
+//                            .theme(Theme.DARK)
+//                            .show();
+//                }
+//            }
+//        });
+        initializeFab(R.drawable.ic_play_arrow, ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.bt_accent)), new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (getActivity() != null) {
-                    final RankingSelectLayout periodSelectLayout = new RankingSelectLayout(getActivity(), null, mPeriod);
-                    new MaterialDialog.Builder(getContext())
-                            .title(getString(R.string.dialog_ranking_target))
-                            .customView(periodSelectLayout, true)
-                            .positiveText(R.string.dialog_ok)
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    final PeriodSelectLayout.Period period = periodSelectLayout.getPeriod();
-                                    final int songNum = periodSelectLayout.getSongNum();
-                                    final ProgressDialog progressDialog = new ProgressDialog(getActivity());
-                                    progressDialog.setMessage(getString(R.string.message_processing));
-                                    progressDialog.show();
-                                    new Thread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            ShareHelper.share(getActivity(), getResources().getString(R.string.share_ranking, periodSelectLayout.getPeriod().toString(getResources()), mRankKind.getRankingShareMessage(getResources(), mSongHistoryController, period, songNum)));
-                                            progressDialog.dismiss();
-                                        }
-                                    }).start();
-                                }
-                            })
-                            .contentColorRes(android.R.color.white)
-                            .backgroundColorRes(R.color.material_blue_grey_800)
-                            .theme(Theme.DARK)
-                            .show();
+                if (getActivity() != null && mIsVisibleToUser) {
+                    Bundle bundle = new Bundle();
+
+                    List<MediaMetadataCompat> trackList = new ArrayList<>();
+                    for (AbstractFlexibleItem item : mItemList) {
+                        if (item instanceof RankedSongItem) {
+                            trackList.add(((RankedSongItem) item).getTrack());
+                        } else if (item instanceof RankedArtistItem) {
+                            trackList.add(((RankedArtistItem) item).getTrack());
+                        }
+                    }
+                    if (trackList.isEmpty()) {
+                        return;
+                    }
+                    bundle.putParcelable(MusicService.Companion.getCUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_QUEUE(), QueueHelper.createQueue(trackList, MEDIA_ID_MUSICS_BY_RANKING));
+                    bundle.putString(MusicService.Companion.getCUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_TITLE(), mPeriod.toString(getResources()));
+                    bundle.putString(MusicService.Companion.getCUSTOM_ACTION_SET_QUEUE_BUNDLE_MEDIA_ID(), MediaIDHelper.createMediaID(trackList.get(0).getDescription().getMediaId(), MEDIA_ID_MUSICS_BY_RANKING));
+                    mMediaBrowsable.sendCustomAction(MusicService.Companion.getCUSTOM_ACTION_SET_QUEUE(), bundle, null);
                 }
             }
         });
@@ -376,7 +399,7 @@ public class RankingFragment extends MediaBrowserListFragment {
             }
 
             private RankedArtistItem newSimpleItem(RankedArtist rankedArtist, int order) {
-                return new RankedArtistItem(rankedArtist.mostPlayedSong().getTitle(), rankedArtist.getArtist().getName(), rankedArtist.getArtist().getAlbumArtUri(), rankedArtist.getPlayCount(), order);
+                return new RankedArtistItem(rankedArtist.mostPlayedSong().buildMediaMetadataCompat(), rankedArtist.getArtist().getName(), rankedArtist.getArtist().getAlbumArtUri(), rankedArtist.getPlayCount(), order);
             }
 
         },;

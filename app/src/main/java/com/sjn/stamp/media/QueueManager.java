@@ -234,12 +234,12 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
         return getPlayingQueue().size();
     }
 
-    protected void setCurrentQueue(String title, List<MediaSessionCompat.QueueItem> newQueue) {
+    public void setCurrentQueue(String title, List<MediaSessionCompat.QueueItem> newQueue) {
         setCurrentQueue(title, newQueue, null);
     }
 
-    protected void setCurrentQueue(String title, List<MediaSessionCompat.QueueItem> newQueue,
-                                   String initialMediaId) {
+    public void setCurrentQueue(String title, List<MediaSessionCompat.QueueItem> newQueue,
+                                String initialMediaId) {
         mOrderedQueue = newQueue;
         if (CustomController.getInstance().getShuffleState() == ShuffleState.SHUFFLE) {
             updateShuffleQueue();
@@ -248,7 +248,10 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
         if (initialMediaId != null) {
             index = QueueHelper.getMusicIndexOnQueue(getPlayingQueue(), initialMediaId);
         }
-        if (initialMediaId != null && !initialMediaId.startsWith(MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE)) {
+        if (initialMediaId != null
+                && !initialMediaId.startsWith(MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE)
+                && !initialMediaId.startsWith(MediaIDHelper.MEDIA_ID_MUSICS_BY_DIRECT)
+                && !initialMediaId.startsWith(MediaIDHelper.MEDIA_ID_MUSICS_BY_RANKING)) {
             UserSettingController userSettingController = new UserSettingController();
             userSettingController.setQueueIdentifyMediaId(initialMediaId);
         }

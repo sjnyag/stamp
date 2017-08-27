@@ -41,6 +41,10 @@ import com.sjn.stamp.utils.MediaItemHelper;
 import com.sjn.stamp.utils.TimeHelper;
 import com.sjn.stamp.utils.WearHelper;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
 /**
  * Manage the interactions among the container service, the queue manager and the actual playback.
  */
@@ -81,6 +85,14 @@ public class PlaybackManager implements Playback.Callback, MediaLogger.Listener 
 
     public MediaSessionCompat.Callback getMediaSessionCallback() {
         return mMediaSessionCallback;
+    }
+
+    public void startNewQueue(String title, String mediaId, @NotNull List<MediaSessionCompat.QueueItem> queueItemList) {
+        mMediaLogger.onSkip(getCurrentMedia(), getCurrentPosition());
+        AnalyticsHelper.trackCategory(mContext, mediaId);
+        mQueueManager.setCurrentQueue(title, queueItemList, mediaId);
+        mQueueManager.updateMetadata();
+        handlePlayRequest();
     }
 
     /**

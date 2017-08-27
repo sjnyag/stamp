@@ -20,6 +20,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.media.MediaMetadataCompat;
@@ -28,10 +30,14 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
 
 import com.sjn.stamp.media.provider.MusicProvider;
+import com.sjn.stamp.ui.item.RankedArtistItem;
+import com.sjn.stamp.ui.item.RankedSongItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 
 import static com.sjn.stamp.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_SEARCH;
 
@@ -43,6 +49,53 @@ public class QueueHelper {
     private static final String TAG = LogHelper.makeLogTag(QueueHelper.class);
 
     private static final int RANDOM_QUEUE_SIZE = 10;
+
+    public static class QueueList extends ArrayList<MediaSessionCompat.QueueItem> implements Parcelable {
+
+        QueueList(){
+            super();
+        }
+
+        QueueList(Parcel in) {
+            in.readTypedList(this, MediaSessionCompat.QueueItem.CREATOR);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int i) {
+            parcel.writeTypedList(this);
+        }
+
+        public static final Parcelable.Creator<QueueList> CREATOR = new Parcelable.Creator<QueueList>() {
+            public QueueList createFromParcel(Parcel in) {
+                return new QueueList(in);
+            }
+
+            public QueueList[] newArray(int size) {
+                return new QueueList[size];
+            }
+        };
+    }
+
+    public static QueueList createQueue(List<MediaMetadataCompat> trackList, String category) {
+        QueueList queueList = new QueueList();
+        int count = 0;
+        if (trackList == null) {
+            return queueList;
+        }
+        for (MediaMetadataCompat track : trackList) {
+            if (track == null) {
+                break;
+            }
+            String hierarchyAwareMediaID = MediaIDHelper.createMediaID(track.getDescription().getMediaId(), category);
+            queueList.add(MediaItemHelper.convertToQueueItem(track, hierarchyAwareMediaID, count++));
+        }
+        return queueList;
+    }
 
     public static List<MediaSessionCompat.QueueItem> getPlayingQueue(String mediaId,
                                                                      MusicProvider musicProvider) {
@@ -231,13 +284,6 @@ public class QueueHelper {
         return true;
     }
 
-    /**
-     * Determine if queue item matches the currently playing queue item
-     *
-     * @param context   for retrieving the {@link MediaControllerCompat}
-     * @param queueItem to compare to currently playing {@link MediaSessionCompat.QueueItem}
-     * @return boolean indicating whether queue item matches currently playing queue item
-     */
     public static boolean isQueueItemPlaying(Activity activity,
                                              MediaSessionCompat.QueueItem queueItem) {
         // Queue item is considered to be playing or paused based on both the controller's

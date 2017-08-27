@@ -72,7 +72,10 @@ public class MusicProvider {
         mMusicListById = new HashMap<>();
         mFavoriteTracks = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
         for (ProviderType providerType : ProviderType.values()) {
-            mListProviderMap.put(providerType, providerType.newProvider(context));
+            ListProvider listProvider = providerType.newProvider(context);
+            if (listProvider != null) {
+                mListProviderMap.put(providerType, listProvider);
+            }
         }
     }
 

@@ -39,6 +39,10 @@ public class RankedSongItem extends AbstractItem<RankedSongItem.SimpleViewHolder
         mPlayCount = playCount;
     }
 
+    public MediaMetadataCompat getTrack(){
+        return mTrack;
+    }
+
     @Override
     public int getLayoutRes() {
         return R.layout.recycler_ranked_item;

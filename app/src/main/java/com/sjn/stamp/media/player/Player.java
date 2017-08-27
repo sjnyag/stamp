@@ -19,6 +19,8 @@ import com.sjn.stamp.media.provider.MusicProvider;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class Player implements SessionManager.SessionListener {
@@ -128,6 +130,10 @@ public class Player implements SessionManager.SessionListener {
     @Override
     public void onSessionEnd() {
         mPlaybackManager.getPlayback().updateLastKnownStreamPosition();
+    }
+
+    public void startNewQueue(String title, String mediaId, @NotNull List<MediaSessionCompat.QueueItem> queueItemList) {
+        mPlaybackManager.startNewQueue(title, mediaId, queueItemList);
     }
 
     private class QueueUpdateListener implements QueueManager.MetadataUpdateListener {

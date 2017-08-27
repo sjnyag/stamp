@@ -23,6 +23,10 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
     companion object {
         private val TAG = LogHelper.makeLogTag(MusicService::class.java)
         val CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER = "RELOAD_MUSIC_PROVIDER"
+        val CUSTOM_ACTION_SET_QUEUE = "SET_QUEUE"
+        val CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_TITLE = "SET_QUEUE_BUNDLE_KEY_TITLE"
+        val CUSTOM_ACTION_SET_QUEUE_BUNDLE_MEDIA_ID = "SET_QUEUE_BUNDLE_MEDIA_ID"
+        val CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_QUEUE = "SET_QUEUE_BUNDLE_KEY_QUEUE"
     }
 
     private lateinit var mMusicProvider: MusicProvider
@@ -82,6 +86,13 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
             CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER -> {
                 result.detach()
                 mMusicProvider.cacheAndNotifyLatestMusicMap()
+                return
+            }
+            CUSTOM_ACTION_SET_QUEUE -> {
+                result.detach()
+                extras?.let {
+                    mPlayer?.startNewQueue(extras.getString(CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_TITLE), extras.getString(CUSTOM_ACTION_SET_QUEUE_BUNDLE_MEDIA_ID), extras.getParcelableArrayList(CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_QUEUE))
+                }
                 return
             }
         }
