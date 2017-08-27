@@ -30,11 +30,13 @@ class StampController(private val mContext: Context) {
     }
 
     fun register(name: String, isSystem: Boolean): Boolean {
-        AnalyticsHelper.trackStamp(mContext, name)
         val result = RealmHelper.getRealmInstance().use { realm ->
             SongStampDao.save(realm, name, isSystem)
         }
         notifyStampChange()
+        if (result) {
+            AnalyticsHelper.trackStamp(mContext, name)
+        }
         return result
     }
 
