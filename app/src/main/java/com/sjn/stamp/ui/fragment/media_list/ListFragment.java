@@ -43,7 +43,7 @@ import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.SelectableAdapter;
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 
-public abstract class ListFragment extends Fragment implements
+public abstract class ListFragment extends FabFragment implements
         SwipeRefreshLayout.OnRefreshListener,
         FastScroller.OnScrollStateChangeListener,
         FlexibleAdapter.OnItemClickListener,
@@ -56,20 +56,15 @@ public abstract class ListFragment extends Fragment implements
     protected static final String LIST_STATE_KEY = "LIST_STATE_KEY";
 
     protected List<AbstractFlexibleItem> mItemList = new ArrayList<>();
-    protected RecyclerView mRecyclerView;
-    protected SongAdapter mAdapter;
 
     protected ProgressBar mLoading;
     protected View mEmptyView;
     protected TextView mEmptyTextView;
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     protected FastScroller mFastScroller;
-    protected Fab mFab;
-    protected CenteredMaterialSheetFab mCenteredMaterialSheetFab;
     protected ProgressItem mProgressItem = new ProgressItem();
 
     protected FragmentInteractionListener mListener;
-    protected boolean mIsVisibleToUser = true;
     protected Parcelable mListState;
 
 
@@ -96,41 +91,6 @@ public abstract class ListFragment extends Fragment implements
             }
         }
     });
-
-    View.OnClickListener startStampEdit = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.EDITING);
-        }
-    };
-
-    View.OnClickListener stopStampEdit = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.NO_EDIT);
-        }
-    };
-
-    private void openStampEdit() {
-        if (!mCenteredMaterialSheetFab.isSheetVisible()) {
-            mCenteredMaterialSheetFab.showSheet();
-        }
-        mFab.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
-        mFab.setImageResource(R.drawable.ic_full_cancel);
-        mFab.setTag(R.id.fab_type, R.drawable.ic_full_cancel);
-        mFab.setOnClickListener(stopStampEdit);
-    }
-
-
-    private void closeStampEdit() {
-        if (mCenteredMaterialSheetFab.isSheetVisible()) {
-            mCenteredMaterialSheetFab.hideSheet();
-        }
-        mFab.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
-        mFab.setImageResource(R.drawable.ic_stamp);
-        mFab.setTag(R.id.fab_type, R.drawable.ic_stamp);
-        mFab.setOnClickListener(startStampEdit);
-    }
 
     abstract public int getMenuResourceId();
 
@@ -208,155 +168,6 @@ public abstract class ListFragment extends Fragment implements
         return mItemList;
     }
 
-    protected void hideFab() {
-        if (mFab == null) {
-            return;
-        }
-        ViewCompat.animate(mFab)
-                .scaleX(0f).scaleY(0f)
-                .alpha(0f).setDuration(100)
-                .start();
-    }
-
-    protected void showFab() {
-        if (mFab == null) {
-            return;
-        }
-        ViewCompat.animate(mFab)
-                .scaleX(1f).scaleY(1f)
-                .alpha(1f).setDuration(200)
-                .setStartDelay(300L)
-                .start();
-    }
-
-    protected void initializeFab(int resourceId, ColorStateList color, View.OnClickListener onClickListener) {
-        mFab = getActivity().findViewById(R.id.fab);
-        mFab.setVisibility(View.VISIBLE);
-        if (Integer.valueOf(resourceId).equals(mFab.getTag(R.id.fab_type))) {
-            return;
-        }
-        StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.NO_EDIT);
-        mFab.setTag(R.id.fab_type, resourceId);
-        mFab.setImageResource(resourceId);
-        mFab.setBackgroundTintList(color);
-        mFab.setOnClickListener(onClickListener);
-        ViewCompat.animate(mFab)
-                .scaleX(1f).scaleY(1f)
-                .alpha(1f).setDuration(100)
-                .setStartDelay(300L)
-                .start();
-    }
-
-    protected void initializeFabWithStamp() {
-        initializeFab(R.drawable.ic_stamp, ColorStateList.valueOf(Color.WHITE), startStampEdit);
-        View sheetView = getActivity().findViewById(R.id.fab_sheet);
-        sheetView.setVisibility(View.VISIBLE);
-        View overlay = getActivity().findViewById(R.id.overlay);
-        overlay.setVisibility(View.VISIBLE);
-        int sheetColor = ContextCompat.getColor(getActivity(), R.color.background);
-        int fabColor = ContextCompat.getColor(getActivity(), R.color.fab_color);
-        mCenteredMaterialSheetFab = new CenteredMaterialSheetFab<>(mFab, sheetView, overlay, sheetColor, fabColor);
-        mCenteredMaterialSheetFab.setEventListener(new MaterialSheetFabEventListener() {
-            @Override
-            public void onShowSheet() {
-            }
-
-            @Override
-            public void onSheetShown() {
-                StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.EDITING);
-            }
-
-            @Override
-            public void onHideSheet() {
-            }
-
-            public void onSheetHidden() {
-                StampEditStateObserver.State state = StampEditStateObserver.State.STAMPING;
-                if (StampEditStateObserver.getInstance().getSelectedStampList() == null || StampEditStateObserver.getInstance().getSelectedStampList().isEmpty()) {
-                    state = StampEditStateObserver.State.NO_EDIT;
-                }
-                StampEditStateObserver.getInstance().notifyStateChange(state);
-            }
-        });
-    }
-
-    public void performFabAction() {
-        //default implementation does nothing
-    }
-
-    @Override
-    public void onStart() {
-        LogHelper.d(TAG, "onStart START");
-        super.onStart();
-        StampEditStateObserver.getInstance().addListener(this);
-        LogHelper.d(TAG, "onStart END");
-    }
-
-    @Override
-    public void onStop() {
-        LogHelper.d(TAG, "onStop START");
-        super.onStop();
-        if (mCenteredMaterialSheetFab != null && mCenteredMaterialSheetFab.isSheetVisible()) {
-            mCenteredMaterialSheetFab.hideSheet();
-        }
-        StampEditStateObserver.getInstance().removeListener(this);
-        LogHelper.d(TAG, "onStop END");
-    }
-
-    @Override
-    public void onSelectedStampChange(List<String> selectedStampList) {
-    }
-
-    @Override
-    public void onNewStampCreated(String stamp) {
-
-    }
-
-    /**
-     * {@link StampEditStateObserver.Listener}
-     */
-    @Override
-    public void onStampStateChange(StampEditStateObserver.State state) {
-        LogHelper.d(TAG, "onStampStateChange: ", state);
-        switch (state) {
-            case EDITING:
-                openStampEdit();
-                break;
-            case NO_EDIT:
-                closeStampEdit();
-                break;
-            case STAMPING:
-                if (mCenteredMaterialSheetFab != null && mCenteredMaterialSheetFab.isSheetVisible()) {
-                    mCenteredMaterialSheetFab.hideSheet();
-                }
-                if (mIsVisibleToUser && !SpotlightHelper.isShown(getActivity(), SpotlightHelper.KEY_STAMP_ADD)) {
-                    showSpotlight();
-                }
-                break;
-        }
-        mAdapter.notifyDataSetChanged();
-    }
-
-    private void showSpotlight() {
-        LinearLayoutManager layoutManager = ((LinearLayoutManager) mRecyclerView.getLayoutManager());
-        RecyclerView.ViewHolder view = mRecyclerView.findViewHolderForAdapterPosition(layoutManager.findFirstVisibleItemPosition());
-        if (view != null && view instanceof SongItem.SimpleViewHolder) {
-            View addStampView = ((SongItem.SimpleViewHolder) view).getShowTapTargetView();
-            if (addStampView != null) {
-                Spotlight.with(getActivity())
-                        .setDuration(200L)
-                        .setAnimation(new DecelerateInterpolator(2f))
-                        .setTargets(new SimpleTarget.Builder(getActivity())
-                                .setPoint(addStampView)
-                                .setRadius(120f)
-                                .setTitle(getString(R.string.spotlight_stamp_add_title))
-                                .setDescription(getString(R.string.spotlight_stamp_add_description))
-                                .build())
-                        .start();
-                SpotlightHelper.setShown(getActivity(), SpotlightHelper.KEY_STAMP_ADD);
-            }
-        }
-    }
 
     public String emptyMessage() {
         return getString(R.string.no_items);

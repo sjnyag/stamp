@@ -231,30 +231,6 @@ public class RankingFragment extends MediaBrowserListFragment {
 //                }
 //            }
 //        });
-        initializeFab(R.drawable.ic_play_arrow, ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.bt_accent)), new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (getActivity() != null && mIsVisibleToUser) {
-                    Bundle bundle = new Bundle();
-
-                    List<MediaMetadataCompat> trackList = new ArrayList<>();
-                    for (AbstractFlexibleItem item : mItemList) {
-                        if (item instanceof RankedSongItem) {
-                            trackList.add(((RankedSongItem) item).getTrack());
-                        } else if (item instanceof RankedArtistItem) {
-                            trackList.add(((RankedArtistItem) item).getTrack());
-                        }
-                    }
-                    if (trackList.isEmpty()) {
-                        return;
-                    }
-                    bundle.putParcelable(MusicService.Companion.getCUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_QUEUE(), QueueHelper.createQueue(trackList, MEDIA_ID_MUSICS_BY_RANKING));
-                    bundle.putString(MusicService.Companion.getCUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_TITLE(), mPeriod.toString(getResources()));
-                    bundle.putString(MusicService.Companion.getCUSTOM_ACTION_SET_QUEUE_BUNDLE_MEDIA_ID(), MediaIDHelper.createMediaID(trackList.get(0).getDescription().getMediaId(), MEDIA_ID_MUSICS_BY_RANKING));
-                    mMediaBrowsable.sendCustomAction(MusicService.Companion.getCUSTOM_ACTION_SET_QUEUE(), bundle, null);
-                }
-            }
-        });
         if (mIsVisibleToUser) {
             notifyFragmentChange();
         }

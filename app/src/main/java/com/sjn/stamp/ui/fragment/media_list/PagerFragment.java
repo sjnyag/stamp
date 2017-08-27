@@ -17,12 +17,12 @@ import java.util.List;
 
 import static com.sjn.stamp.utils.ViewHelper.setFragmentTitle;
 
-public abstract class PagerFragment extends Fragment {
+public abstract class PagerFragment extends FabFragment {
     static final String PAGER_KIND_KEY = "PAGER_KIND";
 
     protected ViewPagerAdapter mAdapter;
     protected ViewPager mViewPager;
-    private List<PageFragmentContainer> mFragments;
+    protected List<PageFragmentContainer> mFragments;
 
     abstract List<PageFragmentContainer> setUpFragmentContainer();
 
