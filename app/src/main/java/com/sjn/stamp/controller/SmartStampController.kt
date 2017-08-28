@@ -36,7 +36,7 @@ internal class SmartStampController(private val mContext: Context) {
         },
         ARTIST_BEST("Artist Best") {
             override fun isTarget(context: Context, song: Song, playCount: Int, recordType: RecordType): Boolean =
-                    true
+                    playCount >= 10
 
             override fun register(context: Context, song: Song, playCount: Int, recordType: RecordType) {
                 val stampController = StampController(context)
