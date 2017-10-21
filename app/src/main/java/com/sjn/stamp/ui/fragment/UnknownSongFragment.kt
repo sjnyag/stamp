@@ -172,7 +172,7 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
                 val item = it.getItem(p)
                 if (item is SimpleMediaMetadataItem) {
                     val song = SongController(context).findSong(unknownSongId)
-                    val mediaMetadata = SongController(context).resolveSongByMusicIdOrMediaId(item.mediaId)
+                    val mediaMetadata = SongController(context).resolveMediaMetadata(item.mediaId)
                     if (song != null && mediaMetadata != null) {
                         openMergeConfirmDialog(p, song, mediaMetadata)
                     }

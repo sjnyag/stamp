@@ -316,35 +316,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         }
         // Perform different actions
         // Here, option 2A) is implemented
-        if (direction == ItemTouchHelper.LEFT) {
-            message.append(getString(R.string.action_archived));
-
-            // Example of UNDO color
-            int actionTextColor;
-            if (Utils.hasMarshmallow()) {
-                actionTextColor = ContextCompat.getColor(getActivity(), R.color.material_color_orange_500);
-            } else {
-                //noinspection deprecation
-                actionTextColor = getResources().getColor(R.color.material_color_orange_500);
-            }
-
-            new UndoHelper(mAdapter, this)
-                    .withPayload(null) //You can pass any custom object (in this case Boolean is enough)
-                    .withAction(UndoHelper.ACTION_UPDATE, new UndoHelper.SimpleActionListener() {
-                        @Override
-                        public boolean onPreAction() {
-                            // Return true to avoid default immediate deletion.
-                            // Ask to the user what to do, open a custom dialog. On option chosen,
-                            // delete the item from Adapter list as usual.
-                            return true;
-                        }
-                    })
-                    .withActionTextColor(actionTextColor)
-                    .remove(positions, getActivity().findViewById(R.id.main_view), message,
-                            getString(R.string.undo), UndoHelper.UNDO_TIMEOUT);
-
-            //Here, option 1B) is implemented
-        } else if (direction == ItemTouchHelper.RIGHT) {
+        if (direction == ItemTouchHelper.RIGHT) {
             AbstractItem subItem = (AbstractItem) abstractItem;
             DialogFacade.createHistoryDeleteDialog(getActivity(), subItem.toString(), new MaterialDialog.SingleButtonCallback() {
                         @Override

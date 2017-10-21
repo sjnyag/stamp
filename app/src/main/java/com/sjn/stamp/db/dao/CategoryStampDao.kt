@@ -10,6 +10,9 @@ object CategoryStampDao : BaseDao() {
     fun findAll(realm: Realm): List<CategoryStamp> =
             realm.where(CategoryStamp::class.java).findAll() ?: emptyList()
 
+    fun findByName(realm: Realm, name: String, isSystem: Boolean): List<CategoryStamp> =
+            realm.where(CategoryStamp::class.java).equalTo("name", name).equalTo("isSystem", isSystem).findAll() ?: emptyList()
+
     fun findCategoryStampList(realm: Realm, categoryType: CategoryType, categoryValue: String): List<CategoryStamp> =
             realm.where(CategoryStamp::class.java).equalTo("type", categoryType.databaseValue).equalTo("value", categoryValue).findAll() ?: emptyList()
 

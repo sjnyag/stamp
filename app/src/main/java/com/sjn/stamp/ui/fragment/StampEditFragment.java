@@ -114,7 +114,7 @@ public class StampEditFragment extends Fragment implements StampEditStateObserve
                 if (context == null || stamp.isEmpty()) {
                     return false;
                 }
-                DialogFacade.createStampDeleteDialog(context, stamp, new MaterialDialog.SingleButtonCallback() {
+                DialogFacade.createRemoveStampSongDialog(context, stamp, new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         switch (which) {

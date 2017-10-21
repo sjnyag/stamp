@@ -32,6 +32,7 @@ public class DialogFacade {
                 .backgroundColorRes(R.color.material_blue_grey_800)
                 .theme(Theme.DARK);
     }
+
     public static MaterialDialog.Builder createConfirmDialog(final Context context, int content, MaterialDialog.SingleButtonCallback callback, final MaterialDialog.OnDismissListener dismissListener) {
         return new MaterialDialog.Builder(context)
                 .title(R.string.dialog_confirm_title)
@@ -68,7 +69,7 @@ public class DialogFacade {
                 .theme(Theme.DARK);
     }
 
-    public static MaterialDialog.Builder createStampDeleteDialog(final Context context, String stamp, MaterialDialog.SingleButtonCallback callback) {
+    public static MaterialDialog.Builder createRemoveStampSongDialog(final Context context, String stamp, MaterialDialog.SingleButtonCallback callback) {
         return new MaterialDialog.Builder(context)
                 .title(R.string.dialog_delete_stamp_title)
                 .content(R.string.dialog_delete_stamp_content, stamp)
@@ -84,6 +85,19 @@ public class DialogFacade {
         return new MaterialDialog.Builder(context)
                 .title(R.string.dialog_lets_play_title)
                 .positiveText(R.string.dialog_ok)
+                .contentColorRes(android.R.color.white)
+                .backgroundColorRes(R.color.material_blue_grey_800)
+                .theme(Theme.DARK);
+    }
+
+    public static MaterialDialog.Builder createRemoveStampSongDialog(final Context context, String song, String stamp, MaterialDialog.SingleButtonCallback callback, DialogInterface.OnDismissListener dismissListener) {
+        return new MaterialDialog.Builder(context)
+                .title(R.string.dialog_remove_stamp_title)
+                .content(R.string.dialog_remove_stamp_content, song, stamp)
+                .positiveText(R.string.dialog_delete)
+                .negativeText(R.string.dialog_cancel)
+                .onAny(callback)
+                .dismissListener(dismissListener)
                 .contentColorRes(android.R.color.white)
                 .backgroundColorRes(R.color.material_blue_grey_800)
                 .theme(Theme.DARK);

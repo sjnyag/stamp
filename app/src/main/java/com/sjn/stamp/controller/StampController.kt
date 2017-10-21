@@ -6,6 +6,7 @@ import com.sjn.stamp.constant.CategoryType
 import com.sjn.stamp.db.CategoryStamp
 import com.sjn.stamp.db.SongStamp
 import com.sjn.stamp.db.dao.CategoryStampDao
+import com.sjn.stamp.db.dao.SongDao
 import com.sjn.stamp.db.dao.SongStampDao
 import com.sjn.stamp.utils.AnalyticsHelper
 import com.sjn.stamp.utils.LogHelper
@@ -37,6 +38,21 @@ class StampController(private val mContext: Context) {
         notifyStampChange()
         AnalyticsHelper.trackStamp(mContext, name)
         return true
+    }
+
+    fun isCategoryStamp(name: String, isSystem: Boolean, mediaId: String): Boolean {
+        val mediaMetadata = SongController(mContext).resolveMediaMetadata(mediaId) ?: return false
+        RealmHelper.getRealmInstance().use { realm ->
+            return CategoryStampDao.findByName(realm, name, isSystem).find { categoryStamp -> categoryStamp.contain(mediaMetadata) } != null
+        }
+    }
+
+    fun removeSong(name: String, isSystem: Boolean, mediaId: String): Boolean {
+        val mediaMetadata = SongController(mContext).resolveMediaMetadata(mediaId) ?: return false
+        RealmHelper.getRealmInstance().use { realm ->
+            val song = SongDao.findByMediaMetadata(realm, mediaMetadata) ?: return false
+            return SongStampDao.remove(realm, song.id, name, isSystem)
+        }
     }
 
     fun delete(stamp: String, isSystem: Boolean) {

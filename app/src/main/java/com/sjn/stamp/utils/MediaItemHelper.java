@@ -14,12 +14,14 @@ import android.text.TextUtils;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
+import com.sjn.stamp.constant.CategoryType;
 import com.sjn.stamp.db.Song;
 import com.sjn.stamp.db.SongHistory;
 import com.sjn.stamp.db.SongStamp;
 import com.sjn.stamp.db.TotalSongHistory;
 import com.sjn.stamp.db.dao.ArtistDao;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -122,6 +124,22 @@ public class MediaItemHelper {
 
     }
 
+    @NotNull
+    public static String fetch(MediaMetadataCompat mediaMetadata, CategoryType categoryType) {
+        if(categoryType == null){
+            return null;
+        }
+        switch (categoryType){
+            case ALBUM:
+                return getAlbum(mediaMetadata);
+            case ARTIST:
+                return getArtist(mediaMetadata);
+            case GENRE:
+                return getGenre(mediaMetadata);
+        }
+        return null;
+    }
+
     public static String getTitle(MediaMetadataCompat metadata) {
         return fetchString(metadata, MediaMetadataCompat.METADATA_KEY_TITLE);
     }
@@ -132,6 +150,10 @@ public class MediaItemHelper {
 
     public static String getAlbum(MediaMetadataCompat metadata) {
         return fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ALBUM);
+    }
+
+    public static String getGenre(MediaMetadataCompat metadata) {
+        return fetchString(metadata, MediaMetadataCompat.METADATA_KEY_GENRE);
     }
 
     public static String getAlbumArtUri(MediaMetadataCompat metadata) {

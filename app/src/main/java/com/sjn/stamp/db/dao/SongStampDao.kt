@@ -23,12 +23,16 @@ object SongStampDao : BaseDao() {
         realm.commitTransaction()
     }
 
-    fun remove(realm: Realm, songId: Long, name: String, isSystem: Boolean) {
-        val song = SongDao.findById(realm, songId) ?: return
+    fun remove(realm: Realm, songId: Long, name: String, isSystem: Boolean): Boolean {
+        val song = SongDao.findById(realm, songId) ?: return false
         val songStamp = findOrCreate(realm, name, isSystem)
+        if (!songStamp.songList.contains(song)) {
+            return false
+        }
         realm.beginTransaction()
         songStamp.removeSong(song)
         realm.commitTransaction()
+        return true
     }
 
     fun findOrCreate(realm: Realm, name: String, isSystem: Boolean): SongStamp {

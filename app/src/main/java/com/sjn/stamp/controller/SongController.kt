@@ -48,7 +48,7 @@ class SongController(private val mContext: Context) {
     }
 
     fun findStampsByMediaId(mediaId: String): List<Stamp> {
-        val mediaMetadata = resolveSongByMusicIdOrMediaId(mediaId)
+        val mediaMetadata = resolveMediaMetadata(mediaId)
         return if (MediaIDHelper.isTrack(mediaId) && mediaMetadata != null) {
             findSongStampListByMediaMetadata(mediaMetadata)
         } else {
@@ -68,7 +68,7 @@ class SongController(private val mContext: Context) {
     }
 
     fun registerStampList(stampNameList: List<String>, mediaId: String, isSystem: Boolean) {
-        val mediaMetadata = resolveSongByMusicIdOrMediaId(mediaId)
+        val mediaMetadata = resolveMediaMetadata(mediaId)
         if (MediaIDHelper.isTrack(mediaId) && mediaMetadata != null) {
             registerSongStampList(stampNameList, mediaMetadata, isSystem)
         } else {
@@ -83,7 +83,7 @@ class SongController(private val mContext: Context) {
     }
 
     fun removeStamp(stampName: String, mediaId: String, isSystem: Boolean) {
-        val mediaMetadata = resolveSongByMusicIdOrMediaId(mediaId)
+        val mediaMetadata = resolveMediaMetadata(mediaId)
         if (MediaIDHelper.isTrack(mediaId) && mediaMetadata != null) {
             removeSongStamp(mediaMetadata, stampName, isSystem)
         } else {
@@ -161,7 +161,7 @@ class SongController(private val mContext: Context) {
         }
     }
 
-    fun resolveSongByMusicIdOrMediaId(musicIdOrMediaId: String): MediaMetadataCompat? {
+    fun resolveMediaMetadata(musicIdOrMediaId: String): MediaMetadataCompat? {
         val musicId = if (MediaIDHelper.isTrack(musicIdOrMediaId)) MediaIDHelper.extractMusicIDFromMediaID(musicIdOrMediaId) else musicIdOrMediaId
         val longMusicId = try {
             java.lang.Long.valueOf(musicId)

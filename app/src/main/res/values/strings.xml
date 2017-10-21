@@ -224,4 +224,7 @@
     <string name="song_history">Song history</string>
     <string name="song_db_unknown">Unknown songs</string>
     <string name="song_db_unknown_summary">Show songs cannot be played.</string>
+    <string name="dialog_remove_stamp_title">Remove song from stamp</string>
+    <string name="dialog_remove_stamp_content">Do you want to remove song[%1$s] from stamp[%2$s] ?</string>
+    <string name="error_message_stamp_failed">Remove failed. This song is stamped by Artist or Album.</string>
 </resources>

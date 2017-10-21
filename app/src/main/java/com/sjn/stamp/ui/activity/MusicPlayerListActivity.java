@@ -31,6 +31,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.sjn.stamp.MusicService;
 import com.sjn.stamp.R;
 import com.sjn.stamp.ui.DialogFacade;
+import com.sjn.stamp.ui.SongListFactory;
 import com.sjn.stamp.ui.fragment.FullScreenPlayerFragment;
 import com.sjn.stamp.ui.fragment.media_list.MediaBrowserListFragment;
 import com.sjn.stamp.ui.fragment.media_list.PagerFragment;
@@ -249,9 +250,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
         MediaBrowserListFragment fragment = getMediaBrowserListFragment();
 
         if (fragment == null || !TextUtils.equals(fragment.getMediaId(), mediaId)) {
-            SongListFragment newFragment = new SongListFragment();
-            newFragment.setMediaId(mediaId);
-            navigateToBrowser(newFragment, true);
+            navigateToBrowser(SongListFactory.INSTANCE.create(mediaId), true);
         }
     }
 

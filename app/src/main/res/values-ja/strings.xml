@@ -220,4 +220,7 @@
     <string name="song_db_unknown_summary">再生できない曲を表示します。</string>
     <string name="dialog_merge_song">正しい曲を選択してください。</string>
     <string name="dialog_confirm_merge_song">[%1$s] のスタンプ・再生履歴を [%2$s] に加えます。</string>
+    <string name="dialog_remove_stamp_title">Stampから削除</string>
+    <string name="dialog_remove_stamp_content">Stamp[%2$s]から[%1$s]を取り除きます。</string>
+    <string name="error_message_stamp_failed">この曲はアーティストかアルバムでスタンプされているので削除できません。</string>
 </resources>

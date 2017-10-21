@@ -234,7 +234,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
 
     @Override
     public String toString() {
-        return "SongHistoryItem[" + super.toString() + "]";
+        return "SongItem[" + super.toString() + "]";
     }
 
 }
