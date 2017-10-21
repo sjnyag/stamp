@@ -134,7 +134,7 @@ public class LocalPlaylistHelper {
         return resolver.delete(PLAYLIST_URI, wherePlayList(resolver, name), null);
     }
 
-    //FIXME: remove duplication check
+    //FIXME: delete duplication check
     //borrowed from http://stackoverflow.com/questions/3182937
     public static boolean add(ContentResolver resolver, int audioId, int playlistId) {
         if (isExistAudioId(resolver, audioId, playlistId)) {

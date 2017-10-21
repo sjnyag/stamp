@@ -122,7 +122,7 @@ public class StampEditFragment extends Fragment implements StampEditStateObserve
                                 return;
                             case POSITIVE:
                                 StampController stampController = new StampController(getContext());
-                                stampController.remove(stamp, false);
+                                stampController.delete(stamp, false);
                                 mStampListLayout.removeViewWithAnimation(view);
                                 updateEmptyString(new StampController(getContext()).findAll());
                                 break;

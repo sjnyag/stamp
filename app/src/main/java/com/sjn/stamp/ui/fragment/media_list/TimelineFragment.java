@@ -297,7 +297,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         // Option 1 FULL_SWIPE: Direct action no Undo Action
         // Do something based on direction when item has been swiped:
         //   A) update item, set "read" if an email etc.
-        //   B) remove the item from the adapter;
+        //   B) delete the item from the adapter;
 
         // Option 2 FULL_SWIPE: Delayed action with Undo Action
         // Show action button and start a new Handler:
@@ -335,7 +335,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
                         public boolean onPreAction() {
                             // Return true to avoid default immediate deletion.
                             // Ask to the user what to do, open a custom dialog. On option chosen,
-                            // remove the item from Adapter list as usual.
+                            // delete the item from Adapter list as usual.
                             return true;
                         }
                     })
@@ -464,7 +464,9 @@ public class TimelineFragment extends MediaBrowserListFragment implements
                 switch (adapterItem.getLayoutRes()) {
                     case R.layout.recycler_song_history_item:
                         AbstractItem subItem = (AbstractItem) adapterItem;
-                        subItem.delete(getActivity());
+                        if (getActivity() != null) {
+                            subItem.delete(getActivity());
+                        }
                         LogHelper.i(TAG, "Confirm removed " + subItem.toString());
                         break;
                 }

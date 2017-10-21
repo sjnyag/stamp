@@ -15,37 +15,37 @@ import com.sjn.stamp.utils.MediaIDHelper;
 public enum DrawerMenu {
     HOME(R.id.navigation_home) {
         @Override
-        Fragment getFragment() {
+        public Fragment getFragment() {
             return new AllSongPagerFragment();
         }
     },
     TIMELINE(R.id.navigation_timeline) {
         @Override
-        Fragment getFragment() {
+        public Fragment getFragment() {
             return new TimelineFragment();
         }
     },
     QUEUE(R.id.navigation_queue) {
         @Override
-        Fragment getFragment() {
+        public Fragment getFragment() {
             return new QueueListFragment();
         }
     },
     STAMP(R.id.navigation_stamp) {
         @Override
-        Fragment getFragment() {
+        public Fragment getFragment() {
             return new StampPagerFragment();
         }
     },
     RANKING(R.id.navigation_ranking) {
         @Override
-        Fragment getFragment() {
+        public Fragment getFragment() {
             return new RankingPagerFragment();
         }
     },
     SETTING(R.id.navigation_setting) {
         @Override
-        Fragment getFragment() {
+        public Fragment getFragment() {
             return new SettingFragment();
         }
     },;
@@ -59,7 +59,7 @@ public enum DrawerMenu {
         return mMenuId;
     }
 
-    abstract Fragment getFragment();
+    public abstract Fragment getFragment();
 
     public static DrawerMenu of(long menuId) {
         for (DrawerMenu drawerMenu : DrawerMenu.values()) {

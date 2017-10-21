@@ -20,6 +20,18 @@ import java.util.List;
 import static net.yslibrary.licenseadapter.Licenses.LICENSE_APACHE_V2;
 
 public class DialogFacade {
+    public static MaterialDialog.Builder createConfirmDialog(final Context context, String content, MaterialDialog.SingleButtonCallback callback, final MaterialDialog.OnDismissListener dismissListener) {
+        return new MaterialDialog.Builder(context)
+                .title(R.string.dialog_confirm_title)
+                .content(content)
+                .positiveText(R.string.dialog_ok)
+                .negativeText(R.string.dialog_cancel)
+                .onAny(callback)
+                .dismissListener(dismissListener)
+                .contentColorRes(android.R.color.white)
+                .backgroundColorRes(R.color.material_blue_grey_800)
+                .theme(Theme.DARK);
+    }
     public static MaterialDialog.Builder createConfirmDialog(final Context context, int content, MaterialDialog.SingleButtonCallback callback, final MaterialDialog.OnDismissListener dismissListener) {
         return new MaterialDialog.Builder(context)
                 .title(R.string.dialog_confirm_title)

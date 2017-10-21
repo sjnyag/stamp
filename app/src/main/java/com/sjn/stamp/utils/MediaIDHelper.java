@@ -196,7 +196,7 @@ public class MediaIDHelper {
         if (musicID == null) {
             return null;
         }
-        //TODO remove underscore
+        //TODO delete underscore
         return musicID.replaceAll("__／__", "/").replaceAll("__｜__", "|");
     }
 
@@ -204,7 +204,7 @@ public class MediaIDHelper {
         if (musicID == null) {
             return null;
         }
-        //TODO remove underscore
+        //TODO delete underscore
         return musicID.replaceAll("/", "__／__").replaceAll("\\|", "__｜__");
     }
 
@@ -221,7 +221,7 @@ public class MediaIDHelper {
         if (hierarchy.length < 1) {
             return null;
         }
-        return ProviderType.of(hierarchy[0]);
+        return ProviderType.Companion.of(hierarchy[0]);
     }
 
     public static boolean isDirect(String categoryType) {

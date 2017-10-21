@@ -15,7 +15,9 @@ import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
 import com.sjn.stamp.db.Song;
+import com.sjn.stamp.db.SongHistory;
 import com.sjn.stamp.db.SongStamp;
+import com.sjn.stamp.db.TotalSongHistory;
 import com.sjn.stamp.db.dao.ArtistDao;
 
 import org.json.JSONObject;
@@ -31,6 +33,12 @@ public class MediaItemHelper {
     private static final String MIME_TYPE_AUDIO_MPEG = "audio/mpeg";
 
     public static final String META_DATA_KEY_BASE_MEDIA_ID = "com.sjn.stamp.media.META_DATA_KEY_BASE_MEDIA_ID";
+
+    public static boolean isSameSong(MediaMetadataCompat metadata, Song song) {
+        return song.getAlbum().equals(fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ALBUM)) &&
+                song.getArtist().getName().equals(fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ARTIST)) &&
+                song.getTitle().equals(fetchString(metadata, MediaMetadataCompat.METADATA_KEY_TITLE));
+    }
 
     private static MediaMetadataCompat.Builder convertToMetadataBuilder(Song song) {
         return new MediaMetadataCompat.Builder()
@@ -114,23 +122,41 @@ public class MediaItemHelper {
 
     }
 
+    public static String getTitle(MediaMetadataCompat metadata) {
+        return fetchString(metadata, MediaMetadataCompat.METADATA_KEY_TITLE);
+    }
+
+    public static String getArtist(MediaMetadataCompat metadata) {
+        return fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ARTIST);
+    }
+
+    public static String getAlbum(MediaMetadataCompat metadata) {
+        return fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ALBUM);
+    }
+
+    public static String getAlbumArtUri(MediaMetadataCompat metadata) {
+        return fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI);
+    }
+
     public static Song createSong(MediaMetadataCompat metadata) {
         return new Song(
                 0,
                 metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID),
                 metadata.getString(MediaItemHelper.CUSTOM_METADATA_TRACK_SOURCE),
-                fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ALBUM),
+                getAlbum(metadata),
                 fetchLong(metadata, MediaMetadataCompat.METADATA_KEY_DURATION),
                 fetchString(metadata, MediaMetadataCompat.METADATA_KEY_GENRE),
                 fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI),
-                fetchString(metadata, MediaMetadataCompat.METADATA_KEY_TITLE),
+                getTitle(metadata),
                 fetchLong(metadata, MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER),
                 fetchLong(metadata, MediaMetadataCompat.METADATA_KEY_NUM_TRACKS),
                 fetchString(metadata, MediaMetadataCompat.METADATA_KEY_DATE),
                 new RealmList<SongStamp>(),
+                null,
+                new TotalSongHistory(),
                 ArtistDao.INSTANCE.newStandalone(
-                        fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ARTIST),
-                        fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI)
+                        getArtist(metadata),
+                        getAlbumArtUri(metadata)
                 )
         );
     }
@@ -309,5 +335,4 @@ public class MediaItemHelper {
         }
         return null;
     }
-
 }

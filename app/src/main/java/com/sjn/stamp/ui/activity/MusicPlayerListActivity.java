@@ -203,7 +203,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
 
     private void startFullScreenIfNeeded(Intent intent) {
         if (intent != null && intent.getBooleanExtra(EXTRA_START_FULLSCREEN, false)) {
-            SlidingUpPanelLayout slidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+            SlidingUpPanelLayout slidingUpPanelLayout = findViewById(R.id.sliding_layout);
             if (slidingUpPanelLayout == null) {
                 return;
             }
@@ -214,7 +214,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
     protected void initializeFromParams(Bundle savedInstanceState, Intent intent) {
         LogHelper.d(TAG, "initializeFromParams ", intent);
         String mediaId = null;
-        // check if we were started from a "Play XYZ" voice search. If so, we save the extras
+        // check if we were started from a "Play XYZ" voice search. If so, we create the extras
         // (which contain the query details) in a parameter, so we can reuse it later, when the
         // MediaSession is connected.
         if (intent.getAction() != null

@@ -25,7 +25,7 @@
                 android:paddingBottom="130dp"/>
 
             <!-- NOT NEEDED ANYMORE!! This layout is generated at runtime when
-                 sticky headers are enabled. So you can safely remove it. -->
+                 sticky headers are enabled. So you can safely delete it. -->
             <!--<include layout="@layout/sticky_header_layout"/>-->
 
         </FrameLayout>

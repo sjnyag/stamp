@@ -1,19 +1,21 @@
 package com.sjn.stamp.db.dao
 
 import com.sjn.stamp.db.Artist
-
 import io.realm.Realm
 
 object ArtistDao : BaseDao() {
 
-    @Suppress("unused")
-    fun findOrCreate(realm: Realm, rawArtist: Artist): Artist {
-        var artist: Artist? = realm.where(Artist::class.java).equalTo("name", rawArtist.name).findFirst()
+    fun findOrCreate(realm: Realm, name: String, uri: String): Artist {
+        var artist: Artist? = realm.where(Artist::class.java).equalTo("name", name).findFirst()
         if (artist == null) {
-            rawArtist.id = getAutoIncrementId(realm, Artist::class.java)
-            artist = realm.copyToRealm(rawArtist)
+            realm.beginTransaction()
+            artist = realm.createObject(Artist::class.java, CategoryStampDao.getAutoIncrementId(realm, Artist::class.java))
+            artist.name = name
+            artist.albumArtUri = uri
+            realm.commitTransaction()
+            return artist
         }
-        return artist!!
+        return artist
     }
 
     fun newStandalone(name: String, uri: String): Artist = Artist(name = name, albumArtUri = uri)

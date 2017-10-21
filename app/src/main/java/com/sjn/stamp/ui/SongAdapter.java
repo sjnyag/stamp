@@ -191,7 +191,7 @@ public class SongAdapter extends FlexibleAdapter<AbstractFlexibleItem> {
                 case 1: //async updateDataSet
                 case 2: //async filterItems
                 case 3: //confirm delete
-                case 8: //onLoadMore remove progress item
+                case 8: //onLoadMore delete progress item
                     return done;
 
                 // Free to use, example:

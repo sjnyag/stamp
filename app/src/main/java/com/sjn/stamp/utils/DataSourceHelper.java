@@ -11,8 +11,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class DataSourceHelper {
-    public static void setMediaPlayerDataSource(Context context,
-                                                MediaPlayer mp, String fileInfo) throws IOException {
+    public static boolean setMediaPlayerDataSource(Context context,
+                                                   MediaPlayer mp, String fileInfo) throws IOException {
 
         if (fileInfo.startsWith("content://")) {
             Uri uri = Uri.parse(fileInfo);
@@ -33,11 +33,16 @@ public class DataSourceHelper {
             try {
                 setMediaPlayerDataSourceUsingFileDescriptor(context, mp, fileInfo);
             } catch (Exception ee) {
-                String uri = getRingtoneUriFromPath(context, fileInfo);
-                mp.reset();
-                mp.setDataSource(uri);
+                try {
+                    String uri = getRingtoneUriFromPath(context, fileInfo);
+                    mp.reset();
+                    mp.setDataSource(uri);
+                } catch (Exception eee) {
+                    return false;
+                }
             }
         }
+        return true;
     }
 
     private static void setMediaPlayerDataSourcePreHoneyComb(Context context, MediaPlayer mp, String fileInfo) throws Exception {

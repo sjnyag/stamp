@@ -20,10 +20,6 @@ import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.TimeHelper;
 import com.sjn.stamp.utils.ViewHelper;
 
-import org.joda.time.DateTime;
-import org.joda.time.Minutes;
-import org.joda.time.Seconds;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -79,8 +75,10 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
 
     @Override
     public void delete(Context context) {
-        SongHistoryController controller = new SongHistoryController(context);
-        controller.delete(mSongHistoryId);
+        if (context != null) {
+            SongHistoryController controller = new SongHistoryController(context);
+            controller.delete(mSongHistoryId);
+        }
     }
 
     @Override
@@ -119,7 +117,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
             holder.mTitle.setText(getTitle());
             holder.mSubtitle.setText(getSubtitle());
         }
-        holder.mDate.setText(getDateText(mRecordedAt, context.getResources()));
+        holder.mDate.setText(TimeHelper.getDateText(mRecordedAt, context.getResources()));
         ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, mAlbumArtUri, mTitle);
         holder.updateStampList(mMediaId);
     }
@@ -128,19 +126,6 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
     public boolean filter(String constraint) {
         return getTitle() != null && getTitle().toLowerCase().trim().contains(constraint) ||
                 getSubtitle() != null && getSubtitle().toLowerCase().trim().contains(constraint);
-    }
-
-    private String getDateText(Date date, Resources resources) {
-        DateTime dateTime = TimeHelper.toDateTime(date).minusSeconds(20);
-        DateTime now = TimeHelper.getJapanNow();
-        Minutes minutes = Minutes.minutesBetween(dateTime, now);
-        if (minutes.isLessThan(Minutes.minutes(1))) {
-            return resources.getString(R.string.item_song_history_seconds_ago, Seconds.secondsBetween(dateTime, now).getSeconds());
-        } else if (minutes.isLessThan(Minutes.minutes(60))) {
-            return resources.getString(R.string.item_song_history_minutes_ago, Minutes.minutesBetween(dateTime, now).getMinutes());
-        } else {
-            return TimeHelper.formatMMDDHHMM(dateTime);
-        }
     }
 
     static final class SimpleViewHolder extends StampContainsViewHolder {

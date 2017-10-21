@@ -88,7 +88,7 @@ public class MusicProvider {
 
     public List<MediaMetadataCompat> getMusicsHierarchy(String categoryType, String categoryValue) {
         LogHelper.d(TAG, "getMusicsHierarchy categoryType: ", categoryType, ", categoryValue: ", categoryValue);
-        ListProvider listProvider = mListProviderMap.get(ProviderType.of(categoryType));
+        ListProvider listProvider = mListProviderMap.get(ProviderType.Companion.of(categoryType));
         if (listProvider == null) {
             return null;
         }
@@ -218,7 +218,7 @@ public class MusicProvider {
                 mediaItems.add(listProvider.getRootMenu(resources));
             }
         } else {
-            ProviderType type = ProviderType.of(mediaId);
+            ProviderType type = ProviderType.Companion.of(mediaId);
             if (type != null) {
                 return getProvider(type).getListItems(mediaId, resources, mCurrentState, mMusicListById);
             }

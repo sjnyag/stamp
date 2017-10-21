@@ -10,4 +10,19 @@ open class SongStamp(
         @Index var name: String = "",
         var isSystem: Boolean = false,
         var songList: RealmList<Song> = RealmList()
-) : RealmObject()
+) : RealmObject() {
+
+    fun addSong(song: Song) {
+        if (!songList.contains(song)) {
+            songList.add(song)
+        }
+        song.addSongStamp(this)
+    }
+
+    fun removeSong(song: Song) {
+        if (songList.contains(song)) {
+            songList.remove(song)
+        }
+        song.removeSongStamp(this)
+    }
+}

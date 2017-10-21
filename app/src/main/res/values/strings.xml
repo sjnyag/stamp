@@ -101,6 +101,7 @@
     <string name="dialog_stamp_register">Register stamp</string>
     <string name="dialog_ranking_target">Select ranking target</string>
     <string name="dialog_period_select">Select ranking period</string>
+    <string name="dialog_merge_song">Select valid song</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_close">CLOSE</string>
@@ -216,4 +217,11 @@
     <string name="invalid_backup_selected">This is invalid.</string>
      <string name="spotlight_stamp_add_title">Tap [Add] button</string>
      <string name="spotlight_stamp_add_description">You can press selected stamps to your song by this button.</string>
+    <string name="song_db_refresh">Refresh Song database</string>
+    <string name="song_db_refresh_summary">If Android music information is updated like a model change, please update music information from here.</string>
+    <string name="dialog_confirm_song_db_refresh">Refresh music information ?</string>
+    <string name="dialog_confirm_merge_song">Merge stamps and playbacks of [%1$s] into [%2$s]</string>
+    <string name="song_history">Song history</string>
+    <string name="song_db_unknown">Unknown songs</string>
+    <string name="song_db_unknown_summary">Show songs cannot be played.</string>
 </resources>

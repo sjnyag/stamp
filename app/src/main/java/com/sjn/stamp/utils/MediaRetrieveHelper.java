@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.media.MediaMetadataCompat;
 import android.util.SparseArray;
 
@@ -27,6 +28,8 @@ public class MediaRetrieveHelper {
             MediaStore.Audio.Genres.NAME,
             MediaStore.Audio.Genres._ID};
 
+    private static final String SORT_ORDER = MediaStore.Audio.Media.TITLE;
+
     private static final String[] MEDIA_PROJECTION = {
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ARTIST,
@@ -46,6 +49,15 @@ public class MediaRetrieveHelper {
             Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     private static final String ALL_MUSIC_SELECTION = MediaStore.Audio.Media.IS_MUSIC + " != 0";
+
+    public static List<MediaMetadataCompat> allMediaMetadataCompat(Context context, PermissionRequiredCallback callback) {
+        return Lists.transform(retrieveAllMedia(context, callback), new Function<MediaCursorContainer, MediaMetadataCompat>() {
+            @Override
+            public MediaMetadataCompat apply(MediaCursorContainer mediaCursorContainer) {
+                return mediaCursorContainer.buildMediaMetadataCompat();
+            }
+        });
+    }
 
     public static Iterator<MediaMetadataCompat> createIterator(List<MediaCursorContainer> list) {
         return Lists.transform(list, new Function<MediaCursorContainer, MediaMetadataCompat>() {
@@ -103,16 +115,17 @@ public class MediaRetrieveHelper {
         return "";
     }
 
+    @NonNull
     public static List<MediaCursorContainer> retrieveAllMedia(Context context, PermissionRequiredCallback callback) {
+        List<MediaCursorContainer> mediaList = new ArrayList<>();
         if (!MediaRetrieveHelper.hasPermission(context) && callback != null) {
             callback.onPermissionRequired();
-            return null;
+            return mediaList;
         }
-        List<MediaCursorContainer> mediaList = new ArrayList<>();
         SparseArray<String> genreMap = createGenreMap(context, callback);
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Cursor mediaCursor = context.getContentResolver().query(
-                uri, MEDIA_PROJECTION, ALL_MUSIC_SELECTION, null, null);
+                uri, MEDIA_PROJECTION, ALL_MUSIC_SELECTION, null, SORT_ORDER);
         try {
             if (mediaCursor != null && mediaCursor.moveToFirst()) {
                 do {

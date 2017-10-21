@@ -1,74 +1,56 @@
 package com.sjn.stamp.db.dao
 
-import com.sjn.stamp.db.Song
 import com.sjn.stamp.db.SongStamp
-
 import io.realm.Realm
 import io.realm.RealmList
 
 object SongStampDao : BaseDao() {
 
+    fun find(realm: Realm, name: String, isSystem: Boolean): SongStamp? =
+            realm.where(SongStamp::class.java).equalTo("name", name).equalTo("isSystem", isSystem).findFirst()
+
     fun findAll(realm: Realm): List<SongStamp> =
-            realm.where(SongStamp::class.java).findAll().sort("name")
+            realm.where(SongStamp::class.java).findAll().sort("name") ?: emptyList()
 
     fun findAll(realm: Realm, isSystem: Boolean): List<SongStamp> =
-            realm.where(SongStamp::class.java).equalTo("isSystem", isSystem).findAll().sort("name")
+            realm.where(SongStamp::class.java).equalTo("isSystem", isSystem).findAll().sort("name") ?: emptyList()
 
-    fun saveOrAdd(realm: Realm, rawSongStamp: SongStamp, rawSong: Song) {
-        realm.executeTransaction { r -> saveOrAddWithoutTransaction(r, rawSongStamp, rawSong) }
+    fun register(realm: Realm, songId: Long, name: String, isSystem: Boolean) {
+        val song = SongDao.findById(realm, songId) ?: return
+        val songStamp = findOrCreate(realm, name, isSystem)
+        realm.beginTransaction()
+        songStamp.addSong(song)
+        realm.commitTransaction()
     }
 
-    fun saveOrAddWithoutTransaction(realm: Realm, rawSongStamp: SongStamp, rawSong: Song) {
-        val managedSongStamp = realm.where(SongStamp::class.java).equalTo("name", rawSongStamp.name).equalTo("isSystem", rawSongStamp.isSystem).findFirst()
-        val managedSong = SongDao.findOrCreate(realm, rawSong)
-        if (managedSongStamp == null) {
-            rawSongStamp.id = getAutoIncrementId(realm, SongStamp::class.java)
-            val songList = RealmList<Song>()
-            songList.add(managedSong)
-            rawSongStamp.songList = songList
-            addSongStamp(managedSong, realm.copyToRealm(rawSongStamp))
-        } else {
-            managedSongStamp.songList
-                    .filter { managedSong.mediaId == it.mediaId }
-                    .forEach { return }
-            managedSongStamp.songList.add(managedSong)
-            addSongStamp(managedSong, managedSongStamp)
+    fun remove(realm: Realm, songId: Long, name: String, isSystem: Boolean) {
+        val song = SongDao.findById(realm, songId) ?: return
+        val songStamp = findOrCreate(realm, name, isSystem)
+        realm.beginTransaction()
+        songStamp.removeSong(song)
+        realm.commitTransaction()
+    }
+
+    fun findOrCreate(realm: Realm, name: String, isSystem: Boolean): SongStamp {
+        if (name.isEmpty()) {
+            throw RuntimeException("Stamp name is empty.")
         }
+        var songStamp: SongStamp? = find(realm, name, isSystem)
+        if (songStamp == null) {
+            realm.beginTransaction()
+            songStamp = realm.createObject(SongStamp::class.java, getAutoIncrementId(realm, SongStamp::class.java))
+            songStamp.name = name
+            songStamp.isSystem = isSystem
+            songStamp.songList = RealmList()
+            realm.commitTransaction()
+            return songStamp
+        }
+        return songStamp
     }
 
-    fun remove(realm: Realm, name: String, isSystem: Boolean) {
+    fun delete(realm: Realm, name: String, isSystem: Boolean) {
         realm.beginTransaction()
         realm.where(SongStamp::class.java).equalTo("name", name).equalTo("isSystem", isSystem).findAll().deleteAllFromRealm()
         realm.commitTransaction()
     }
-
-    fun save(realm: Realm, name: String, isSystem: Boolean): Boolean {
-        var result = false
-        if (name.isEmpty()) {
-            return false
-        }
-        realm.beginTransaction()
-        var songStamp: SongStamp? = realm.where(SongStamp::class.java).equalTo("name", name).equalTo("isSystem", isSystem).findFirst()
-        if (songStamp == null) {
-            songStamp = realm.createObject(SongStamp::class.java, getAutoIncrementId(realm, SongStamp::class.java))
-            songStamp!!.name = name
-            songStamp.isSystem = isSystem
-            result = true
-        }
-        realm.commitTransaction()
-        return result
-    }
-
-    fun newStandalone(name: String, isSystem: Boolean): SongStamp = SongStamp(name = name, isSystem = isSystem)
-
-    private fun addSongStamp(song: Song, songStamp: SongStamp?) {
-        if (songStamp?.name == null) {
-            return
-        }
-        song.songStampList
-                .filter { it.name == songStamp.name }
-                .forEach { return }
-        song.songStampList.add(songStamp)
-    }
-
 }

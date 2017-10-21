@@ -212,4 +212,12 @@
 
     <string name="spotlight_stamp_add_title">「Add」ボタンをタップ</string>
     <string name="spotlight_stamp_add_description">このボタンで選択したスタンプを押すことができます。</string>
+    <string name="song_db_refresh">音楽情報を更新する</string>
+    <string name="song_db_refresh_summary">機種変更など、Androidの音楽情報が変更された場合に更新してください。</string>
+    <string name="dialog_confirm_song_db_refresh">音楽情報を更新します。よろしいですか？</string>
+    <string name="song_history">再生履歴</string>
+    <string name="song_db_unknown">不明な曲</string>
+    <string name="song_db_unknown_summary">再生できない曲を表示します。</string>
+    <string name="dialog_merge_song">正しい曲を選択してください。</string>
+    <string name="dialog_confirm_merge_song">[%1$s] のスタンプ・再生履歴を [%2$s] に加えます。</string>
 </resources>

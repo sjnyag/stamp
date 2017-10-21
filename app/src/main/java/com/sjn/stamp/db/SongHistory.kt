@@ -14,7 +14,7 @@ open class SongHistory(
         @PrimaryKey var id: Long = 0,
         var song: Song = Song(),
         var recordedAt: Date = Date(),
-        @Index private var recordType: String = "",
+        @Index var recordType: String = "",
         var device: Device = Device(),
         var count: Int = 0,
         var latitude: Float = 0.toFloat(),

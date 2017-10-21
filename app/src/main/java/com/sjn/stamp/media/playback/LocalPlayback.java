@@ -186,7 +186,12 @@ class LocalPlayback implements Playback, AudioManager.OnAudioFocusChangeListener
                 mState = PlaybackStateCompat.STATE_BUFFERING;
 
                 mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                DataSourceHelper.setMediaPlayerDataSource(mContext, mMediaPlayer, source);
+                if (!DataSourceHelper.setMediaPlayerDataSource(mContext, mMediaPlayer, source)) {
+                    if (mCallback != null) {
+                        mCallback.onError("Failed to retrieve media.");
+                    }
+                    return;
+                }
 
                 // Starts preparing the media player in the background. When
                 // it's done, it will call our OnPreparedListener (that is,
@@ -363,7 +368,7 @@ class LocalPlayback implements Playback, AudioManager.OnAudioFocusChangeListener
             // If we are playing, we need to reset media player by calling configMediaPlayerState
             // with mAudioFocus properly set.
             if (mState == PlaybackStateCompat.STATE_PLAYING && !canDuck) {
-                // If we don't have audio focus and can't duck, we save the information that
+                // If we don't have audio focus and can't duck, we create the information that
                 // we were playing, so that we can resume playback once we get the focus back.
                 mPlayOnFocusGain = true;
             }

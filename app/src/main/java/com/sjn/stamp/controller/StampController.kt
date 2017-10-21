@@ -30,32 +30,25 @@ class StampController(private val mContext: Context) {
     }
 
     fun register(name: String, isSystem: Boolean): Boolean {
-        val result = RealmHelper.getRealmInstance().use { realm ->
-            SongStampDao.save(realm, name, isSystem)
+        if (RealmHelper.getRealmInstance().use { SongStampDao.find(it, name, isSystem) } != null) {
+            return false
         }
+        RealmHelper.getRealmInstance().use { realm -> SongStampDao.findOrCreate(realm, name, isSystem) }
         notifyStampChange()
-        if (result) {
-            AnalyticsHelper.trackStamp(mContext, name)
-        }
-        return result
+        AnalyticsHelper.trackStamp(mContext, name)
+        return true
     }
 
-    fun remove(stamp: String, isSystem: Boolean) {
+    fun delete(stamp: String, isSystem: Boolean) {
         RealmHelper.getRealmInstance().use { realm ->
-            SongStampDao.remove(realm, stamp, isSystem)
-            CategoryStampDao.remove(realm, stamp, isSystem)
+            delete(realm, stamp, isSystem)
         }
         notifyStampChange()
     }
 
-    fun remove(realm: Realm, stamp: String, isSystem: Boolean) {
-        SongStampDao.remove(realm, stamp, isSystem)
-        CategoryStampDao.remove(realm, stamp, isSystem)
-    }
-
-    fun removeWithoutTransaction(realm: Realm, stamp: String, isSystem: Boolean) {
-        realm.where(SongStamp::class.java).equalTo("name", stamp).equalTo("isSystem", isSystem).findAll().deleteAllFromRealm()
-        realm.where(CategoryStamp::class.java).equalTo("name", stamp).equalTo("isSystem", isSystem).findAll().deleteAllFromRealm()
+    fun delete(realm: Realm, stamp: String, isSystem: Boolean) {
+        SongStampDao.delete(realm, stamp, isSystem)
+        CategoryStampDao.delete(realm, stamp, isSystem)
     }
 
     fun findAll(): List<String> {

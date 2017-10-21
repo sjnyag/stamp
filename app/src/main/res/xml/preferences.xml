@@ -31,6 +31,20 @@
             android:title="@string/export_backup"/>
     </PreferenceCategory>
     <PreferenceCategory
+        android:key="song_history"
+        android:title="@string/song_history">
+        <Preference
+            android:key="song_db_refresh"
+            android:summary="@string/song_db_refresh_summary"
+            android:title="@string/song_db_refresh">
+        </Preference>
+        <Preference
+            android:key="song_db_unknown"
+            android:summary="@string/song_db_unknown_summary"
+            android:title="@string/song_db_unknown">
+        </Preference>
+    </PreferenceCategory>
+    <PreferenceCategory
         android:key="application_information"
         android:title="@string/setting_application_information">
         <Preference

@@ -7,7 +7,7 @@ class Migration : RealmMigration {
 
     companion object {
         private val TAG = LogHelper.makeLogTag(Migration::class.java)
-        val VERSION = 4
+        val VERSION = 5
     }
 
     override fun migrate(realm: DynamicRealm, version: Long, newVersion: Long) {
@@ -28,6 +28,10 @@ class Migration : RealmMigration {
         }
         if (oldVersion == 3L) {
             migrateTo4(schema)
+            oldVersion++
+        }
+        if (oldVersion == 4L) {
+            migrateTo5(realm, schema)
             oldVersion++
         }
         if (oldVersion != newVersion) {
@@ -57,6 +61,14 @@ class Migration : RealmMigration {
                             artist.setString("mAlbumArtUri", artUrl)
                         }
                         return artist
+                    }
+
+                    internal fun getAutoIncrementId(realm: DynamicRealm, clazz: String): Int {
+                        val maxId = realm.where(clazz).max("mId")
+                        if (maxId != null) {
+                            return maxId.toInt() + 1
+                        }
+                        return 1
                     }
                 })
                 .removeField("mArtist")
@@ -159,11 +171,36 @@ class Migration : RealmMigration {
                 .transform({ obj -> obj.setBoolean("isSystem", false) })
     }
 
-    internal fun getAutoIncrementId(realm: DynamicRealm, clazz: String): Int {
-        val maxId = realm.where(clazz).max("mId")
-        if (maxId != null) {
-            return maxId.toInt() + 1
-        }
-        return 1
+    private fun migrateTo5(realm: DynamicRealm, schema: RealmSchema) {
+        schema.get("Song")
+                .addRealmObjectField("totalSongHistory", schema.get("TotalSongHistory"))
+                .transform(object : RealmObjectSchema.Function {
+                    override fun apply(obj: DynamicRealmObject) {
+                        obj.set("totalSongHistory", findOrCreateArtist(obj))
+                    }
+
+                    internal fun findOrCreateArtist(obj: DynamicRealmObject): DynamicRealmObject {
+                        var totalSongHistory: DynamicRealmObject? = realm.where("TotalSongHistory").equalTo("song.id", obj.getLong("id")).findFirst()
+                        if (totalSongHistory == null) {
+                            totalSongHistory = realm.createObject("TotalSongHistory", getAutoIncrementId(realm, "TotalSongHistory"))
+                            totalSongHistory!!.set("song", obj)
+                            totalSongHistory.setInt("playCount", 0)
+                            totalSongHistory.setInt("playCount", 0)
+                            totalSongHistory.setInt("playCount", 0)
+                        }
+                        return totalSongHistory
+                    }
+
+                    internal fun getAutoIncrementId(realm: DynamicRealm, clazz: String): Int {
+                        val maxId = realm.where(clazz).max("id")
+                        if (maxId != null) {
+                            return maxId.toInt() + 1
+                        }
+                        return 1
+                    }
+                })
+        schema.get("TotalSongHistory")
+                .removeField("song")
+
     }
 }

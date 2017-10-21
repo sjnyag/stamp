@@ -1,15 +1,13 @@
 package com.sjn.stamp.db.dao
 
+import android.support.v4.media.MediaMetadataCompat
 import com.sjn.stamp.constant.RecordType
-import com.sjn.stamp.db.Song
 import com.sjn.stamp.db.SongHistory
 import io.realm.Realm
 import io.realm.Sort
 import java.util.*
 
 object SongHistoryDao : BaseDao() {
-
-    fun timeline(realm: Realm, recordType: String): List<SongHistory> = findAll(realm, recordType)
 
     fun where(realm: Realm, from: Date?, to: Date?, recordType: String): List<SongHistory> {
         val query = realm.where(SongHistory::class.java).equalTo("recordType", recordType)
@@ -19,34 +17,39 @@ object SongHistoryDao : BaseDao() {
         if (to != null) {
             query.lessThanOrEqualTo("recordedAt", to)
         }
-        return query.findAll()
+        return query.findAll() ?: emptyList()
     }
 
-    fun findPlayRecordByArtist(realm: Realm, artistName: String): List<SongHistory> =
-            realm.where(SongHistory::class.java).equalTo("recordType", RecordType.PLAY.databaseValue).equalTo("song.artist.name", artistName).findAll()
-
-    fun findOldestByArtist(realm: Realm, artistName: String): SongHistory =
-            realm.where(SongHistory::class.java).equalTo("recordType", RecordType.PLAY.databaseValue).equalTo("song.artist.name", artistName).findAllSorted("recordedAt", Sort.ASCENDING).first()
-
-    fun findOldest(realm: Realm, song: Song): SongHistory =
-            realm.where(SongHistory::class.java).equalTo("song.mediaId", song.mediaId).equalTo("recordType", RecordType.PLAY.databaseValue).findAllSorted("recordedAt", Sort.ASCENDING).first()
-
-    fun save(realm: Realm, songHistory: SongHistory) {
-        realm.executeTransaction { r ->
-            songHistory.id = getAutoIncrementId(r, SongHistory::class.java)
-            songHistory.device = DeviceDao.findOrCreate(r, songHistory.device)
-            songHistory.song = SongDao.findOrCreate(r, songHistory.song)
-            r.insert(songHistory)
-        }
-    }
-
-    fun remove(realm: Realm, id: Long) {
-        realm.executeTransactionAsync { r -> r.where(SongHistory::class.java).equalTo("id", id).findFirst().deleteFromRealm() }
-    }
+    fun timeline(realm: Realm, recordType: String): List<SongHistory> =
+            findAll(realm, recordType)
 
     fun findAll(realm: Realm, recordType: String): List<SongHistory> =
-            realm.where(SongHistory::class.java).equalTo("recordType", recordType).findAllSorted("recordedAt", Sort.DESCENDING)
+            realm.where(SongHistory::class.java).equalTo("recordType", recordType).findAllSorted("recordedAt", Sort.DESCENDING) ?: emptyList()
 
-    fun newStandalone(): SongHistory = SongHistory()
+    fun findPlayRecordByArtist(realm: Realm, artistName: String): List<SongHistory> =
+            realm.where(SongHistory::class.java).equalTo("recordType", RecordType.PLAY.databaseValue).equalTo("song.artist.name", artistName).findAll() ?: emptyList()
+
+    fun findOldestByArtist(realm: Realm, artistName: String): SongHistory? =
+            realm.where(SongHistory::class.java).equalTo("recordType", RecordType.PLAY.databaseValue).equalTo("song.artist.name", artistName).findAllSorted("recordedAt", Sort.ASCENDING).first()
+
+    fun findOldest(realm: Realm, songId: Long): SongHistory? =
+            realm.where(SongHistory::class.java).equalTo("song.id", songId).equalTo("recordType", RecordType.PLAY.databaseValue).findAllSorted("recordedAt", Sort.ASCENDING).first()
+
+    fun create(realm: Realm, metadata: MediaMetadataCompat, recordType: RecordType, date: Date, count: Int) {
+        val songHistory = SongHistory()
+        songHistory.id = getAutoIncrementId(realm, SongHistory::class.java)
+        songHistory.device = DeviceDao.findOrCreate(realm)
+        songHistory.song = SongDao.findOrCreate(realm, metadata)
+        songHistory.recordType = recordType.databaseValue
+        songHistory.recordedAt = date
+        songHistory.count = count
+        realm.beginTransaction()
+        realm.copyToRealm(songHistory)
+        realm.commitTransaction()
+    }
+
+    fun delete(realm: Realm, songHistoryId: Long) {
+        realm.executeTransactionAsync { r -> r.where(SongHistory::class.java).equalTo("id", songHistoryId).findFirst().deleteFromRealm() }
+    }
 
 }

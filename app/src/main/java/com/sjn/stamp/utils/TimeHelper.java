@@ -1,13 +1,16 @@
 package com.sjn.stamp.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
 
 import com.sjn.stamp.R;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.LocalDate;
+import org.joda.time.Minutes;
 import org.joda.time.Months;
+import org.joda.time.Seconds;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -16,6 +19,19 @@ import java.util.Date;
 import java.util.Locale;
 
 public class TimeHelper {
+
+    public static String getDateText(Date date, Resources resources) {
+        DateTime dateTime = TimeHelper.toDateTime(date).minusSeconds(20);
+        DateTime now = TimeHelper.getJapanNow();
+        Minutes minutes = Minutes.minutesBetween(dateTime, now);
+        if (minutes.isLessThan(Minutes.minutes(1))) {
+            return resources.getString(R.string.item_song_history_seconds_ago, Seconds.secondsBetween(dateTime, now).getSeconds());
+        } else if (minutes.isLessThan(Minutes.minutes(60))) {
+            return resources.getString(R.string.item_song_history_minutes_ago, Minutes.minutesBetween(dateTime, now).getMinutes());
+        } else {
+            return TimeHelper.formatMMDDHHMM(dateTime);
+        }
+    }
 
     static String getDateDiff(Context context, Date before) {
         return getDateDiff(context, before, getJapanNow().toDate());

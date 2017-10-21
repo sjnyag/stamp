@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.MediaMetadataCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -76,6 +77,20 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
         mIsPlayable = mediaItem.isPlayable();
         mIsBrowsable = mediaItem.isBrowsable();
         mMediaBrowsable = mediaBrowsable;
+        mActivity = activity;
+    }
+
+    public SongItem(MediaMetadataCompat metadataCompat, Activity activity) {
+        super(metadataCompat.getDescription().getMediaId());
+        setDraggable(true);
+        setSwipeable(true);
+        mMediaId = metadataCompat.getDescription().getMediaId();
+        mTitle = metadataCompat.getDescription().getTitle() == null ? "" : metadataCompat.getDescription().getTitle().toString();
+        mSubTitle = metadataCompat.getDescription().getSubtitle() == null ? "" : metadataCompat.getDescription().getSubtitle().toString();
+        mAlbumArt = metadataCompat.getDescription().getIconUri() == null ? "" : metadataCompat.getDescription().getIconUri().toString();
+        mIsPlayable = false;
+        mIsBrowsable = false;
+        mMediaBrowsable = null;
         mActivity = activity;
     }
 
