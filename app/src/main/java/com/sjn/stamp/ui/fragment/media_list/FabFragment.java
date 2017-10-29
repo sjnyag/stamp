@@ -63,8 +63,8 @@ public abstract class FabFragment extends Fragment implements StampEditStateObse
             mCenteredMaterialSheetFab.showSheet();
         }
         mFab.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
-        mFab.setImageResource(R.drawable.ic_full_cancel);
-        mFab.setTag(R.id.fab_type, R.drawable.ic_full_cancel);
+        mFab.setImageResource(R.drawable.ic_dialog_close_light);
+        mFab.setTag(R.id.fab_type, R.drawable.ic_dialog_close_light);
         mFab.setOnClickListener(stopStampEdit);
     }
 

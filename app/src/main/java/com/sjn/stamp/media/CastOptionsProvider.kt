@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.sjn.stamp
+package com.sjn.stamp.media
 
 import android.content.Context
 
 import com.google.android.gms.cast.framework.CastOptions
 import com.google.android.gms.cast.framework.OptionsProvider
 import com.google.android.gms.cast.framework.SessionProvider
+import com.sjn.stamp.R
 
 /**
  * Specify receiver application ID for cast
@@ -30,7 +31,7 @@ class CastOptionsProvider : OptionsProvider {
 
     override fun getCastOptions(context: Context): CastOptions {
         return CastOptions.Builder()
-                .setReceiverApplicationId(context.getString(com.sjn.stamp.R.string.cast_application_id))
+                .setReceiverApplicationId(context.getString(R.string.cast_application_id))
                 .build()
     }
 

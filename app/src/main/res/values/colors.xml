@@ -25,7 +25,7 @@
     <color name="media_item_icon_not_playing">@color/bt_accent</color>
     <color name="fullscreen_secondary_line_color">#E5CCCCCC</color>
     <color name="fullscreen_line_color">#E5FFFFFF</color>
-    <color name="tv_search_button">#ff0097A7</color>
+    <color name="white">#FFFFFF</color>
     <color name="default_background">#0096a6</color>
 
     <color name="toggle_off_stroke">#B2B2B2</color>

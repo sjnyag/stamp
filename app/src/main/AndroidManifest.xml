@@ -143,7 +143,7 @@
         -->
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-            android:value="com.sjn.stamp.CastOptionsProvider"/>
+            android:value="com.sjn.stamp.media.CastOptionsProvider"/>
 
         <!-- A receiver that will receive media buttons and send as
             intents to your MediaBrowserServiceCompat implementation.

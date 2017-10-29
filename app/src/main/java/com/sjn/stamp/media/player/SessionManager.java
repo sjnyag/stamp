@@ -15,7 +15,6 @@ import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.sjn.stamp.ui.activity.NowPlayingActivity;
 import com.sjn.stamp.utils.CarHelper;
 import com.sjn.stamp.utils.LogHelper;
-import com.sjn.stamp.utils.WearHelper;
 
 import java.util.List;
 
@@ -105,8 +104,6 @@ public class SessionManager implements SessionManagerListener<CastSession> {
     private Bundle makeSessionExtras() {
         Bundle sessionExtras = new Bundle();
         CarHelper.setSlotReservationFlags(sessionExtras, true, true, true);
-        WearHelper.setSlotReservationFlags(sessionExtras, true, true);
-        WearHelper.setUseBackgroundFromTheme(sessionExtras, true);
         return sessionExtras;
     }
 

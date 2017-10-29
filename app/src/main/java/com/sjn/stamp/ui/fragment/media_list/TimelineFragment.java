@@ -14,7 +14,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.support.wearable.view.SimpleAnimatorListener;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -326,10 +325,25 @@ public class TimelineFragment extends MediaBrowserListFragment implements
                                     if (holder instanceof ItemTouchHelperCallback.ViewHolderCallback) {
                                         final View view = ((ItemTouchHelperCallback.ViewHolderCallback) holder).getFrontView();
                                         Animator animator = ObjectAnimator.ofFloat(view, "translationX", view.getTranslationX(), 0);
-                                        animator.addListener(new SimpleAnimatorListener() {
+                                        animator.addListener(new Animator.AnimatorListener() {
+                                            @Override
+                                            public void onAnimationStart(Animator animator) {
+
+                                            }
+
+                                            @Override
+                                            public void onAnimationEnd(Animator animator) {
+
+                                            }
+
                                             @Override
                                             public void onAnimationCancel(Animator animation) {
                                                 view.setTranslationX(0);
+                                            }
+
+                                            @Override
+                                            public void onAnimationRepeat(Animator animator) {
+
                                             }
                                         });
                                         animator.start();
@@ -368,10 +382,25 @@ public class TimelineFragment extends MediaBrowserListFragment implements
                             if (holder instanceof ItemTouchHelperCallback.ViewHolderCallback) {
                                 final View view = ((ItemTouchHelperCallback.ViewHolderCallback) holder).getFrontView();
                                 Animator animator = ObjectAnimator.ofFloat(view, "translationX", view.getTranslationX(), 0);
-                                animator.addListener(new SimpleAnimatorListener() {
+                                animator.addListener(new Animator.AnimatorListener() {
+                                    @Override
+                                    public void onAnimationStart(Animator animator) {
+
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animator animator) {
+
+                                    }
+
                                     @Override
                                     public void onAnimationCancel(Animator animation) {
                                         view.setTranslationX(0);
+                                    }
+
+                                    @Override
+                                    public void onAnimationRepeat(Animator animator) {
+
                                     }
                                 });
                                 animator.start();

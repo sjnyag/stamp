@@ -39,7 +39,6 @@ import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.MediaItemHelper;
 import com.sjn.stamp.utils.TimeHelper;
-import com.sjn.stamp.utils.WearHelper;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -196,7 +195,6 @@ public class PlaybackManager implements Playback.Callback, MediaLogger.Listener 
         LogHelper.d(TAG, "updatePlaybackState, setting Favorite custom action of music ",
                 musicId, " current favorite=", mMusicProvider.isFavorite(musicId));
         Bundle customActionExtras = new Bundle();
-        WearHelper.setShowCustomActionOnWear(customActionExtras, true);
         stateBuilder.addCustomAction(new PlaybackStateCompat.CustomAction.Builder(
                 CUSTOM_ACTION_THUMBS_UP, mResources.getString(R.string.favorite), favoriteIcon)
                 .setExtras(customActionExtras)
