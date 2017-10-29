@@ -16,11 +16,12 @@ public class DataSourceHelper {
 
         if (fileInfo.startsWith("content://")) {
             Uri uri = Uri.parse(fileInfo);
-            fileInfo = getRingtonePathFromContentUri(context, uri);
+            mp.setDataSource(context, uri);
+            return true;
         }
 
         try {
-            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB)
+            if (CompatibleHelper.hasHoneycomb())
                 try {
                     setMediaPlayerDataSourcePreHoneyComb(context, mp, fileInfo);
                 } catch (Exception e) {
