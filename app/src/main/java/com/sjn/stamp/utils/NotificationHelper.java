@@ -12,7 +12,7 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
 import com.sjn.stamp.R;
-import com.sjn.stamp.ui.activity.NowPlayingActivity;
+import com.sjn.stamp.ui.activity.IntentDispatchActivity;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -39,7 +39,7 @@ public class NotificationHelper {
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_KEY_PLAYED_TEXT, contentTitle + "\n" + contentText);
         fetchBitmapFromURLAsync(context, bitmapUrl, new NotificationCompat.Builder(context)
-                .setColor(ResourceHelper.getThemeColor(context, R.attr.colorPrimary, Color.DKGRAY))
+                .setColor(ViewHelper.getThemeColor(context, R.attr.colorPrimary, Color.DKGRAY))
                 .setSmallIcon(R.mipmap.ic_notification)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentTitle(contentTitle)
@@ -69,7 +69,7 @@ public class NotificationHelper {
             public void onPrepareLoad(Drawable placeHolderDrawable) {
             }
         };
-        BitmapHelper.readBitmapAsync(context, bitmapUrl, target);
+        ViewHelper.readBitmapAsync(context, bitmapUrl, target);
     }
 
     private static class SetNotificationBitmapAsyncTask extends AsyncTask<Void, Void, Void> {
@@ -95,7 +95,7 @@ public class NotificationHelper {
     }
 
     private static PendingIntent createShareAction(Context context, int requestCode, String text) {
-        Intent i = new Intent(context, NowPlayingActivity.class);
+        Intent i = new Intent(context, IntentDispatchActivity.class);
         i.setAction(ACTION_CMD);
         i.putExtra(CMD_NAME, CMD_SHARE);
         i.putExtra(SHARE_MESSAGE, text);

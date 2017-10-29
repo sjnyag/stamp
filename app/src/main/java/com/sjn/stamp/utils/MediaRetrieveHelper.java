@@ -168,12 +168,13 @@ public class MediaRetrieveHelper {
         String artist = cursor.getString(1);
         String album = cursor.getString(2);
         long duration = cursor.getLong(3);
-        String source = cursor.getString(4);
+        //String source = cursor.getString(4);
         int trackNumber = cursor.getInt(5);
         long totalTrackCount = cursor.getLong(6);
         String musicId = cursor.getString(7);
         long albumId = cursor.getLong(8);
         String dateAdded = TimeHelper.toRFC3339(cursor.getLong(10));
+        String source = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Long.valueOf(musicId)).toString();
         String genre = "";
         /*
         if (genreMap == null || genreMap.size() == 0) {

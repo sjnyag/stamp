@@ -73,7 +73,7 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
         super.onStart();
         LogHelper.d(TAG, "fragment.onStart");
         MediaControllerObserver.getInstance().addListener(this);
-        onConnected();
+        onMediaControllerConnected();
     }
 
     @Override
@@ -84,9 +84,9 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
     }
 
     @Override
-    public void onConnected() {
+    public void onMediaControllerConnected() {
         MediaControllerCompat controller = MediaControllerCompat.getMediaController(getActivity());
-        LogHelper.d(TAG, "onConnected, mediaController==null? ", controller == null);
+        LogHelper.d(TAG, "onMediaControllerConnected, mediaController==null? ", controller == null);
         if (controller != null) {
             onMetadataChanged(controller.getMetadata());
             onPlaybackStateChanged(controller.getPlaybackState());

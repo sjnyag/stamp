@@ -12,8 +12,7 @@ import android.support.v7.media.MediaRouter;
 
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManagerListener;
-import com.sjn.stamp.ui.activity.NowPlayingActivity;
-import com.sjn.stamp.utils.CarHelper;
+import com.sjn.stamp.ui.activity.IntentDispatchActivity;
 import com.sjn.stamp.utils.LogHelper;
 
 import java.util.List;
@@ -50,7 +49,7 @@ public class SessionManager implements SessionManagerListener<CastSession> {
 
     private void initialize(Context context, MediaSessionCompat.Callback callback) {
         LogHelper.i(TAG, "initialize");
-        mSessionExtras = makeSessionExtras();
+        mSessionExtras = new Bundle();
         mSession = createSession(context, callback, mSessionExtras);
         mMediaRouter = MediaRouter.getInstance(context.getApplicationContext());
     }
@@ -101,12 +100,6 @@ public class SessionManager implements SessionManagerListener<CastSession> {
         mSession.setPlaybackState(playbackState);
     }
 
-    private Bundle makeSessionExtras() {
-        Bundle sessionExtras = new Bundle();
-        CarHelper.setSlotReservationFlags(sessionExtras, true, true, true);
-        return sessionExtras;
-    }
-
     private MediaSessionCompat createSession(Context context, MediaSessionCompat.Callback callback, Bundle sessionExtra) {
         LogHelper.i(TAG, "createSession");
         // Start a new MediaSession
@@ -116,7 +109,7 @@ public class SessionManager implements SessionManagerListener<CastSession> {
                 MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
 
         context = context.getApplicationContext();
-        Intent intent = new Intent(context, NowPlayingActivity.class);
+        Intent intent = new Intent(context, IntentDispatchActivity.class);
         PendingIntent pi = PendingIntent.getActivity(context, 99 /*request code*/,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
         session.setSessionActivity(pi);

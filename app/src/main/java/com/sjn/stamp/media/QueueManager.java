@@ -31,7 +31,6 @@ import com.sjn.stamp.model.constant.ShuffleState;
 import com.sjn.stamp.controller.UserSettingController;
 import com.sjn.stamp.media.provider.MusicProvider;
 import com.sjn.stamp.media.provider.single.QueueProvider;
-import com.sjn.stamp.utils.BitmapHelper;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.MediaItemHelper;
@@ -282,7 +281,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
             mTarget = new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    Bitmap icon = BitmapHelper.createIcon(bitmap);
+                    Bitmap icon = ViewHelper.createIcon(bitmap);
                     mMusicProvider.updateMusicArt(musicId, bitmap, icon);
 
                     // If we are still playing the same music, notify the listeners:
@@ -300,7 +299,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
                 @Override
                 public void onBitmapFailed(Drawable errorDrawable) {
                     Bitmap bitmap = ViewHelper.toBitmap(ViewHelper.createTextDrawable(metadata.getDescription().getTitle().toString()), 128, 128);
-                    Bitmap icon = BitmapHelper.createIcon(bitmap);
+                    Bitmap icon = ViewHelper.createIcon(bitmap);
                     mMusicProvider.updateMusicArt(musicId, bitmap, icon);
 
                     // If we are still playing the same music, notify the listeners:
@@ -319,7 +318,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
                 public void onPrepareLoad(Drawable placeHolderDrawable) {
                 }
             };
-            BitmapHelper.readBitmapAsync(mContext, albumUri, mTarget);
+            ViewHelper.readBitmapAsync(mContext, albumUri, mTarget);
         }
     }
 

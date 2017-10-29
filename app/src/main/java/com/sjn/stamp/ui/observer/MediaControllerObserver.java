@@ -23,7 +23,7 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
         if (mListenerList != null) {
             List<Listener> tempList = new ArrayList<>(mListenerList);
             for (Listener listener : tempList) {
-                listener.onConnected();
+                listener.onMediaControllerConnected();
             }
         }
     }
@@ -33,7 +33,7 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
 
         void onMetadataChanged(MediaMetadataCompat metadata);
 
-        void onConnected();
+        void onMediaControllerConnected();
     }
 
     public void addListener(Listener listener) {
@@ -70,6 +70,14 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
                 listener.onMetadataChanged(metadata);
             }
         }
+    }
+
+    public static void register(MediaControllerCompat mediaController) {
+        mediaController.registerCallback(getInstance());
+    }
+
+    public static void unregister(MediaControllerCompat mediaController) {
+        mediaController.unregisterCallback(getInstance());
     }
 
     public static MediaControllerObserver getInstance() {

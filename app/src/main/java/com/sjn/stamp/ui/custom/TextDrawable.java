@@ -1,6 +1,5 @@
 package com.sjn.stamp.ui.custom;
 
-
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;

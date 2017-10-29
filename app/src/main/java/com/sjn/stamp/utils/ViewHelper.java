@@ -3,6 +3,9 @@ package com.sjn.stamp.utils;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -12,6 +15,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -23,12 +28,20 @@ import com.sjn.stamp.R;
 import com.sjn.stamp.ui.custom.TextDrawable;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 public class ViewHelper {
+    // Resolution reasonable for carrying around as an icon (generally in
+    // MediaDescription.getIconBitmap). This should not be bigger than necessary, because
+    // the MediaDescription object should be lightweight. If you set it too high and try to
+    // serialize the MediaDescription, you may get FAILED BINDER TRANSACTION errors.
+    private static final int MAX_ART_WIDTH_ICON = 128;  // pixels
+    private static final int MAX_ART_HEIGHT_ICON = 128;  // pixels
+
     private static int colorAccent = -1;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -46,7 +59,7 @@ public class ViewHelper {
         return Math.round(dp * getDisplayMetrics(context).density);
     }
 
-    public static DisplayMetrics getDisplayMetrics(Context context) {
+    private static DisplayMetrics getDisplayMetrics(Context context) {
         return context.getResources().getDisplayMetrics();
     }
 
@@ -59,7 +72,6 @@ public class ViewHelper {
             actionBar.setTitle(title);
         }
     }
-
 
     public static void setFragmentTitle(Activity activity, int title) {
         if (activity != null) {
@@ -147,7 +159,6 @@ public class ViewHelper {
     }
 
     public static Bitmap toBitmap(Drawable drawable, int width, int height) {
-
         if (drawable instanceof BitmapDrawable) {
             BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
             return bitmapDrawable.getBitmap();
@@ -158,11 +169,57 @@ public class ViewHelper {
         return bitmap;
     }
 
-    public static class ColorGenerator {
+    /**
+     * Get a color value from a theme attribute.
+     *
+     * @param context      used for getting the color.
+     * @param attribute    theme attribute.
+     * @param defaultColor default to use.
+     * @return color value
+     */
+    public static int getThemeColor(Context context, int attribute, int defaultColor) {
+        int themeColor = 0;
+        String packageName = context.getPackageName();
+        try {
+            Context packageContext = context.createPackageContext(packageName, 0);
+            ApplicationInfo applicationInfo =
+                    context.getPackageManager().getApplicationInfo(packageName, 0);
+            packageContext.setTheme(applicationInfo.theme);
+            Resources.Theme theme = packageContext.getTheme();
+            TypedArray ta = theme.obtainStyledAttributes(new int[]{attribute});
+            themeColor = ta.getColor(0, defaultColor);
+            ta.recycle();
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return themeColor;
+    }
 
-        public static ColorGenerator DEFAULT;
+    public static void readBitmapAsync(final Context context, final String url, final Target target) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            public void run() {
+                Picasso.with(context).load(url).into(target);
+            }
+        });
+    }
 
-        public static ColorGenerator MATERIAL;
+    public static Bitmap createIcon(Bitmap bitmap) {
+        return scaleBitmap(bitmap,
+                MAX_ART_WIDTH_ICON, MAX_ART_HEIGHT_ICON);
+    }
+
+    private static Bitmap scaleBitmap(Bitmap src, int maxWidth, int maxHeight) {
+        double scaleFactor = Math.min(
+                ((double) maxWidth) / src.getWidth(), ((double) maxHeight) / src.getHeight());
+        return Bitmap.createScaledBitmap(src,
+                (int) (src.getWidth() * scaleFactor), (int) (src.getHeight() * scaleFactor), false);
+    }
+
+    private static class ColorGenerator {
+
+        static ColorGenerator DEFAULT;
+
+        static ColorGenerator MATERIAL;
 
         static {
             DEFAULT = create(Arrays.asList(
@@ -213,7 +270,7 @@ public class ViewHelper {
             return mColors.get(mRandom.nextInt(mColors.size()));
         }
 
-        public int getColor(Object key) {
+        int getColor(Object key) {
             if (key == null) {
                 return mColors.get(0);
             }

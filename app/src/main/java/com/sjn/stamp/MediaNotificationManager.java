@@ -38,9 +38,7 @@ import android.support.v7.app.NotificationCompat;
 
 import com.sjn.stamp.media.player.CastPlayer;
 import com.sjn.stamp.ui.activity.MusicPlayerListActivity;
-import com.sjn.stamp.utils.BitmapHelper;
 import com.sjn.stamp.utils.LogHelper;
-import com.sjn.stamp.utils.ResourceHelper;
 import com.sjn.stamp.utils.ViewHelper;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -98,7 +96,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
         mService = service;
         updateSessionToken();
 
-        mNotificationColor = ResourceHelper.getThemeColor(mService, com.sjn.stamp.R.attr.colorPrimary,
+        mNotificationColor = ViewHelper.getThemeColor(mService, com.sjn.stamp.R.attr.colorPrimary,
                 Color.DKGRAY);
 
         mNotificationManager = NotificationManagerCompat.from(service);
@@ -413,7 +411,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
             public void onPrepareLoad(Drawable placeHolderDrawable) {
             }
         };
-        BitmapHelper.readBitmapAsync(mService, bitmapUrl, mTarget);
+        ViewHelper.readBitmapAsync(mService, bitmapUrl, mTarget);
     }
 
     private class SetNotificationBitmapAsyncTask extends AsyncTask<Void, Void, Void> {

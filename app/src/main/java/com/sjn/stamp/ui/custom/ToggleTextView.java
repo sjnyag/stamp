@@ -7,7 +7,6 @@ import android.util.AttributeSet;
 
 import com.sjn.stamp.R;
 
-
 public class ToggleTextView extends AppCompatTextView {
 
     public boolean isBooleanValue() {

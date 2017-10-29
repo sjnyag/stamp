@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.sjn.stamp.ui.activity.DrawerMenu;
+import com.sjn.stamp.ui.DrawerMenu;
 
 import java.util.Date;
 

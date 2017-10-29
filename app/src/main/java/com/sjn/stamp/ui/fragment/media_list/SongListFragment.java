@@ -133,7 +133,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                         return;
                     case POSITIVE:
                         mListener.destroyActionModeIfCan();
-                        mMediaBrowsable.sendCustomAction(MusicService.Companion.getCUSTOM_ACTION_RELOAD_MUSIC_PROVIDER(), null, null);
+                        mMediaBrowsable.sendCustomAction(MusicService.CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER, null, null);
                         return;
                     default:
                         mSwipeRefreshLayout.setRefreshing(false);

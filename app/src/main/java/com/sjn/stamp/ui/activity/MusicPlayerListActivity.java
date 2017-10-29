@@ -31,11 +31,11 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.sjn.stamp.MusicService;
 import com.sjn.stamp.R;
 import com.sjn.stamp.ui.DialogFacade;
-import com.sjn.stamp.ui.SongListFactory;
+import com.sjn.stamp.ui.DrawerMenu;
+import com.sjn.stamp.ui.SongListFragmentFactory;
 import com.sjn.stamp.ui.fragment.FullScreenPlayerFragment;
 import com.sjn.stamp.ui.fragment.media_list.MediaBrowserListFragment;
 import com.sjn.stamp.ui.fragment.media_list.PagerFragment;
-import com.sjn.stamp.ui.fragment.media_list.SongListFragment;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.MediaRetrieveHelper;
@@ -109,7 +109,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
             }).show();
         }
         if (Arrays.asList(permissions).contains(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            sendCustomAction(MusicService.Companion.getCUSTOM_ACTION_RELOAD_MUSIC_PROVIDER(), null, null);
+            sendCustomAction(MusicService.CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER, null, null);
         }
     }
 
@@ -202,6 +202,32 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
         setTitle(title);
     }
 
+    @Override
+    public void onMediaControllerConnected() {
+        super.onMediaControllerConnected();
+        if (mVoiceSearchParams != null) {
+            // If there is a bootstrap parameter to start from a search query, we
+            // send it to the media session and set it to null, so it won't play again
+            // when the activity is stopped/started or recreated:
+            String query = mVoiceSearchParams.getString(SearchManager.QUERY);
+            MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
+            if (controller != null) {
+                controller.getTransportControls()
+                        .playFromSearch(query, mVoiceSearchParams);
+            }
+            mVoiceSearchParams = null;
+        }
+        MediaBrowserListFragment mediaControllerFragment = getMediaBrowserListFragment();
+        if (mediaControllerFragment != null) {
+            mediaControllerFragment.onMediaControllerConnected();
+        }
+        MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
+        if (mReservedUri != null && controller != null) {
+            controller.getTransportControls().playFromUri(mReservedUri, null);
+            mReservedUri = null;
+        }
+    }
+
     private void startFullScreenIfNeeded(Intent intent) {
         if (intent != null && intent.getBooleanExtra(EXTRA_START_FULLSCREEN, false)) {
             SlidingUpPanelLayout slidingUpPanelLayout = findViewById(R.id.sliding_layout);
@@ -250,7 +276,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
         MediaBrowserListFragment fragment = getMediaBrowserListFragment();
 
         if (fragment == null || !TextUtils.equals(fragment.getMediaId(), mediaId)) {
-            navigateToBrowser(SongListFactory.INSTANCE.create(mediaId), true);
+            navigateToBrowser(SongListFragmentFactory.INSTANCE.create(mediaId), true);
         }
     }
 
@@ -276,31 +302,6 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
     }
 
     @Override
-    protected void onMediaControllerConnected() {
-        if (mVoiceSearchParams != null) {
-            // If there is a bootstrap parameter to start from a search query, we
-            // send it to the media session and set it to null, so it won't play again
-            // when the activity is stopped/started or recreated:
-            String query = mVoiceSearchParams.getString(SearchManager.QUERY);
-            MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
-            if (controller != null) {
-                controller.getTransportControls()
-                        .playFromSearch(query, mVoiceSearchParams);
-            }
-            mVoiceSearchParams = null;
-        }
-        MediaBrowserListFragment mediaControllerFragment = getMediaBrowserListFragment();
-        if (mediaControllerFragment != null) {
-            mediaControllerFragment.onConnected();
-        }
-        MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
-        if (mReservedUri != null && controller != null) {
-            controller.getTransportControls().playFromUri(mReservedUri, null);
-            mReservedUri = null;
-        }
-    }
-
-    @Override
     public List<AbstractFlexibleItem> getCurrentMediaItems() {
         MediaBrowserListFragment mediaControllerFragment = getMediaBrowserListFragment();
         if (mediaControllerFragment != null) {
@@ -320,7 +321,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
 
     @Override
     public void onBackPressed() {
-        SlidingUpPanelLayout slidingUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        SlidingUpPanelLayout slidingUpPanelLayout = findViewById(R.id.sliding_layout);
         if (slidingUpPanelLayout != null && slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
             slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
             return;

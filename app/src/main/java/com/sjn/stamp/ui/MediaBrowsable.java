@@ -1,4 +1,4 @@
-package com.sjn.stamp.ui.activity;
+package com.sjn.stamp.ui;
 
 
 import android.os.Bundle;

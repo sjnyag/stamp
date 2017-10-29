@@ -238,7 +238,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
         return rootView;
     }
 
-    public void onConnected() {
+    public void onMediaControllerConnected() {
         MediaControllerCompat controller = getController();
         if (controller == null) {
             return;
@@ -292,7 +292,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
         LogHelper.i(TAG, "onStart");
         super.onStart();
         MediaControllerObserver.getInstance().addListener(this);
-        onConnected();
+        onMediaControllerConnected();
         CustomController.getInstance().addRepeatStateListenerSet(this);
         CustomController.getInstance().addShuffleStateListenerSet(this);
         onRepeatStateChanged(CustomController.getInstance().getRepeatState());

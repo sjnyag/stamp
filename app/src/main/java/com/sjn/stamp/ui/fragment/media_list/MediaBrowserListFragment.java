@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.sjn.stamp.ui.activity.MediaBrowsable;
+import com.sjn.stamp.ui.MediaBrowsable;
 import com.sjn.stamp.ui.observer.MediaControllerObserver;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
@@ -59,9 +59,9 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
             return;
         }
         LogHelper.d(TAG, "fragment.onAttach, mediaId=", mMediaId,
-                "  onConnected=" + mediaBrowser.isConnected());
+                "  onMediaControllerConnected=" + mediaBrowser.isConnected());
         if (mediaBrowser.isConnected()) {
-            onConnected();
+            onMediaControllerConnected();
         }
         LogHelper.d(TAG, "onAttach END");
     }
@@ -122,17 +122,17 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
     // fragment.onStart() or explicitly by the activity in the case where the connection
     // completes after the onStart()
     @Override
-    public void onConnected() {
-        LogHelper.d(TAG, "onConnected START");
+    public void onMediaControllerConnected() {
+        LogHelper.d(TAG, "onMediaControllerConnected START");
         if (isDetached() || mMediaBrowsable == null) {
-            LogHelper.d(TAG, "onConnected SKIP");
+            LogHelper.d(TAG, "onMediaControllerConnected SKIP");
             return;
         }
         mMediaId = getMediaId();
         if (mMediaId == null) {
             mMediaId = mMediaBrowsable.getMediaBrowser().getRoot();
         }
-        LogHelper.d(TAG, "onConnected mediaId: " + mMediaId);
+        LogHelper.d(TAG, "onMediaControllerConnected mediaId: " + mMediaId);
 
         // Unsubscribing before subscribing is required if this mediaId already has a subscriber
         // on this MediaBrowser instance. Subscribing to an already subscribed mediaId will replace
@@ -149,7 +149,7 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
 
         // Add MediaController callback so we can redraw the list when metadata changes:
         // MediaControllerObserver.getInstance().addListener(this);
-        LogHelper.d(TAG, "onConnected END");
+        LogHelper.d(TAG, "onMediaControllerConnected END");
     }
 
     public void setMediaId(String mediaId) {

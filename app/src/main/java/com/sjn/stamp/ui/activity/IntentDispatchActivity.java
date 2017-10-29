@@ -33,9 +33,9 @@ import static com.sjn.stamp.utils.NotificationHelper.SHARE_MESSAGE;
  * <p>
  * This activity determines which activity to launch based on the current UI mode.
  */
-public class NowPlayingActivity extends AppCompatActivity {
+public class IntentDispatchActivity extends AppCompatActivity {
 
-    private static final String TAG = LogHelper.makeLogTag(NowPlayingActivity.class);
+    private static final String TAG = LogHelper.makeLogTag(IntentDispatchActivity.class);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,7 +53,7 @@ public class NowPlayingActivity extends AppCompatActivity {
             ShareHelper.share(this, newIntent.getExtras().getString(SHARE_MESSAGE));
         } else {
             startActivity(newIntent);
-            finish();
         }
+        finish();
     }
 }

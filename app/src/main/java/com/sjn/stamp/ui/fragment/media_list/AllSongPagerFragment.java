@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sjn.stamp.R;
-import com.sjn.stamp.ui.SongListFactory;
+import com.sjn.stamp.ui.SongListFragmentFactory;
 import com.sjn.stamp.utils.MediaIDHelper;
 
 import java.util.ArrayList;
@@ -43,6 +43,6 @@ public class AllSongPagerFragment extends PagerFragment implements PagerFragment
 
     @Override
     public Fragment create(String fragmentHint) {
-        return SongListFactory.INSTANCE.create(fragmentHint);
+        return SongListFragmentFactory.INSTANCE.create(fragmentHint);
     }
 }

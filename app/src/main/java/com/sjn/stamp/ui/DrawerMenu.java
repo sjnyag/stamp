@@ -1,4 +1,4 @@
-package com.sjn.stamp.ui.activity;
+package com.sjn.stamp.ui;
 
 import android.support.v4.app.Fragment;
 
@@ -7,10 +7,8 @@ import com.sjn.stamp.ui.fragment.SettingFragment;
 import com.sjn.stamp.ui.fragment.media_list.AllSongPagerFragment;
 import com.sjn.stamp.ui.fragment.media_list.QueueListFragment;
 import com.sjn.stamp.ui.fragment.media_list.RankingPagerFragment;
-import com.sjn.stamp.ui.fragment.media_list.SongListFragment;
 import com.sjn.stamp.ui.fragment.media_list.StampPagerFragment;
 import com.sjn.stamp.ui.fragment.media_list.TimelineFragment;
-import com.sjn.stamp.utils.MediaIDHelper;
 
 public enum DrawerMenu {
     HOME(R.id.navigation_home) {

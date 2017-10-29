@@ -3,7 +3,7 @@ package com.sjn.stamp.ui.fragment.media_list;
 import android.support.v4.app.Fragment;
 
 import com.sjn.stamp.R;
-import com.sjn.stamp.ui.SongListFactory;
+import com.sjn.stamp.ui.SongListFragmentFactory;
 import com.sjn.stamp.utils.MediaIDHelper;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class StampPagerFragment extends PagerFragment implements PagerFragment.P
 
     @Override
     public Fragment create(String fragmentHint) {
-        return SongListFactory.INSTANCE.create(fragmentHint);
+        return SongListFragmentFactory.INSTANCE.create(fragmentHint);
     }
 
 }

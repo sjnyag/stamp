@@ -15,11 +15,11 @@ import com.sjn.stamp.R;
 
 public class SongStateHelper {
 
-    public static final int STATE_INVALID = -1;
-    public static final int STATE_NONE = 0;
-    public static final int STATE_PLAYABLE = 1;
-    public static final int STATE_PAUSED = 2;
-    public static final int STATE_PLAYING = 3;
+    private static final int STATE_INVALID = -1;
+    private static final int STATE_NONE = 0;
+    private static final int STATE_PLAYABLE = 1;
+    private static final int STATE_PAUSED = 2;
+    private static final int STATE_PLAYING = 3;
 
     private static ColorStateList sColorStatePlaying;
     private static ColorStateList sColorStateNotPlaying;

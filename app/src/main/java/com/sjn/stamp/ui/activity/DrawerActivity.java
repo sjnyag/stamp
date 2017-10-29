@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2014 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.sjn.stamp.ui.activity;
 
 import android.content.res.Configuration;
@@ -22,10 +7,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.cast.framework.CastButtonFactory;
+import com.google.android.gms.cast.framework.CastContext;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -33,19 +22,16 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.sjn.stamp.R;
+import com.sjn.stamp.ui.DrawerMenu;
 import com.sjn.stamp.utils.AnalyticsHelper;
 import com.sjn.stamp.utils.LogHelper;
 
-public abstract class DrawerActivity extends BaseActivity implements FragmentManager.OnBackStackChangedListener {
+public abstract class DrawerActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
 
     private static final String TAG = LogHelper.makeLogTag(DrawerActivity.class);
     public static final String FRAGMENT_TAG = "fragment_container";
 
     protected Toolbar mToolbar;
-
-    public Drawer getDrawer() {
-        return mDrawer;
-    }
 
     protected Drawer mDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -76,6 +62,19 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.main, menu);
+        try {
+            CastButtonFactory.setUpMediaRouteButton(getApplicationContext(),
+                    menu, R.id.media_route_menu_item);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    @Override
     public void onBackStackChanged() {
         updateDrawerToggleState();
     }
@@ -84,6 +83,7 @@ public abstract class DrawerActivity extends BaseActivity implements FragmentMan
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LogHelper.d(TAG, "Activity onCreate");
+        CastContext.getSharedInstance(this);
     }
 
     @Override

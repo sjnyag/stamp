@@ -9,7 +9,6 @@ import android.widget.Spinner;
 
 import com.sjn.stamp.R;
 
-
 public class RankingSelectLayout extends PeriodSelectLayout {
 
     public int getSongNum() {
