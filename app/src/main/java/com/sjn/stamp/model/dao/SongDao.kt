@@ -1,7 +1,7 @@
-package com.sjn.stamp.db.dao
+package com.sjn.stamp.model.dao
 
 import android.support.v4.media.MediaMetadataCompat
-import com.sjn.stamp.db.Song
+import com.sjn.stamp.model.Song
 import com.sjn.stamp.utils.MediaItemHelper
 import io.realm.Realm
 

@@ -1,6 +1,6 @@
-package com.sjn.stamp.db
+package com.sjn.stamp.model
 
-import com.sjn.stamp.constant.RecordType
+import com.sjn.stamp.model.constant.RecordType
 import io.realm.RealmObject
 import io.realm.RealmResults
 import io.realm.annotations.LinkingObjects

@@ -1,4 +1,4 @@
-package com.sjn.stamp.migration
+package com.sjn.stamp.model.migration
 
 import com.sjn.stamp.utils.LogHelper
 import io.realm.*

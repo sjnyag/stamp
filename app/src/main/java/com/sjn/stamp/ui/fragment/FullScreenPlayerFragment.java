@@ -37,8 +37,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.sjn.stamp.R;
-import com.sjn.stamp.constant.RepeatState;
-import com.sjn.stamp.constant.ShuffleState;
+import com.sjn.stamp.model.constant.RepeatState;
+import com.sjn.stamp.model.constant.ShuffleState;
 import com.sjn.stamp.media.CustomController;
 import com.sjn.stamp.media.player.CastPlayer;
 import com.sjn.stamp.ui.activity.MusicPlayerListActivity;

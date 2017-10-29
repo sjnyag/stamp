@@ -1,4 +1,4 @@
-package com.sjn.stamp.constant
+package com.sjn.stamp.model.constant
 
 enum class RecordType(val databaseValue: String) {
     PLAY("play"),

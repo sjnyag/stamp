@@ -1,7 +1,7 @@
-package com.sjn.stamp.db
+package com.sjn.stamp.model
 
 import android.support.v4.media.MediaMetadataCompat
-import com.sjn.stamp.constant.CategoryType
+import com.sjn.stamp.model.constant.CategoryType
 import com.sjn.stamp.utils.MediaItemHelper
 import io.realm.RealmObject
 import io.realm.annotations.Index

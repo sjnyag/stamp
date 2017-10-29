@@ -3,11 +3,11 @@ package com.sjn.stamp.controller
 import android.content.Context
 import android.os.AsyncTask
 import android.support.v4.media.MediaMetadataCompat
-import com.sjn.stamp.constant.RecordType
-import com.sjn.stamp.db.*
-import com.sjn.stamp.db.dao.SongDao
-import com.sjn.stamp.db.dao.SongHistoryDao
-import com.sjn.stamp.db.dao.TotalSongHistoryDao
+import com.sjn.stamp.model.constant.RecordType
+import com.sjn.stamp.model.*
+import com.sjn.stamp.model.dao.SongDao
+import com.sjn.stamp.model.dao.SongHistoryDao
+import com.sjn.stamp.model.dao.TotalSongHistoryDao
 import com.sjn.stamp.ui.custom.PeriodSelectLayout
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaItemHelper

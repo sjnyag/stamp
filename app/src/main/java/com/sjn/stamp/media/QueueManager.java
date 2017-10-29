@@ -26,8 +26,8 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 
 import com.sjn.stamp.R;
-import com.sjn.stamp.constant.RepeatState;
-import com.sjn.stamp.constant.ShuffleState;
+import com.sjn.stamp.model.constant.RepeatState;
+import com.sjn.stamp.model.constant.ShuffleState;
 import com.sjn.stamp.controller.UserSettingController;
 import com.sjn.stamp.media.provider.MusicProvider;
 import com.sjn.stamp.media.provider.single.QueueProvider;

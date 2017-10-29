@@ -1,4 +1,4 @@
-package com.sjn.stamp.constant
+package com.sjn.stamp.model.constant
 
 enum class ShuffleState(val no: Int) : QueueState {
     SHUFFLE(0),

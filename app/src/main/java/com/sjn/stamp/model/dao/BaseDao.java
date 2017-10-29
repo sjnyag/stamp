@@ -1,4 +1,4 @@
-package com.sjn.stamp.db.dao;
+package com.sjn.stamp.model.dao;
 
 import io.realm.Realm;
 

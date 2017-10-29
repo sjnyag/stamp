@@ -1,8 +1,8 @@
-package com.sjn.stamp.db
+package com.sjn.stamp.model
 
 import android.content.res.Resources
 import com.sjn.stamp.R
-import com.sjn.stamp.constant.RecordType
+import com.sjn.stamp.model.constant.RecordType
 import com.sjn.stamp.utils.TimeHelper
 import io.realm.RealmObject
 import io.realm.annotations.Index

@@ -28,7 +28,7 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.sjn.stamp.R;
-import com.sjn.stamp.constant.RepeatState;
+import com.sjn.stamp.model.constant.RepeatState;
 import com.sjn.stamp.controller.SongHistoryController;
 import com.sjn.stamp.media.CustomController;
 import com.sjn.stamp.media.MediaLogger;

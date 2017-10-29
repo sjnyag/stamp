@@ -21,7 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.text.TextUtils;
 
-import com.sjn.stamp.constant.CategoryType;
+import com.sjn.stamp.model.constant.CategoryType;
 import com.sjn.stamp.media.provider.ProviderType;
 
 import java.util.Arrays;

@@ -3,7 +3,7 @@ package com.sjn.stamp.media.provider
 import android.content.Context
 import android.content.res.Resources
 import com.sjn.stamp.R
-import com.sjn.stamp.constant.CategoryType
+import com.sjn.stamp.model.constant.CategoryType
 import com.sjn.stamp.media.provider.multiple.*
 import com.sjn.stamp.media.provider.single.AllProvider
 import com.sjn.stamp.media.provider.single.NewProvider

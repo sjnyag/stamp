@@ -1,8 +1,8 @@
-package com.sjn.stamp.db.dao
+package com.sjn.stamp.model.dao
 
 import android.support.v4.media.MediaMetadataCompat
-import com.sjn.stamp.constant.RecordType
-import com.sjn.stamp.db.SongHistory
+import com.sjn.stamp.model.constant.RecordType
+import com.sjn.stamp.model.SongHistory
 import io.realm.Realm
 import io.realm.Sort
 import java.util.*

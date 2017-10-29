@@ -1,4 +1,4 @@
-package com.sjn.stamp.constant
+package com.sjn.stamp.model.constant
 
 import android.support.v4.media.MediaMetadataCompat
 

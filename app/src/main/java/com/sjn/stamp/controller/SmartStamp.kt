@@ -1,9 +1,9 @@
 package com.sjn.stamp.controller
 
 import android.content.Context
-import com.sjn.stamp.constant.RecordType
-import com.sjn.stamp.db.Song
-import com.sjn.stamp.db.dao.SongHistoryDao
+import com.sjn.stamp.model.constant.RecordType
+import com.sjn.stamp.model.Song
+import com.sjn.stamp.model.dao.SongHistoryDao
 import com.sjn.stamp.utils.RealmHelper
 
 internal enum class SmartStamp(var mStampName: String) {

@@ -1,7 +1,7 @@
-package com.sjn.stamp.db.dao
+package com.sjn.stamp.model.dao
 
-import com.sjn.stamp.constant.RecordType
-import com.sjn.stamp.db.TotalSongHistory
+import com.sjn.stamp.model.constant.RecordType
+import com.sjn.stamp.model.TotalSongHistory
 import io.realm.Realm
 import io.realm.Sort
 

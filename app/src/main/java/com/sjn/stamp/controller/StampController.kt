@@ -2,12 +2,12 @@ package com.sjn.stamp.controller
 
 import android.content.Context
 import android.support.v4.media.MediaMetadataCompat
-import com.sjn.stamp.constant.CategoryType
-import com.sjn.stamp.db.CategoryStamp
-import com.sjn.stamp.db.SongStamp
-import com.sjn.stamp.db.dao.CategoryStampDao
-import com.sjn.stamp.db.dao.SongDao
-import com.sjn.stamp.db.dao.SongStampDao
+import com.sjn.stamp.model.constant.CategoryType
+import com.sjn.stamp.model.CategoryStamp
+import com.sjn.stamp.model.SongStamp
+import com.sjn.stamp.model.dao.CategoryStampDao
+import com.sjn.stamp.model.dao.SongDao
+import com.sjn.stamp.model.dao.SongStampDao
 import com.sjn.stamp.utils.AnalyticsHelper
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.RealmHelper

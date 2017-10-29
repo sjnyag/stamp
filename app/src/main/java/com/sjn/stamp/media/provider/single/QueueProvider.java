@@ -5,7 +5,7 @@ import android.support.v4.media.MediaMetadataCompat;
 
 import com.google.common.collect.Lists;
 import com.sjn.stamp.R;
-import com.sjn.stamp.constant.RepeatState;
+import com.sjn.stamp.model.constant.RepeatState;
 import com.sjn.stamp.utils.MediaIDHelper;
 
 import java.util.ArrayList;

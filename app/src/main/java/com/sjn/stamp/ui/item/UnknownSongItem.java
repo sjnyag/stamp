@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sjn.stamp.R;
-import com.sjn.stamp.db.Song;
+import com.sjn.stamp.model.Song;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.TimeHelper;
 import com.sjn.stamp.utils.ViewHelper;

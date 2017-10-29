@@ -1,6 +1,6 @@
-package com.sjn.stamp.db.dao
+package com.sjn.stamp.model.dao
 
-import com.sjn.stamp.db.SongStamp
+import com.sjn.stamp.model.SongStamp
 import io.realm.Realm
 import io.realm.RealmList
 

@@ -21,8 +21,8 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.Theme
 import com.sjn.stamp.R
 import com.sjn.stamp.controller.SongController
-import com.sjn.stamp.db.Song
-import com.sjn.stamp.db.dao.SongDao
+import com.sjn.stamp.model.Song
+import com.sjn.stamp.model.dao.SongDao
 import com.sjn.stamp.ui.DialogFacade
 import com.sjn.stamp.ui.SongAdapter
 import com.sjn.stamp.ui.item.SimpleMediaMetadataItem

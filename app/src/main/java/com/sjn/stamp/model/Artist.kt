@@ -1,4 +1,4 @@
-package com.sjn.stamp.db
+package com.sjn.stamp.model
 
 import io.realm.RealmObject
 import io.realm.RealmResults

@@ -1,13 +1,11 @@
 package com.sjn.stamp.ui.fragment.media_list;
 
 import android.app.ProgressDialog;
-import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -17,20 +15,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.sjn.stamp.MusicService;
 import com.sjn.stamp.R;
 import com.sjn.stamp.controller.SongHistoryController;
-import com.sjn.stamp.db.RankedArtist;
-import com.sjn.stamp.db.RankedSong;
-import com.sjn.stamp.db.Shareable;
+import com.sjn.stamp.model.RankedArtist;
+import com.sjn.stamp.model.RankedSong;
+import com.sjn.stamp.model.Shareable;
 import com.sjn.stamp.ui.SongAdapter;
 import com.sjn.stamp.ui.custom.PeriodSelectLayout;
 import com.sjn.stamp.ui.item.RankedArtistItem;
 import com.sjn.stamp.ui.item.RankedSongItem;
 import com.sjn.stamp.utils.LogHelper;
-import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.MediaItemHelper;
-import com.sjn.stamp.utils.QueueHelper;
 import com.sjn.stamp.utils.RealmHelper;
 import com.sjn.stamp.utils.ViewHelper;
 
@@ -42,8 +37,6 @@ import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager;
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 import io.realm.Realm;
-
-import static com.sjn.stamp.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_RANKING;
 
 public class RankingFragment extends MediaBrowserListFragment {
 

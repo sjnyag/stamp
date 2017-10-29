@@ -1,7 +1,7 @@
-package com.sjn.stamp.db.dao
+package com.sjn.stamp.model.dao
 
-import com.sjn.stamp.constant.CategoryType
-import com.sjn.stamp.db.CategoryStamp
+import com.sjn.stamp.model.constant.CategoryType
+import com.sjn.stamp.model.CategoryStamp
 
 import io.realm.Realm
 

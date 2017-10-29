@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.sjn.stamp.R;
 import com.sjn.stamp.controller.SongController;
-import com.sjn.stamp.db.Stamp;
+import com.sjn.stamp.model.Stamp;
 import com.sjn.stamp.ui.observer.StampEditStateObserver;
 import com.sjn.stamp.utils.MediaIDHelper;
 

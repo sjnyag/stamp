@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.sjn.stamp.R;
 import com.sjn.stamp.controller.SongHistoryController;
-import com.sjn.stamp.db.SongHistory;
+import com.sjn.stamp.model.SongHistory;
 import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.TimeHelper;
 import com.sjn.stamp.utils.ViewHelper;

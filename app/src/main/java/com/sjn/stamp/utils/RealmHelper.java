@@ -10,7 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
 
 import com.sjn.stamp.R;
-import com.sjn.stamp.migration.Migration;
+import com.sjn.stamp.model.migration.Migration;
 
 import java.io.File;
 import java.io.FileInputStream;

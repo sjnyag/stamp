@@ -14,12 +14,11 @@ import android.text.TextUtils;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
-import com.sjn.stamp.constant.CategoryType;
-import com.sjn.stamp.db.Song;
-import com.sjn.stamp.db.SongHistory;
-import com.sjn.stamp.db.SongStamp;
-import com.sjn.stamp.db.TotalSongHistory;
-import com.sjn.stamp.db.dao.ArtistDao;
+import com.sjn.stamp.model.constant.CategoryType;
+import com.sjn.stamp.model.Song;
+import com.sjn.stamp.model.SongStamp;
+import com.sjn.stamp.model.TotalSongHistory;
+import com.sjn.stamp.model.dao.ArtistDao;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;

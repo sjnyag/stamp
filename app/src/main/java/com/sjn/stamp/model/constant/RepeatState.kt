@@ -1,4 +1,4 @@
-package com.sjn.stamp.constant
+package com.sjn.stamp.model.constant
 
 enum class RepeatState(val no: Int) : QueueState {
     ALL(0),

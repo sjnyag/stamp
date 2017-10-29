@@ -2,10 +2,10 @@ package com.sjn.stamp.media;
 
 import android.content.Context;
 
-import com.sjn.stamp.constant.ShuffleState;
+import com.sjn.stamp.model.constant.ShuffleState;
 import com.sjn.stamp.controller.UserSettingController;
 import com.sjn.stamp.utils.LogHelper;
-import com.sjn.stamp.constant.RepeatState;
+import com.sjn.stamp.model.constant.RepeatState;
 
 import java.util.ArrayList;
 import java.util.List;

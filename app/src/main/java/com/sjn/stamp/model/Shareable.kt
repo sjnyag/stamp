@@ -1,4 +1,4 @@
-package com.sjn.stamp.db
+package com.sjn.stamp.model
 
 import android.content.res.Resources
 

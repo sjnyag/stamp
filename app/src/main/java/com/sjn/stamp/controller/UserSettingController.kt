@@ -1,8 +1,8 @@
 package com.sjn.stamp.controller
 
-import com.sjn.stamp.constant.RepeatState
-import com.sjn.stamp.constant.ShuffleState
-import com.sjn.stamp.db.dao.UserSettingDao
+import com.sjn.stamp.model.constant.RepeatState
+import com.sjn.stamp.model.constant.ShuffleState
+import com.sjn.stamp.model.dao.UserSettingDao
 import com.sjn.stamp.utils.RealmHelper
 
 class UserSettingController {

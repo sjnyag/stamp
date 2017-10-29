@@ -1,6 +1,6 @@
-package com.sjn.stamp.db.dao
+package com.sjn.stamp.model.dao
 
-import com.sjn.stamp.db.Device
+import com.sjn.stamp.model.Device
 import io.realm.Realm
 
 object DeviceDao : BaseDao() {

@@ -1,6 +1,6 @@
-package com.sjn.stamp.db.dao
+package com.sjn.stamp.model.dao
 
-import com.sjn.stamp.db.Artist
+import com.sjn.stamp.model.Artist
 import io.realm.Realm
 
 object ArtistDao : BaseDao() {

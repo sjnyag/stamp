@@ -1,8 +1,8 @@
-package com.sjn.stamp.db.dao
+package com.sjn.stamp.model.dao
 
-import com.sjn.stamp.constant.RepeatState
-import com.sjn.stamp.constant.ShuffleState
-import com.sjn.stamp.db.UserSetting
+import com.sjn.stamp.model.constant.RepeatState
+import com.sjn.stamp.model.constant.ShuffleState
+import com.sjn.stamp.model.UserSetting
 
 import io.realm.Realm
 
