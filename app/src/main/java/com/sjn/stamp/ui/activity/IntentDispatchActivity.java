@@ -25,6 +25,7 @@ import com.sjn.stamp.utils.ShareHelper;
 import static com.sjn.stamp.utils.NotificationHelper.ACTION_CMD;
 import static com.sjn.stamp.utils.NotificationHelper.CMD_NAME;
 import static com.sjn.stamp.utils.NotificationHelper.CMD_SHARE;
+import static com.sjn.stamp.utils.NotificationHelper.HASH_TAG_LIST;
 import static com.sjn.stamp.utils.NotificationHelper.SHARE_MESSAGE;
 
 /**
@@ -50,7 +51,7 @@ public class IntentDispatchActivity extends AppCompatActivity {
         String action = newIntent.getAction();
         String command = newIntent.getStringExtra(CMD_NAME);
         if (ACTION_CMD.equals(action) && CMD_SHARE.equals(command)) {
-            ShareHelper.share(this, newIntent.getExtras().getString(SHARE_MESSAGE));
+            ShareHelper.share(this, newIntent.getExtras().getString(SHARE_MESSAGE), newIntent.getExtras().getStringArrayList(HASH_TAG_LIST));
         } else {
             startActivity(newIntent);
         }

@@ -80,7 +80,7 @@ class SongHistoryController(private val mContext: Context) {
 
     private fun sendNotificationBySongCount(realm: Realm, song: Song, playCount: Int) {
         if (NotificationHelper.isSendPlayedNotification(playCount)) {
-            NotificationHelper.sendPlayedNotification(mContext, song.share(mContext.resources), song.albumArtUri, playCount, SongHistoryDao.findOldest(realm, song.id)!!.recordedAt)
+            NotificationHelper.sendPlayedNotification(mContext, song, song.albumArtUri, playCount, SongHistoryDao.findOldest(realm, song.id)!!.recordedAt)
         }
     }
 
