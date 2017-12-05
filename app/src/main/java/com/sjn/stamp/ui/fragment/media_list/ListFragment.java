@@ -55,7 +55,7 @@ public abstract class ListFragment extends FabFragment implements
     private static final String TAG = LogHelper.makeLogTag(ListFragment.class);
     protected static final String LIST_STATE_KEY = "LIST_STATE_KEY";
 
-    protected List<AbstractFlexibleItem> mItemList = new ArrayList<>();
+    protected List<AbstractFlexibleItem<?>> mItemList = new ArrayList<>();
 
     protected ProgressBar mLoading;
     protected View mEmptyView;
@@ -164,7 +164,7 @@ public abstract class ListFragment extends FabFragment implements
         LogHelper.d(TAG, "notifyFragmentChange END");
     }
 
-    public List<AbstractFlexibleItem> getCurrentItems() {
+    public List<AbstractFlexibleItem<?>> getCurrentItems() {
         return mItemList;
     }
 

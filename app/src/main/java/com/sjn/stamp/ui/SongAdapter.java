@@ -12,12 +12,12 @@ import java.util.List;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 
-public class SongAdapter extends FlexibleAdapter<AbstractFlexibleItem> {
+public class SongAdapter extends FlexibleAdapter<AbstractFlexibleItem<?>> {
 
     private static final String TAG = SongAdapter.class.getSimpleName();
 
 
-    public SongAdapter(List<AbstractFlexibleItem> items, Object listeners) {
+    public SongAdapter(List<AbstractFlexibleItem<?>> items, Object listeners) {
         //stableIds ? true = Items implement hashCode() so they can have stableIds!
         super(items, listeners, true);
 
@@ -27,7 +27,7 @@ public class SongAdapter extends FlexibleAdapter<AbstractFlexibleItem> {
     }
 
     @Override
-    public void updateDataSet(List<AbstractFlexibleItem> items, boolean animate) {
+    public void updateDataSet(List<AbstractFlexibleItem<?>> items, boolean animate) {
         // NOTE: To have views/items not changed, set them into "items" before passing the final
         // list to the Adapter.
 

@@ -337,9 +337,9 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
             return null;
         }
 
-        synchronized private List<AbstractFlexibleItem> createItemList(List<MediaBrowserCompat.MediaItem> songList) {
+        synchronized private List<AbstractFlexibleItem<?>> createItemList(List<MediaBrowserCompat.MediaItem> songList) {
             LogHelper.d(TAG, "createItemList START");
-            List<AbstractFlexibleItem> itemList = new ArrayList<>();
+            List<AbstractFlexibleItem<?>> itemList = new ArrayList<>();
             for (MediaBrowserCompat.MediaItem item : songList) {
                 AbstractFlexibleItem songItem = new SongItem(item, mFragment.mMediaBrowsable, mFragment.getActivity());
                 itemList.add(songItem);

@@ -277,7 +277,7 @@ public class RankingFragment extends MediaBrowserListFragment {
         }
 
         interface Callback {
-            List<AbstractFlexibleItem> createItemList(Realm realm, PeriodSelectLayout.Period period, SongHistoryController songHistoryController);
+            List<AbstractFlexibleItem<?>> createItemList(Realm realm, PeriodSelectLayout.Period period, SongHistoryController songHistoryController);
         }
 
         @Override
@@ -330,8 +330,8 @@ public class RankingFragment extends MediaBrowserListFragment {
             }
 
             @Override
-            public List<AbstractFlexibleItem> createItemList(Realm realm, PeriodSelectLayout.Period period, SongHistoryController songHistoryController) {
-                List<AbstractFlexibleItem> itemList = new ArrayList<>();
+            public List<AbstractFlexibleItem<?>> createItemList(Realm realm, PeriodSelectLayout.Period period, SongHistoryController songHistoryController) {
+                List<AbstractFlexibleItem<?>> itemList = new ArrayList<>();
                 int order = 1;
                 for (RankedSong rankedSong : songHistoryController.getRankedSongList(realm, period)) {
                     itemList.add(newSimpleItem(rankedSong, order++));
@@ -358,8 +358,8 @@ public class RankingFragment extends MediaBrowserListFragment {
             }
 
             @Override
-            public List<AbstractFlexibleItem> createItemList(Realm realm, PeriodSelectLayout.Period period, SongHistoryController songHistoryController) {
-                List<AbstractFlexibleItem> itemList = new ArrayList<>();
+            public List<AbstractFlexibleItem<?>> createItemList(Realm realm, PeriodSelectLayout.Period period, SongHistoryController songHistoryController) {
+                List<AbstractFlexibleItem<?>> itemList = new ArrayList<>();
                 int order = 1;
                 for (RankedArtist rankedArtist : songHistoryController.getRankedArtistList(realm, period)) {
                     itemList.add(newSimpleItem(rankedArtist, order++));

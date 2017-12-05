@@ -289,7 +289,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
     }
 
     private MediaBrowserListFragment getMediaBrowserListFragment() {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(DrawerActivity.FRAGMENT_TAG);
         if (fragment instanceof MediaBrowserListFragment) {
             return (MediaBrowserListFragment) fragment;
         } else if (fragment instanceof PagerFragment) {
@@ -302,7 +302,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
     }
 
     @Override
-    public List<AbstractFlexibleItem> getCurrentMediaItems() {
+    public List<AbstractFlexibleItem<?>> getCurrentMediaItems() {
         MediaBrowserListFragment mediaControllerFragment = getMediaBrowserListFragment();
         if (mediaControllerFragment != null) {
             return mediaControllerFragment.getCurrentItems();

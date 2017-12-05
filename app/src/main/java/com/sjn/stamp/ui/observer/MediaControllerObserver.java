@@ -29,7 +29,7 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
     }
 
     public interface Listener {
-        void onPlaybackStateChanged(@NonNull PlaybackStateCompat state);
+        void onPlaybackStateChanged(PlaybackStateCompat state);
 
         void onMetadataChanged(MediaMetadataCompat metadata);
 

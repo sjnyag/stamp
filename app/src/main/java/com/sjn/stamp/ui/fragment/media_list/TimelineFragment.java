@@ -266,12 +266,12 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         return item;
     }
 
-    private List<AbstractFlexibleItem> createItemList(int startPosition, int size) {
+    private List<AbstractFlexibleItem<?>> createItemList(int startPosition, int size) {
         int end = startPosition + size;
         if (end >= mAllSongHistoryList.size()) {
             end = mAllSongHistoryList.size();
         }
-        List<AbstractFlexibleItem> headerItemList = new ArrayList<>();
+        List<AbstractFlexibleItem<?>> headerItemList = new ArrayList<>();
         DateHeaderItem header = (mAdapter == null || mAdapter.getHeaderItems().isEmpty()) ? null : (DateHeaderItem) Iterables.getLast(mAdapter.getHeaderItems());
 
         for (int i = startPosition; i < mAllSongHistoryList.size(); i++) {
