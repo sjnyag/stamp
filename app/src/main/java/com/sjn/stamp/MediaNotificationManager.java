@@ -17,6 +17,8 @@
 package com.sjn.stamp;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -34,10 +36,11 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
 
 import com.sjn.stamp.media.player.CastPlayer;
 import com.sjn.stamp.ui.activity.MusicPlayerListActivity;
+import com.sjn.stamp.utils.CompatibleHelper;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.ViewHelper;
 import com.squareup.picasso.Picasso;
@@ -58,6 +61,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
 
     private static final int NOTIFICATION_ID = 412;
     private static final int REQUEST_CODE = 100;
+    private static final String CHANNEL_ID = "stamp_channel_01";
 
     public static final String ACTION_PAUSE = "com.sjn.stamp.pause";
     public static final String ACTION_PLAY = "com.sjn.stamp.play";
@@ -100,6 +104,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
                 Color.DKGRAY);
 
         mNotificationManager = NotificationManagerCompat.from(service);
+        createNotificationChannel();
 
         String pkg = mService.getPackageName();
         mPauseIntent = PendingIntent.getBroadcast(mService, REQUEST_CODE,
@@ -233,6 +238,15 @@ public class MediaNotificationManager extends BroadcastReceiver {
         }
     }
 
+    private void createNotificationChannel() {
+        if (CompatibleHelper.hasOreo()) {
+            NotificationManager manager = (NotificationManager) mService.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (manager != null) {
+                manager.createNotificationChannel(new NotificationChannel(CHANNEL_ID, "Stamp", NotificationManager.IMPORTANCE_LOW));
+            }
+        }
+    }
+
     private PendingIntent createContentIntent(MediaDescriptionCompat description) {
         Intent openUI = new Intent(mService, MusicPlayerListActivity.class);
         openUI.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -288,7 +302,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
             return null;
         }
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(mService);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(mService, CHANNEL_ID);
         int playPauseButtonPosition = 0;
 
         // If skip to previous action is enabled
@@ -314,7 +328,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
         MediaDescriptionCompat description = mMetadata.getDescription();
 
         notificationBuilder
-                .setStyle(new NotificationCompat.MediaStyle()
+                .setStyle(new android.support.v4.media.app.NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(
                                 new int[]{playPauseButtonPosition, playPauseButtonPosition + 1})  // show only play/pause in compact view
                         .setMediaSession(mSessionToken))
