@@ -83,7 +83,11 @@ public abstract class DrawerActivity extends AppCompatActivity implements Fragme
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LogHelper.d(TAG, "Activity onCreate");
-        CastContext.getSharedInstance(this);
+        try {
+            CastContext.getSharedInstance(this);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
