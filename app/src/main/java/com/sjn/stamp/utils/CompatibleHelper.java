@@ -14,4 +14,8 @@ public class CompatibleHelper {
     public static boolean hasHoneycomb() {
         return android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB;
     }
+
+    public static boolean hasOreo() {
+        return android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+    }
 }

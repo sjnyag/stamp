@@ -50,7 +50,7 @@ abstract class MediaBrowserActivity : DrawerActivity(), MediaBrowsable, MediaCon
         mMediaBrowser?.disconnect()
     }
 
-    override fun sendCustomAction(action: String, extras: Bundle, callback: MediaBrowserCompat.CustomActionCallback) {
+    override fun sendCustomAction(action: String, extras: Bundle?, callback: MediaBrowserCompat.CustomActionCallback?) {
         if (mMediaBrowser != null && mMediaBrowser!!.isConnected) {
             mMediaBrowser!!.sendCustomAction(action, extras, callback)
         }

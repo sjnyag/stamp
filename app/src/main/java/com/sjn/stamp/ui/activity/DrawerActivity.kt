@@ -77,7 +77,12 @@ abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStack
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         LogHelper.d(TAG, "Activity onCreate")
-        CastContext.getSharedInstance(this)
+        try {
+            CastContext.getSharedInstance(this)
+        } catch (e: RuntimeException) {
+            e.printStackTrace()
+        }
+
     }
 
     override fun onStart() {
