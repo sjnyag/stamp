@@ -3,12 +3,10 @@ package com.sjn.stamp.ui.activity
 import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Context
-import android.support.v4.view.MenuItemCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.view.ActionMode
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
-import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
@@ -21,6 +19,7 @@ import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.helpers.ActionModeHelper
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import java.util.*
+
 
 abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQueryTextListener, ListFragment.FragmentInteractionListener, ActionMode.Callback {
 
@@ -57,8 +56,8 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         val searchItem = menu.findItem(R.id.action_search)
         if (searchItem != null) {
-            mSearchView = MenuItemCompat.getActionView(searchItem) as SearchView
-            mSearchView!!.inputType = InputType.TYPE_TEXT_VARIATION_FILTER
+            mSearchView = searchItem.actionView as SearchView
+            //mSearchView!!.inputType = InputType.TYPE_TEXT_VARIATION_FILTER
             mSearchView!!.imeOptions = EditorInfo.IME_ACTION_DONE or EditorInfo.IME_FLAG_NO_FULLSCREEN
             mSearchView!!.queryHint = getString(R.string.action_search)
             mSearchView!!.setSearchableInfo(searchManager.getSearchableInfo(componentName))
