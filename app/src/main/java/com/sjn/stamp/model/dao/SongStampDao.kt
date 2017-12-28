@@ -16,23 +16,26 @@ object SongStampDao : BaseDao() {
             realm.where(SongStamp::class.java).equalTo("isSystem", isSystem).findAll().sort("name") ?: emptyList()
 
     fun register(realm: Realm, songId: Long, name: String, isSystem: Boolean) {
-        val song = SongDao.findById(realm, songId) ?: return
-        val songStamp = findOrCreate(realm, name, isSystem)
-        realm.beginTransaction()
-        songStamp.addSong(song)
-        realm.commitTransaction()
+        realm.executeTransaction({
+            val song = SongDao.findById(realm, songId)
+            if (song != null) {
+                val songStamp = findOrCreate(realm, name, isSystem)
+                songStamp.addSong(song)
+            }
+        })
     }
 
     fun remove(realm: Realm, songId: Long, name: String, isSystem: Boolean): Boolean {
-        val song = SongDao.findById(realm, songId) ?: return false
-        val songStamp = findOrCreate(realm, name, isSystem)
-        if (!songStamp.songList.contains(song)) {
-            return false
-        }
-        realm.beginTransaction()
-        songStamp.removeSong(song)
-        realm.commitTransaction()
-        return true
+        var result = false
+        realm.executeTransaction({
+            val song = SongDao.findById(realm, songId)
+            val songStamp = findOrCreate(realm, name, isSystem)
+            if (song != null && !songStamp.songList.contains(song)) {
+                songStamp.removeSong(song)
+                result = true
+            }
+        })
+        return result
     }
 
     fun findOrCreate(realm: Realm, name: String, isSystem: Boolean): SongStamp {
@@ -41,20 +44,28 @@ object SongStampDao : BaseDao() {
         }
         var songStamp: SongStamp? = find(realm, name, isSystem)
         if (songStamp == null) {
-            realm.beginTransaction()
-            songStamp = realm.createObject(SongStamp::class.java, getAutoIncrementId(realm, SongStamp::class.java))
-            songStamp.name = name
-            songStamp.isSystem = isSystem
-            songStamp.songList = RealmList()
-            realm.commitTransaction()
-            return songStamp
+            if (realm.isInTransaction) {
+                return create(realm, name, isSystem)
+            } else {
+                realm.beginTransaction()
+                songStamp = create(realm, name, isSystem)
+                realm.commitTransaction()
+            }
         }
         return songStamp
     }
 
     fun delete(realm: Realm, name: String, isSystem: Boolean) {
-        realm.beginTransaction()
-        realm.where(SongStamp::class.java).equalTo("name", name).equalTo("isSystem", isSystem).findAll().deleteAllFromRealm()
-        realm.commitTransaction()
+        realm.executeTransaction({
+            realm.where(SongStamp::class.java).equalTo("name", name).equalTo("isSystem", isSystem).findAll().deleteAllFromRealm()
+        })
+    }
+
+    private fun create(realm: Realm, name: String, isSystem: Boolean): SongStamp {
+        val songStamp = realm.createObject(SongStamp::class.java, getAutoIncrementId(realm, SongStamp::class.java))
+        songStamp.name = name
+        songStamp.isSystem = isSystem
+        songStamp.songList = RealmList()
+        return songStamp
     }
 }
