@@ -23,8 +23,6 @@ abstract class MediaBrowserActivity : DrawerActivity(), MediaBrowsable, MediaCon
             try {
                 LogHelper.i(TAG, "onMediaControllerConnected")
                 MediaControllerCompat.setMediaController(this@MediaBrowserActivity, MediaControllerCompat(this@MediaBrowserActivity, mMediaBrowser!!.sessionToken))
-                MediaControllerObserver.register(mediaController)
-                MediaControllerObserver.getInstance().notifyConnected()
             } catch (e: RemoteException) {
                 LogHelper.e(TAG, e, "could not connect media controller")
             }
@@ -44,9 +42,6 @@ abstract class MediaBrowserActivity : DrawerActivity(), MediaBrowsable, MediaCon
         super.onDestroy()
         LogHelper.i(TAG, "Activity onDestroy")
         MediaControllerObserver.getInstance().removeListener(this)
-        mediaController?.let {
-            MediaControllerObserver.unregister(it)
-        }
         mMediaBrowser?.disconnect()
     }
 
@@ -74,7 +69,6 @@ abstract class MediaBrowserActivity : DrawerActivity(), MediaBrowsable, MediaCon
     }
 
     companion object {
-
         private val TAG = LogHelper.makeLogTag(MediaBrowserActivity::class.java)
     }
 

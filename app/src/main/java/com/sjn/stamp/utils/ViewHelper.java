@@ -158,13 +158,17 @@ public class ViewHelper {
                 .build(s, generator.getColor(text));
     }
 
-    public static Bitmap toBitmap(Drawable drawable, int width, int height) {
+    public static Bitmap toBitmap(Drawable drawable) {
         if (drawable instanceof BitmapDrawable) {
             BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
             return bitmapDrawable.getBitmap();
         }
+        int width = drawable.getIntrinsicWidth() > 0 ? drawable.getIntrinsicWidth() : 96;
+        int height = drawable.getIntrinsicHeight() > 0 ? drawable.getIntrinsicHeight() : 96;
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
+        Canvas canvas = new Canvas();
+        canvas.setBitmap(bitmap);
+        drawable.setBounds(0, 0, width, height);
         drawable.draw(canvas);
         return bitmap;
     }

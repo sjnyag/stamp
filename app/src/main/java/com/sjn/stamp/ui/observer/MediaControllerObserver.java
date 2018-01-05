@@ -34,6 +34,8 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
         void onMetadataChanged(MediaMetadataCompat metadata);
 
         void onMediaControllerConnected();
+
+        void onSessionDestroyed();
     }
 
     public void addListener(Listener listener) {
@@ -68,6 +70,17 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
         if (mListenerList != null) {
             for (Listener listener : mListenerList) {
                 listener.onMetadataChanged(metadata);
+            }
+        }
+    }
+
+    @Override
+    public void onSessionDestroyed() {
+        super.onSessionDestroyed();
+        LogHelper.i(TAG, "onSessionDestroyed ", mListenerList.size());
+        if (mListenerList != null) {
+            for (Listener listener : mListenerList) {
+                listener.onSessionDestroyed();
             }
         }
     }

@@ -116,6 +116,11 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
     }
 
     @Override
+    public void onSessionDestroyed() {
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         LogHelper.i(TAG, "onCreateView");

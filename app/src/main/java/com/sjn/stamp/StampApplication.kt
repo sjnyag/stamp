@@ -27,11 +27,15 @@ class StampApplication : MultiDexApplication() {
         JodaTimeAndroid.init(this)
         DrawerImageLoader.init(object : AbstractDrawerImageLoader() {
             override fun set(imageView: ImageView?, uri: Uri?, placeholder: Drawable?) {
-                Picasso.with(imageView!!.context).load(uri).placeholder(placeholder).into(imageView)
+                imageView?.let {
+                    Picasso.with(it.context).load(uri).placeholder(placeholder).into(it)
+                }
             }
 
             override fun cancel(imageView: ImageView?) {
-                Picasso.with(imageView!!.context).cancelRequest(imageView)
+                imageView?.let {
+                    Picasso.with(it.context).cancelRequest(imageView)
+                }
             }
         })
     }

@@ -100,7 +100,10 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
     override fun onFragmentChange(swipeRefreshLayout: SwipeRefreshLayout, recyclerView: RecyclerView, mode: Int) {
         LogHelper.d(TAG, "onFragmentChange START")
         //mRecyclerView = recyclerView;
-        mAdapter = recyclerView.adapter as FlexibleAdapter<AbstractFlexibleItem<*>>
+
+        if(recyclerView.adapter is FlexibleAdapter<*>) {
+            mAdapter = recyclerView.adapter as FlexibleAdapter<AbstractFlexibleItem<*>>
+        }
         //mSwipeRefreshLayout = swipeRefreshLayout;
         //initializeSwipeToRefresh();
         initializeActionModeHelper(mode)
@@ -152,12 +155,7 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
     @SuppressLint("NewApi")
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
         LogHelper.d(TAG, "onCreateActionMode START")
-        if (CompatibleHelper.hasMarshmallow()) {
-            window.statusBarColor = resources.getColor(R.color.color_accent_dark, theme)
-        } else if (CompatibleHelper.hasLollipop()) {
-
-            window.statusBarColor = resources.getColor(R.color.color_accent_dark)
-        }
+        CompatibleHelper.getColor(resources, R.color.color_accent_dark, theme)?.let { window.statusBarColor = it }
         LogHelper.d(TAG, "onCreateActionMode END")
         return true
     }
@@ -169,12 +167,7 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
     @SuppressLint("NewApi")
     override fun onDestroyActionMode(mode: ActionMode) {
         LogHelper.d(TAG, "onDestroyActionMode START")
-        if (CompatibleHelper.hasMarshmallow()) {
-            window.statusBarColor = resources.getColor(R.color.color_primary_dark, theme)
-        } else if (CompatibleHelper.hasLollipop()) {
-
-            window.statusBarColor = resources.getColor(R.color.color_primary_dark)
-        }
+        CompatibleHelper.getColor(resources, R.color.color_primary_dark, theme)?.let { window.statusBarColor = it }
         LogHelper.d(TAG, "onDestroyActionMode END")
     }
 

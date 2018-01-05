@@ -1,39 +1,24 @@
 package com.sjn.stamp.ui.fragment.media_list;
 
-
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.gordonwong.materialsheetfab.MaterialSheetFabEventListener;
 import com.sjn.stamp.R;
-import com.sjn.stamp.ui.SongAdapter;
-import com.sjn.stamp.ui.custom.CenteredMaterialSheetFab;
-import com.sjn.stamp.ui.custom.Fab;
 import com.sjn.stamp.ui.item.ProgressItem;
-import com.sjn.stamp.ui.item.SongItem;
 import com.sjn.stamp.ui.observer.StampEditStateObserver;
 import com.sjn.stamp.utils.LogHelper;
-import com.sjn.stamp.utils.SpotlightHelper;
-import com.takusemba.spotlight.SimpleTarget;
-import com.takusemba.spotlight.Spotlight;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -179,7 +164,7 @@ public abstract class ListFragment extends FabFragment implements
         if (mEmptyTextView != null) {
             mEmptyTextView.setText(emptyMessage());
         }
-        if (mFastScroller != null && mRefreshHandler != null && mEmptyView != null) {
+        if (mFastScroller != null && mEmptyView != null) {
             if (size > 0 || (mLoading != null && mLoading.getVisibility() == View.VISIBLE)) {
                 mFastScroller.setVisibility(View.VISIBLE);
                 mRefreshHandler.removeMessages(2);

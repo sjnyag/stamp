@@ -228,6 +228,11 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
         }
     }
 
+    @Override
+    public void onSessionDestroyed() {
+
+    }
+
     private void startFullScreenIfNeeded(Intent intent) {
         if (intent != null && intent.getBooleanExtra(EXTRA_START_FULLSCREEN, false)) {
             SlidingUpPanelLayout slidingUpPanelLayout = findViewById(R.id.sliding_layout);

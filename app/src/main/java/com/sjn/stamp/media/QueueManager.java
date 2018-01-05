@@ -258,6 +258,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
         mListener.onQueueUpdated(title, newQueue);
     }
 
+    //TODO:
     public void updateMetadata() {
         LogHelper.d(TAG, "updateMetadata");
         MediaSessionCompat.QueueItem currentMusic = getCurrentMusic();
@@ -298,7 +299,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
 
                 @Override
                 public void onBitmapFailed(Drawable errorDrawable) {
-                    Bitmap bitmap = ViewHelper.toBitmap(ViewHelper.createTextDrawable(metadata.getDescription().getTitle().toString()), 128, 128);
+                    Bitmap bitmap = ViewHelper.toBitmap(ViewHelper.createTextDrawable(metadata.getDescription().getTitle().toString()));
                     Bitmap icon = ViewHelper.createIcon(bitmap);
                     mMusicProvider.updateMusicArt(musicId, bitmap, icon);
 

@@ -152,6 +152,11 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
         LogHelper.d(TAG, "onMediaControllerConnected END");
     }
 
+    @Override
+    public void onSessionDestroyed() {
+
+    }
+
     public void setMediaId(String mediaId) {
         Bundle args = new Bundle(1);
         args.putString(MediaBrowserListFragment.ARG_MEDIA_ID, mediaId);

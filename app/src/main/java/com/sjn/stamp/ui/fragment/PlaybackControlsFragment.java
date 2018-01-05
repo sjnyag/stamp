@@ -94,6 +94,11 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
     }
 
     @Override
+    public void onSessionDestroyed() {
+
+    }
+
+    @Override
     public void onMetadataChanged(MediaMetadataCompat metadata) {
         LogHelper.d(TAG, "onMetadataChanged ", metadata);
         if (getActivity() == null) {

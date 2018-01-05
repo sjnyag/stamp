@@ -156,6 +156,7 @@ public abstract class FabFragment extends Fragment implements StampEditStateObse
         });
     }
 
+    @SuppressWarnings("unused")
     public void performFabAction() {
         //default implementation does nothing
     }

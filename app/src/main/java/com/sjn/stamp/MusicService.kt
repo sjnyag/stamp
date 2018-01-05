@@ -7,12 +7,15 @@ import android.os.RemoteException
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaBrowserServiceCompat
+import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.sjn.stamp.media.playback.PlaybackManager
 import com.sjn.stamp.media.player.CastPlayer
 import com.sjn.stamp.media.player.Player
 import com.sjn.stamp.media.provider.MusicProvider
 import com.sjn.stamp.media.source.LocalMediaSource
+import com.sjn.stamp.notification.NotificationManager
+import com.sjn.stamp.ui.observer.MediaControllerObserver
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaIDHelper
 import com.sjn.stamp.utils.NotificationHelper.*
@@ -30,8 +33,9 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
     }
 
     private lateinit var mMusicProvider: MusicProvider
-    private var mMediaNotificationManager: MediaNotificationManager? = null
+    private var mNotificationManager: NotificationManager? = null
     private var mPlayer: Player? = null
+    private var mMediaController: MediaControllerCompat? = null
     private var mCastPlayer: CastPlayer? = null
 
     override fun onCreate() {
@@ -42,13 +46,20 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
             LogHelper.d(TAG, "MusicProvider.callBack start")
             mPlayer = Player(this@MusicService)
             sessionToken = mPlayer!!.initialize(this@MusicService, mMusicProvider)
+            sessionToken?.let {
+                mMediaController = MediaControllerCompat(this@MusicService, it)
+                mMediaController?.let {
+                    MediaControllerObserver.register(it)
+                }
+            }
+            MediaControllerObserver.getInstance().notifyConnected()
             Thread(Runnable {
                 mPlayer?.restorePreviousState(mMusicProvider)
                 mCastPlayer = CastPlayer(this@MusicService, mPlayer?.sessionManageListener)
                 try {
-                    mMediaNotificationManager = MediaNotificationManager(this@MusicService)
+                    mNotificationManager = NotificationManager(this@MusicService)
                 } catch (e: RemoteException) {
-                    throw IllegalStateException("Could not create a MediaNotificationManager", e)
+                    throw IllegalStateException("Could not create a NotificationManager", e)
                 }
                 LogHelper.d(TAG, "MusicProvider.callBack end")
             }).start()
@@ -72,7 +83,10 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
     override fun onDestroy() {
         LogHelper.d(TAG, "onDestroy")
         mPlayer?.stop()
-        mMediaNotificationManager?.stopNotification()
+        mMediaController?.let {
+            MediaControllerObserver.unregister(it)
+        }
+        mNotificationManager?.stopNotification()
         mCastPlayer?.finish()
     }
 
@@ -118,7 +132,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
                                 result: MediaBrowserServiceCompat.Result<List<MediaItem>>) {
         LogHelper.d(TAG, "OnLoadChildren: parentMediaId=", parentMediaId)
         if (MediaIDHelper.MEDIA_ID_EMPTY_ROOT == parentMediaId) {
-            result.sendResult(ArrayList<MediaItem>())
+            result.sendResult(ArrayList())
         } else {
             result.detach()
             if (mMusicProvider.isInitialized) {
@@ -131,28 +145,33 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
      * [PlaybackManager.PlaybackServiceCallback]
      */
     override fun onPlaybackStart() {
+        LogHelper.d(TAG, "onPlaybackStart")
         mPlayer?.setActive(true)
         // The service needs to continue running even after the bound client (usually a
         // MediaController) disconnects, otherwise the music playback will stop.
         // Calling startService(Intent) will keep the service running until it is explicitly killed.
         startService(Intent(applicationContext, MusicService::class.java))
-        mMediaNotificationManager?.startForeground()
+        mNotificationManager?.startForeground()
     }
 
     override fun onPlaybackStop() {
+        LogHelper.d(TAG, "onPlaybackStop")
         mPlayer?.setActive(false)
-        mMediaNotificationManager?.stopForeground(true)
+        mNotificationManager?.stopForeground(false)
     }
 
     override fun onPlaybackStateUpdated(newState: PlaybackStateCompat) {
+        LogHelper.d(TAG, "onPlaybackStateUpdated ", newState)
         mPlayer?.setPlaybackState(newState)
     }
 
     override fun onNotificationRequired() {
-        mMediaNotificationManager?.startNotification()
+        LogHelper.d(TAG, "onNotificationRequired")
+        mNotificationManager?.startNotification()
     }
 
     private fun handleActionCommand(command: String) {
+        LogHelper.d(TAG, "handleActionCommand ", command)
         when (command) {
             CMD_PAUSE -> mPlayer?.pause()
             CMD_STOP_CASTING -> mCastPlayer?.stop()
