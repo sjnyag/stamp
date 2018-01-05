@@ -6,7 +6,7 @@ import com.sjn.stamp.model.UserSetting
 
 import io.realm.Realm
 
-object UserSettingDao : BaseDao() {
+object UserSettingDao : BaseDao<UserSetting>() {
 
     fun getUserSetting(realm: Realm): UserSetting = findOrCreate(realm)
 

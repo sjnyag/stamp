@@ -4,7 +4,7 @@ import com.sjn.stamp.model.SongStamp
 import io.realm.Realm
 import io.realm.RealmList
 
-object SongStampDao : BaseDao() {
+object SongStampDao : BaseDao<SongStamp>() {
 
     fun find(realm: Realm, name: String, isSystem: Boolean): SongStamp? =
             realm.where(SongStamp::class.java).equalTo("name", name).equalTo("isSystem", isSystem).findFirst()
@@ -62,7 +62,7 @@ object SongStampDao : BaseDao() {
     }
 
     private fun create(realm: Realm, name: String, isSystem: Boolean): SongStamp {
-        val songStamp = realm.createObject(SongStamp::class.java, getAutoIncrementId(realm, SongStamp::class.java))
+        val songStamp = realm.createObject(SongStamp::class.java, getAutoIncrementId(realm))
         songStamp.name = name
         songStamp.isSystem = isSystem
         songStamp.songList = RealmList()

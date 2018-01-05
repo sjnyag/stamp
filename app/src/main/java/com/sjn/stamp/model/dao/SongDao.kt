@@ -5,7 +5,7 @@ import com.sjn.stamp.model.Song
 import com.sjn.stamp.utils.MediaItemHelper
 import io.realm.Realm
 
-object SongDao : BaseDao() {
+object SongDao : BaseDao<Song>() {
 
     fun findById(realm: Realm, id: Long): Song? =
             realm.where(Song::class.java).equalTo("id", id).findFirst()
@@ -29,7 +29,7 @@ object SongDao : BaseDao() {
         var song: Song? = findByMediaMetadata(realm, metadata)
         if (song == null) {
             song = Song()
-            song.id = getAutoIncrementId(realm, Song::class.java)
+            song.id = getAutoIncrementId(realm)
             val artist = ArtistDao.findOrCreate(realm, MediaItemHelper.getArtist(metadata), MediaItemHelper.getAlbumArtUri(metadata))
             val totalSongHistory = TotalSongHistoryDao.findOrCreate(realm, song.id)
             song.artist = artist

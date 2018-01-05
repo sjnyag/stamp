@@ -3,13 +3,13 @@ package com.sjn.stamp.model.dao
 import com.sjn.stamp.model.Artist
 import io.realm.Realm
 
-object ArtistDao : BaseDao() {
+object ArtistDao : BaseDao<Artist>() {
 
     fun findOrCreate(realm: Realm, name: String, uri: String): Artist {
         var artist: Artist? = realm.where(Artist::class.java).equalTo("name", name).findFirst()
         if (artist == null) {
             realm.beginTransaction()
-            artist = realm.createObject(Artist::class.java, CategoryStampDao.getAutoIncrementId(realm, Artist::class.java))
+            artist = realm.createObject(Artist::class.java, getAutoIncrementId(realm))
             artist.name = name
             artist.albumArtUri = uri
             realm.commitTransaction()

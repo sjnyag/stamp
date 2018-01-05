@@ -5,7 +5,7 @@ import com.sjn.stamp.model.CategoryStamp
 
 import io.realm.Realm
 
-object CategoryStampDao : BaseDao() {
+object CategoryStampDao : BaseDao<CategoryStamp>() {
 
     fun findAll(realm: Realm): List<CategoryStamp> =
             realm.where(CategoryStamp::class.java).findAll() ?: emptyList()
@@ -20,7 +20,7 @@ object CategoryStampDao : BaseDao() {
         var categoryStamp: CategoryStamp? = realm.where(CategoryStamp::class.java).equalTo("name", name).equalTo("type", categoryType.databaseValue).equalTo("value", categoryValue).equalTo("isSystem", isSystem).findFirst()
         if (categoryStamp == null) {
             realm.beginTransaction()
-            categoryStamp = realm.createObject(CategoryStamp::class.java, getAutoIncrementId(realm, CategoryStamp::class.java))
+            categoryStamp = realm.createObject(CategoryStamp::class.java, getAutoIncrementId(realm))
             categoryStamp.name = name
             categoryStamp.type = categoryType.databaseValue
             categoryStamp.isSystem = isSystem

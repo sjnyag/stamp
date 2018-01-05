@@ -1,11 +1,11 @@
 package com.sjn.stamp.model.dao
 
-import com.sjn.stamp.model.constant.RecordType
 import com.sjn.stamp.model.TotalSongHistory
+import com.sjn.stamp.model.constant.RecordType
 import io.realm.Realm
 import io.realm.Sort
 
-object TotalSongHistoryDao : BaseDao() {
+object TotalSongHistoryDao : BaseDao<TotalSongHistory>() {
 
     fun findPlayed(realm: Realm): List<TotalSongHistory> =
             realm.where(TotalSongHistory::class.java).greaterThanOrEqualTo("playCount", 1).findAll().sort("playCount", Sort.DESCENDING) ?: emptyList()
@@ -14,7 +14,7 @@ object TotalSongHistoryDao : BaseDao() {
         var totalSongHistory: TotalSongHistory? = realm.where(TotalSongHistory::class.java).equalTo("song.id", songId).findFirst()
         if (totalSongHistory == null) {
             realm.beginTransaction()
-            totalSongHistory = realm.createObject(TotalSongHistory::class.java, getAutoIncrementId(realm, TotalSongHistory::class.java))
+            totalSongHistory = realm.createObject(TotalSongHistory::class.java, getAutoIncrementId(realm))
             realm.commitTransaction()
             return totalSongHistory
         }

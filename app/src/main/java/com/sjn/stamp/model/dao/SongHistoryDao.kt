@@ -7,7 +7,7 @@ import io.realm.Realm
 import io.realm.Sort
 import java.util.*
 
-object SongHistoryDao : BaseDao() {
+object SongHistoryDao : BaseDao<SongHistory>() {
 
     fun where(realm: Realm, from: Date?, to: Date?, recordType: String): List<SongHistory> {
         val query = realm.where(SongHistory::class.java).equalTo("recordType", recordType)
@@ -37,7 +37,7 @@ object SongHistoryDao : BaseDao() {
 
     fun create(realm: Realm, metadata: MediaMetadataCompat, recordType: RecordType, date: Date, count: Int) {
         val songHistory = SongHistory()
-        songHistory.id = getAutoIncrementId(realm, SongHistory::class.java)
+        songHistory.id = getAutoIncrementId(realm)
         songHistory.device = DeviceDao.findOrCreate(realm)
         songHistory.song = SongDao.findOrCreate(realm, metadata)
         songHistory.recordType = recordType.databaseValue
