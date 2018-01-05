@@ -155,6 +155,7 @@ class NotificationContainer(
             if (bitmapLoadTask != null && bitmapLoadTask!!.loadPreparedBitmap(builder, this@NotificationContainer, it)) {
                 return
             }
+            builder.setLargeIcon(metadata.getTextDrawableBitmap())
             bitmapLoadTask?.cancel(true)
             bitmapLoadTask = SetNotificationBitmapAsyncTask(context.contentResolver, metadata.description.title.toString(), it, builder, this@NotificationContainer)
             bitmapLoadTask?.execute()
@@ -210,4 +211,7 @@ class NotificationContainer(
         // Make sure that the notification can be dismissed by the user when we are not playing:
         setOngoing(playbackState.state == PlaybackStateCompat.STATE_PLAYING)
     }
+
+    private fun MediaMetadataCompat.getTextDrawableBitmap() =
+            ViewHelper.toBitmap(ViewHelper.createTextDrawable(description.title.toString()))
 }

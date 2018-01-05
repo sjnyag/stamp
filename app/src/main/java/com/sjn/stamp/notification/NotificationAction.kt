@@ -3,6 +3,7 @@ package com.sjn.stamp.notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaControllerCompat
 import com.sjn.stamp.MusicService
@@ -61,5 +62,11 @@ enum class NotificationAction(val action: String) {
                 PendingIntent.getService(context, REQUEST_CODE,
                         Intent(context, MusicService::class.java).setAction(NotificationHelper.ACTION_CMD).putExtra(NotificationHelper.CMD_NAME, NotificationHelper.CMD_KILL),
                         PendingIntent.FLAG_CANCEL_CURRENT)
+
+        fun createIntentFilter(): IntentFilter? {
+            val filter = IntentFilter()
+            NotificationAction.values().forEach { filter.addAction(it.action) }
+            return filter
+        }
     }
 }

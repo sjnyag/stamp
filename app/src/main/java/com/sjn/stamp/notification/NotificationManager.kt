@@ -81,11 +81,12 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
             }
             // The notification must be updated after setting started to true
             mNotificationContainer?.let {
-                it.create(mMetadata!!, mPlaybackState!!)
                 MediaControllerObserver.getInstance().addListener(this)
-                val filter = IntentFilter()
-                NotificationAction.values().forEach { filter.addAction(it.action) }
-                mReceiver?.let { mService.registerReceiver(it, filter) }
+                mReceiver?.let {
+                    mService.registerReceiver(it, NotificationAction.createIntentFilter())
+                }
+                it.create(mMetadata!!, mPlaybackState!!)
+                it.start()
                 startForeground()
                 mStarted = true
             }
