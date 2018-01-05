@@ -16,7 +16,6 @@
 
 package com.sjn.stamp.notification
 
-import android.content.IntentFilter
 import android.os.RemoteException
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat

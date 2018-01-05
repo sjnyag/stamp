@@ -167,7 +167,7 @@ public class SessionManager implements SessionManagerListener<CastSession> {
             return;
         }
         // This is our final chance to update the underlying stream position
-        // In onSessionEnded(), the underlying CastPlayback#mRemoteMediaClient
+        // In onSessionEnded(), the underlying CastPlayback#remoteMediaClient
         // is disconnected and hence we update our local value of stream position
         // to the latest position.
         mSessionListener.onSessionEnd();

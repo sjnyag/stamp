@@ -193,8 +193,7 @@ public class MediaItemHelper {
                 .setExtras(metadata.getBundle()).build();
     }
 
-    public static MediaInfo convertToMediaInfo(MediaSessionCompat.QueueItem track,
-                                               JSONObject customData) {
+    public static MediaInfo convertToMediaInfo(MediaSessionCompat.QueueItem track, JSONObject customData, String mediaUri, Uri iconUri) {
         MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
         mediaMetadata.putString(MediaMetadata.KEY_TITLE,
                 track.getDescription().getTitle() == null ? "" :
@@ -210,52 +209,18 @@ public class MediaItemHelper {
             mediaMetadata.putString(MediaMetadata.KEY_ALBUM_TITLE,
                     track.getDescription().getExtras().getString(MediaMetadataCompat.METADATA_KEY_ALBUM));
         }
-        WebImage image = new WebImage(
-                new Uri.Builder().encodedPath(track.getDescription().getIconUri().toString())
-                        .build());
+        WebImage image = new WebImage(iconUri);
         // First image is used by the receiver for showing the audio album art.
         mediaMetadata.addImage(image);
         // Second image is used by Cast Companion Library on the full screen activity that is shown
         // when the cast dialog is clicked.
         mediaMetadata.addImage(image);
 
-        //noinspection ResourceType
-        return new MediaInfo.Builder(track.getDescription().getMediaUri().toString())
+        return new MediaInfo.Builder(mediaUri)
                 .setContentType(MIME_TYPE_AUDIO_MPEG)
                 .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
                 .setMetadata(mediaMetadata)
                 .setCustomData(customData)
-                .build();
-    }
-
-    public static MediaInfo convertToMediaInfo(MediaSessionCompat.QueueItem track, String url) {
-        MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
-        mediaMetadata.putString(MediaMetadata.KEY_TITLE,
-                track.getDescription().getTitle() == null ? "" :
-                        track.getDescription().getTitle().toString());
-        mediaMetadata.putString(MediaMetadata.KEY_SUBTITLE,
-                track.getDescription().getSubtitle() == null ? "" :
-                        track.getDescription().getSubtitle().toString());
-        if (track.getDescription().getExtras() != null) {
-            mediaMetadata.putString(MediaMetadata.KEY_ALBUM_ARTIST,
-                    track.getDescription().getExtras().getString((MediaMetadataCompat.METADATA_KEY_ARTIST)));
-            mediaMetadata.putString(MediaMetadata.KEY_ARTIST,
-                    track.getDescription().getExtras().getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
-            mediaMetadata.putString(MediaMetadata.KEY_ALBUM_TITLE,
-                    track.getDescription().getExtras().getString(MediaMetadataCompat.METADATA_KEY_ALBUM));
-        }
-        WebImage image = new WebImage(
-                new Uri.Builder().encodedPath(url + "/image/" + TimeHelper.getJapanNow().toString()).build());
-        // First image is used by the receiver for showing the audio album art.
-        mediaMetadata.addImage(image);
-        // Second image is used by Cast Companion Library on the full screen activity that is shown
-        // when the cast dialog is clicked.
-        mediaMetadata.addImage(image);
-
-        return new MediaInfo.Builder(url)
-                .setContentType("audio/mpeg")
-                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-                .setMetadata(mediaMetadata)
                 .build();
     }
 

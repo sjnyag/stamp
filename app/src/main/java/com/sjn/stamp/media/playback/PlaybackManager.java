@@ -98,7 +98,7 @@ public class PlaybackManager implements Playback.Callback, MediaLogger.Listener 
      * Handle a request to play music
      */
     public void handlePlayRequest() {
-        LogHelper.d(TAG, "handlePlayRequest: mState=" + mPlayback.getState());
+        LogHelper.d(TAG, "handlePlayRequest: state=" + mPlayback.getState());
         MediaSessionCompat.QueueItem currentMusic = mQueueManager.getCurrentMusic();
         if (currentMusic != null) {
             int playBackState = mPlayback.getState();
@@ -114,7 +114,7 @@ public class PlaybackManager implements Playback.Callback, MediaLogger.Listener 
      * Handle a request to pause music
      */
     public void handlePauseRequest() {
-        LogHelper.d(TAG, "handlePauseRequest: mState=" + mPlayback.getState());
+        LogHelper.d(TAG, "handlePauseRequest: state=" + mPlayback.getState());
         if (mPlayback.isPlaying()) {
             mPlayback.pause();
             mServiceCallback.onPlaybackStop();
@@ -129,7 +129,7 @@ public class PlaybackManager implements Playback.Callback, MediaLogger.Listener 
      *                  MediaController clients.
      */
     public void handleStopRequest(String withError) {
-        LogHelper.d(TAG, "handleStopRequest: mState=" + mPlayback.getState() + " error=", withError);
+        LogHelper.d(TAG, "handleStopRequest: state=" + mPlayback.getState() + " error=", withError);
         mPlayback.stop(true);
         mServiceCallback.onPlaybackStop();
         updatePlaybackState(withError);
