@@ -97,7 +97,7 @@ class NotificationContainer(
         notificationBuilder
                 .apply {
                     // If skip to previous action is enabled
-                    if (playbackState.actions and PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS != 0L) {
+                    //if (playbackState.actions and PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS != 0L) {
                         addPreviousAction()
 
                         // If there is a "skip to previous" button, the play/pause button will
@@ -105,7 +105,7 @@ class NotificationContainer(
                         // requires to specify the index of the buttons (actions) that should be visible
                         // when in compact view.
                         actions.add(actions.size)
-                    }
+                    //}
                 }
                 .apply {
                     addPlayPauseAction(playbackState)
@@ -113,10 +113,10 @@ class NotificationContainer(
                 }
                 .apply {
                     // If skip to next action is enabled
-                    if (playbackState.actions and PlaybackStateCompat.ACTION_SKIP_TO_NEXT != 0L) {
+                    //if (playbackState.actions and PlaybackStateCompat.ACTION_SKIP_TO_NEXT != 0L) {
                         addNextAction()
                         actions.add(actions.size)
-                    }
+                    //}
                 }
                 .setStyle(android.support.v4.media.app.NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(*actions.toIntArray())  // show only play/pause in compact view
