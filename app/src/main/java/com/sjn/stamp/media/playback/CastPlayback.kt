@@ -32,35 +32,23 @@ import org.json.JSONObject
 /**
  * An implementation of Playback that talks to Cast.
  */
-open class CastPlayback(context: Context) : Playback {
-    internal val context: Context = context.applicationContext
+open class CastPlayback(internal val context: Context, private val callback: Playback.Callback, initialStreamPosition: Int, override var currentMediaId: String?) : Playback {
+
     internal val remoteMediaClient: RemoteMediaClient = CastContext.getSharedInstance(this.context).sessionManager.currentCastSession.remoteMediaClient
-    internal var callback: Playback.Callback? = null
-    private var currentPosition: Int = 0
     private val remoteMediaClientListener: RemoteMediaClient.Listener = CastMediaClientListener()
+    private var currentPosition: Int = initialStreamPosition
 
     override var state: Int = 0
-
-    override val isConnected: Boolean
-        get() = CastContext.getSharedInstance(context).sessionManager.currentCastSession?.isConnected ?: false
-
-    override val isPlaying: Boolean
-        get() = isConnected && remoteMediaClient.isPlaying
-
-    override var currentStreamPosition: Int
-        get() = if (!isConnected) currentPosition else remoteMediaClient.approximateStreamPosition.toInt()
-        set(value) {
-            this.currentPosition = value
-        }
-
-    override var currentMediaId: String? = null
+    override val isConnected: Boolean get() = CastContext.getSharedInstance(context).sessionManager.currentCastSession?.isConnected ?: false
+    override val isPlaying: Boolean get() = isConnected && remoteMediaClient.isPlaying
+    override val currentStreamPosition: Int get() = if (!isConnected) currentPosition else remoteMediaClient.approximateStreamPosition.toInt()
 
     override fun start() = remoteMediaClient.addListener(remoteMediaClientListener)
 
     override fun stop(notifyListeners: Boolean) {
         remoteMediaClient.removeListener(remoteMediaClientListener)
         state = PlaybackStateCompat.STATE_STOPPED
-        if (notifyListeners) callback?.onPlaybackStatusChanged(state)
+        if (notifyListeners) callback.onPlaybackStatusChanged(state)
     }
 
     override fun updateLastKnownStreamPosition() {
@@ -68,10 +56,9 @@ open class CastPlayback(context: Context) : Playback {
     }
 
     override fun play(item: QueueItem) {
-        loadMedia(item, true, item.description.mediaUri.toString(),
-                Uri.Builder().encodedPath(item.description.iconUri.toString()).build())
+        playItem(item)
         state = PlaybackStateCompat.STATE_BUFFERING
-        callback?.onPlaybackStatusChanged(state)
+        callback.onPlaybackStatusChanged(state)
     }
 
     override fun pause() {
@@ -83,7 +70,7 @@ open class CastPlayback(context: Context) : Playback {
 
     override fun seekTo(position: Int) {
         if (currentMediaId == null) {
-            callback?.onError("seekTo cannot be calling in the absence of mediaId.")
+            callback.onError("seekTo cannot be calling in the absence of mediaId.")
             return
         }
         if (remoteMediaClient.hasMediaSession()) {
@@ -92,13 +79,12 @@ open class CastPlayback(context: Context) : Playback {
         }
     }
 
-
-    override fun setCallback(callback: Playback.Callback) {
-        this.callback = callback
+    open fun playItem(item: QueueItem) {
+        send(item, true, item.description.mediaUri.toString(), Uri.Builder().encodedPath(item.description.iconUri.toString()).build())
     }
 
     @Throws(JSONException::class)
-    protected open fun loadMedia(item: QueueItem, autoPlay: Boolean, mediaUri: String, iconUri: Uri) {
+    protected fun send(item: QueueItem, autoPlay: Boolean, mediaUri: String, iconUri: Uri) {
         val mediaId = item.description.mediaId
         if (mediaId == null || mediaId.isEmpty()) {
             throw IllegalArgumentException("Invalid mediaId")
@@ -116,7 +102,7 @@ open class CastPlayback(context: Context) : Playback {
             customData.put(ITEM_ID, mediaId)
         } catch (e: JSONException) {
             LogHelper.e(TAG, "Exception loading media ", e, null)
-            e.message?.let { callback?.onError(it) }
+            e.message?.let { callback.onError(it) }
         }
         remoteMediaClient.load(MediaItemHelper.convertToMediaInfo(
                 item, customData, mediaUri, iconUri), autoPlay, currentPosition.toLong(), customData)
@@ -135,7 +121,7 @@ open class CastPlayback(context: Context) : Playback {
                 val remoteMediaId = customData.getString(ITEM_ID)
                 if (!TextUtils.equals(currentMediaId, remoteMediaId)) {
                     currentMediaId = remoteMediaId
-                    callback?.setCurrentMediaId(remoteMediaId)
+                    callback.setCurrentMediaId(remoteMediaId)
                     updateLastKnownStreamPosition()
                 }
             }
@@ -153,21 +139,21 @@ open class CastPlayback(context: Context) : Playback {
         // Convert the remote playback states to media playback states.
         when (status) {
             MediaStatus.PLAYER_STATE_IDLE -> if (remoteMediaClient.idleReason == MediaStatus.IDLE_REASON_FINISHED) {
-                callback?.onCompletion()
+                callback.onCompletion()
             }
             MediaStatus.PLAYER_STATE_BUFFERING -> {
                 state = PlaybackStateCompat.STATE_BUFFERING
-                callback?.onPlaybackStatusChanged(state)
+                callback.onPlaybackStatusChanged(state)
             }
             MediaStatus.PLAYER_STATE_PLAYING -> {
                 state = PlaybackStateCompat.STATE_PLAYING
                 setMetadataFromRemote()
-                callback?.onPlaybackStatusChanged(state)
+                callback.onPlaybackStatusChanged(state)
             }
             MediaStatus.PLAYER_STATE_PAUSED -> {
                 state = PlaybackStateCompat.STATE_PAUSED
                 setMetadataFromRemote()
-                callback?.onPlaybackStatusChanged(state)
+                callback.onPlaybackStatusChanged(state)
             }
             else // case unknown
             -> LogHelper.d(TAG, "State default : ", status)

@@ -18,27 +18,24 @@ package com.sjn.stamp.media.playback
 import android.content.Context
 import android.net.Uri
 import android.support.v4.media.session.MediaSessionCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import com.sjn.stamp.utils.LocalCastHelper
 import com.sjn.stamp.utils.TimeHelper
 
 /**
  * An implementation of Playback that talks to Cast.
  */
-class LocalCastPlayback internal constructor(context: Context) : CastPlayback(context) {
+class LocalCastPlayback(context: Context, callback: Playback.Callback, initialStreamPosition: Int, currentMediaId: String?) : CastPlayback(context, callback, initialStreamPosition, currentMediaId) {
 
     private var httpServer: LocalCastHelper.HttpServer? = null
 
-    override fun play(item: MediaSessionCompat.QueueItem) {
+    override fun playItem(item: MediaSessionCompat.QueueItem) {
         if (httpServer == null || !httpServer!!.isAlive) {
             httpServer = LocalCastHelper.startSever(context)
         }
         httpServer?.let {
             it.media = item
-            loadMedia(item, true, it.url, Uri.Builder().encodedPath(it.url + "/image/" + TimeHelper.getJapanNow().toString()).build())
+            send(item, true, it.url, Uri.Builder().encodedPath("${it.url}/image/${TimeHelper.getJapanNow()}").build())
         }
-        state = PlaybackStateCompat.STATE_BUFFERING
-        callback?.onPlaybackStatusChanged(state)
     }
 
     override fun stop(notifyListeners: Boolean) {

@@ -48,34 +48,28 @@ interface Playback {
     /**
      * @return pos if currently playing an item
      */
-    /**
-     * Set the current position. Typically used when switching players that are in
-     * paused state.
-     */
-    var currentStreamPosition: Int
+    val currentStreamPosition: Int
 
     /**
      * @return the current media Id being processed in any state or null.
      */
-    /**
-     * Set the current mediaId. This is only used when switching from one
-     * playback to another.
-     */
-    var currentMediaId: String?
+    val currentMediaId: String?
 
     enum class Type {
         CAST {
-            override fun createInstance(context: Context): Playback {
-                return LocalCastPlayback(context)
+            override fun createInstance(context: Context, callback: Callback, initialStreamPosition: Int, initialMediaId: String?): Playback {
+                return LocalCastPlayback(context, callback, initialStreamPosition, initialMediaId)
             }
         },
         LOCAL {
-            override fun createInstance(context: Context): Playback {
-                return LocalPlayback(context)
+            override fun createInstance(context: Context, callback: Callback, initialStreamPosition: Int, initialMediaId: String?): Playback {
+                return LocalPlayback(context, callback, initialStreamPosition, initialMediaId)
             }
         };
 
-        abstract fun createInstance(context: Context): Playback
+        abstract fun createInstance(context: Context, callback: Callback, initialStreamPosition: Int, initialMediaId: String?): Playback
+        fun createInstance(context: Context, callback: Callback): Playback = createInstance(context, callback, 0, null)
+
     }
 
 
@@ -137,9 +131,4 @@ interface Playback {
          */
         fun setCurrentMediaId(mediaId: String)
     }
-
-    /**
-     * @param callback to be called
-     */
-    fun setCallback(callback: Callback)
 }

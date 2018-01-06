@@ -65,15 +65,14 @@ public class PlaybackManager implements Playback.Callback, MediaLogger.Listener 
 
     public PlaybackManager(Context context, PlaybackServiceCallback serviceCallback, Resources resources,
                            MusicProvider musicProvider, QueueManager queueManager,
-                           Playback playback, SongHistoryController songHistoryController) {
+                           Playback.Type playbackType, SongHistoryController songHistoryController) {
         mContext = context;
         mMusicProvider = musicProvider;
         mServiceCallback = serviceCallback;
         mResources = resources;
         mQueueManager = queueManager;
         mMediaSessionCallback = new MediaSessionCallback();
-        mPlayback = playback;
-        mPlayback.setCallback(this);
+        mPlayback = playbackType.createInstance(mContext, this);
         mMediaLogger = new MediaLogger(this);
         mSongHistoryController = songHistoryController;
     }
@@ -254,21 +253,14 @@ public class PlaybackManager implements Playback.Callback, MediaLogger.Listener 
 
     /**
      * Switch to a different Playback instance, maintaining all playback state, if possible.
-     *
-     * @param playback switch to this playback
      */
-    public void switchToPlayback(Playback playback, boolean resumePlaying) {
-        if (playback == null) {
-            throw new IllegalArgumentException("Playback cannot be null");
-        }
+    public void switchToPlayback(Playback.Type playbackType, boolean resumePlaying) {
         // suspend the current one.
         int oldState = mPlayback.getState();
         int pos = mPlayback.getCurrentStreamPosition();
         String currentMediaId = mPlayback.getCurrentMediaId();
         mPlayback.stop(false);
-        playback.setCallback(this);
-        playback.setCurrentStreamPosition(pos < 0 ? 0 : pos);
-        playback.setCurrentMediaId(currentMediaId);
+        Playback playback = playbackType.createInstance(mContext, this, pos < 0 ? 0 : pos, currentMediaId);
         playback.start();
         // finally swap the instance
         mPlayback = playback;

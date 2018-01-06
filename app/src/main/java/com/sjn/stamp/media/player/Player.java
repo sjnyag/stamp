@@ -60,9 +60,8 @@ public class Player implements SessionManager.SessionListener {
     }
 
     public MediaSessionCompat.Token initialize(PlaybackManager.PlaybackServiceCallback callback, MusicProvider musicProvider) {
-        Playback playback = Playback.Type.LOCAL.createInstance(mContext);
         mQueueManager = initializeQueueManager(musicProvider);
-        mPlaybackManager = new PlaybackManager(mContext, callback, mContext.getResources(), musicProvider, mQueueManager, playback,
+        mPlaybackManager = new PlaybackManager(mContext, callback, mContext.getResources(), musicProvider, mQueueManager, Playback.Type.LOCAL,
                 new SongHistoryController(mContext));
         mPlaybackManager.updatePlaybackState(null);
         mSessionManager = new SessionManager(mContext, getMediaSessionCallback(), this);
@@ -119,12 +118,12 @@ public class Player implements SessionManager.SessionListener {
 
     @Override
     public void toLocalPlayback() {
-        mPlaybackManager.switchToPlayback(Playback.Type.LOCAL.createInstance(mContext), false);
+        mPlaybackManager.switchToPlayback(Playback.Type.LOCAL, false);
     }
 
     @Override
     public void toCastCallback() {
-        mPlaybackManager.switchToPlayback(Playback.Type.CAST.createInstance(mContext), true);
+        mPlaybackManager.switchToPlayback(Playback.Type.CAST, true);
     }
 
     @Override
