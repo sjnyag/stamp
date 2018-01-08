@@ -11,10 +11,15 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.text.TextUtils
 import com.sjn.stamp.MusicService
 import com.sjn.stamp.controller.UserSettingController
-import java.io.IOException
 
 object MediaPlayerHelper {
     private val TAG = LogHelper.makeLogTag(MediaPlayerHelper::class.java)
+
+    // The volume we set the media player to when we lose audio focus, but are
+    // allowed to reduce the volume instead of stopping playback.
+    private val VOLUME_DUCK = 0.2f
+    // The volume we set the media player when we have audio focus.
+    private val VOLUME_NORMAL = 1.0f
 
     class MediaPlayerManager(private val context: Context, initialStreamPosition: Int, var currentMediaId: String?, private val listener: Listener) :
             OnCompletionListener, OnErrorListener, OnPreparedListener, OnSeekCompleteListener, AudioFocusHelper.AudioFocusManager.Listener {
@@ -34,51 +39,37 @@ object MediaPlayerHelper {
         val currentStreamPosition: Int get() = mediaPlayer?.currentPosition ?: currentPosition
 
         fun play(item: MediaSessionCompat.QueueItem) {
-            audioManager.playOnFocusGain = true
-            audioManager.tryToGetAudioFocus()
-            audioManager.start()
-            val mediaId = item.description.mediaId
-            val mediaHasChanged = !TextUtils.equals(mediaId, currentMediaId)
-            if (mediaHasChanged || state != PlaybackStateCompat.STATE_PAUSED) {
-                currentPosition = 0
-                currentMediaId = mediaId
-            }
-
-            if (state == PlaybackStateCompat.STATE_PAUSED && !mediaHasChanged && mediaPlayer != null) {
-                configMediaPlayerState()
-            } else if (item.description.mediaUri == null) {
+            if (item.description.mediaUri == null) {
                 state = PlaybackStateCompat.STATE_ERROR
                 listener.onPlaybackStatusChanged(state)
                 listener.onError("Media not found.")
-            } else {
-                state = PlaybackStateCompat.STATE_STOPPED
-                val source = item.description.mediaUri!!.toString()
-                try {
-                    createMediaPlayerIfNeeded()
-
-                    state = PlaybackStateCompat.STATE_BUFFERING
-
-                    mediaPlayer?.setAudioStreamType(AudioManager.STREAM_MUSIC)
-                    if (!DataSourceHelper.setMediaPlayerDataSource(context, mediaPlayer, source)) {
-                        listener.onError("Failed to retrieve media.")
-                        return
-                    }
-
-                    // Starts preparing the media player in the background. When
-                    // it's done, it will call our OnPreparedListener (that is,
-                    // the onPrepared() method on this class, since we set the
-                    // listener to 'this'). Until the media player is prepared,
-                    // we *cannot* call start() on it!
-                    mediaPlayer?.prepareAsync()
-
-                    listener.onPlaybackStatusChanged(state)
-
-                } catch (ex: IOException) {
-                    LogHelper.e(TAG, ex, "Exception playing song")
-                    ex.message?.let { listener.onError(it) }
-                }
-
+                return
             }
+            val isSameMedia = TextUtils.equals(item.description.mediaId, currentMediaId)
+            if (!isSameMedia || state != PlaybackStateCompat.STATE_PAUSED) {
+                currentPosition = 0
+                currentMediaId = item.description.mediaId
+            }
+            audioManager.start()
+            if (state == PlaybackStateCompat.STATE_PAUSED && isSameMedia && mediaPlayer != null) {
+                configMediaPlayerState()
+                return
+            }
+            state = PlaybackStateCompat.STATE_STOPPED
+            createMediaPlayerIfNeeded()
+            state = PlaybackStateCompat.STATE_BUFFERING
+            mediaPlayer?.setAudioStreamType(AudioManager.STREAM_MUSIC)
+            if (!DataSourceHelper.setMediaPlayerDataSource(context, mediaPlayer, item.description.mediaUri?.toString())) {
+                listener.onError("Failed to retrieve media.")
+                return
+            }
+            // Starts preparing the media player in the background. When
+            // it's done, it will call our OnPreparedListener (that is,
+            // the onPrepared() method on this class, since we set the
+            // listener to 'this'). Until the media player is prepared,
+            // we *cannot* call start() on it!
+            mediaPlayer?.prepareAsync()
+            listener.onPlaybackStatusChanged(state)
         }
 
         fun pause() {
@@ -87,13 +78,13 @@ object MediaPlayerHelper {
                 mediaPlayer?.let {
                     if (it.isPlaying) {
                         it.pause()
-                        currentPosition = it.currentPosition
+                        updateLastKnownStreamPosition()
                     }
                 }
             }
             state = PlaybackStateCompat.STATE_PAUSED
             listener.onPlaybackStatusChanged(state)
-            audioManager.stop()
+            audioManager.releaseReceiver()
             audioManager.giveUpAudioFocus()
         }
 
@@ -101,7 +92,7 @@ object MediaPlayerHelper {
             state = PlaybackStateCompat.STATE_STOPPED
             if (notifyListeners) listener.onPlaybackStatusChanged(state)
             currentPosition = currentStreamPosition
-            audioManager.stop()
+            audioManager.releaseReceiver()
             audioManager.giveUpAudioFocus()
             // Relax all resources
             relaxResources()
@@ -114,11 +105,9 @@ object MediaPlayerHelper {
                 // If we do not have a current media player, simply update the current position
                 currentPosition = position
             } else {
-                if (mediaPlayer!!.isPlaying) {
-                    state = PlaybackStateCompat.STATE_BUFFERING
-                }
-                audioManager.start()
-                mediaPlayer!!.seekTo(position)
+                if (mediaPlayer?.isPlaying == true) state = PlaybackStateCompat.STATE_BUFFERING
+                audioManager.setUpReceiver()
+                mediaPlayer?.seekTo(position)
                 listener.onPlaybackStatusChanged(state)
             }
         }
@@ -136,9 +125,8 @@ object MediaPlayerHelper {
             LogHelper.d(TAG, "onSeekComplete from MediaPlayer:", player.currentPosition)
             currentPosition = player.currentPosition
             if (state == PlaybackStateCompat.STATE_BUFFERING) {
-                audioManager.start()
-                mediaPlayer!!.start()
-                state = PlaybackStateCompat.STATE_PLAYING
+                audioManager.setUpReceiver()
+                mediaPlayer?.startAndChangeState()
             }
             listener.onPlaybackStatusChanged(state)
         }
@@ -206,36 +194,18 @@ object MediaPlayerHelper {
          * you are sure this is the case.
          */
         private fun configMediaPlayerState() {
-            LogHelper.d(TAG, "configMediaPlayerState. audioFocus=", audioManager.audioFocus)
-            if (audioManager.audioFocus == AudioFocusHelper.AUDIO_NO_FOCUS_NO_DUCK) {
-                // If we don't have audio focus and can't duck, we have to pause,
-                if (state == PlaybackStateCompat.STATE_PLAYING && UserSettingController().stopOnAudioLostFocus()) {
-                    pause()
-                }
-            } else {  // we have audio focus:
-                audioManager.start()
-                if (audioManager.audioFocus == AudioFocusHelper.AUDIO_NO_FOCUS_CAN_DUCK) {
-                    mediaPlayer!!.setVolume(AudioFocusHelper.VOLUME_DUCK, AudioFocusHelper.VOLUME_DUCK) // we'll be relatively quiet
-                } else {
-                    if (mediaPlayer != null) {
-                        mediaPlayer!!.setVolume(AudioFocusHelper.VOLUME_NORMAL, AudioFocusHelper.VOLUME_NORMAL) // we can be loud again
-                    } // else do something for remote client.
-                }
+            LogHelper.d(TAG, "configMediaPlayerState.")
+            if (audioManager.hasFocus()) {  // we have audio focus:
+                audioManager.setUpReceiver()
+                mediaPlayer?.changeVolume(audioManager.noFocusCanDuck())
                 // If we were playing when we lost focus, we need to resume playing.
                 if (audioManager.playOnFocusGain) {
-                    if (mediaPlayer != null && !mediaPlayer!!.isPlaying) {
-                        LogHelper.d(TAG, "configMediaPlayerState startMediaPlayer. seeking to ",
-                                currentPosition)
-                        state = if (currentPosition == mediaPlayer!!.currentPosition) {
-                            mediaPlayer!!.start()
-                            PlaybackStateCompat.STATE_PLAYING
-                        } else {
-                            mediaPlayer!!.seekTo(currentPosition)
-                            PlaybackStateCompat.STATE_BUFFERING
-                        }
-                    }
+                    if (mediaPlayer?.isPlaying == false) mediaPlayer?.resume(currentPosition)
                     audioManager.playOnFocusGain = false
                 }
+            } else if (state == PlaybackStateCompat.STATE_PLAYING && UserSettingController().stopOnAudioLostFocus()) {
+                // If we don't have audio focus and can't duck, we have to pause,
+                pause()
             }
             listener.onPlaybackStatusChanged(state)
         }
@@ -278,6 +248,32 @@ object MediaPlayerHelper {
                 it.release()
             }
             mediaPlayer = null
+        }
+
+        private fun MediaPlayer.changeVolume(duck: Boolean) {
+            if (duck) {
+                setVolume(VOLUME_DUCK, VOLUME_DUCK) // we'll be relatively quiet
+            } else {
+                setVolume(VOLUME_NORMAL, VOLUME_NORMAL) // we can be loud again
+            }
+        }
+
+        private fun MediaPlayer.startAndChangeState() {
+            start()
+            state = PlaybackStateCompat.STATE_PLAYING
+        }
+
+        private fun MediaPlayer.seekToAndChangeState(position: Int) {
+            seekTo(position)
+            state = PlaybackStateCompat.STATE_BUFFERING
+        }
+
+        private fun MediaPlayer.resume(expectedPosition: Int) {
+            if (expectedPosition == currentPosition) {
+                startAndChangeState()
+            } else {
+                seekToAndChangeState(expectedPosition)
+            }
         }
     }
 

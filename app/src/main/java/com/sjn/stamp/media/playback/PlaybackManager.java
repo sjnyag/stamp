@@ -379,7 +379,7 @@ public class PlaybackManager implements Playback.Callback, MediaLogger.Listener 
 
         @Override
         public void onStop() {
-            LogHelper.d(TAG, "stop. current state=" + mPlayback.getState());
+            LogHelper.d(TAG, "releaseReceiver. current state=" + mPlayback.getState());
             handleStopRequest(null);
         }
 

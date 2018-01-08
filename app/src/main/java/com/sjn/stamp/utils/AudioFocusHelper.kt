@@ -9,11 +9,6 @@ import android.media.AudioManager
 object AudioFocusHelper {
     private val TAG = LogHelper.makeLogTag(AudioFocusHelper::class.java)
 
-    // The volume we set the media player to when we lose audio focus, but are
-    // allowed to reduce the volume instead of stopping playback.
-    val VOLUME_DUCK = 0.2f
-    // The volume we set the media player when we have audio focus.
-    val VOLUME_NORMAL = 1.0f
     // we don't have audio focus, and can't duck (play at a low volume)
     val AUDIO_NO_FOCUS_NO_DUCK = 0
     // we don't have focus, but can duck (play at a low volume)
@@ -31,9 +26,9 @@ object AudioFocusHelper {
         var playOnFocusGain: Boolean = false
 
         // Type of audio focus we have:
-        var audioFocus = AUDIO_NO_FOCUS_NO_DUCK
-        private val audioManager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        private var audioFocus = AUDIO_NO_FOCUS_NO_DUCK
         private var audioNoisyReceiverRegistered: Boolean = false
+        private val audioManager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         private val audioNoisyIntentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
         private val audioNoisyReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
@@ -44,14 +39,20 @@ object AudioFocusHelper {
             }
         }
 
-        fun start() {
+        fun start(){
+            playOnFocusGain = true
+            tryToGetAudioFocus()
+            setUpReceiver()
+        }
+
+        fun setUpReceiver() {
             if (!audioNoisyReceiverRegistered) {
                 context.registerReceiver(audioNoisyReceiver, audioNoisyIntentFilter)
                 audioNoisyReceiverRegistered = true
             }
         }
 
-        fun stop() {
+        fun releaseReceiver() {
             // Give up Audio focus
             if (audioNoisyReceiverRegistered) {
                 context.unregisterReceiver(audioNoisyReceiver)
@@ -62,7 +63,7 @@ object AudioFocusHelper {
         /**
          * Try to get the system audio focus.
          */
-        fun tryToGetAudioFocus() {
+        private fun tryToGetAudioFocus() {
             LogHelper.d(TAG, "tryToGetAudioFocus")
             val result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
                     AudioManager.AUDIOFOCUS_GAIN)
@@ -82,6 +83,10 @@ object AudioFocusHelper {
                 audioFocus = AUDIO_NO_FOCUS_NO_DUCK
             }
         }
+
+        fun hasFocus() = !noFocusNoDuck()
+        fun noFocusCanDuck() = audioFocus == AudioFocusHelper.AUDIO_NO_FOCUS_CAN_DUCK
+        private fun noFocusNoDuck() = audioFocus == AudioFocusHelper.AUDIO_NO_FOCUS_NO_DUCK
 
         /**
          * Called by AudioManager on audio focus changes.
