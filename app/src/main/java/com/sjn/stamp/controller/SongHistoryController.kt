@@ -3,13 +3,14 @@ package com.sjn.stamp.controller
 import android.content.Context
 import android.os.AsyncTask
 import android.support.v4.media.MediaMetadataCompat
-import com.sjn.stamp.model.constant.RecordType
 import com.sjn.stamp.model.*
+import com.sjn.stamp.model.constant.RecordType
 import com.sjn.stamp.model.dao.SongDao
 import com.sjn.stamp.model.dao.SongHistoryDao
 import com.sjn.stamp.model.dao.TotalSongHistoryDao
 import com.sjn.stamp.ui.custom.PeriodSelectLayout
 import com.sjn.stamp.utils.LogHelper
+import com.sjn.stamp.utils.MediaIDHelper.resolveMusicId
 import com.sjn.stamp.utils.MediaItemHelper
 import com.sjn.stamp.utils.NotificationHelper
 import com.sjn.stamp.utils.RealmHelper
@@ -33,24 +34,24 @@ class SongHistoryController(private val mContext: Context) {
             }
         }
 
-    fun onPlay(song: MediaMetadataCompat, date: Date) {
-        LogHelper.d(TAG, "insertPLAY ", song.description.title)
-        register(song, RecordType.PLAY, date)
+    fun onPlay(mediaId: String, date: Date) {
+        LogHelper.d(TAG, "insertPLAY ", mediaId)
+        register(mediaId, RecordType.PLAY, date)
     }
 
-    fun onSkip(song: MediaMetadataCompat, date: Date) {
-        LogHelper.d(TAG, "insertSKIP ", song.description.title)
-        register(song, RecordType.SKIP, date)
+    fun onSkip(mediaId: String, date: Date) {
+        LogHelper.d(TAG, "insertSKIP ", mediaId)
+        register(mediaId, RecordType.SKIP, date)
     }
 
-    fun onStart(song: MediaMetadataCompat, date: Date) {
-        LogHelper.d(TAG, "insertSTART ", song.description.title)
-        register(song, RecordType.START, date)
+    fun onStart(mediaId: String, date: Date) {
+        LogHelper.d(TAG, "insertSTART ", mediaId)
+        register(mediaId, RecordType.START, date)
     }
 
-    fun onComplete(song: MediaMetadataCompat, date: Date) {
-        LogHelper.d(TAG, "insertComplete ", song.description.title)
-        register(song, RecordType.COMPLETE, date)
+    fun onComplete(mediaId: String, date: Date) {
+        LogHelper.d(TAG, "insertComplete ", mediaId)
+        register(mediaId, RecordType.COMPLETE, date)
     }
 
     fun delete(songHistoryId: Long) {
@@ -65,16 +66,16 @@ class SongHistoryController(private val mContext: Context) {
 
     fun getRankedArtistList(realm: Realm, period: PeriodSelectLayout.Period): List<RankedArtist> = getRankedArtistList(realm, period.from(), period.to(), 30)
 
-    private fun register(metadata: MediaMetadataCompat, recordType: RecordType, date: Date) {
+    private fun register(mediaId: String, recordType: RecordType, date: Date) {
         RealmHelper.getRealmInstance().use { realm ->
-            val song = SongDao.findOrCreate(realm, metadata)
+            val song = SongDao.findOrCreateByMediaId(realm, resolveMusicId(mediaId), mContext)
             val playCount = TotalSongHistoryDao.increment(realm, song.id, recordType)
-            SongHistoryDao.create(realm, metadata, recordType, date, playCount)
+            SongHistoryDao.create(realm, song, recordType, date, playCount)
             if (recordType === RecordType.PLAY) {
                 sendNotificationBySongCount(realm, song, playCount)
                 sendNotificationByArtistCount(song)
             }
-            SongController(mContext).calculateSmartStamp(metadata, playCount, recordType)
+            SongController(mContext).calculateSmartStamp(song, playCount, recordType)
         }
     }
 

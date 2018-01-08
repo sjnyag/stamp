@@ -1,6 +1,7 @@
 package com.sjn.stamp.model.dao
 
 import android.support.v4.media.MediaMetadataCompat
+import com.sjn.stamp.model.Song
 import com.sjn.stamp.model.constant.RecordType
 import com.sjn.stamp.model.SongHistory
 import io.realm.Realm
@@ -35,11 +36,11 @@ object SongHistoryDao : BaseDao<SongHistory>() {
     fun findOldest(realm: Realm, songId: Long): SongHistory? =
             realm.where(SongHistory::class.java).equalTo("song.id", songId).equalTo("recordType", RecordType.PLAY.databaseValue).findAllSorted("recordedAt", Sort.ASCENDING).first()
 
-    fun create(realm: Realm, metadata: MediaMetadataCompat, recordType: RecordType, date: Date, count: Int) {
+    fun create(realm: Realm, song: Song, recordType: RecordType, date: Date, count: Int) {
         val songHistory = SongHistory()
         songHistory.id = getAutoIncrementId(realm)
         songHistory.device = DeviceDao.findOrCreate(realm)
-        songHistory.song = SongDao.findOrCreate(realm, metadata)
+        songHistory.song = song
         songHistory.recordType = recordType.databaseValue
         songHistory.recordedAt = date
         songHistory.count = count

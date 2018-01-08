@@ -21,8 +21,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.text.TextUtils;
 
-import com.sjn.stamp.model.constant.CategoryType;
 import com.sjn.stamp.media.provider.ProviderType;
+import com.sjn.stamp.model.constant.CategoryType;
 
 import java.util.Arrays;
 
@@ -102,13 +102,8 @@ public class MediaIDHelper {
                 );
     }
 
-    public static Long resolveMusicId(String musicIdOrMediaId) {
-        String musicId = (MediaIDHelper.isTrack(musicIdOrMediaId)) ? MediaIDHelper.extractMusicIDFromMediaID(musicIdOrMediaId) : musicIdOrMediaId;
-        try {
-            return java.lang.Long.valueOf(musicId);
-        } catch (NumberFormatException e) {
-            return null;
-        }
+    public static String resolveMusicId(String musicIdOrMediaId) {
+        return (MediaIDHelper.isTrack(musicIdOrMediaId)) ? MediaIDHelper.extractMusicIDFromMediaID(musicIdOrMediaId) : musicIdOrMediaId;
     }
 
     /**

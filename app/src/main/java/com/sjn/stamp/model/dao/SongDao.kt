@@ -1,14 +1,19 @@
 package com.sjn.stamp.model.dao
 
+import android.content.Context
 import android.support.v4.media.MediaMetadataCompat
 import com.sjn.stamp.model.Song
 import com.sjn.stamp.utils.MediaItemHelper
+import com.sjn.stamp.utils.MediaRetrieveHelper
 import io.realm.Realm
 
 object SongDao : BaseDao<Song>() {
 
     fun findById(realm: Realm, id: Long): Song? =
             realm.where(Song::class.java).equalTo("id", id).findFirst()
+
+    private fun findByMediaId(realm: Realm, mediaId: String): Song? =
+            realm.where(Song::class.java).equalTo("mediaId", mediaId).findFirst()
 
     @Suppress("unused")
     fun findByTitleArtistAlbum(realm: Realm, title: String, artist: String, album: String): Song? =
@@ -28,6 +33,25 @@ object SongDao : BaseDao<Song>() {
     fun findOrCreate(realm: Realm, metadata: MediaMetadataCompat): Song {
         var song: Song? = findByMediaMetadata(realm, metadata)
         if (song == null) {
+            song = Song()
+            song.id = getAutoIncrementId(realm)
+            val artist = ArtistDao.findOrCreate(realm, MediaItemHelper.getArtist(metadata), MediaItemHelper.getAlbumArtUri(metadata))
+            val totalSongHistory = TotalSongHistoryDao.findOrCreate(realm, song.id)
+            song.artist = artist
+            song.totalSongHistory = totalSongHistory
+            song.loadMediaMetadataCompat(metadata)
+            realm.beginTransaction()
+            realm.copyToRealm(song)
+            realm.commitTransaction()
+            return song
+        }
+        return song
+    }
+
+    fun findOrCreateByMediaId(realm: Realm, mediaId: String, context: Context): Song {
+        var song: Song? = findByMediaId(realm, mediaId)
+        if (song == null) {
+            val metadata = MediaRetrieveHelper.findByMusicId(context, mediaId.toLong(), null)
             song = Song()
             song.id = getAutoIncrementId(realm)
             val artist = ArtistDao.findOrCreate(realm, MediaItemHelper.getArtist(metadata), MediaItemHelper.getAlbumArtUri(metadata))

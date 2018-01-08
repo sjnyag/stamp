@@ -2,15 +2,18 @@ package com.sjn.stamp.controller
 
 import android.content.Context
 import android.support.v4.media.MediaMetadataCompat
-import com.sjn.stamp.model.constant.CategoryType
-import com.sjn.stamp.model.constant.RecordType
+import com.sjn.stamp.media.provider.ProviderType
 import com.sjn.stamp.model.Song
 import com.sjn.stamp.model.Stamp
+import com.sjn.stamp.model.constant.CategoryType
+import com.sjn.stamp.model.constant.RecordType
 import com.sjn.stamp.model.dao.CategoryStampDao
 import com.sjn.stamp.model.dao.SongDao
 import com.sjn.stamp.model.dao.SongStampDao
-import com.sjn.stamp.media.provider.ProviderType
-import com.sjn.stamp.utils.*
+import com.sjn.stamp.utils.LogHelper
+import com.sjn.stamp.utils.MediaIDHelper
+import com.sjn.stamp.utils.MediaRetrieveHelper
+import com.sjn.stamp.utils.RealmHelper
 import io.realm.Realm
 
 class SongController(private val mContext: Context) {
@@ -30,8 +33,8 @@ class SongController(private val mContext: Context) {
         return false
     }
 
-    fun calculateSmartStamp(track: MediaMetadataCompat, playCount: Int, recordType: RecordType) {
-        val song = MediaItemHelper.createSong(track)
+    fun calculateSmartStamp(rawSong: Song, playCount: Int, recordType: RecordType) {
+        val song = RealmHelper.getRealmInstance().copyFromRealm(rawSong)
         Thread(Runnable {
             SmartStamp.values()
                     .filter { it.isTarget(mContext, song, playCount, recordType) }

@@ -9,7 +9,6 @@ import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.sjn.stamp.R;
-import com.sjn.stamp.controller.SongHistoryController;
 import com.sjn.stamp.controller.UserSettingController;
 import com.sjn.stamp.media.CustomController;
 import com.sjn.stamp.media.QueueManager;
@@ -61,8 +60,7 @@ public class Player implements SessionManager.SessionListener {
 
     public MediaSessionCompat.Token initialize(PlaybackManager.PlaybackServiceCallback callback, MusicProvider musicProvider) {
         mQueueManager = initializeQueueManager(musicProvider);
-        mPlaybackManager = new PlaybackManager(mContext, callback, mContext.getResources(), musicProvider, mQueueManager, Playback.Type.LOCAL,
-                new SongHistoryController(mContext));
+        mPlaybackManager = new PlaybackManager(mContext, callback, mQueueManager, Playback.Type.LOCAL);
         mPlaybackManager.updatePlaybackState(null);
         mSessionManager = new SessionManager(mContext, getMediaSessionCallback(), this);
         return mSessionManager.getSessionToken();

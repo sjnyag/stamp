@@ -2,36 +2,31 @@ package com.sjn.stamp.media;
 
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-
-import com.sjn.stamp.utils.LogHelper;
 
 public class MediaLogger {
 
-    private static final String TAG = LogHelper.makeLogTag(MediaLogger.class);
     private static final Long START_WAIT_TIME = 2000L;
     private static final Long START_LIMIT_TIME = 5000L;
     private static final Long PLAY_WAIT_TIME = 20000L;
-    private static final Long COMPLETE_REMAIN_TIME = 10000L;
     private Listener mListener;
     static private Handler mTimerHandler;
 
     public interface Listener {
 
-        MediaMetadataCompat getCurrentMedia();
+        String getCurrentMediaId();
 
         int getPlaybackState();
 
         int getCurrentPosition();
 
-        void onSongStart(@NonNull MediaMetadataCompat metadata);
+        void onSongStart(@NonNull String mediaId);
 
-        void onSongPlay(@NonNull MediaMetadataCompat metadata);
+        void onSongPlay(@NonNull String mediaId);
 
-        void onSongSkip(@NonNull MediaMetadataCompat metadata);
+        void onSongSkip(@NonNull String mediaId);
 
-        void onSongComplete(@NonNull MediaMetadataCompat metadata);
+        void onSongComplete(@NonNull String mediaId);
     }
 
     public MediaLogger(Listener listener) {
@@ -46,21 +41,19 @@ public class MediaLogger {
         mTimerHandler.postDelayed(new MediaStartTimer(), START_WAIT_TIME);
     }
 
-    public void onComplete(MediaMetadataCompat metadata) {
-        if (mListener == null || metadata == null) {
+    public void onComplete(String mediaId) {
+        if (mListener == null || mediaId == null) {
             return;
         }
-        mListener.onSongComplete(metadata);
+        mListener.onSongComplete(mediaId);
     }
 
-    public void onSkip(MediaMetadataCompat metadata, int position) {
-        if (mListener == null || metadata == null) {
+    public void onSkip(String mediaId, int position) {
+        if (mListener == null || mediaId == null) {
             return;
         }
         if (START_WAIT_TIME < position && position < PLAY_WAIT_TIME) {
-            mListener.onSongSkip(metadata);
-        } else if (metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION) - position < COMPLETE_REMAIN_TIME) {
-            mListener.onSongComplete(metadata);
+            mListener.onSongSkip(mediaId);
         }
     }
 
@@ -76,26 +69,26 @@ public class MediaLogger {
 
         @Override
         public void run() {
-            if (mListener != null && mListener.getCurrentMedia() != null && mTimerHandler != null && isStart(mListener.getPlaybackState(), mListener.getCurrentPosition())) {
-                mListener.onSongStart(mListener.getCurrentMedia());
+            if (mListener != null && mListener.getCurrentMediaId() != null && mTimerHandler != null && isStart(mListener.getPlaybackState(), mListener.getCurrentPosition())) {
+                mListener.onSongStart(mListener.getCurrentMediaId());
                 resetTimerHandler();
-                mTimerHandler.postDelayed(new MediaPlayTimer(mListener.getCurrentMedia()), PLAY_WAIT_TIME - START_WAIT_TIME);
+                mTimerHandler.postDelayed(new MediaPlayTimer(mListener.getCurrentMediaId()), PLAY_WAIT_TIME - START_WAIT_TIME);
             }
         }
     }
 
     private class MediaPlayTimer implements Runnable {
-        final MediaMetadataCompat mStartMetadata;
+        final String mStartMediaId;
 
-        public MediaPlayTimer(MediaMetadataCompat startMetadata) {
-            mStartMetadata = startMetadata;
+        MediaPlayTimer(String startMediaId) {
+            mStartMediaId = startMediaId;
         }
 
         @Override
         public void run() {
-            if (mListener != null && mListener.getCurrentMedia() != null && isSongPlaying(mListener.getPlaybackState())
-                    && mStartMetadata != null && isSameSong(mStartMetadata, mListener.getCurrentMedia())) {
-                mListener.onSongPlay(mListener.getCurrentMedia());
+            if (mListener != null && mListener.getCurrentMediaId() != null && isSongPlaying(mListener.getPlaybackState())
+                    && mStartMediaId != null && mStartMediaId.equals(mListener.getCurrentMediaId())) {
+                mListener.onSongPlay(mListener.getCurrentMediaId());
             }
         }
     }
@@ -107,11 +100,6 @@ public class MediaLogger {
     private static boolean isSongPlaying(int state) {
         return isPlaying(state);
     }
-
-    private static boolean isSameSong(@NonNull MediaMetadataCompat startMetadata, @NonNull MediaMetadataCompat playingMetadata) {
-        return startMetadata.getDescription().toString().equals(playingMetadata.getDescription().toString());
-    }
-
 
     private static boolean isPlaying(int state) {
         return state == PlaybackStateCompat.STATE_PLAYING;
