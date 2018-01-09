@@ -176,8 +176,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         }
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
-        mAdapter.setFastScroller((FastScroller) rootView.findViewById(R.id.fast_scroller),
-                ViewHelper.getColorAccent(getActivity()), this);
+        mAdapter.setFastScroller((FastScroller) rootView.findViewById(R.id.fast_scroller));
 
         mAdapter.setLongPressDragEnabled(false)
                 .setHandleDragEnabled(false)
@@ -422,7 +421,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
     }
 
     @Override
-    public void onUndoConfirmed(int action) {
+    public void onActionCanceled(int action) {
         LogHelper.i(TAG, "onUndoConfirmed action=" + action);
         if (action == UndoHelper.ACTION_UPDATE) {
             //TODO: Complete click animation on swiped item
@@ -452,7 +451,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
     }
 
     @Override
-    public void onDeleteConfirmed(int action) {
+    public void onActionConfirmed(int action, int event) {
         LogHelper.i(TAG, "onDeleteConfirmed action=" + action);
         // Disable Refreshing
         mSwipeRefreshLayout.setRefreshing(false);

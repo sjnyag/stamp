@@ -37,8 +37,8 @@ public class QueueTitleItem extends AbstractItem<QueueTitleItem.LayoutViewHolder
     }
 
     @Override
-    public LayoutViewHolder createViewHolder(FlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent) {
-        return new LayoutViewHolder(inflater.inflate(getLayoutRes(), parent, false), adapter);
+    public LayoutViewHolder createViewHolder(View view, FlexibleAdapter adapter){
+        return new LayoutViewHolder(view, adapter);
     }
 
     @Override

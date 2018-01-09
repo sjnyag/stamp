@@ -41,7 +41,6 @@ import com.sjn.stamp.ui.item.SongItem;
 import com.sjn.stamp.ui.observer.MusicListObserver;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
-import com.sjn.stamp.utils.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -237,8 +236,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
         }
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
-        mAdapter.setFastScroller((FastScroller) rootView.findViewById(R.id.fast_scroller),
-                ViewHelper.getColorAccent(getActivity()), this);
+        mAdapter.setFastScroller((FastScroller) rootView.findViewById(R.id.fast_scroller));
         mAdapter.setLongPressDragEnabled(false)
                 .setHandleDragEnabled(false)
                 .setSwipeEnabled(false)

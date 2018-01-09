@@ -145,7 +145,7 @@ public abstract class ListFragment extends FabFragment implements
 
     public void notifyFragmentChange() {
         LogHelper.d(TAG, "notifyFragmentChange START");
-        mListener.onFragmentChange(mSwipeRefreshLayout, mRecyclerView, SelectableAdapter.MODE_IDLE);
+        mListener.onFragmentChange(mSwipeRefreshLayout, mRecyclerView, SelectableAdapter.Mode.IDLE);
         LogHelper.d(TAG, "notifyFragmentChange END");
     }
 

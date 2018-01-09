@@ -26,19 +26,17 @@ import com.sjn.stamp.model.dao.SongDao
 import com.sjn.stamp.ui.DialogFacade
 import com.sjn.stamp.ui.SongAdapter
 import com.sjn.stamp.ui.item.SimpleMediaMetadataItem
-import com.sjn.stamp.ui.item.SongItem
 import com.sjn.stamp.ui.item.UnknownSongItem
 import com.sjn.stamp.ui.observer.StampEditStateObserver
 import com.sjn.stamp.utils.MediaItemHelper
 import com.sjn.stamp.utils.MediaRetrieveHelper
 import com.sjn.stamp.utils.RealmHelper
-import com.sjn.stamp.utils.ViewHelper
 import eu.davidea.fastscroller.FastScroller
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 
-class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, FastScroller.OnScrollStateChangeListener, FlexibleAdapter.OnItemClickListener, FlexibleAdapter.OnItemLongClickListener, FlexibleAdapter.EndlessScrollListener<SongItem>, FlexibleAdapter.OnUpdateListener, StampEditStateObserver.Listener {
+class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, FastScroller.OnScrollStateChangeListener, FlexibleAdapter.OnItemClickListener, FlexibleAdapter.OnItemLongClickListener, FlexibleAdapter.EndlessScrollListener, FlexibleAdapter.OnUpdateListener, StampEditStateObserver.Listener {
 
     private var mUnknownSongRecyclerView: RecyclerView? = null
     private var mMergeSongRecyclerView: RecyclerView? = null
@@ -115,9 +113,9 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val rootView = inflater!!.inflate(R.layout.fragment_list, container, false)
+        val rootView = inflater.inflate(R.layout.fragment_list, container, false)
 
         mLoading = rootView.findViewById(R.id.progressBar)
         mEmptyView = rootView.findViewById(R.id.empty_view)
@@ -147,17 +145,18 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
             it.layoutManager = layoutManager
             it.adapter = mUnknownSongAdapter
         }
-        mUnknownSongAdapter?.let {
-            it.setFastScroller(rootView.findViewById<View>(R.id.fast_scroller) as FastScroller,
-                    ViewHelper.getColorAccent(activity), this)
-            it.setLongPressDragEnabled(false)
-                    .setHandleDragEnabled(false)
-                    .setSwipeEnabled(false)
-                    .setUnlinkAllItemsOnRemoveHeaders(false)
-                    .setDisplayHeadersAtStartUp(false)
-                    .setStickyHeaders(false)
-                    .showAllHeaders()
-            it.addUserLearnedSelection(savedInstanceState == null)
+        mUnknownSongAdapter?.let { adapter ->
+            activity?.let {
+                adapter.fastScroller = rootView.findViewById<View>(R.id.fast_scroller) as FastScroller
+                adapter.setLongPressDragEnabled(false)
+                        .setHandleDragEnabled(false)
+                        .setSwipeEnabled(false)
+                        .setUnlinkAllItemsOnRemoveHeaders(false)
+                        .setDisplayHeadersAtStartUp(false)
+                        .setStickyHeaders(false)
+                        .showAllHeaders()
+                adapter.addUserLearnedSelection(savedInstanceState == null)
+            }
         }
         mLoading?.let {
             it.visibility = View.GONE
@@ -171,26 +170,30 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
             mMergeSongAdapter?.let {
                 val item = it.getItem(p)
                 if (item is SimpleMediaMetadataItem) {
-                    val song = SongController(context).findSong(unknownSongId)
-                    val mediaMetadata = SongController(context).resolveMediaMetadata(item.mediaId)
-                    if (song != null && mediaMetadata != null) {
-                        openMergeConfirmDialog(p, song, mediaMetadata)
+                    context?.let {
+                        val song = SongController(it).findSong(unknownSongId)
+                        val mediaMetadata = SongController(it).resolveMediaMetadata(item.mediaId)
+                        if (song != null && mediaMetadata != null) {
+                            openMergeConfirmDialog(p, song, mediaMetadata)
+                        }
                     }
                 }
             }
             false
         }))
-        mMergeSongRecyclerView?.let {
-            it.layoutManager = SmoothScrollLinearLayoutManager(activity)
-            it.adapter = mMergeSongAdapter
-            mSongSelectDialog = MaterialDialog.Builder(context)
-                    .title(R.string.dialog_merge_song)
-                    .customView(it, false)
-                    .negativeText(R.string.dialog_cancel)
-                    .contentColorRes(android.R.color.white)
-                    .backgroundColorRes(R.color.material_blue_grey_800)
-                    .theme(Theme.DARK)
-                    .show()
+        mMergeSongRecyclerView?.let { view ->
+            view.layoutManager = SmoothScrollLinearLayoutManager(activity)
+            view.adapter = mMergeSongAdapter
+            context?.let {
+                mSongSelectDialog = MaterialDialog.Builder(it)
+                        .title(R.string.dialog_merge_song)
+                        .customView(view, false)
+                        .negativeText(R.string.dialog_cancel)
+                        .contentColorRes(android.R.color.white)
+                        .backgroundColorRes(R.color.material_blue_grey_800)
+                        .theme(Theme.DARK)
+                        .show()
+            }
         }
         CreateMergeSongListAsyncTask(this).execute()
     }
@@ -200,12 +203,14 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
             when (which) {
                 DialogAction.NEGATIVE -> return@SingleButtonCallback
                 DialogAction.POSITIVE -> {
-                    if (SongController(context).mergeSong(unknownSong, mediaMetadata)) {
-                        activity.runOnUiThread({
-                            mUnknownSongAdapter?.removeItem(position)
-                            mUnknownSongAdapter?.notifyItemRemoved(position)
-                            mSongSelectDialog?.dismiss()
-                        })
+                    activity?.let {
+                        if (SongController(it).mergeSong(unknownSong, mediaMetadata)) {
+                            it.runOnUiThread({
+                                mUnknownSongAdapter?.removeItem(position)
+                                mUnknownSongAdapter?.notifyItemRemoved(position)
+                                mSongSelectDialog?.dismiss()
+                            })
+                        }
                     }
                 }
                 else -> {
@@ -229,7 +234,7 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
                 MediaRetrieveHelper.allMediaMetadataCompat(fragment.context, null)
 
         override fun onPostExecute(result: List<MediaMetadataCompat>) {
-            fragment.activity.runOnUiThread(Runnable {
+            fragment.activity?.runOnUiThread(Runnable {
                 if (!fragment.isAdded) {
                     return@Runnable
                 }
@@ -242,12 +247,14 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
     private class CreateUnknownSongListAsyncTask constructor(val fragment: UnknownSongFragment) : AsyncTask<Void, Void, Void>() {
 
         override fun doInBackground(vararg params: Void): Void? {
-            SongController(fragment.context).refreshAllSongs(MediaRetrieveHelper.allMediaMetadataCompat(fragment.context, null))
+            fragment.context?.let {
+                SongController(it).refreshAllSongs(MediaRetrieveHelper.allMediaMetadataCompat(it, null))
+            }
             return null
         }
 
         override fun onPostExecute(result: Void?) {
-            fragment.activity.runOnUiThread(Runnable {
+            fragment.activity?.runOnUiThread(Runnable {
                 if (!fragment.isAdded) {
                     return@Runnable
                 }

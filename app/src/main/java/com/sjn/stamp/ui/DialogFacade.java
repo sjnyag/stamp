@@ -132,7 +132,8 @@ public class DialogFacade {
     public static MaterialDialog.Builder createLicenceDialog(final Context context) {
         List<LicenseEntry> dataSet = new ArrayList<>();
         dataSet.add(Licenses.noContent("Android SDK", "Google Inc.", "https://developer.android.com/sdk/terms.html"));
-        dataSet.add(Licenses.noLink("Google Play Services", "Google Inc.", GoogleApiAvailability.getInstance().getOpenSourceSoftwareLicenseInfo(context)));
+//TODO
+//        dataSet.add(Licenses.noLink("Google Play Services", "Google Inc.", GoogleApiAvailability.getInstance().getOpenSourceSoftwareLicenseInfo(context)));
         dataSet.add(Licenses.noContent("Android Support Libraries", "Google Inc.", "https://developer.android.com/sdk/terms.html"));
         dataSet.add(Licenses.noContent("Firebase", "Google Inc.", "https://firebase.google.com/terms/"));
         dataSet.add(Licenses.fromGitHub("google/guava", LICENSE_APACHE_V2));

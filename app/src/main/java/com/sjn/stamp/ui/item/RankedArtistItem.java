@@ -7,9 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,7 +20,7 @@ import java.util.List;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.items.IFilterable;
-import eu.davidea.flexibleadapter.utils.Utils;
+import eu.davidea.flexibleadapter.utils.FlexibleUtils;
 
 public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHolder> implements IFilterable, Serializable {
     public int getOrder() {
@@ -66,8 +64,8 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
     }
 
     @Override
-    public SimpleViewHolder createViewHolder(FlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent) {
-        return new SimpleViewHolder(inflater.inflate(getLayoutRes(), parent, false), adapter);
+    public SimpleViewHolder createViewHolder(View view, FlexibleAdapter adapter){
+        return new SimpleViewHolder(view, adapter);
     }
 
     @Override
@@ -75,8 +73,8 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
     public void bindViewHolder(final FlexibleAdapter adapter, SimpleViewHolder holder, int position, List payloads) {
         Context context = holder.itemView.getContext();
         if (adapter.hasSearchText()) {
-            Utils.highlightText(holder.mTitle, getTitle(), adapter.getSearchText());
-            Utils.highlightText(holder.mSubtitle, getSubtitle(), adapter.getSearchText());
+            FlexibleUtils.highlightText(holder.mTitle, getTitle(), adapter.getSearchText());
+            FlexibleUtils.highlightText(holder.mSubtitle, getSubtitle(), adapter.getSearchText());
         } else {
             holder.mTitle.setText(mArtistName);
             holder.mSubtitle.setText(context.getString(R.string.item_ranking_most_played, mMostPlayedSongTitle));

@@ -60,8 +60,8 @@ public class DateHeaderItem extends AbstractHeaderItem<DateHeaderItem.HeaderView
     }
 
     @Override
-    public HeaderViewHolder createViewHolder(FlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent) {
-        return new HeaderViewHolder(inflater.inflate(getLayoutRes(), parent, false), adapter);
+    public HeaderViewHolder createViewHolder(View view, FlexibleAdapter adapter){
+        return new HeaderViewHolder(view, adapter);
     }
 
     @Override

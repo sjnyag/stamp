@@ -25,7 +25,7 @@ import java.util.List;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.items.IFilterable;
-import eu.davidea.flexibleadapter.utils.Utils;
+import eu.davidea.flexibleadapter.utils.FlexibleUtils;
 
 public class UnknownSongItem extends AbstractItem<UnknownSongItem.SimpleViewHolder> implements IFilterable, Serializable {
 
@@ -76,8 +76,8 @@ public class UnknownSongItem extends AbstractItem<UnknownSongItem.SimpleViewHold
     }
 
     @Override
-    public SimpleViewHolder createViewHolder(FlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent) {
-        return new SimpleViewHolder(inflater.inflate(getLayoutRes(), parent, false), adapter);
+    public SimpleViewHolder createViewHolder(View view, FlexibleAdapter adapter) {
+        return new SimpleViewHolder(view, adapter);
     }
 
     @Override
@@ -85,8 +85,8 @@ public class UnknownSongItem extends AbstractItem<UnknownSongItem.SimpleViewHold
     public void bindViewHolder(final FlexibleAdapter adapter, final SimpleViewHolder holder, int position, List payloads) {
         final Context context = holder.itemView.getContext();
         if (adapter.hasSearchText()) {
-            Utils.highlightText(holder.mTitle, getTitle(), adapter.getSearchText());
-            Utils.highlightText(holder.mSubtitle, getSubtitle(), adapter.getSearchText());
+            FlexibleUtils.highlightText(holder.mTitle, getTitle(), adapter.getSearchText());
+            FlexibleUtils.highlightText(holder.mSubtitle, getSubtitle(), adapter.getSearchText());
         } else {
             holder.mTitle.setText(mTitle);
             holder.mSubtitle.setText(mSubTitle);

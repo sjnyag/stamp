@@ -68,8 +68,7 @@ public class MyStampListFragment extends SongListFragment implements
         }
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
-        mAdapter.setFastScroller((FastScroller) rootView.findViewById(R.id.fast_scroller),
-                ViewHelper.getColorAccent(getActivity()), this);
+        mAdapter.setFastScroller((FastScroller) rootView.findViewById(R.id.fast_scroller));
         mAdapter.setLongPressDragEnabled(false)
                 .setHandleDragEnabled(false)
                 .setSwipeEnabled(true)
@@ -240,7 +239,7 @@ public class MyStampListFragment extends SongListFragment implements
     }
 
     @Override
-    public void onUndoConfirmed(int action) {
+    public void onActionCanceled(int action) {
         LogHelper.i(TAG, "onUndoConfirmed action=" + action);
         if (action == UndoHelper.ACTION_UPDATE) {
         } else if (action == UndoHelper.ACTION_REMOVE) {
@@ -257,7 +256,7 @@ public class MyStampListFragment extends SongListFragment implements
     }
 
     @Override
-    public void onDeleteConfirmed(int action) {
+    public void onActionConfirmed(int action, int event) {
         LogHelper.i(TAG, "onDeleteConfirmed action=" + action);
         mSwipeRefreshLayout.setRefreshing(false);
         for (AbstractFlexibleItem adapterItem : mAdapter.getDeletedItems()) {

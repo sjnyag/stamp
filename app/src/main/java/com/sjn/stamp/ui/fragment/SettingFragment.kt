@@ -40,12 +40,14 @@ class SettingFragment : PreferenceFragmentCompat() {
         setHasOptionsMenu(true)
 
         findPreference("song_db_refresh").onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            DialogFacade.createConfirmDialog(activity, R.string.dialog_confirm_song_db_refresh, MaterialDialog.SingleButtonCallback { dialog, which ->
+            DialogFacade.createConfirmDialog(activity, R.string.dialog_confirm_song_db_refresh, MaterialDialog.SingleButtonCallback { _, which ->
                 when (which) {
                     DialogAction.NEGATIVE -> return@SingleButtonCallback
                     DialogAction.POSITIVE -> {
-                        AnalyticsHelper.trackSetting(context, "song_db_refresh")
-                        Thread(Runnable { SongController(context).refreshAllSongs(MediaRetrieveHelper.allMediaMetadataCompat(context, null)) }).start()
+                        context?.let {
+                            AnalyticsHelper.trackSetting(it, "song_db_refresh")
+                            Thread(Runnable { SongController(it).refreshAllSongs(MediaRetrieveHelper.allMediaMetadataCompat(it, null)) }).start()
+                        }
                     }
                     else -> {
                     }
@@ -55,16 +57,17 @@ class SettingFragment : PreferenceFragmentCompat() {
         }
 
         findPreference("song_db_unknown").onPreferenceClickListener = Preference.OnPreferenceClickListener {
-
-            val transaction = fragmentManager.beginTransaction()
-            transaction.add(R.id.container, UnknownSongFragment())
-            transaction.addToBackStack(null)
-            transaction.commit()
+            fragmentManager?.let {
+                val transaction = it.beginTransaction()
+                transaction.add(R.id.container, UnknownSongFragment())
+                transaction.addToBackStack(null)
+                transaction.commit()
+            }
             true
         }
 
         findPreference("import_backup").onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            DialogFacade.createConfirmDialog(activity, R.string.dialog_confirm_import, MaterialDialog.SingleButtonCallback { dialog, which ->
+            DialogFacade.createConfirmDialog(activity, R.string.dialog_confirm_import, MaterialDialog.SingleButtonCallback { _, which ->
                 when (which) {
                     DialogAction.NEGATIVE -> return@SingleButtonCallback
                     DialogAction.POSITIVE -> {
@@ -82,7 +85,7 @@ class SettingFragment : PreferenceFragmentCompat() {
         }
 
         findPreference("export_backup").onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            DialogFacade.createConfirmDialog(activity, R.string.dialog_confirm_export, MaterialDialog.SingleButtonCallback { dialog, which ->
+            DialogFacade.createConfirmDialog(activity, R.string.dialog_confirm_export, MaterialDialog.SingleButtonCallback { _, which ->
                 when (which) {
                     DialogAction.NEGATIVE -> return@SingleButtonCallback
                     DialogAction.POSITIVE -> {
@@ -112,7 +115,7 @@ class SettingFragment : PreferenceFragmentCompat() {
             }
             true
         }
-        findPreference("setting_songs_new_song_days").onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
+        findPreference("setting_songs_new_song_days").onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
             AnalyticsHelper.trackSetting(context, "setting_songs_new_song_days", newValue.toString())
             try {
                 val newSongDays = Integer.parseInt(newValue.toString())
@@ -149,20 +152,20 @@ class SettingFragment : PreferenceFragmentCompat() {
 
     override fun onStart() {
         super.onStart()
-        val fab = activity.findViewById<View>(R.id.fab) as FloatingActionButton
-        if (fab != null) {
-            ViewCompat.animate(fab)
-                    .scaleX(0f).scaleY(0f)
-                    .alpha(0f).setDuration(100)
-                    .start()
+        activity?.let {
+            (it.findViewById<View>(R.id.fab) as FloatingActionButton).let {
+                ViewCompat.animate(it)
+                        .scaleX(0f).scaleY(0f)
+                        .alpha(0f).setDuration(100)
+                        .start()
+            }
         }
     }
 
     override fun onStop() {
         super.onStop()
-        val mFab = activity.findViewById<View>(R.id.fab) as FloatingActionButton
-        if (mFab != null) {
-            mFab.visibility = View.VISIBLE
+        activity?.let {
+            (it.findViewById<View>(R.id.fab) as FloatingActionButton).visibility = View.VISIBLE
         }
     }
 
@@ -172,15 +175,17 @@ class SettingFragment : PreferenceFragmentCompat() {
 
         if (requestCode == REQUEST_BACKUP) {
             if (resultCode == AppCompatActivity.RESULT_OK) {
-                if (data != null && data.data != null && data.data.path.endsWith(".realm")) {
-                    val progressDialog = ProgressDialog(activity)
-                    progressDialog.setMessage(getString(R.string.message_processing))
-                    progressDialog.show()
-                    RealmHelper.importBackUp(activity, data.data)
-                    progressDialog.dismiss()
-                    DialogFacade.createRestartDialog(activity) { dialog, which -> activity.recreate() }.show()
-                } else {
-                    Toast.makeText(context, R.string.invalid_backup_selected, Toast.LENGTH_SHORT).show()
+                activity?.let {
+                    if (data != null && data.data != null && data.data.path.endsWith(".realm")) {
+                        val progressDialog = ProgressDialog(it)
+                        progressDialog.setMessage(getString(R.string.message_processing))
+                        progressDialog.show()
+                        RealmHelper.importBackUp(it, data.data)
+                        progressDialog.dismiss()
+                        DialogFacade.createRestartDialog(it) { _, _ -> it.recreate() }.show()
+                    } else {
+                        Toast.makeText(it, R.string.invalid_backup_selected, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }

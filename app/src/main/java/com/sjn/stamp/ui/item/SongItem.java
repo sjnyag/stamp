@@ -10,9 +10,7 @@ import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,7 +26,7 @@ import java.util.List;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.helpers.AnimatorHelper;
 import eu.davidea.flexibleadapter.items.IFilterable;
-import eu.davidea.flexibleadapter.utils.Utils;
+import eu.davidea.flexibleadapter.utils.FlexibleUtils;
 
 /**
  * You should extend directly from
@@ -108,8 +106,8 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
     }
 
     @Override
-    public SimpleViewHolder createViewHolder(FlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent) {
-        return new SimpleViewHolder(inflater.inflate(getLayoutRes(), parent, false), adapter, mActivity);
+    public SimpleViewHolder createViewHolder(View view, FlexibleAdapter adapter) {
+        return new SimpleViewHolder(view, adapter, mActivity);
     }
 
     @Override
@@ -117,8 +115,8 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
     public void bindViewHolder(final FlexibleAdapter adapter, final SimpleViewHolder holder, int position, List payloads) {
         final Context context = holder.itemView.getContext();
         if (adapter.hasSearchText()) {
-            Utils.highlightText(holder.mTitle, getTitle(), adapter.getSearchText());
-            Utils.highlightText(holder.mSubtitle, getSubtitle(), adapter.getSearchText());
+            FlexibleUtils.highlightText(holder.mTitle, getTitle(), adapter.getSearchText());
+            FlexibleUtils.highlightText(holder.mSubtitle, getSubtitle(), adapter.getSearchText());
         } else {
             holder.mTitle.setText(mTitle);
             holder.mSubtitle.setText(mSubTitle);

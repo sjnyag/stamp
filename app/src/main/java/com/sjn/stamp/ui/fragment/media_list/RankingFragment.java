@@ -169,8 +169,7 @@ public class RankingFragment extends MediaBrowserListFragment {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
         //mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mAdapter.setFastScroller((FastScroller) rootView.findViewById(R.id.fast_scroller),
-                ViewHelper.getColorAccent(getActivity()), this);
+        mAdapter.setFastScroller((FastScroller) rootView.findViewById(R.id.fast_scroller));
 
         mAdapter.setLongPressDragEnabled(false)
                 .setHandleDragEnabled(false)
