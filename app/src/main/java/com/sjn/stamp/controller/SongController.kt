@@ -33,12 +33,11 @@ class SongController(private val mContext: Context) {
         return false
     }
 
-    fun calculateSmartStamp(rawSong: Song, playCount: Int, recordType: RecordType) {
-        val song = RealmHelper.getRealmInstance().copyFromRealm(rawSong)
+    fun calculateSmartStamp(songId: Long, playCount: Int, recordType: RecordType) {
         Thread(Runnable {
             SmartStamp.values()
-                    .filter { it.isTarget(mContext, song, playCount, recordType) }
-                    .forEach { it.register(mContext, song, playCount, recordType) }
+                    .filter { it.isTarget(mContext, songId, playCount, recordType) }
+                    .forEach { it.register(mContext, songId, playCount, recordType) }
         }).start()
     }
 

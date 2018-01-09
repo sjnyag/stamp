@@ -75,7 +75,7 @@ class SongHistoryController(private val mContext: Context) {
                 sendNotificationBySongCount(realm, song, playCount)
                 sendNotificationByArtistCount(song)
             }
-            SongController(mContext).calculateSmartStamp(song, playCount, recordType)
+            SongController(mContext).calculateSmartStamp(song.id, playCount, recordType)
         }
     }
 

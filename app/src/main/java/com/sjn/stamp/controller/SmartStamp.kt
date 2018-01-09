@@ -1,41 +1,44 @@
 package com.sjn.stamp.controller
 
 import android.content.Context
-import com.sjn.stamp.model.constant.RecordType
 import com.sjn.stamp.model.Song
+import com.sjn.stamp.model.constant.RecordType
+import com.sjn.stamp.model.dao.SongDao
 import com.sjn.stamp.model.dao.SongHistoryDao
 import com.sjn.stamp.utils.RealmHelper
 
 internal enum class SmartStamp(var mStampName: String) {
     HEAVY_ROTATION("Heavy Rotation") {
-        override fun isTarget(context: Context, song: Song, playCount: Int, recordType: RecordType): Boolean {
+        override fun isTarget(context: Context, songId: Long, playCount: Int, recordType: RecordType): Boolean {
             var result = false
             var counter = 0
             RealmHelper.getRealmInstance().use { realm ->
-                for (songHistory in SongHistoryDao.findAll(realm, RecordType.PLAY.databaseValue)) {
-                    if (songHistory.song != song) {
-                        break
-                    }
-                    counter++
-                    if (counter >= 10) {
-                        result = true
-                        break
+                SongDao.findById(realm, songId)?.let { song ->
+                    for (songHistory in SongHistoryDao.findAll(realm, RecordType.PLAY.databaseValue)) {
+                        if (songHistory.song != song) {
+                            break
+                        }
+                        counter++
+                        if (counter >= 10) {
+                            result = true
+                            break
+                        }
                     }
                 }
             }
             return result
         }
 
-        override fun register(context: Context, song: Song, playCount: Int, recordType: RecordType) {
+        override fun register(context: Context, songId: Long, playCount: Int, recordType: RecordType) {
             StampController(context).register(mStampName, true)
-            SongController(context).registerStamp(song.id, mStampName, true)
+            SongController(context).registerStamp(songId, mStampName, true)
         }
     },
     ARTIST_BEST("Artist Best") {
-        override fun isTarget(context: Context, song: Song, playCount: Int, recordType: RecordType): Boolean =
+        override fun isTarget(context: Context, songId: Long, playCount: Int, recordType: RecordType): Boolean =
                 playCount >= 10
 
-        override fun register(context: Context, song: Song, playCount: Int, recordType: RecordType) {
+        override fun register(context: Context, songId: Long, playCount: Int, recordType: RecordType) {
             val stampController = StampController(context)
             val songController = SongController(context)
             StampController(context).register(mStampName, true)
@@ -52,15 +55,15 @@ internal enum class SmartStamp(var mStampName: String) {
         }
     },
     BREAK_SONG("Break Song") {
-        override fun isTarget(context: Context, song: Song, playCount: Int, recordType: RecordType): Boolean =
+        override fun isTarget(context: Context, songId: Long, playCount: Int, recordType: RecordType): Boolean =
                 false
 
-        override fun register(context: Context, song: Song, playCount: Int, recordType: RecordType) {
+        override fun register(context: Context, songId: Long, playCount: Int, recordType: RecordType) {
 
         }
     };
 
-    internal abstract fun isTarget(context: Context, song: Song, playCount: Int, recordType: RecordType): Boolean
+    internal abstract fun isTarget(context: Context, songId: Long, playCount: Int, recordType: RecordType): Boolean
 
-    abstract fun register(context: Context, song: Song, playCount: Int, recordType: RecordType)
+    abstract fun register(context: Context, songId: Long, playCount: Int, recordType: RecordType)
 }

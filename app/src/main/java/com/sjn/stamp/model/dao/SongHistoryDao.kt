@@ -1,9 +1,8 @@
 package com.sjn.stamp.model.dao
 
-import android.support.v4.media.MediaMetadataCompat
 import com.sjn.stamp.model.Song
-import com.sjn.stamp.model.constant.RecordType
 import com.sjn.stamp.model.SongHistory
+import com.sjn.stamp.model.constant.RecordType
 import io.realm.Realm
 import io.realm.Sort
 import java.util.*
@@ -36,17 +35,19 @@ object SongHistoryDao : BaseDao<SongHistory>() {
     fun findOldest(realm: Realm, songId: Long): SongHistory? =
             realm.where(SongHistory::class.java).equalTo("song.id", songId).equalTo("recordType", RecordType.PLAY.databaseValue).findAllSorted("recordedAt", Sort.ASCENDING).first()
 
-    fun create(realm: Realm, song: Song, recordType: RecordType, date: Date, count: Int) {
-        val songHistory = SongHistory()
-        songHistory.id = getAutoIncrementId(realm)
-        songHistory.device = DeviceDao.findOrCreate(realm)
-        songHistory.song = song
-        songHistory.recordType = recordType.databaseValue
-        songHistory.recordedAt = date
-        songHistory.count = count
-        realm.beginTransaction()
-        realm.copyToRealm(songHistory)
-        realm.commitTransaction()
+    fun create(realm: Realm, rawSong: Song, recordType: RecordType, date: Date, count: Int) {
+        SongDao.findById(realm, rawSong.id)?.let { song ->
+            realm.executeTransaction({
+                realm.copyToRealm(SongHistory().apply {
+                    this.id = getAutoIncrementId(realm)
+                    this.device = DeviceDao.findOrCreate(realm)
+                    this.recordType = recordType.databaseValue
+                    this.recordedAt = date
+                    this.count = count
+                    this.song = song
+                })
+            })
+        }
     }
 
     fun delete(realm: Realm, songHistoryId: Long) {
