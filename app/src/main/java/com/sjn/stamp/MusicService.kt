@@ -77,7 +77,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
                 mPlayer?.handleIntent(startIntent)
             }
         }
-        return Service.START_STICKY
+        return Service.START_NOT_STICKY
     }
 
     override fun onDestroy() {
