@@ -204,13 +204,13 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
         mRepeat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CustomController.getInstance().toggleRepeatState(getContext());
+                CustomController.INSTANCE.toggleRepeatState();
             }
         });
         mShuffle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CustomController.getInstance().toggleShuffleState(getContext());
+                CustomController.INSTANCE.toggleShuffleState();
             }
         });
 
@@ -298,10 +298,10 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
         super.onStart();
         MediaControllerObserver.getInstance().addListener(this);
         onMediaControllerConnected();
-        CustomController.getInstance().addRepeatStateListenerSet(this);
-        CustomController.getInstance().addShuffleStateListenerSet(this);
-        onRepeatStateChanged(CustomController.getInstance().getRepeatState());
-        onShuffleStateChanged(CustomController.getInstance().getShuffleState());
+        CustomController.INSTANCE.addRepeatStateListenerSet(this);
+        CustomController.INSTANCE.addShuffleStateListenerSet(this);
+        onRepeatStateChanged(CustomController.INSTANCE.getRepeatState());
+        onShuffleStateChanged(CustomController.INSTANCE.getShuffleState());
     }
 
     @Override
@@ -309,8 +309,8 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
         LogHelper.i(TAG, "onStop");
         super.onStop();
         MediaControllerObserver.getInstance().removeListener(this);
-        CustomController.getInstance().removeRepeatStateListenerSet(this);
-        CustomController.getInstance().removeShuffleStateListenerSet(this);
+        CustomController.INSTANCE.removeRepeatStateListenerSet(this);
+        CustomController.INSTANCE.removeShuffleStateListenerSet(this);
     }
 
     @Override

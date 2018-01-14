@@ -18,6 +18,7 @@ import com.sjn.stamp.notification.NotificationManager
 import com.sjn.stamp.ui.observer.MediaControllerObserver
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaIDHelper
+import com.sjn.stamp.utils.MediaRetrieveHelper
 import com.sjn.stamp.utils.NotificationHelper.*
 import java.util.*
 
@@ -41,7 +42,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
     override fun onCreate() {
         super.onCreate()
         LogHelper.d(TAG, "onCreate")
-        mMusicProvider = MusicProvider(this, LocalMediaSource(this, {}))
+        mMusicProvider = MusicProvider(this, LocalMediaSource(this, MediaRetrieveHelper.PermissionRequiredCallback { }))
         mMusicProvider.retrieveMediaAsync {
             LogHelper.d(TAG, "MusicProvider.callBack start")
             mPlayer = Player(this@MusicService)

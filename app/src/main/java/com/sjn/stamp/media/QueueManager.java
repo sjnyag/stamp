@@ -77,7 +77,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
     }
 
     private List<MediaSessionCompat.QueueItem> getPlayingQueue() {
-        if (CustomController.getInstance().getShuffleState() == ShuffleState.SHUFFLE) {
+        if (CustomController.INSTANCE.getShuffleState() == ShuffleState.SHUFFLE) {
             return mShuffledQueue;
         }
         return mOrderedQueue;
@@ -101,7 +101,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
         this.mMusicProvider = musicProvider;
         this.mListener = listener;
         this.mResources = resources;
-        CustomController.getInstance().addShuffleStateListenerSet(this);
+        CustomController.INSTANCE.addShuffleStateListenerSet(this);
 
         mOrderedQueue = Collections.synchronizedList(new ArrayList<MediaSessionCompat.QueueItem>());
         mShuffledQueue = Collections.synchronizedList(new ArrayList<MediaSessionCompat.QueueItem>());
@@ -119,7 +119,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
             }
         }
         setCurrentQueueIndex(mCurrentIndex);
-        onShuffleStateChanged(CustomController.getInstance().getShuffleState());
+        onShuffleStateChanged(CustomController.INSTANCE.getShuffleState());
     }
 
     private boolean isSameBrowsingCategory(@NonNull String mediaId) {
@@ -167,7 +167,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
         if (index < 0) {
             // skip backwards before the first song will keep you on the first song
             index = 0;
-        } else if (CustomController.getInstance().getRepeatState() == RepeatState.ALL) {
+        } else if (CustomController.INSTANCE.getRepeatState() == RepeatState.ALL) {
             // skip forwards when in last song will cycle back to start of the queue
             index %= getPlayingQueue().size();
         }
@@ -240,7 +240,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
     public void setCurrentQueue(String title, List<MediaSessionCompat.QueueItem> newQueue,
                                 String initialMediaId) {
         mOrderedQueue = newQueue;
-        if (CustomController.getInstance().getShuffleState() == ShuffleState.SHUFFLE) {
+        if (CustomController.INSTANCE.getShuffleState() == ShuffleState.SHUFFLE) {
             updateShuffleQueue();
         }
         int index = 0;
@@ -340,7 +340,7 @@ public class QueueManager implements QueueProvider.QueueListener, CustomControll
 
     @Override
     public RepeatState getRepeatState() {
-        return CustomController.getInstance().getRepeatState();
+        return CustomController.INSTANCE.getRepeatState();
     }
 
     public interface MetadataUpdateListener {

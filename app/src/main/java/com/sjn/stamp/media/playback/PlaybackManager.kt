@@ -150,7 +150,7 @@ class PlaybackManager(
         mediaLogger.onComplete(currentMediaId)
         // The media player finished playing the current song, so we go ahead
         // and start the next.
-        val skipCount = if (CustomController.getInstance().repeatState === RepeatState.ONE) 0 else 1
+        val skipCount = if (CustomController.repeatState === RepeatState.ONE) 0 else 1
         if (queueManager.skipQueuePosition(skipCount)) {
             handlePlayRequest()
             queueManager.updateMetadata()
@@ -205,17 +205,18 @@ class PlaybackManager(
         }
     }
 
-    override fun getCurrentMediaId(): String? {
-        return playback.currentMediaId
-    }
-
-    override fun getPlaybackState(): Int {
-        return playback.state
-    }
-
-    override fun getCurrentPosition(): Int {
-        return playback.currentStreamPosition
-    }
+    override val currentMediaId: String?
+        get() {
+            return playback.currentMediaId
+        }
+    override val playbackState: Int
+        get() {
+            return playback.state
+        }
+    override val currentPosition: Int
+        get() {
+            return playback.currentStreamPosition
+        }
 
     override fun onSongStart(mediaId: String) {
         SongHistoryController(context).onStart(mediaId, TimeHelper.getJapanNow().toDate())
