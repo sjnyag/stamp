@@ -18,7 +18,7 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.sjn.stamp.R
-import com.sjn.stamp.media.player.CastPlayer
+import com.sjn.stamp.media.player.StampSession.Companion.EXTRA_CONNECTED_CAST
 import com.sjn.stamp.utils.CompatibleHelper
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.ViewHelper
@@ -172,7 +172,7 @@ class NotificationContainer(
 
     private fun NotificationCompat.Builder.addCastAction() =
             controller.extras?.let {
-                it.getString(CastPlayer.EXTRA_CONNECTED_CAST)?.let {
+                it.getString(EXTRA_CONNECTED_CAST)?.let {
                     setSubText(context.resources.getString(R.string.casting_to_device, it))
                     addAction(R.drawable.ic_close_black_24dp, context.getString(R.string.stop_casting), NotificationAction.STOP_CAST.createIntent(context))
                 }

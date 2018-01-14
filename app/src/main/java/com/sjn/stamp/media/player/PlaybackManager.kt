@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package com.sjn.stamp.media.playback
+package com.sjn.stamp.media.player
 
 import android.content.Context
 import android.net.Uri
@@ -26,7 +26,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import com.sjn.stamp.controller.SongHistoryController
 import com.sjn.stamp.media.CustomController
 import com.sjn.stamp.media.MediaLogger
-import com.sjn.stamp.media.QueueManager
+import com.sjn.stamp.media.playback.Playback
 import com.sjn.stamp.model.constant.RepeatState
 import com.sjn.stamp.utils.AnalyticsHelper
 import com.sjn.stamp.utils.LogHelper
@@ -60,6 +60,10 @@ class PlaybackManager(
                     }
         }
 
+    init {
+        updatePlaybackState(null)
+    }
+
     fun startNewQueue(title: String, mediaId: String, queueItemList: List<MediaSessionCompat.QueueItem>) {
         mediaLogger.onSkip(currentMediaId, currentPosition)
         AnalyticsHelper.trackCategory(context, mediaId)
@@ -71,7 +75,7 @@ class PlaybackManager(
     /**
      * Handle a request to play music
      */
-    fun handlePlayRequest() {
+    private fun handlePlayRequest() {
         LogHelper.d(TAG, "handlePlayRequest: state=" + playback.state)
         queueManager.currentMusic?.let {
             if (playback.state.isPlayable) {
@@ -85,7 +89,7 @@ class PlaybackManager(
     /**
      * Handle a request to pause music
      */
-    fun handlePauseRequest() {
+    private fun handlePauseRequest() {
         LogHelper.d(TAG, "handlePauseRequest: state=" + playback.state)
         if (playback.isPlaying) {
             playback.pause()
@@ -100,7 +104,7 @@ class PlaybackManager(
      * message will be set in the PlaybackState and will be visible to
      * MediaController clients.
      */
-    fun handleStopRequest(withError: String?) {
+    private fun handleStopRequest(withError: String?) {
         LogHelper.d(TAG, "handleStopRequest: state=" + playback.state + " error=", withError)
         playback.stop(true)
         serviceCallback.onPlaybackStop()
@@ -266,7 +270,7 @@ class PlaybackManager(
             playback.seekTo(position.toInt())
         }
 
-        override fun onPlayFromMediaId(mediaId: String?, extras: Bundle?) {
+        override fun onPlayFromMediaId(mediaId: String, extras: Bundle) {
             mediaLogger.onSkip(currentMediaId, currentPosition)
             LogHelper.d(TAG, "playFromMediaId mediaId:", mediaId, "  extras=", extras)
             AnalyticsHelper.trackCategory(context, mediaId)
@@ -333,7 +337,7 @@ class PlaybackManager(
          * should defer the actual search to another thread (for example, by using
          * an [AsyncTask] as we do here).
          */
-        override fun onPlayFromSearch(query: String?, extras: Bundle?) {
+        override fun onPlayFromSearch(query: String, extras: Bundle) {
             LogHelper.d(TAG, "playFromSearch  query=", query, " extras=", extras)
 
             playback.state = PlaybackStateCompat.STATE_CONNECTING
@@ -366,5 +370,9 @@ class PlaybackManager(
     companion object {
 
         private val TAG = LogHelper.makeLogTag(PlaybackManager::class.java)
+    }
+
+    fun restorePreviousState(lastMusicId: String, queueIdentifyMediaId: String) {
+        queueManager.restorePreviousState(lastMusicId, queueIdentifyMediaId)
     }
 }

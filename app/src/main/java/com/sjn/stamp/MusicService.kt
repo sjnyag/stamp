@@ -9,8 +9,7 @@ import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import com.sjn.stamp.media.playback.PlaybackManager
-import com.sjn.stamp.media.player.CastPlayer
+import com.sjn.stamp.media.player.PlaybackManager
 import com.sjn.stamp.media.player.Player
 import com.sjn.stamp.media.provider.MusicProvider
 import com.sjn.stamp.media.source.LocalMediaSource
@@ -37,7 +36,6 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
     private var mNotificationManager: NotificationManager? = null
     private var mPlayer: Player? = null
     private var mMediaController: MediaControllerCompat? = null
-    private var mCastPlayer: CastPlayer? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -45,8 +43,8 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
         mMusicProvider = MusicProvider(this, LocalMediaSource(this, MediaRetrieveHelper.PermissionRequiredCallback { }))
         mMusicProvider.retrieveMediaAsync {
             LogHelper.d(TAG, "MusicProvider.callBack start")
-            mPlayer = Player(this@MusicService)
-            sessionToken = mPlayer!!.initialize(this@MusicService, mMusicProvider)
+            mPlayer = Player(this@MusicService, this@MusicService, mMusicProvider)
+            sessionToken = mPlayer?.sessionToken
             sessionToken?.let {
                 mMediaController = MediaControllerCompat(this@MusicService, it)
                 mMediaController?.let {
@@ -56,7 +54,6 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
             MediaControllerObserver.getInstance().notifyConnected()
             Thread(Runnable {
                 mPlayer?.restorePreviousState(mMusicProvider)
-                mCastPlayer = CastPlayer(this@MusicService, mPlayer?.sessionManageListener)
                 try {
                     mNotificationManager = NotificationManager(this@MusicService)
                 } catch (e: RemoteException) {
@@ -88,7 +85,6 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
             MediaControllerObserver.unregister(it)
         }
         mNotificationManager?.stopNotification()
-        mCastPlayer?.finish()
     }
 
     /**
@@ -175,7 +171,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
         LogHelper.d(TAG, "handleActionCommand ", command)
         when (command) {
             CMD_PAUSE -> mPlayer?.pause()
-            CMD_STOP_CASTING -> mCastPlayer?.stop()
+            CMD_STOP_CASTING -> mPlayer?.stopCasting()
             CMD_KILL -> if (mPlayer != null) stopSelf()
         }
     }

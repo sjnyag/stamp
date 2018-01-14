@@ -37,10 +37,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.sjn.stamp.R;
+import com.sjn.stamp.media.player.StampSession;
 import com.sjn.stamp.model.constant.RepeatState;
 import com.sjn.stamp.model.constant.ShuffleState;
 import com.sjn.stamp.media.CustomController;
-import com.sjn.stamp.media.player.CastPlayer;
 import com.sjn.stamp.ui.activity.MusicPlayerListActivity;
 import com.sjn.stamp.ui.observer.MediaControllerObserver;
 import com.sjn.stamp.utils.LogHelper;
@@ -396,7 +396,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
         mLastPlaybackState = state;
         MediaControllerCompat controller = getController();
         if (controller != null && controller.getExtras() != null) {
-            String castName = controller.getExtras().getString(CastPlayer.EXTRA_CONNECTED_CAST);
+            String castName = controller.getExtras().getString(StampSession.Companion.getEXTRA_CONNECTED_CAST());
             String line3Text = castName == null ? "" : getResources()
                     .getString(R.string.casting_to_device, castName);
             mLine3.setText(line3Text);
