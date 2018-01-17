@@ -14,13 +14,12 @@ public class DataSourceHelper {
     public static boolean setMediaPlayerDataSource(Context context,
                                                    MediaPlayer mp, String fileInfo) throws IOException {
 
-        if (fileInfo.startsWith("content://")) {
-            Uri uri = Uri.parse(fileInfo);
-            mp.setDataSource(context, uri);
-            return true;
-        }
-
         try {
+            if (fileInfo.startsWith("content://")) {
+                Uri uri = Uri.parse(fileInfo);
+                mp.setDataSource(context, uri);
+                return true;
+            }
             if (CompatibleHelper.hasHoneycomb())
                 try {
                     setMediaPlayerDataSourcePreHoneyComb(context, mp, fileInfo);

@@ -371,8 +371,4 @@ class PlaybackManager(
 
         private val TAG = LogHelper.makeLogTag(PlaybackManager::class.java)
     }
-
-    fun restorePreviousState(lastMusicId: String, queueIdentifyMediaId: String) {
-        queueManager.restorePreviousState(lastMusicId, queueIdentifyMediaId)
-    }
 }

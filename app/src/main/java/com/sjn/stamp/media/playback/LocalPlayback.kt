@@ -37,10 +37,6 @@ internal class LocalPlayback(context: Context, private val callback: Playback.Ca
     override val currentStreamPosition: Int get() = mediaPlayerManager.currentStreamPosition
     override val currentMediaId: String? get() = mediaPlayerManager.currentMediaId
 
-    init {
-        this.state = PlaybackStateCompat.STATE_NONE
-    }
-
     override fun start() {}
 
     override fun stop(notifyListeners: Boolean) {

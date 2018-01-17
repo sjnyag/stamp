@@ -93,12 +93,13 @@ class QueueManager(private val mContext: Context,
         if (lastMusicId != null && !lastMusicId.isEmpty() && mOrderedQueue != null) {
             for (i in mOrderedQueue!!.indices) {
                 if (lastMusicId == MediaIDHelper.extractMusicIDFromMediaID(mOrderedQueue!![i].description.mediaId!!)) {
-                    setCurrentQueueIndex(i)
+                    mCurrentIndex = i
                     break
                 }
             }
         }
         setCurrentQueueIndex(mCurrentIndex)
+        updateMetadata()
         onShuffleStateChanged(CustomController.shuffleState)
     }
 
@@ -114,8 +115,7 @@ class QueueManager(private val mContext: Context,
     private fun setCurrentQueueIndex(index: Int): Boolean {
         if (index >= 0 && index < playingQueue!!.size) {
             mCurrentIndex = index
-            val userSettingController = UserSettingController()
-            userSettingController.lastMusicId = MediaIDHelper.extractMusicIDFromMediaID(currentMusic!!.description.mediaId!!)
+            UserSettingController().lastMusicId = MediaIDHelper.extractMusicIDFromMediaID(currentMusic!!.description.mediaId!!)
             return true
         }
         return false

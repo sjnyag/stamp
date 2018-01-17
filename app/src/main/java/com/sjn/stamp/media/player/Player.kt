@@ -12,7 +12,6 @@ import com.sjn.stamp.media.CustomController
 import com.sjn.stamp.media.playback.Playback
 import com.sjn.stamp.media.provider.MusicProvider
 import com.sjn.stamp.utils.MediaControllerHelper
-import com.sjn.stamp.utils.MediaIDHelper
 
 class Player(private val context: Context, callback: PlaybackManager.PlaybackServiceCallback, musicProvider: MusicProvider) : StampSession.SessionListener {
 
@@ -28,25 +27,13 @@ class Player(private val context: Context, callback: PlaybackManager.PlaybackSer
         sessionManager = StampSession(context, playbackManager.mediaSessionCallback, this)
     }
 
-    fun restorePreviousState(musicProvider: MusicProvider) {
+    fun restorePreviousState() {
         val userSettingController = UserSettingController()
         val customController = CustomController
         customController.repeatState = userSettingController.repeatState
         customController.shuffleState = userSettingController.shuffleState
-        playbackManager.restorePreviousState(userSettingController.lastMusicId, userSettingController.queueIdentifyMediaId)
-
-        if (queueManager.currentMusic?.description != null) {
-            val musicId = MediaIDHelper.extractMusicIDFromMediaID(queueManager.currentMusic!!.description.mediaId!!)
-            val mediaMetadataCompat = musicProvider.getMusicByMusicId(musicId)
-            if (mediaMetadataCompat != null) {
-                sessionManager.setMetadata(mediaMetadataCompat)
-            }
-            val state = PlaybackStateCompat.Builder()
-                    .setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_SKIP_TO_NEXT or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
-                    .setState(PlaybackStateCompat.STATE_PAUSED, 0, 1.0f)
-                    .build()
-            sessionManager.setPlaybackState(state)
-        }
+        queueManager.restorePreviousState(userSettingController.lastMusicId, userSettingController.queueIdentifyMediaId)
+        playbackManager.updatePlaybackState(null)
     }
 
     fun stop() {

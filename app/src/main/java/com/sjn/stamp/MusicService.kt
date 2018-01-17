@@ -53,7 +53,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
             }
             MediaControllerObserver.getInstance().notifyConnected()
             Thread(Runnable {
-                mPlayer?.restorePreviousState(mMusicProvider)
+                mPlayer?.restorePreviousState()
                 try {
                     mNotificationManager = NotificationManager(this@MusicService)
                 } catch (e: RemoteException) {

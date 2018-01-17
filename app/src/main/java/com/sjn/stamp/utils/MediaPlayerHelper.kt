@@ -34,8 +34,8 @@ object MediaPlayerHelper {
         private var currentPosition: Int = initialStreamPosition
         private var mediaPlayer: MediaPlayer? = null
 
-        var state: Int = 0
-        val isPlaying: Boolean get() = audioManager.playOnFocusGain || (mediaPlayer != null && mediaPlayer?.isPlaying ?: false)
+        var state: Int = PlaybackStateCompat.STATE_STOPPED
+        val isPlaying: Boolean get() = audioManager.playOnFocusGain || (mediaPlayer?.isPlaying ?: false)
         val currentStreamPosition: Int get() = mediaPlayer?.currentPosition ?: currentPosition
 
         fun play(item: MediaSessionCompat.QueueItem) {
