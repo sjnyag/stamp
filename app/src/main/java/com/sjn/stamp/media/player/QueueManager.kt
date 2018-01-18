@@ -89,17 +89,7 @@ class QueueManager(private val mContext: Context,
     }
 
     fun restorePreviousState(lastMusicId: String?, queueIdentifyMediaId: String) {
-        setQueueFromMusic(queueIdentifyMediaId)
-        if (lastMusicId != null && !lastMusicId.isEmpty() && mOrderedQueue != null) {
-            for (i in mOrderedQueue!!.indices) {
-                if (lastMusicId == MediaIDHelper.extractMusicIDFromMediaID(mOrderedQueue!![i].description.mediaId!!)) {
-                    mCurrentIndex = i
-                    break
-                }
-            }
-        }
-        setCurrentQueueIndex(mCurrentIndex)
-        updateMetadata()
+        setQueueFromMusic(queueIdentifyMediaId, lastMusicId)
         onShuffleStateChanged(CustomController.shuffleState)
     }
 
@@ -132,7 +122,7 @@ class QueueManager(private val mContext: Context,
 
     private fun setCurrentQueueItem(mediaId: String): Boolean {
         // set the current index on queue from the music Id:
-        val index = QueueHelper.getMusicIndexOnQueue(playingQueue, mediaId)
+        val index = QueueHelper.getMusicIndexOnQueueByMediaId(playingQueue, mediaId)
         if (setCurrentQueueIndex(index)) {
             mListener.onCurrentQueueIndexUpdated(mCurrentIndex)
         }
@@ -174,7 +164,7 @@ class QueueManager(private val mContext: Context,
         updateMetadata()
     }
 
-    fun setQueueFromMusic(mediaId: String) {
+    fun setQueueFromMusic(mediaId: String, startMusicId: String? = null) {
         LogHelper.d(TAG, "setQueueFromMusic ", mediaId)
 
         // The mediaId used here is not the unique musicId. This one comes from the
@@ -190,21 +180,24 @@ class QueueManager(private val mContext: Context,
             val queueTitle = mResources.getString(R.string.browse_musics_by_genre_subtitle,
                     MediaIDHelper.extractBrowseCategoryValueFromMediaID(mediaId))
             setCurrentQueue(queueTitle,
-                    QueueHelper.getPlayingQueue(mediaId, mMusicProvider), mediaId)
+                    QueueHelper.getPlayingQueue(mediaId, mMusicProvider), mediaId, startMusicId)
         }
         updateMetadata()
     }
 
     @JvmOverloads
     fun setCurrentQueue(title: String, newQueue: List<MediaSessionCompat.QueueItem>?,
-                        initialMediaId: String? = null) {
+                        initialMediaId: String? = null, startMusicId: String? = null) {
         mOrderedQueue = newQueue
         if (CustomController.shuffleState === ShuffleState.SHUFFLE) {
             updateShuffleQueue()
         }
-        var index = 0
-        if (initialMediaId != null) {
-            index = QueueHelper.getMusicIndexOnQueue(playingQueue, initialMediaId)
+        var index = -1
+        if (startMusicId != null) {
+            index = QueueHelper.getMusicIndexOnQueueByMusicId(playingQueue, startMusicId)
+        }
+        if (index == -1 && initialMediaId != null) {
+            index = QueueHelper.getMusicIndexOnQueueByMediaId(playingQueue, initialMediaId)
         }
         if (initialMediaId != null
                 && !initialMediaId.startsWith(MediaIDHelper.MEDIA_ID_MUSICS_BY_QUEUE)
@@ -220,9 +213,11 @@ class QueueManager(private val mContext: Context,
     //TODO:
     fun updateMetadata() {
         LogHelper.d(TAG, "updateMetadata")
-        val currentMusic = currentMusic ?: return
+        if (currentMusic == null) {
+            return
+        }
         val musicId = MediaIDHelper.extractMusicIDFromMediaID(
-                currentMusic.description.mediaId!!)
+                currentMusic!!.description.mediaId!!)
         val metadata = mMusicProvider.getMusicByMusicId(musicId) ?: return
 
         mListener.onMetadataChanged(metadata)
@@ -237,8 +232,7 @@ class QueueManager(private val mContext: Context,
                     mMusicProvider.updateMusicArt(musicId, bitmap, icon)
 
                     // If we are still playing the same music, notify the listeners:
-                    val currentPlayingId = MediaIDHelper.extractMusicIDFromMediaID(
-                            currentMusic.description.mediaId!!)
+                    val currentPlayingId = MediaIDHelper.extractMusicIDFromMediaID(currentMusic?.description?.mediaId!!)
                     if (musicId == currentPlayingId) {
                         mListener.onMetadataChanged(mMusicProvider.getMusicByMusicId(currentPlayingId))
                     }
@@ -250,8 +244,7 @@ class QueueManager(private val mContext: Context,
                     mMusicProvider.updateMusicArt(musicId, bitmap, icon)
 
                     // If we are still playing the same music, notify the listeners:
-                    val currentPlayingId = MediaIDHelper.extractMusicIDFromMediaID(
-                            currentMusic.description.mediaId!!)
+                    val currentPlayingId = MediaIDHelper.extractMusicIDFromMediaID(currentMusic?.description?.mediaId!!)
                     if (musicId == currentPlayingId) {
                         mListener.onMetadataChanged(mMusicProvider.getMusicByMusicId(currentPlayingId))
                     }

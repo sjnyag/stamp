@@ -84,7 +84,7 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
                 mReceiver?.let {
                     mService.registerReceiver(it, NotificationAction.createIntentFilter())
                 }
-                it.create(mMetadata!!, mPlaybackState!!)
+                it.create(mMetadata, mPlaybackState)
                 it.start()
                 startForeground()
                 mStarted = true
@@ -149,7 +149,7 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
                 return
             } else {
                 mNotificationContainer?.let {
-                    it.create(mMetadata!!, mPlaybackState!!)
+                    it.create(mMetadata, mPlaybackState)
                     it.start()
                 }
             }
@@ -164,7 +164,7 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
             return
         } else {
             mNotificationContainer?.let {
-                it.create(mMetadata!!, mPlaybackState!!)
+                it.create(mMetadata, mPlaybackState)
                 it.start()
             }
         }

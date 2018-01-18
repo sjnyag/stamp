@@ -88,7 +88,7 @@ class NotificationContainer(
         notificationManager.cancelAll()
     }
 
-    fun create(metadata: MediaMetadataCompat, playbackState: PlaybackStateCompat) {
+    fun create(metadata: MediaMetadataCompat?, playbackState: PlaybackStateCompat?) {
         LogHelper.d(TAG, "updateNotificationMetadata. metadata=" + metadata)
 
         val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
@@ -108,7 +108,9 @@ class NotificationContainer(
                     //}
                 }
                 .apply {
-                    addPlayPauseAction(playbackState)
+                    playbackState?.let{
+                        addPlayPauseAction(it)
+                    }
                     actions.add(actions.size)
                 }
                 .apply {
@@ -126,16 +128,20 @@ class NotificationContainer(
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setUsesChronometer(true)
                 .setDeleteIntent(NotificationAction.killIntent(context))
-                .setContentIntent(NotificationAction.contentIntent(context, metadata.description))
-                .setContentTitle(metadata.description.title)
-                .setContentText(metadata.description.subtitle)
+                .setContentIntent(NotificationAction.contentIntent(context, metadata?.description))
+                .setContentTitle(metadata?.description?.title)
+                .setContentText(metadata?.description?.subtitle)
                 .apply {
                     addCastAction()
                 }
                 .apply {
-                    setNotificationPlaybackState(playbackState)
+                    playbackState?.let{
+                        setNotificationPlaybackState(it)
+                    }
                 }
-        fetchBitmapFromURLAsync(notificationBuilder, metadata)
+        metadata?.let{
+            fetchBitmapFromURLAsync(notificationBuilder, it)
+        }
         notification = notificationBuilder.build()
     }
 

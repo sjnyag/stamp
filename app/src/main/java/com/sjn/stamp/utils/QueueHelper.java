@@ -17,27 +17,21 @@
 package com.sjn.stamp.utils;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
 
 import com.sjn.stamp.media.provider.MusicProvider;
-import com.sjn.stamp.ui.item.RankedArtistItem;
-import com.sjn.stamp.ui.item.RankedSongItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 
 import static com.sjn.stamp.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_SEARCH;
 
@@ -52,7 +46,7 @@ public class QueueHelper {
 
     public static class QueueList extends ArrayList<MediaSessionCompat.QueueItem> implements Parcelable {
 
-        QueueList(){
+        QueueList() {
             super();
         }
 
@@ -181,8 +175,23 @@ public class QueueHelper {
     }
 
 
-    public static int getMusicIndexOnQueue(Iterable<MediaSessionCompat.QueueItem> queue,
-                                           String mediaId) {
+    public static int getMusicIndexOnQueueByMusicId(Iterable<MediaSessionCompat.QueueItem> queue,
+                                                    String musicId) {
+        int index = 0;
+        if (queue == null) {
+            return -1;
+        }
+        for (MediaSessionCompat.QueueItem item : queue) {
+            if (musicId.equals(MediaIDHelper.extractMusicIDFromMediaID(item.getDescription().getMediaId()))) {
+                return index;
+            }
+            index++;
+        }
+        return -1;
+    }
+
+    public static int getMusicIndexOnQueueByMediaId(Iterable<MediaSessionCompat.QueueItem> queue,
+                                                    String mediaId) {
         int index = 0;
         if (queue == null) {
             return -1;
