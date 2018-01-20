@@ -182,7 +182,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
                 .setHandleDragEnabled(false)
                 .setSwipeEnabled(true)
                 .setUnlinkAllItemsOnRemoveHeaders(false)
-                .setDisplayHeadersAtStartUp(false)
+                .setDisplayHeadersAtStartUp(true)
                 .setStickyHeaders(true)
                 .showAllHeaders();
         mAdapter.addUserLearnedSelection(savedInstanceState == null);

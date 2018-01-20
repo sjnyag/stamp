@@ -31,8 +31,8 @@ class NotificationContainer(
 ) {
     companion object {
         private val TAG = LogHelper.makeLogTag(Notification::class.java)
-        val NOTIFICATION_ID = 412
-        val CHANNEL_ID = "stamp_channel_01"
+        const val NOTIFICATION_ID = 412
+        const val CHANNEL_ID = "stamp_channel_01"
 
         private class SetNotificationBitmapAsyncTask(
                 internal val contentResolver: ContentResolver,

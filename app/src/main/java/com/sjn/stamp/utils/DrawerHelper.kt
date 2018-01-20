@@ -187,7 +187,7 @@ object DrawerHelper {
 
     private fun createDefaultHeader(metadata: MediaMetadataCompat, accountHeader: AccountHeader) {
         val profileDrawerItem = createProfileItem(metadata)
-        profileDrawerItem.withIcon(R.mipmap.ic_launcher)
+        profileDrawerItem.withIcon(ViewHelper.toBitmap(ViewHelper.createTextDrawable(metadata.description.title)))
         accountHeader.clear()
         accountHeader.addProfiles(profileDrawerItem)
     }
