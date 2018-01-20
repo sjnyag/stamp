@@ -23,14 +23,15 @@ class SongHistoryController(private val mContext: Context) {
         get() {
             return RealmHelper.getRealmInstance().use { realm ->
                 val songList = ArrayList<MediaMetadataCompat>()
-                TotalSongHistoryDao.findPlayed(realm)
-                        // FIXME
-                        .takeWhile { !(it.playCount == 0 || songList.size >= UserSettingController().mostPlayedSongSize) }
-                        .forEach {
-                            if (it.song != null && it.song.isNotEmpty()) {
-                                songList.add(MediaItemHelper.convertToMetadata(it.song.first()))
-                            }
-                        }
+                val list = TotalSongHistoryDao.findPlayed(realm)
+                for (songHistory in list) {
+                    if (songHistory.playCount == 0 || songList.size >= UserSettingController().mostPlayedSongSize) {
+                        break
+                    }
+                    if (songHistory.song != null && songHistory.song.isNotEmpty()) {
+                        songList.add(MediaItemHelper.convertToMetadata(songHistory.song.first()))
+                    }
+                }
                 songList
             }
         }
