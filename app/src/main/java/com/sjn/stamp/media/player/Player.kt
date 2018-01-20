@@ -8,7 +8,6 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.sjn.stamp.R
 import com.sjn.stamp.controller.UserSettingController
-import com.sjn.stamp.media.CustomController
 import com.sjn.stamp.media.playback.Playback
 import com.sjn.stamp.media.provider.MusicProvider
 import com.sjn.stamp.utils.MediaControllerHelper
@@ -22,17 +21,13 @@ class Player(private val context: Context, callback: PlaybackManager.PlaybackSer
     private val sessionManager: StampSession
 
     init {
-        queueManager = QueueManager(context, musicProvider, context.resources, QueueUpdateListener())
+        queueManager = QueueManager(context, musicProvider, QueueUpdateListener())
         playbackManager = PlaybackManager(context, callback, queueManager, Playback.Type.LOCAL)
         sessionManager = StampSession(context, playbackManager.mediaSessionCallback, this)
     }
 
     fun restorePreviousState() {
-        val userSettingController = UserSettingController()
-        val customController = CustomController
-        customController.repeatState = userSettingController.repeatState
-        customController.shuffleState = userSettingController.shuffleState
-        queueManager.restorePreviousState(userSettingController.lastMusicId, userSettingController.queueIdentifyMediaId)
+        queueManager.restorePreviousState(UserSettingController().lastMusicId, UserSettingController().queueIdentifyMediaId)
         playbackManager.updatePlaybackState(null)
     }
 

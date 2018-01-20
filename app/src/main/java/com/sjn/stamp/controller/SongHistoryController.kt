@@ -24,6 +24,7 @@ class SongHistoryController(private val mContext: Context) {
             return RealmHelper.getRealmInstance().use { realm ->
                 val songList = ArrayList<MediaMetadataCompat>()
                 TotalSongHistoryDao.findPlayed(realm)
+                        // FIXME
                         .takeWhile { !(it.playCount == 0 || songList.size >= UserSettingController().mostPlayedSongSize) }
                         .forEach {
                             if (it.song != null && it.song.isNotEmpty()) {

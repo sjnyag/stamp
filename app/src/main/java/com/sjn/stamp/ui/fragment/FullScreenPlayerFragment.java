@@ -37,10 +37,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.sjn.stamp.R;
+import com.sjn.stamp.media.CustomController;
 import com.sjn.stamp.media.player.StampSession;
 import com.sjn.stamp.model.constant.RepeatState;
 import com.sjn.stamp.model.constant.ShuffleState;
-import com.sjn.stamp.media.CustomController;
 import com.sjn.stamp.ui.activity.MusicPlayerListActivity;
 import com.sjn.stamp.ui.observer.MediaControllerObserver;
 import com.sjn.stamp.utils.LogHelper;
@@ -75,7 +75,6 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
     private TextView mLine2;
     private TextView mLine3;
     private ProgressBar mLoading;
-    private View mControllers;
     private Drawable mPauseDrawable;
     private Drawable mPlayDrawable;
     private Drawable mNoRepeatDrawable;
@@ -126,7 +125,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
         LogHelper.i(TAG, "onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_full_player, container, false);
 
-        mBackgroundImage = (ImageView) rootView.findViewById(R.id.background_image);
+        mBackgroundImage = rootView.findViewById(R.id.background_image);
         mPauseDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.stamp_ic_pause_white_48dp);
         mPlayDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.stamp_ic_play_arrow_white_48dp);
         mRepeatOneDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_repeat_one_white_48dp);
@@ -136,19 +135,18 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
         mNoShuffleDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_shuffle_white_48dp);
         mNoRepeatDrawable.setAlpha(50);
         mNoShuffleDrawable.setAlpha(50);
-        mPlayPause = (ImageView) rootView.findViewById(R.id.play_pause);
-        mSkipNext = (ImageView) rootView.findViewById(R.id.next);
-        mSkipPrev = (ImageView) rootView.findViewById(R.id.prev);
-        mRepeat = (ImageView) rootView.findViewById(R.id.repeat);
-        mShuffle = (ImageView) rootView.findViewById(R.id.shuffle);
-        mStart = (TextView) rootView.findViewById(R.id.startText);
-        mEnd = (TextView) rootView.findViewById(R.id.endText);
-        mSeekbar = (SeekBar) rootView.findViewById(R.id.seekBar1);
-        mLine1 = (TextView) rootView.findViewById(R.id.line1);
-        mLine2 = (TextView) rootView.findViewById(R.id.line2);
-        mLine3 = (TextView) rootView.findViewById(R.id.line3);
-        mLoading = (ProgressBar) rootView.findViewById(R.id.progressBar1);
-        mControllers = rootView.findViewById(R.id.controllers);
+        mPlayPause = rootView.findViewById(R.id.play_pause);
+        mSkipNext = rootView.findViewById(R.id.next);
+        mSkipPrev = rootView.findViewById(R.id.prev);
+        mRepeat = rootView.findViewById(R.id.repeat);
+        mShuffle = rootView.findViewById(R.id.shuffle);
+        mStart = rootView.findViewById(R.id.startText);
+        mEnd = rootView.findViewById(R.id.endText);
+        mSeekbar = rootView.findViewById(R.id.seekBar1);
+        mLine1 = rootView.findViewById(R.id.line1);
+        mLine2 = rootView.findViewById(R.id.line2);
+        mLine3 = rootView.findViewById(R.id.line3);
+        mLoading = rootView.findViewById(R.id.progressBar1);
 
         mSkipNext.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -407,11 +405,9 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
                 mLoading.setVisibility(INVISIBLE);
                 mPlayPause.setVisibility(VISIBLE);
                 mPlayPause.setImageDrawable(mPauseDrawable);
-                mControllers.setVisibility(VISIBLE);
                 scheduleSeekbarUpdate();
                 break;
             case PlaybackStateCompat.STATE_PAUSED:
-                mControllers.setVisibility(VISIBLE);
                 mLoading.setVisibility(INVISIBLE);
                 mPlayPause.setVisibility(VISIBLE);
                 mPlayPause.setImageDrawable(mPlayDrawable);

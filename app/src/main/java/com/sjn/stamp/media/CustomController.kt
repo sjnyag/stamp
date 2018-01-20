@@ -10,8 +10,8 @@ object CustomController {
     private val shuffleStateListenerSet = ArrayList<ShuffleStateListener>()
     private val repeatStateListenerSet = ArrayList<RepeatStateListener>()
 
-    var shuffleState: ShuffleState = ShuffleState.getDefault()
-        set(state) {
+    var shuffleState: ShuffleState = UserSettingController().shuffleState
+        private set(state) {
             field = state
             for (shuffleStateListener in shuffleStateListenerSet) {
                 shuffleStateListener.onShuffleStateChanged(state)
@@ -20,9 +20,8 @@ object CustomController {
             userSettingController.shuffleState = state
         }
 
-
-    var repeatState: RepeatState = RepeatState.getDefault()
-        set(state) {
+    var repeatState: RepeatState = UserSettingController().repeatState
+        private set(state) {
             field = state
             for (repeatStateListener in repeatStateListenerSet) {
                 repeatStateListener.onRepeatStateChanged(state)

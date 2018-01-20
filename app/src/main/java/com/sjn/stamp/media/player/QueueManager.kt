@@ -17,7 +17,6 @@
 package com.sjn.stamp.media.player
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -42,7 +41,6 @@ import java.util.*
  */
 class QueueManager(private val mContext: Context,
                    private val mMusicProvider: MusicProvider,
-                   private val mResources: Resources,
                    private val mListener: MetadataUpdateListener) : QueueProvider.QueueListener, CustomController.ShuffleStateListener {
 
     // "Now playing" queue:
@@ -62,14 +60,12 @@ class QueueManager(private val mContext: Context,
             null
         } else playingQueue!![mCurrentIndex]
 
-    val currentQueueSize: Int
-        get() = if (playingQueue == null) {
-            0
-        } else playingQueue!!.size
-
     override fun onShuffleStateChanged(state: ShuffleState) {
         if (state === ShuffleState.SHUFFLE) {
             updateShuffleQueue()
+        } else {
+            //TODO Bug will occur when Callback called but ShuffleState won't change
+            setCurrentQueueIndex(Math.max(QueueHelper.getMusicIndexOnQueueByMediaId(playingQueue, mShuffledQueue!![mCurrentIndex].description.mediaId), 0))
         }
     }
 
@@ -90,7 +86,6 @@ class QueueManager(private val mContext: Context,
 
     fun restorePreviousState(lastMusicId: String?, queueIdentifyMediaId: String) {
         setQueueFromMusic(queueIdentifyMediaId, lastMusicId)
-        onShuffleStateChanged(CustomController.shuffleState)
     }
 
     private fun isSameBrowsingCategory(mediaId: String): Boolean {
@@ -153,13 +148,13 @@ class QueueManager(private val mContext: Context,
 
     fun setQueueFromSearch(query: String, extras: Bundle): Boolean {
         val queue = QueueHelper.getPlayingQueueFromSearch(query, extras, mMusicProvider)
-        setCurrentQueue(mResources.getString(R.string.search_queue_title), queue)
+        setCurrentQueue(mContext.getString(R.string.search_queue_title), queue)
         updateMetadata()
         return queue != null && !queue.isEmpty()
     }
 
     fun setRandomQueue() {
-        setCurrentQueue(mResources.getString(R.string.random_queue_title),
+        setCurrentQueue(mContext.getString(R.string.random_queue_title),
                 QueueHelper.getRandomQueue(mMusicProvider))
         updateMetadata()
     }
@@ -177,7 +172,7 @@ class QueueManager(private val mContext: Context,
             canReuseQueue = setCurrentQueueItem(mediaId)
         }
         if (!canReuseQueue) {
-            val queueTitle = mResources.getString(R.string.browse_musics_by_genre_subtitle,
+            val queueTitle = mContext.getString(R.string.browse_musics_by_genre_subtitle,
                     MediaIDHelper.extractBrowseCategoryValueFromMediaID(mediaId))
             setCurrentQueue(queueTitle,
                     QueueHelper.getPlayingQueue(mediaId, mMusicProvider), mediaId, startMusicId)
@@ -185,7 +180,6 @@ class QueueManager(private val mContext: Context,
         updateMetadata()
     }
 
-    @JvmOverloads
     fun setCurrentQueue(title: String, newQueue: List<MediaSessionCompat.QueueItem>?,
                         initialMediaId: String? = null, startMusicId: String? = null) {
         mOrderedQueue = newQueue
