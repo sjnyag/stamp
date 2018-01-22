@@ -5,7 +5,6 @@ import android.net.Uri
 import android.net.wifi.WifiManager
 import android.support.v4.media.session.MediaSessionCompat
 import fi.iki.elonen.NanoHTTPD
-import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.InetSocketAddress
@@ -15,7 +14,7 @@ object LocalCastHelper {
     private val TAG = LogHelper.makeLogTag(LocalCastHelper::class.java)
 
     class HttpServer @Throws(IOException::class)
-    internal constructor(internal val context: Context, internal val wifiAddress: String, internal val port: Int) : NanoHTTPD(port) {
+    internal constructor(internal val context: Context, wifiAddress: String, port: Int) : NanoHTTPD(port) {
         internal var media: MediaSessionCompat.QueueItem? = null
 
         val url = "http://$wifiAddress:$port"
@@ -34,7 +33,7 @@ object LocalCastHelper {
         private fun serveMusic(): NanoHTTPD.Response = NanoHTTPD.Response(
                 Response.Status.OK, "audio/mp3",
                 try {
-                    FileInputStream(media!!.description.mediaUri!!.toString())
+                    context.contentResolver.openInputStream(Uri.parse(media?.description?.mediaUri?.toString()))
                 } catch (e: FileNotFoundException) {
                     e.printStackTrace()
                     null

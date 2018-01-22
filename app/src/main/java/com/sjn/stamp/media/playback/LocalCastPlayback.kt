@@ -29,8 +29,9 @@ class LocalCastPlayback(context: Context, callback: Playback.Callback, initialSt
     private var httpServer: LocalCastHelper.HttpServer? = null
 
     override fun playItem(item: MediaSessionCompat.QueueItem) {
-        if (httpServer == null || !httpServer!!.isAlive) {
+        if (httpServer?.isAlive != true) {
             httpServer = LocalCastHelper.startSever(context)
+
         }
         httpServer?.let {
             it.media = item
