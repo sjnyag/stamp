@@ -57,14 +57,14 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_playback_controls, container, false);
 
-        mPlayPause = (ImageButton) rootView.findViewById(R.id.play_pause);
+        mPlayPause = rootView.findViewById(R.id.play_pause);
         mPlayPause.setEnabled(true);
         mPlayPause.setOnClickListener(mButtonListener);
 
-        mTitle = (TextView) rootView.findViewById(R.id.title);
-        mSubtitle = (TextView) rootView.findViewById(R.id.artist);
-        mExtraInfo = (TextView) rootView.findViewById(R.id.extra_info);
-        mAlbumArt = (ImageView) rootView.findViewById(R.id.album_art);
+        mTitle = rootView.findViewById(R.id.title);
+        mSubtitle = rootView.findViewById(R.id.artist);
+        mExtraInfo = rootView.findViewById(R.id.extra_info);
+        mAlbumArt = rootView.findViewById(R.id.album_art);
         return rootView;
     }
 
