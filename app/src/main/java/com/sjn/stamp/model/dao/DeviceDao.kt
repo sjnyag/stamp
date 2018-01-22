@@ -13,12 +13,20 @@ object DeviceDao : BaseDao<Device>() {
     fun findOrCreate(realm: Realm, model: String, os: String): Device {
         var device: Device? = realm.where(Device::class.java).equalTo("model", model).equalTo("os", os).findFirst()
         if (device == null) {
-            realm.beginTransaction()
-            device = realm.createObject(Device::class.java, CategoryStampDao.getAutoIncrementId(realm))
-            device.model = model
-            device.os = os
-            realm.commitTransaction()
-            return device
+            return if (realm.isInTransaction) {
+                realm.createObject(Device::class.java, CategoryStampDao.getAutoIncrementId(realm)).apply {
+                    this.model = model
+                    this.os = os
+                }
+            } else {
+                realm.beginTransaction()
+                device = realm.createObject(Device::class.java, CategoryStampDao.getAutoIncrementId(realm)).apply {
+                    this.model = model
+                    this.os = os
+                }
+                realm.commitTransaction()
+                device
+            }
         }
         return device
     }

@@ -14,10 +14,10 @@ import android.text.TextUtils;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.common.images.WebImage;
-import com.sjn.stamp.model.constant.CategoryType;
 import com.sjn.stamp.model.Song;
 import com.sjn.stamp.model.SongStamp;
 import com.sjn.stamp.model.TotalSongHistory;
+import com.sjn.stamp.model.constant.CategoryType;
 import com.sjn.stamp.model.dao.ArtistDao;
 
 import org.jetbrains.annotations.NotNull;
@@ -63,6 +63,9 @@ public class MediaItemHelper {
     }
 
     public static MediaMetadataCompat updateMusicArt(MediaMetadataCompat metadata, Bitmap albumArt, Bitmap icon) {
+        if (metadata == null) {
+            return null;
+        }
         return new MediaMetadataCompat.Builder(metadata)
                 // set high resolution bitmap in METADATA_KEY_ALBUM_ART. This is used, for
                 // example, on the lockscreen background when the media session is active.
@@ -125,10 +128,10 @@ public class MediaItemHelper {
 
     @NotNull
     public static String fetch(MediaMetadataCompat mediaMetadata, CategoryType categoryType) {
-        if(categoryType == null){
+        if (categoryType == null) {
             return null;
         }
-        switch (categoryType){
+        switch (categoryType) {
             case ALBUM:
                 return getAlbum(mediaMetadata);
             case ARTIST:

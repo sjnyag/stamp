@@ -121,7 +121,7 @@ class QueueManager(private val mContext: Context,
         if (index < 0) {
             // skip backwards before the first song will keep you on the first song
             index = 0
-        } else if (CustomController.repeatState === RepeatState.ALL) {
+        } else if (CustomController.repeatState === RepeatState.ALL && playingQueue.isNotEmpty()) {
             // skip forwards when in last song will cycle back to start of the queue
             index %= playingQueue.size
         }

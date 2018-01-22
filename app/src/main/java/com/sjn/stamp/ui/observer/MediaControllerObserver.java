@@ -58,7 +58,8 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
     public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
         LogHelper.i(TAG, "onPlaybackStateChanged ", mListenerList.size());
         if (mListenerList != null) {
-            for (Listener listener : mListenerList) {
+            List<Listener> tempList = new ArrayList<>(mListenerList);
+            for (Listener listener : tempList) {
                 listener.onPlaybackStateChanged(state);
             }
         }
@@ -68,7 +69,8 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
     public void onMetadataChanged(MediaMetadataCompat metadata) {
         LogHelper.i(TAG, "onMetadataChanged ", mListenerList.size());
         if (mListenerList != null) {
-            for (Listener listener : mListenerList) {
+            List<Listener> tempList = new ArrayList<>(mListenerList);
+            for (Listener listener : tempList) {
                 listener.onMetadataChanged(metadata);
             }
         }
@@ -79,7 +81,8 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
         super.onSessionDestroyed();
         LogHelper.i(TAG, "onSessionDestroyed ", mListenerList.size());
         if (mListenerList != null) {
-            for (Listener listener : mListenerList) {
+            List<Listener> tempList = new ArrayList<>(mListenerList);
+            for (Listener listener : tempList) {
                 listener.onSessionDestroyed();
             }
         }
