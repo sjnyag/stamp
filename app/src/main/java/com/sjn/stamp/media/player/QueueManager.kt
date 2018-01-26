@@ -226,7 +226,9 @@ class QueueManager(private val mContext: Context,
                     // If we are still playing the same music, notify the listeners:
                     val currentPlayingId = MediaIDHelper.extractMusicIDFromMediaID(currentMusic?.description?.mediaId!!)
                     if (musicId == currentPlayingId) {
-                        mListener.onMetadataChanged(mMusicProvider.getMusicByMusicId(currentPlayingId))
+                        mMusicProvider.getMusicByMusicId(currentPlayingId)?.let {
+                            mListener.onMetadataChanged(it)
+                        }
                     }
                 }
             }

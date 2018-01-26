@@ -32,47 +32,49 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
         const val CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_QUEUE = "SET_QUEUE_BUNDLE_KEY_QUEUE"
     }
 
-    private lateinit var mMusicProvider: MusicProvider
-    private var mNotificationManager: NotificationManager? = null
-    private var mPlayer: Player? = null
-    private var mMediaController: MediaControllerCompat? = null
+    private lateinit var musicProvider: MusicProvider
+    private var notificationManager: NotificationManager? = null
+    private var player: Player? = null
+    private var mediaController: MediaControllerCompat? = null
 
     override fun onCreate() {
         super.onCreate()
         LogHelper.d(TAG, "onCreate")
-        mMusicProvider = MusicProvider(this, LocalMediaSource(this, MediaRetrieveHelper.PermissionRequiredCallback { }))
-        mMusicProvider.retrieveMediaAsync {
-            LogHelper.d(TAG, "MusicProvider.callBack start")
-            mPlayer = Player(this@MusicService, this@MusicService, mMusicProvider)
-            sessionToken = mPlayer?.sessionToken
-            sessionToken?.let {
-                mMediaController = MediaControllerCompat(this@MusicService, it)
-                mMediaController?.let {
-                    MediaControllerObserver.register(it)
+        musicProvider = MusicProvider(this, LocalMediaSource(this, MediaRetrieveHelper.PermissionRequiredCallback { }))
+        musicProvider.retrieveMediaAsync(object : MusicProvider.Callback {
+            override fun onMusicCatalogReady(success: Boolean) {
+                LogHelper.d(TAG, "MusicProvider.callBack start")
+                player = Player(this@MusicService, this@MusicService, musicProvider)
+                sessionToken = player?.sessionToken
+                sessionToken?.let {
+                    mediaController = MediaControllerCompat(this@MusicService, it)
+                    mediaController?.let {
+                        MediaControllerObserver.register(it)
+                    }
                 }
+                MediaControllerObserver.getInstance().notifyConnected()
+                Thread(Runnable {
+                    player?.restorePreviousState()
+                    try {
+                        notificationManager = NotificationManager(this@MusicService)
+                    } catch (e: RemoteException) {
+                        throw IllegalStateException("Could not create a NotificationManager", e)
+                    }
+                    LogHelper.d(TAG, "MusicProvider.callBack end")
+                }).start()
             }
-            MediaControllerObserver.getInstance().notifyConnected()
-            Thread(Runnable {
-                mPlayer?.restorePreviousState()
-                try {
-                    mNotificationManager = NotificationManager(this@MusicService)
-                } catch (e: RemoteException) {
-                    throw IllegalStateException("Could not create a NotificationManager", e)
-                }
-                LogHelper.d(TAG, "MusicProvider.callBack end")
-            }).start()
-        }
+        })
     }
 
     override fun onStartCommand(startIntent: Intent?, flags: Int, startId: Int): Int {
         LogHelper.d(TAG, "onStartCommand")
-        if (startIntent != null) {
-            val action = startIntent.action
-            val command = startIntent.getStringExtra(CMD_NAME)
+        startIntent?.let{
+            val action = it.action
+            val command = it.getStringExtra(CMD_NAME)
             if (ACTION_CMD == action) {
                 handleActionCommand(command)
             } else {
-                mPlayer?.handleIntent(startIntent)
+                player?.handleIntent(it)
             }
         }
         return Service.START_NOT_STICKY
@@ -80,11 +82,11 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
 
     override fun onDestroy() {
         LogHelper.d(TAG, "onDestroy")
-        mPlayer?.stop()
-        mMediaController?.let {
+        player?.stop()
+        mediaController?.let {
             MediaControllerObserver.unregister(it)
         }
-        mNotificationManager?.stopNotification()
+        notificationManager?.stopNotification()
     }
 
     /**
@@ -96,13 +98,13 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
         when (action) {
             CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER -> {
                 result.detach()
-                mMusicProvider.cacheAndNotifyLatestMusicMap()
+                musicProvider.cacheAndNotifyLatestMusicMap()
                 return
             }
             CUSTOM_ACTION_SET_QUEUE -> {
                 result.detach()
                 extras?.let {
-                    mPlayer?.startNewQueue(extras.getString(CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_TITLE), extras.getString(CUSTOM_ACTION_SET_QUEUE_BUNDLE_MEDIA_ID), extras.getParcelableArrayList(CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_QUEUE))
+                    player?.startNewQueue(extras.getString(CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_TITLE), extras.getString(CUSTOM_ACTION_SET_QUEUE_BUNDLE_MEDIA_ID), extras.getParcelableArrayList(CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_QUEUE))
                 }
                 return
             }
@@ -114,8 +116,8 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
                           result: MediaBrowserServiceCompat.Result<List<MediaBrowserCompat.MediaItem>>) {
         LogHelper.d(TAG, "onSearch " + query)
         result.detach()
-        if (mMusicProvider.isInitialized) {
-            Thread(Runnable { result.sendResult(mMusicProvider.getChildren(query, resources)) }).start()
+        if (musicProvider.isInitialized) {
+            Thread(Runnable { result.sendResult(musicProvider.getChildren(query, resources)) }).start()
         }
     }
 
@@ -132,8 +134,8 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
             result.sendResult(ArrayList())
         } else {
             result.detach()
-            if (mMusicProvider.isInitialized) {
-                Thread(Runnable { result.sendResult(mMusicProvider.getChildren(parentMediaId, resources)) }).start()
+            if (musicProvider.isInitialized) {
+                Thread(Runnable { result.sendResult(musicProvider.getChildren(parentMediaId, resources)) }).start()
             }
         }
     }
@@ -143,36 +145,36 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
      */
     override fun onPlaybackStart() {
         LogHelper.d(TAG, "onPlaybackStart")
-        mPlayer?.setActive(true)
+        player?.setActive(true)
         // The service needs to continue running even after the bound client (usually a
         // MediaController) disconnects, otherwise the music playback will stop.
         // Calling startService(Intent) will keep the service running until it is explicitly killed.
         startService(Intent(applicationContext, MusicService::class.java))
-        mNotificationManager?.startForeground()
+        notificationManager?.startForeground()
     }
 
     override fun onPlaybackStop() {
         LogHelper.d(TAG, "onPlaybackStop")
-        mPlayer?.setActive(false)
-        mNotificationManager?.stopForeground(false)
+        player?.setActive(false)
+        notificationManager?.stopForeground(false)
     }
 
     override fun onPlaybackStateUpdated(newState: PlaybackStateCompat) {
         LogHelper.d(TAG, "onPlaybackStateUpdated ", newState)
-        mPlayer?.setPlaybackState(newState)
+        player?.setPlaybackState(newState)
     }
 
     override fun onNotificationRequired() {
         LogHelper.d(TAG, "onNotificationRequired")
-        mNotificationManager?.startNotification()
+        notificationManager?.startNotification()
     }
 
     private fun handleActionCommand(command: String) {
         LogHelper.d(TAG, "handleActionCommand ", command)
         when (command) {
-            CMD_PAUSE -> mPlayer?.pause()
-            CMD_STOP_CASTING -> mPlayer?.stopCasting()
-            CMD_KILL -> if (mPlayer != null) stopSelf()
+            CMD_PAUSE -> player?.pause()
+            CMD_STOP_CASTING -> player?.stopCasting()
+            CMD_KILL -> player?.let { stopSelf() }
         }
     }
 

@@ -36,16 +36,16 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
         private val TAG = LogHelper.makeLogTag(NotificationManager::class.java)
     }
 
-    private var mSessionToken: MediaSessionCompat.Token? = null
-    private var mController: MediaControllerCompat? = null
+    private var sessionToken: MediaSessionCompat.Token? = null
+    private var controller: MediaControllerCompat? = null
 
-    private var mPlaybackState: PlaybackStateCompat? = null
-    private var mMetadata: MediaMetadataCompat? = null
-    private var mNotificationContainer: NotificationContainer? = null
+    private var playbackState: PlaybackStateCompat? = null
+    private var currentMetadata: MediaMetadataCompat? = null
+    private var notificationContainer: NotificationContainer? = null
 
-    private var mStarted = false
+    private var started = false
 
-    private var mReceiver: NotificationReceiver? = null
+    private var receiver: NotificationReceiver? = null
 
 
     init {
@@ -54,7 +54,7 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
 
     fun startForeground() {
         LogHelper.i(TAG, "startForeground")
-        mNotificationContainer?.notification?.let {
+        notificationContainer?.notification?.let {
             mService.startForeground(NotificationContainer.NOTIFICATION_ID, it)
         }
     }
@@ -71,23 +71,23 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
      */
     fun startNotification() {
         LogHelper.i(TAG, "startNotification")
-        if (!mStarted) {
-            mMetadata = mController!!.metadata
-            mPlaybackState = mController!!.playbackState
-            if (mPlaybackState == null) {
+        if (!started) {
+            currentMetadata = controller!!.metadata
+            playbackState = controller!!.playbackState
+            if (playbackState == null) {
                 stopForeground(true)
                 return
             }
             // The notification must be updated after setting started to true
-            mNotificationContainer?.let {
+            notificationContainer?.let {
                 MediaControllerObserver.getInstance().addListener(this)
-                mReceiver?.let {
+                receiver?.let {
                     mService.registerReceiver(it, NotificationAction.createIntentFilter())
                 }
-                it.create(mMetadata, mPlaybackState)
+                it.create(currentMetadata, playbackState)
                 it.start()
                 startForeground()
-                mStarted = true
+                started = true
             }
         }
     }
@@ -98,12 +98,12 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
      */
     fun stopNotification() {
         LogHelper.i(TAG, "stopNotification")
-        if (mStarted) {
-            mStarted = false
+        if (started) {
+            started = false
             MediaControllerObserver.getInstance().removeListener(this)
             try {
-                mNotificationContainer?.cancel()
-                mReceiver?.let { mService.unregisterReceiver(it) }
+                notificationContainer?.cancel()
+                receiver?.let { mService.unregisterReceiver(it) }
             } catch (ex: IllegalArgumentException) {
                 // ignore if the receiver is not registered.
             }
@@ -120,16 +120,16 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
     private fun updateSessionToken() {
         LogHelper.i(TAG, "updateSessionToken")
         val freshToken = mService.sessionToken
-        if (mSessionToken == null && freshToken != null || mSessionToken != null && mSessionToken != freshToken) {
-            mController?.let {
+        if (sessionToken == null && freshToken != null || sessionToken != null && sessionToken != freshToken) {
+            controller?.let {
                 MediaControllerObserver.getInstance().removeListener(this)
             }
-            mSessionToken = freshToken
-            mSessionToken?.let {
-                mController = MediaControllerCompat(mService, it)
-                mReceiver = NotificationReceiver(mController!!)
-                mNotificationContainer = NotificationContainer(mService, it, mController!!)
-                if (mStarted) {
+            sessionToken = freshToken
+            sessionToken?.let {
+                controller = MediaControllerCompat(mService, it)
+                receiver = NotificationReceiver(controller!!)
+                notificationContainer = NotificationContainer(mService, it, controller!!)
+                if (started) {
                     MediaControllerObserver.getInstance().addListener(this)
                 }
             }
@@ -140,16 +140,16 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
 
     override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
         LogHelper.d(TAG, "Received new playback state", state)
-        mPlaybackState = state
+        playbackState = state
         if (state.state == PlaybackStateCompat.STATE_STOPPED || state.state == PlaybackStateCompat.STATE_NONE) {
             stopNotification()
         } else {
-            if (mPlaybackState == null || !mStarted) {
+            if (playbackState == null || !started) {
                 stopForeground(true)
                 return
             } else {
-                mNotificationContainer?.let {
-                    it.create(mMetadata, mPlaybackState)
+                notificationContainer?.let {
+                    it.create(currentMetadata, playbackState)
                     it.start()
                 }
             }
@@ -158,13 +158,13 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
 
     override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
         LogHelper.d(TAG, "Received new metadata ", metadata)
-        mMetadata = metadata
-        if (mPlaybackState == null || !mStarted) {
+        currentMetadata = metadata
+        if (playbackState == null || !started) {
             stopForeground(true)
             return
         } else {
-            mNotificationContainer?.let {
-                it.create(mMetadata, mPlaybackState)
+            notificationContainer?.let {
+                it.create(currentMetadata, playbackState)
                 it.start()
             }
         }

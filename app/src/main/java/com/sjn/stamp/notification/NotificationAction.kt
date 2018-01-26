@@ -39,7 +39,7 @@ enum class NotificationAction(val action: String) {
     abstract fun exec(context: Context, control: MediaControllerCompat.TransportControls)
 
     companion object {
-        private val REQUEST_CODE = 100
+        private const val REQUEST_CODE = 100
 
         fun of(action: String): NotificationAction? {
             return NotificationAction.values().firstOrNull { it.action == action }

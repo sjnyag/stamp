@@ -14,6 +14,7 @@ import com.squareup.picasso.Picasso
 
 import net.danlew.android.joda.JodaTimeAndroid
 
+@Suppress("unused")
 class StampApplication : MultiDexApplication() {
 
     override fun attachBaseContext(base: Context) {

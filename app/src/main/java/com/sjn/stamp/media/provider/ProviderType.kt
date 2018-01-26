@@ -11,7 +11,7 @@ import com.sjn.stamp.media.provider.single.QueueProvider
 import com.sjn.stamp.media.provider.single.TopSongProvider
 import com.sjn.stamp.utils.MediaIDHelper
 
-enum class ProviderType(internal val mKeyId: String, private val mEmptyMessageResourceId: Int) {
+enum class ProviderType(internal val keyId: String, private val emptyMessageResourceId: Int) {
     ARTIST(MediaIDHelper.MEDIA_ID_MUSICS_BY_ARTIST, R.string.no_items) {
         override fun newProvider(context: Context): ListProvider = ArtistListProvider(context)
 
@@ -83,7 +83,7 @@ enum class ProviderType(internal val mKeyId: String, private val mEmptyMessageRe
 
     abstract val categoryType: CategoryType?
 
-    fun getEmptyMessage(resources: Resources): String = resources.getString(mEmptyMessageResourceId)
+    fun getEmptyMessage(resources: Resources): String = resources.getString(emptyMessageResourceId)
 
     companion object {
 
@@ -91,7 +91,7 @@ enum class ProviderType(internal val mKeyId: String, private val mEmptyMessageRe
             if (value == null) {
                 return null
             }
-            return ProviderType.values().firstOrNull { value.startsWith(it.mKeyId) }
+            return ProviderType.values().firstOrNull { value.startsWith(it.keyId) }
         }
     }
 }

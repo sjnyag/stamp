@@ -77,9 +77,9 @@ class MediaLogger(private val listener: Listener?) {
 
     companion object {
 
-        private val START_WAIT_TIME = 2000L
-        private val START_LIMIT_TIME = 5000L
-        private val PLAY_WAIT_TIME = 20000L
+        private const val START_WAIT_TIME = 2000L
+        private const val START_LIMIT_TIME = 5000L
+        private const val PLAY_WAIT_TIME = 20000L
         private var timerHandler: Handler? = null
 
         private fun isStart(state: Int, position: Int): Boolean {
