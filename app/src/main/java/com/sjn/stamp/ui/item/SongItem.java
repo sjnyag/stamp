@@ -36,7 +36,7 @@ import eu.davidea.flexibleadapter.utils.FlexibleUtils;
 public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements IFilterable, Serializable {
 
     @SuppressWarnings(value = "unused")
-    private static final String TAG = LogHelper.makeLogTag(SongItem.class);
+    private static final String TAG = LogHelper.INSTANCE.makeLogTag(SongItem.class);
 
     public String getMediaId() {
         return mMediaId;
@@ -123,9 +123,9 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
         }
 
         holder.mMediaId = mMediaId;
-        ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, null, mTitle);
+        ViewHelper.INSTANCE.updateAlbumArt((Activity) context, holder.mAlbumArtView, null, mTitle);
         if (mAlbumArt != null && !mAlbumArt.isEmpty()) {
-            ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, mAlbumArt, mTitle);
+            ViewHelper.INSTANCE.updateAlbumArt((Activity) context, holder.mAlbumArtView, mAlbumArt, mTitle);
         } else if (mMediaBrowsable != null) {
             mMediaBrowsable.search(mMediaId, null, new MediaBrowserCompat.SearchCallback() {
                 @Override
@@ -136,7 +136,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
                         }
                         if (query.equals(holder.mMediaId)) {
                             mAlbumArt = metadata.getDescription().getIconUri().toString();
-                            ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, mAlbumArt, mTitle);
+                            ViewHelper.INSTANCE.updateAlbumArt((Activity) context, holder.mAlbumArtView, mAlbumArt, mTitle);
                         }
                         break;
                     }
@@ -189,7 +189,7 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
 
         @Override
         public float getActivationElevation() {
-            return ViewHelper.dpToPx(itemView.getContext(), 4f);
+            return ViewHelper.INSTANCE.dpToPx(itemView.getContext(), 4f);
         }
 
         @Override
@@ -216,9 +216,9 @@ public class SongItem extends AbstractItem<SongItem.SimpleViewHolder> implements
 
         public void update(View view, String mediaId, boolean isPlayable) {
             Integer cachedState = (Integer) view.getTag(R.id.tag_mediaitem_state_cache);
-            int state = SongStateHelper.getMediaItemState(this.mActivity, mediaId, isPlayable);
+            int state = SongStateHelper.INSTANCE.getMediaItemState(this.mActivity, mediaId, isPlayable);
             if (cachedState == null || cachedState != state) {
-                Drawable drawable = SongStateHelper.getDrawableByState(this.mActivity, state);
+                Drawable drawable = SongStateHelper.INSTANCE.getDrawableByState(this.mActivity, state);
                 if (drawable != null) {
                     this.mImageView.setImageDrawable(drawable);
                     this.mImageView.setVisibility(View.VISIBLE);

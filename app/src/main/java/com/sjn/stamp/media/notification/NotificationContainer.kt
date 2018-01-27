@@ -90,59 +90,18 @@ class NotificationContainer(
 
     fun create(metadata: MediaMetadataCompat?, playbackState: PlaybackStateCompat?) {
         LogHelper.d(TAG, "updateNotificationMetadata. metadata=" + metadata)
-
-        val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
-        val actions = arrayListOf<Int>()
-
-        notificationBuilder
+        notification = NotificationCompat.Builder(context, CHANNEL_ID)
                 .apply {
-                    // If skip to previous action is enabled
-                    //if (playbackState.actions and PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS != 0L) {
-                        addPreviousAction()
-
-                        // If there is a "skip to previous" button, the play/pause button will
-                        // be the second one. We need to keep track of it, because the MediaStyle notification
-                        // requires to specify the index of the buttons (actions) that should be visible
-                        // when in compact view.
-                        actions.add(actions.size)
-                    //}
-                }
-                .apply {
-                    playbackState?.let{
-                        addPlayPauseAction(it)
-                    }
-                    actions.add(actions.size)
-                }
-                .apply {
-                    // If skip to next action is enabled
-                    //if (playbackState.actions and PlaybackStateCompat.ACTION_SKIP_TO_NEXT != 0L) {
-                        addNextAction()
-                        actions.add(actions.size)
-                    //}
-                }
-                .setStyle(android.support.v4.media.app.NotificationCompat.MediaStyle()
-                        .setShowActionsInCompactView(*actions.toIntArray())  // show only play/pause in compact view
-                        .setMediaSession(sessionToken))
-                .setColor(notificationColor)
-                .setSmallIcon(R.mipmap.ic_notification)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setUsesChronometer(true)
-                .setDeleteIntent(NotificationAction.killIntent(context))
-                .setContentIntent(NotificationAction.contentIntent(context, metadata?.description))
-                .setContentTitle(metadata?.description?.title)
-                .setContentText(metadata?.description?.subtitle)
-                .apply {
+                    addPreviousAction()
+                    addPlayPauseAction(playbackState)
+                    addNextAction()
+                    setupStyle(metadata)
                     addCastAction()
-                }
-                .apply {
-                    playbackState?.let{
-                        setNotificationPlaybackState(it)
+                    setNotificationPlaybackState(playbackState)
+                    metadata?.let {
+                        fetchBitmapFromURLAsync(this, it)
                     }
-                }
-        metadata?.let{
-            fetchBitmapFromURLAsync(notificationBuilder, it)
-        }
-        notification = notificationBuilder.build()
+                }.build()
     }
 
     fun start() = notification?.let { notificationManager.notify(NOTIFICATION_ID, it) }
@@ -176,6 +135,20 @@ class NotificationContainer(
             addAction(R.drawable.ic_skip_next_white_24dp,
                     context.getString(R.string.label_next), NotificationAction.NEXT.createIntent(context))
 
+    private fun NotificationCompat.Builder.setupStyle(metadata: MediaMetadataCompat?) {
+        setStyle(android.support.v4.media.app.NotificationCompat.MediaStyle()
+                .setShowActionsInCompactView(0, 1, 2)  // show only play/pause in compact view
+                .setMediaSession(sessionToken))
+        color = notificationColor
+        setSmallIcon(R.mipmap.ic_notification)
+        setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+        setUsesChronometer(true)
+        setDeleteIntent(NotificationAction.killIntent(context))
+        setContentIntent(NotificationAction.contentIntent(context, metadata?.description))
+        setContentTitle(metadata?.description?.title)
+        setContentText(metadata?.description?.subtitle)
+    }
+
     private fun NotificationCompat.Builder.addCastAction() =
             controller.extras?.let {
                 it.getString(EXTRA_CONNECTED_CAST)?.let {
@@ -184,11 +157,11 @@ class NotificationContainer(
                 }
             }
 
-    private fun NotificationCompat.Builder.addPlayPauseAction(playbackState: PlaybackStateCompat) {
+    private fun NotificationCompat.Builder.addPlayPauseAction(playbackState: PlaybackStateCompat?) {
         val label: String
         val icon: Int
         val intent: PendingIntent?
-        if (playbackState.state == PlaybackStateCompat.STATE_PLAYING) {
+        if (playbackState?.state == PlaybackStateCompat.STATE_PLAYING) {
             label = context.getString(R.string.label_pause)
             icon = R.drawable.stamp_ic_pause_white_24dp
             intent = NotificationAction.PAUSE.createIntent(context)
@@ -200,9 +173,9 @@ class NotificationContainer(
         addAction(NotificationCompat.Action(icon, label, intent))
     }
 
-    private fun NotificationCompat.Builder.setNotificationPlaybackState(playbackState: PlaybackStateCompat) {
+    private fun NotificationCompat.Builder.setNotificationPlaybackState(playbackState: PlaybackStateCompat?) {
         LogHelper.d(TAG, "updateNotificationPlaybackState. playbackState=" + playbackState)
-        if (playbackState.state == PlaybackStateCompat.STATE_PLAYING && playbackState.position >= 0) {
+        if (playbackState?.state == PlaybackStateCompat.STATE_PLAYING && playbackState.position >= 0) {
             LogHelper.d(TAG, "updateNotificationPlaybackState. updating playback position to ",
                     (System.currentTimeMillis() - playbackState.position) / 1000, " seconds")
             setWhen(System.currentTimeMillis() - playbackState.position)
@@ -215,7 +188,7 @@ class NotificationContainer(
                     .setUsesChronometer(false)
         }
         // Make sure that the notification can be dismissed by the user when we are not playing:
-        setOngoing(playbackState.state == PlaybackStateCompat.STATE_PLAYING)
+        setOngoing(playbackState?.state == PlaybackStateCompat.STATE_PLAYING)
     }
 
     private fun MediaMetadataCompat.getTextDrawableBitmap() =

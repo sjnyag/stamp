@@ -33,7 +33,6 @@ import com.sjn.stamp.ui.item.SongHistoryItem;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
 import com.sjn.stamp.utils.RealmHelper;
-import com.sjn.stamp.utils.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +51,7 @@ import io.realm.Realm;
 public class TimelineFragment extends MediaBrowserListFragment implements
         UndoHelper.OnUndoListener, FlexibleAdapter.OnItemSwipeListener {
 
-    private static final String TAG = LogHelper.makeLogTag(TimelineFragment.class);
+    private static final String TAG = LogHelper.INSTANCE.makeLogTag(TimelineFragment.class);
 
     private SongHistoryController mSongHistoryController;
     protected List<SongHistory> mAllSongHistoryList = new ArrayList<>();
@@ -113,10 +112,10 @@ public class TimelineFragment extends MediaBrowserListFragment implements
      */
     @Override
     public boolean onItemClick(int position) {
-        LogHelper.d(TAG, "onItemClick ");
+        LogHelper.INSTANCE.d(TAG, "onItemClick ");
         AbstractFlexibleItem item = mAdapter.getItem(position);
         if (item instanceof SongHistoryItem) {
-            mMediaBrowsable.onMediaItemSelected(MediaIDHelper.extractMusicIDFromMediaID(((SongHistoryItem) item).getMediaId()));
+            mMediaBrowsable.onMediaItemSelected(MediaIDHelper.INSTANCE.extractMusicIDFromMediaID(((SongHistoryItem) item).getMediaId()));
         }
         return false;
     }
@@ -137,9 +136,9 @@ public class TimelineFragment extends MediaBrowserListFragment implements
      */
     @Override
     public void noMoreLoad(int newItemsSize) {
-        LogHelper.d(TAG, "newItemsSize=" + newItemsSize);
-        LogHelper.d(TAG, "Total pages loaded=" + mAdapter.getEndlessCurrentPage());
-        LogHelper.d(TAG, "Total items loaded=" + mAdapter.getMainItemCount());
+        LogHelper.INSTANCE.d(TAG, "newItemsSize=" + newItemsSize);
+        LogHelper.INSTANCE.d(TAG, "Total pages loaded=" + mAdapter.getEndlessCurrentPage());
+        LogHelper.INSTANCE.d(TAG, "Total items loaded=" + mAdapter.getMainItemCount());
     }
 
     @Override
@@ -152,7 +151,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_list, container, false);
         mSongHistoryController = new SongHistoryController(getContext());
-        mRealm = RealmHelper.getRealmInstance();
+        mRealm = RealmHelper.INSTANCE.getRealmInstance();
 
         mLoading = rootView.findViewById(R.id.progressBar);
         mEmptyView = rootView.findViewById(R.id.empty_view);
@@ -287,7 +286,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
 
     @Override
     public void onItemSwipe(final int position, int direction) {
-        LogHelper.i(TAG, "onItemSwipe position=" + position +
+        LogHelper.INSTANCE.i(TAG, "onItemSwipe position=" + position +
                 " direction=" + (direction == ItemTouchHelper.LEFT ? "LEFT" : "RIGHT"));
 
         // Option 1 FULL_SWIPE: Direct action no Undo Action
@@ -415,14 +414,14 @@ public class TimelineFragment extends MediaBrowserListFragment implements
 
     @Override
     public void onActionStateChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
-        LogHelper.i(TAG, "onActionStateChanged actionState=" + actionState);
+        LogHelper.INSTANCE.i(TAG, "onActionStateChanged actionState=" + actionState);
 
         mSwipeRefreshLayout.setEnabled(actionState == ItemTouchHelper.ACTION_STATE_IDLE);
     }
 
     @Override
     public void onActionCanceled(int action) {
-        LogHelper.i(TAG, "onUndoConfirmed action=" + action);
+        LogHelper.INSTANCE.i(TAG, "onUndoConfirmed action=" + action);
         if (action == UndoHelper.ACTION_UPDATE) {
             //TODO: Complete click animation on swiped item
 //			final RecyclerView.ViewHolder holder = mRecyclerView.findViewHolderForLayoutPosition(mSwipedPosition);
@@ -452,7 +451,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
 
     @Override
     public void onActionConfirmed(int action, int event) {
-        LogHelper.i(TAG, "onDeleteConfirmed action=" + action);
+        LogHelper.INSTANCE.i(TAG, "onDeleteConfirmed action=" + action);
         // Disable Refreshing
         mSwipeRefreshLayout.setRefreshing(false);
         // Removing items from Database. Example:
@@ -465,7 +464,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
                         if (getActivity() != null) {
                             subItem.delete(getActivity());
                         }
-                        LogHelper.i(TAG, "Confirm removed " + subItem.toString());
+                        LogHelper.INSTANCE.i(TAG, "Confirm removed " + subItem.toString());
                         break;
                 }
 

@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sjn.stamp.utils;
+package com.sjn.stamp.utils
 
-import android.app.UiModeManager;
-import android.content.Context;
-import android.content.res.Configuration;
+import android.app.UiModeManager
+import android.content.Context
+import android.content.res.Configuration
 
-public class TvHelper {
-    private static final String TAG = LogHelper.makeLogTag(TvHelper.class);
+object TvHelper {
+    private val TAG = LogHelper.makeLogTag(TvHelper::class.java)
 
     /**
      * Returns true when running Android TV
@@ -28,14 +28,14 @@ public class TvHelper {
      * @param c Context to detect UI Mode.
      * @return true when device is running in tv mode, false otherwise.
      */
-    public static boolean isTvUiMode(Context c) {
-        UiModeManager uiModeManager = (UiModeManager) c.getSystemService(Context.UI_MODE_SERVICE);
-        if (uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION) {
-            LogHelper.d(TAG, "Running in TV mode");
-            return true;
+    fun isTvUiMode(c: Context): Boolean {
+        val uiModeManager = c.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+        return if (uiModeManager.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION) {
+            LogHelper.d(TAG, "Running in TV mode")
+            true
         } else {
-            LogHelper.d(TAG, "Running on a non-TV mode");
-            return false;
+            LogHelper.d(TAG, "Running on a non-TV mode")
+            false
         }
     }
 }

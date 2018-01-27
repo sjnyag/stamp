@@ -11,11 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sjn.stamp.R;
+import com.sjn.stamp.utils.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.sjn.stamp.utils.ViewHelper.setFragmentTitle;
 
 public abstract class PagerFragment extends FabFragment {
     static final String PAGER_KIND_KEY = "PAGER_KIND";
@@ -98,7 +97,7 @@ public abstract class PagerFragment extends FabFragment {
     }
 
     protected void setTitle(String title) {
-        setFragmentTitle(getActivity(), title);
+        ViewHelper.INSTANCE.setFragmentTitle(getActivity(), title);
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {

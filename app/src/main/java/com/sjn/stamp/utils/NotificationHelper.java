@@ -40,12 +40,12 @@ public class NotificationHelper {
 
     public static void sendPlayedNotification(Context context, String title, String bitmapUrl, int playCount, Date recordedAt) {
         String contentTitle = context.getResources().getString(R.string.notification_title, title, String.valueOf(playCount));
-        String contentText = context.getResources().getString(R.string.notification_text, TimeHelper.getDateDiff(context, recordedAt));
+        String contentText = context.getResources().getString(R.string.notification_text, TimeHelper.INSTANCE.getDateDiff(context, recordedAt));
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_KEY_PLAYED_TEXT, contentTitle + "\n" + contentText);
         bundle.putStringArrayList(BUNDLE_KEY_HASH_TAG_LIST, new ArrayList<>(Arrays.asList(title)));
         fetchBitmapFromURLAsync(context, bitmapUrl, new NotificationCompat.Builder(context)
-                .setColor(ViewHelper.getThemeColor(context, R.attr.colorPrimary, Color.DKGRAY))
+                .setColor(ViewHelper.INSTANCE.getThemeColor(context, R.attr.colorPrimary, Color.DKGRAY))
                 .setSmallIcon(R.mipmap.ic_notification)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentTitle(contentTitle)
@@ -56,12 +56,12 @@ public class NotificationHelper {
 
     public static void sendPlayedNotification(Context context, Song song, String bitmapUrl, int playCount, Date recordedAt) {
         String contentTitle = context.getResources().getString(R.string.notification_title, context.getResources().getString(R.string.share_song, song.getTitle(), song.getArtist().getName()), String.valueOf(playCount));
-        String contentText = context.getResources().getString(R.string.notification_text, TimeHelper.getDateDiff(context, recordedAt));
+        String contentText = context.getResources().getString(R.string.notification_text, TimeHelper.INSTANCE.getDateDiff(context, recordedAt));
         Bundle bundle = new Bundle();
         bundle.putString(BUNDLE_KEY_PLAYED_TEXT, contentTitle + "\n" + contentText);
         bundle.putStringArrayList(BUNDLE_KEY_HASH_TAG_LIST, new ArrayList<>(Arrays.asList(song.getTitle(), song.getArtist().getName())));
         fetchBitmapFromURLAsync(context, bitmapUrl, new NotificationCompat.Builder(context)
-                .setColor(ViewHelper.getThemeColor(context, R.attr.colorPrimary, Color.DKGRAY))
+                .setColor(ViewHelper.INSTANCE.getThemeColor(context, R.attr.colorPrimary, Color.DKGRAY))
                 .setSmallIcon(R.mipmap.ic_notification)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentTitle(contentTitle)
@@ -91,7 +91,7 @@ public class NotificationHelper {
             public void onPrepareLoad(Drawable placeHolderDrawable) {
             }
         };
-        ViewHelper.readBitmapAsync(context, bitmapUrl, target);
+        ViewHelper.INSTANCE.readBitmapAsync(context, bitmapUrl, target);
     }
 
     private static class SetNotificationBitmapAsyncTask extends AsyncTask<Void, Void, Void> {

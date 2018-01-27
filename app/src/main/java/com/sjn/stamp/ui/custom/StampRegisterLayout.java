@@ -15,7 +15,7 @@ import com.sjn.stamp.utils.LogHelper;
 
 public class StampRegisterLayout extends RelativeLayout {
 
-    private static final String TAG = LogHelper.makeLogTag(StampRegisterLayout.class);
+    private static final String TAG = LogHelper.INSTANCE.makeLogTag(StampRegisterLayout.class);
 
     public StampRegisterLayout(Context context) {
         super(context);

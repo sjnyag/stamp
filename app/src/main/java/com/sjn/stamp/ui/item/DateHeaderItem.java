@@ -1,9 +1,7 @@
 package com.sjn.stamp.ui.item;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sjn.stamp.R;
@@ -35,8 +33,8 @@ public class DateHeaderItem extends AbstractHeaderItem<DateHeaderItem.HeaderView
 
     public DateHeaderItem(Date date) {
         super();
-        mDate = TimeHelper.toDateOnly(date);
-        mTitle = TimeHelper.toDateTime(date).toLocalDate().toString();
+        mDate = TimeHelper.INSTANCE.toDateOnly(date);
+        mTitle = TimeHelper.INSTANCE.toDateTime(date).toLocalDate().toString();
         setDraggable(false);
     }
 
@@ -60,7 +58,7 @@ public class DateHeaderItem extends AbstractHeaderItem<DateHeaderItem.HeaderView
     }
 
     @Override
-    public HeaderViewHolder createViewHolder(View view, FlexibleAdapter adapter){
+    public HeaderViewHolder createViewHolder(View view, FlexibleAdapter adapter) {
         return new HeaderViewHolder(view, adapter);
     }
 
@@ -82,7 +80,7 @@ public class DateHeaderItem extends AbstractHeaderItem<DateHeaderItem.HeaderView
     }
 
     public boolean isDateOf(Date recordedAt) {
-        return TimeHelper.toDateOnly(recordedAt).compareTo(mDate) == 0;
+        return TimeHelper.INSTANCE.toDateOnly(recordedAt).compareTo(mDate) == 0;
     }
 
     static class HeaderViewHolder extends LongClickDisableViewHolder {

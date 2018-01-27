@@ -17,7 +17,7 @@ import java.util.List;
 
 public abstract class MediaBrowserListFragment extends ListFragment implements MediaControllerObserver.Listener {
 
-    private static final String TAG = LogHelper.makeLogTag(MediaBrowserListFragment.class);
+    private static final String TAG = LogHelper.INSTANCE.makeLogTag(MediaBrowserListFragment.class);
     private static final String ARG_MEDIA_ID = "media_id";
 
     protected String mMediaId;
@@ -32,24 +32,24 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
                 @Override
                 public void onChildrenLoaded(@NonNull String parentId,
                                              @NonNull List<MediaBrowserCompat.MediaItem> children) {
-                    LogHelper.d(TAG, "onChildrenLoaded START");
-                    LogHelper.d(TAG, "onChildrenLoaded parentId: " + parentId);
-                    LogHelper.d(TAG, "onChildrenLoaded children: " + children.size());
+                    LogHelper.INSTANCE.d(TAG, "onChildrenLoaded START");
+                    LogHelper.INSTANCE.d(TAG, "onChildrenLoaded parentId: " + parentId);
+                    LogHelper.INSTANCE.d(TAG, "onChildrenLoaded children: " + children.size());
                     onMediaBrowserChildrenLoaded(parentId, children);
-                    LogHelper.d(TAG, "onChildrenLoaded END");
+                    LogHelper.INSTANCE.d(TAG, "onChildrenLoaded END");
                 }
 
                 @Override
                 public void onError(@NonNull String id) {
-                    LogHelper.d(TAG, "onError START");
+                    LogHelper.INSTANCE.d(TAG, "onError START");
                     onMediaBrowserError(id);
-                    LogHelper.d(TAG, "onError END");
+                    LogHelper.INSTANCE.d(TAG, "onError END");
                 }
             };
 
     @Override
     public void onAttach(Context context) {
-        LogHelper.d(TAG, "onAttach START");
+        LogHelper.INSTANCE.d(TAG, "onAttach START");
         super.onAttach(context);
         if (context instanceof MediaBrowsable) {
             mMediaBrowsable = (MediaBrowsable) context;
@@ -58,64 +58,64 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
         if (mediaBrowser == null) {
             return;
         }
-        LogHelper.d(TAG, "fragment.onAttach, mediaId=", mMediaId,
+        LogHelper.INSTANCE.d(TAG, "fragment.onAttach, mediaId=", mMediaId,
                 "  onMediaControllerConnected=" + mediaBrowser.isConnected());
         if (mediaBrowser.isConnected()) {
             onMediaControllerConnected();
         }
-        LogHelper.d(TAG, "onAttach END");
+        LogHelper.INSTANCE.d(TAG, "onAttach END");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        LogHelper.d(TAG, "onCreateView START");
+        LogHelper.INSTANCE.d(TAG, "onCreateView START");
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        LogHelper.d(TAG, "onCreateView END");
+        LogHelper.INSTANCE.d(TAG, "onCreateView END");
         return view;
     }
 
     @Override
     public void onStart() {
-        LogHelper.d(TAG, "onStart START");
+        LogHelper.INSTANCE.d(TAG, "onStart START");
         super.onStart();
         updateTitle();
         MediaControllerObserver.getInstance().addListener(this);
-        LogHelper.d(TAG, "onStart END");
+        LogHelper.INSTANCE.d(TAG, "onStart END");
     }
 
     @Override
     public void onResume() {
-        LogHelper.d(TAG, "onResume START");
+        LogHelper.INSTANCE.d(TAG, "onResume START");
         super.onResume();
-        LogHelper.d(TAG, "onResume END");
+        LogHelper.INSTANCE.d(TAG, "onResume END");
     }
 
     @Override
     public void onPause() {
-        LogHelper.d(TAG, "onPause START");
+        LogHelper.INSTANCE.d(TAG, "onPause START");
         super.onPause();
-        LogHelper.d(TAG, "onPause END");
+        LogHelper.INSTANCE.d(TAG, "onPause END");
     }
 
     @Override
     public void onStop() {
-        LogHelper.d(TAG, "onStop START");
+        LogHelper.INSTANCE.d(TAG, "onStop START");
         super.onStop();
         MediaControllerObserver.getInstance().removeListener(this);
-        LogHelper.d(TAG, "onStop END");
+        LogHelper.INSTANCE.d(TAG, "onStop END");
     }
 
     @Override
     public void onDetach() {
-        LogHelper.d(TAG, "onDetach START");
+        LogHelper.INSTANCE.d(TAG, "onDetach START");
         super.onDetach();
         MediaBrowserCompat mediaBrowser = mMediaBrowsable.getMediaBrowser();
         if (mediaBrowser != null && mediaBrowser.isConnected() && mMediaId != null) {
             mediaBrowser.unsubscribe(mMediaId);
         }
         mMediaBrowsable = null;
-        LogHelper.d(TAG, "onDetach END");
+        LogHelper.INSTANCE.d(TAG, "onDetach END");
     }
 
     // Called when the MediaBrowser is connected. This method is either called by the
@@ -123,16 +123,16 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
     // completes after the onStart()
     @Override
     public void onMediaControllerConnected() {
-        LogHelper.d(TAG, "onMediaControllerConnected START");
+        LogHelper.INSTANCE.d(TAG, "onMediaControllerConnected START");
         if (isDetached() || mMediaBrowsable == null) {
-            LogHelper.d(TAG, "onMediaControllerConnected SKIP");
+            LogHelper.INSTANCE.d(TAG, "onMediaControllerConnected SKIP");
             return;
         }
         mMediaId = getMediaId();
         if (mMediaId == null) {
             mMediaId = mMediaBrowsable.getMediaBrowser().getRoot();
         }
-        LogHelper.d(TAG, "onMediaControllerConnected mediaId: " + mMediaId);
+        LogHelper.INSTANCE.d(TAG, "onMediaControllerConnected mediaId: " + mMediaId);
 
         // Unsubscribing before subscribing is required if this mediaId already has a subscriber
         // on this MediaBrowser instance. Subscribing to an already subscribed mediaId will replace
@@ -149,7 +149,7 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
 
         // Add MediaController callback so we can redraw the list when metadata changes:
         // MediaControllerObserver.getInstance().addListener(this);
-        LogHelper.d(TAG, "onMediaControllerConnected END");
+        LogHelper.INSTANCE.d(TAG, "onMediaControllerConnected END");
     }
 
     @Override
@@ -172,14 +172,14 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
     }
 
     protected void reloadList() {
-        LogHelper.d(TAG, "reloadList START");
+        LogHelper.INSTANCE.d(TAG, "reloadList START");
         mMediaBrowsable.getMediaBrowser().unsubscribe(mMediaId);
         mMediaBrowsable.getMediaBrowser().subscribe(mMediaId, mSubscriptionCallback);
-        LogHelper.d(TAG, "reloadList END");
+        LogHelper.INSTANCE.d(TAG, "reloadList END");
     }
 
     protected void updateTitle() {
-        LogHelper.d(TAG, "updateTitle START");
+        LogHelper.INSTANCE.d(TAG, "updateTitle START");
         if (mListener == null) {
             return;
         }
@@ -208,9 +208,9 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
                 if (mListener == null) {
                     return;
                 }
-                mListener.setToolbarTitle(MediaIDHelper.extractBrowseCategoryValueFromMediaID(mMediaId));
+                mListener.setToolbarTitle(MediaIDHelper.INSTANCE.extractBrowseCategoryValueFromMediaID(mMediaId));
             }
         });
-        LogHelper.d(TAG, "updateTitle END");
+        LogHelper.INSTANCE.d(TAG, "updateTitle END");
     }
 }

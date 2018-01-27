@@ -35,7 +35,7 @@ class LocalCastPlayback(context: Context, callback: Playback.Callback, initialSt
         }
         httpServer?.let {
             it.media = item
-            send(item, true, it.url, Uri.Builder().encodedPath("${it.url}/image/${TimeHelper.getJapanNow()}").build())
+            send(item, true, it.url, Uri.Builder().encodedPath("${it.url}/image/${TimeHelper.japanNow}").build())
         }
     }
 

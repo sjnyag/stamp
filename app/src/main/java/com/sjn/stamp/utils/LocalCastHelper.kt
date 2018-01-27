@@ -54,9 +54,9 @@ object LocalCastHelper {
             val wifiAddress = getWifiAddress(context)
             val port = LocalCastHelper.findOpenPort(wifiAddress, 8080)
             LogHelper.i(TAG, "http://$wifiAddress:$port")
-            val httpServer = LocalCastHelper.HttpServer(context, wifiAddress, port)
-            httpServer.start()
-            return httpServer
+            return LocalCastHelper.HttpServer(context, wifiAddress, port).apply {
+                start()
+            }
         } catch (e: IOException) {
             e.printStackTrace()
         }

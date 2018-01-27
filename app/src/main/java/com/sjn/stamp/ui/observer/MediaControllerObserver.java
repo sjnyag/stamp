@@ -12,14 +12,14 @@ import java.util.Collections;
 import java.util.List;
 
 public class MediaControllerObserver extends MediaControllerCompat.Callback {
-    private static final String TAG = LogHelper.makeLogTag(MediaControllerObserver.class);
+    private static final String TAG = LogHelper.INSTANCE.makeLogTag(MediaControllerObserver.class);
 
     private static MediaControllerObserver sInstance;
 
     private List<Listener> mListenerList = Collections.synchronizedList(new ArrayList<Listener>());
 
     public void notifyConnected() {
-        LogHelper.i(TAG, "notifyConnected ", mListenerList.size());
+        LogHelper.INSTANCE.i(TAG, "notifyConnected ", mListenerList.size());
         if (mListenerList != null) {
             List<Listener> tempList = new ArrayList<>(mListenerList);
             for (Listener listener : tempList) {
@@ -39,7 +39,7 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
     }
 
     public void addListener(Listener listener) {
-        LogHelper.i(TAG, "addListener");
+        LogHelper.INSTANCE.i(TAG, "addListener");
         if (mListenerList.contains(listener)) {
             return;
         }
@@ -47,7 +47,7 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
     }
 
     public void removeListener(Listener listener) {
-        LogHelper.i(TAG, "removeListener");
+        LogHelper.INSTANCE.i(TAG, "removeListener");
         if (!mListenerList.contains(listener)) {
             return;
         }
@@ -56,7 +56,7 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
 
     @Override
     public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
-        LogHelper.i(TAG, "onPlaybackStateChanged ", mListenerList.size());
+        LogHelper.INSTANCE.i(TAG, "onPlaybackStateChanged ", mListenerList.size());
         if (mListenerList != null) {
             List<Listener> tempList = new ArrayList<>(mListenerList);
             for (Listener listener : tempList) {
@@ -67,7 +67,7 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
 
     @Override
     public void onMetadataChanged(MediaMetadataCompat metadata) {
-        LogHelper.i(TAG, "onMetadataChanged ", mListenerList.size());
+        LogHelper.INSTANCE.i(TAG, "onMetadataChanged ", mListenerList.size());
         if (mListenerList != null) {
             List<Listener> tempList = new ArrayList<>(mListenerList);
             for (Listener listener : tempList) {
@@ -79,7 +79,7 @@ public class MediaControllerObserver extends MediaControllerCompat.Callback {
     @Override
     public void onSessionDestroyed() {
         super.onSessionDestroyed();
-        LogHelper.i(TAG, "onSessionDestroyed ", mListenerList.size());
+        LogHelper.INSTANCE.i(TAG, "onSessionDestroyed ", mListenerList.size());
         if (mListenerList != null) {
             List<Listener> tempList = new ArrayList<>(mListenerList);
             for (Listener listener : tempList) {

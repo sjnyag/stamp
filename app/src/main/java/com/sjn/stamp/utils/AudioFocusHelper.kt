@@ -39,7 +39,7 @@ object AudioFocusHelper {
             }
         }
 
-        fun start(){
+        fun start() {
             playOnFocusGain = true
             tryToGetAudioFocus()
             setUpReceiver()
@@ -65,13 +65,8 @@ object AudioFocusHelper {
          */
         private fun tryToGetAudioFocus() {
             LogHelper.d(TAG, "tryToGetAudioFocus")
-            val result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
-                    AudioManager.AUDIOFOCUS_GAIN)
-            audioFocus = if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                AUDIO_FOCUSED
-            } else {
-                AUDIO_NO_FOCUS_NO_DUCK
-            }
+            val result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
+            audioFocus = if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) AUDIO_FOCUSED else AUDIO_NO_FOCUS_NO_DUCK
         }
 
         /**
@@ -97,7 +92,6 @@ object AudioFocusHelper {
             if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
                 // We have gained focus:
                 audioFocus = AUDIO_FOCUSED
-
             } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS ||
                     focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT ||
                     focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
@@ -105,7 +99,6 @@ object AudioFocusHelper {
                 // Otherwise, we need to pause the playback.
                 val canDuck = focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
                 audioFocus = if (canDuck) AUDIO_NO_FOCUS_CAN_DUCK else AUDIO_NO_FOCUS_NO_DUCK
-
                 // If we are playing, we need to reset media player by calling configMediaPlayerState
                 // with audioFocus properly set.
                 if (listener.isMediaPlayerPlaying() && !canDuck) {

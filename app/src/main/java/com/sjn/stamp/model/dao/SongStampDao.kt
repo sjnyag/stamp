@@ -13,7 +13,8 @@ object SongStampDao : BaseDao<SongStamp>() {
             realm.where(SongStamp::class.java).findAll().sort("name") ?: emptyList()
 
     fun findAll(realm: Realm, isSystem: Boolean): List<SongStamp> =
-            realm.where(SongStamp::class.java).equalTo("isSystem", isSystem).findAll().sort("name") ?: emptyList()
+            realm.where(SongStamp::class.java).equalTo("isSystem", isSystem).findAll().sort("name")
+                    ?: emptyList()
 
     fun register(realm: Realm, songId: Long, name: String, isSystem: Boolean) {
         realm.executeTransaction({

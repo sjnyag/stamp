@@ -24,6 +24,6 @@ class NewProvider(context: Context) : AllProvider(context) {
             list.indices
                     .firstOrNull {
                         TimeHelper.toDateTime(list[it].getString(MediaMetadataCompat.METADATA_KEY_DATE))
-                                .isBefore(TimeHelper.getJapanNow().minusDays(days))
+                                .isBefore(TimeHelper.japanNow.minusDays(days))
                     }?.let { if (it == 0) ArrayList() else list.subList(0, it) } ?: list
 }

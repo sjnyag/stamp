@@ -57,7 +57,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
 
     private final int REQUEST_PERMISSION = 1;
 
-    private static final String TAG = LogHelper.makeLogTag(MusicPlayerListActivity.class);
+    private static final String TAG = LogHelper.INSTANCE.makeLogTag(MusicPlayerListActivity.class);
     private static final String SAVED_MEDIA_ID = "com.sjn.stamp.MEDIA_ID";
 
     public static final String EXTRA_START_FULLSCREEN =
@@ -79,7 +79,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LogHelper.d(TAG, "Activity onCreate");
+        LogHelper.INSTANCE.d(TAG, "Activity onCreate");
 
         setContentView(R.layout.activity_player);
         initializeToolbar();
@@ -87,20 +87,20 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
             navigateToBrowser(DrawerMenu.first().getFragment(), false);
         }
 
-        if (!PermissionHelper.hasPermission(this, MediaRetrieveHelper.PERMISSIONS)) {
-            LogHelper.d(TAG, "has no Permission");
-            PermissionHelper.requestPermissions(this, MediaRetrieveHelper.PERMISSIONS, REQUEST_PERMISSION);
+        if (!PermissionHelper.INSTANCE.hasPermission(this, MediaRetrieveHelper.INSTANCE.getPERMISSIONS())) {
+            LogHelper.INSTANCE.d(TAG, "has no Permission");
+            PermissionHelper.INSTANCE.requestPermissions(this, MediaRetrieveHelper.INSTANCE.getPERMISSIONS(), REQUEST_PERMISSION);
         }
         mSavedInstanceState = savedInstanceState;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        LogHelper.d(TAG, "onRequestPermissionsResult");
-        LogHelper.d(TAG, "onRequestPermissionsResult: requestCode " + requestCode);
-        LogHelper.d(TAG, "onRequestPermissionsResult: permissions " + Arrays.toString(permissions));
-        LogHelper.d(TAG, "onRequestPermissionsResult: grantResults " + Arrays.toString(grantResults));
-        if (!PermissionHelper.hasPermission(this, MediaRetrieveHelper.PERMISSIONS)) {
+        LogHelper.INSTANCE.d(TAG, "onRequestPermissionsResult");
+        LogHelper.INSTANCE.d(TAG, "onRequestPermissionsResult: requestCode " + requestCode);
+        LogHelper.INSTANCE.d(TAG, "onRequestPermissionsResult: permissions " + Arrays.toString(permissions));
+        LogHelper.INSTANCE.d(TAG, "onRequestPermissionsResult: grantResults " + Arrays.toString(grantResults));
+        if (!PermissionHelper.INSTANCE.hasPermission(this, MediaRetrieveHelper.INSTANCE.getPERMISSIONS())) {
             DialogFacade.createPermissionNecessaryDialog(this, new MaterialDialog.SingleButtonCallback() {
                 @Override
                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -116,7 +116,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
     @Override
     public void onResume() {
         super.onResume();
-        LogHelper.d(TAG, "Activity onResume");
+        LogHelper.INSTANCE.d(TAG, "Activity onResume");
         initializeFromParams(mSavedInstanceState, mNewIntent == null ? getIntent() : mNewIntent);
         mNewIntent = null;
     }
@@ -142,7 +142,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
-        LogHelper.d(TAG, "onNewIntent, intent=" + intent);
+        LogHelper.INSTANCE.d(TAG, "onNewIntent, intent=" + intent);
         mNewIntent = intent;
     }
 
@@ -155,7 +155,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
 
     @Override
     public void playByCategory(String mediaId) {
-        LogHelper.d(TAG, "playByCategory, mediaId=" + mediaId);
+        LogHelper.INSTANCE.d(TAG, "playByCategory, mediaId=" + mediaId);
         MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
         if (controller != null) {
             controller.getTransportControls().playFromMediaId(mediaId, null);
@@ -165,10 +165,10 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
 
     @Override
     public void onMediaItemSelected(String musicId) {
-        LogHelper.d(TAG, "onMediaItemSelected, musicId=" + musicId);
+        LogHelper.INSTANCE.d(TAG, "onMediaItemSelected, musicId=" + musicId);
         MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
         if (controller != null) {
-            controller.getTransportControls().playFromMediaId(MediaIDHelper.createDirectMediaId(musicId), null);
+            controller.getTransportControls().playFromMediaId(MediaIDHelper.INSTANCE.createDirectMediaId(musicId), null);
         }
     }
 
@@ -179,7 +179,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
 
     @Override
     public void onMediaItemSelected(String mediaId, boolean isPlayable, boolean isBrowsable) {
-        LogHelper.d(TAG, "onMediaItemSelected, mediaId=" + mediaId);
+        LogHelper.INSTANCE.d(TAG, "onMediaItemSelected, mediaId=" + mediaId);
         if (isPlayable) {
             MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
             if (controller != null) {
@@ -188,14 +188,14 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
         } else if (isBrowsable) {
             navigateToBrowser(mediaId);
         } else {
-            LogHelper.w(TAG, "Ignoring MediaItem that is neither browsable nor playable: ",
+            LogHelper.INSTANCE.w(TAG, "Ignoring MediaItem that is neither browsable nor playable: ",
                     "mediaId=", mediaId);
         }
     }
 
     @Override
     public void setToolbarTitle(CharSequence title) {
-        LogHelper.d(TAG, "Setting toolbar title to ", title);
+        LogHelper.INSTANCE.d(TAG, "Setting toolbar title to ", title);
         if (title == null) {
             title = getString(R.string.app_name);
         }
@@ -244,7 +244,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
     }
 
     protected void initializeFromParams(Bundle savedInstanceState, Intent intent) {
-        LogHelper.d(TAG, "initializeFromParams ", intent);
+        LogHelper.INSTANCE.d(TAG, "initializeFromParams ", intent);
         String mediaId = null;
         // check if we were started from a "Play XYZ" voice search. If so, we create the extras
         // (which contain the query details) in a parameter, so we can reuse it later, when the
@@ -252,10 +252,10 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
         if (intent.getAction() != null
                 && intent.getAction().equals(MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH)) {
             mVoiceSearchParams = intent.getExtras();
-            LogHelper.d(TAG, "Starting from voice search query=",
+            LogHelper.INSTANCE.d(TAG, "Starting from voice search query=",
                     mVoiceSearchParams.getString(SearchManager.QUERY));
         } else if (intent.getData() != null) {
-            LogHelper.d(TAG, "Play from Intent: " + intent.getData());
+            LogHelper.INSTANCE.d(TAG, "Play from Intent: " + intent.getData());
             MediaControllerCompat controller = MediaControllerCompat.getMediaController(this);
             if (controller != null) {
                 mReservedUri = null;
@@ -274,7 +274,7 @@ public class MusicPlayerListActivity extends MediaBrowserListActivity {
     }
 
     private void navigateToBrowser(String mediaId) {
-        LogHelper.d(TAG, "navigateToBrowser, mediaId=" + mediaId);
+        LogHelper.INSTANCE.d(TAG, "navigateToBrowser, mediaId=" + mediaId);
         if (mediaId == null) {
             return;
         }

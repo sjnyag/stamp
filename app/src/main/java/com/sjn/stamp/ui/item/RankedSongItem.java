@@ -70,7 +70,7 @@ public class RankedSongItem extends AbstractItem<RankedSongItem.SimpleViewHolder
             holder.mOrderView.setText(String.valueOf(mOrder));
         }
         if (artUrl != null) {
-            ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, artUrl, title);
+            ViewHelper.INSTANCE.updateAlbumArt((Activity) context, holder.mAlbumArtView, artUrl, title);
         }
     }
 
@@ -118,7 +118,7 @@ public class RankedSongItem extends AbstractItem<RankedSongItem.SimpleViewHolder
 
         @Override
         public float getActivationElevation() {
-            return ViewHelper.dpToPx(itemView.getContext(), 4f);
+            return ViewHelper.INSTANCE.dpToPx(itemView.getContext(), 4f);
         }
 
         @Override

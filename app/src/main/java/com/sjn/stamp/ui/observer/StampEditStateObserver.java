@@ -15,7 +15,7 @@ public class StampEditStateObserver {
         STAMPING
     }
 
-    private static final String TAG = LogHelper.makeLogTag(StampEditStateObserver.class);
+    private static final String TAG = LogHelper.INSTANCE.makeLogTag(StampEditStateObserver.class);
 
     private static StampEditStateObserver sInstance;
 
@@ -34,7 +34,7 @@ public class StampEditStateObserver {
     }
 
     public void notifyAllStampChange(String stamp) {
-        LogHelper.i(TAG, "notifyAllStampChange ", mListenerList.size());
+        LogHelper.INSTANCE.i(TAG, "notifyAllStampChange ", mListenerList.size());
         if (mListenerList != null) {
             List<Listener> tempList = new ArrayList<>(mListenerList);
             for (Listener listener : tempList) {
@@ -44,7 +44,7 @@ public class StampEditStateObserver {
     }
 
     public void notifySelectedStampListChange(List<String> stampList) {
-        LogHelper.i(TAG, "notifySelectedStampListChange ", mListenerList.size());
+        LogHelper.INSTANCE.i(TAG, "notifySelectedStampListChange ", mListenerList.size());
         mSelectedStampList = stampList;
         if (mListenerList != null) {
             List<Listener> tempList = new ArrayList<>(mListenerList);
@@ -55,7 +55,7 @@ public class StampEditStateObserver {
     }
 
     public void notifyStateChange(State state) {
-        LogHelper.i(TAG, "notifyStateChange ", state);
+        LogHelper.INSTANCE.i(TAG, "notifyStateChange ", state);
         mState = state;
         if (mListenerList != null) {
             List<Listener> tempList = new ArrayList<>(mListenerList);

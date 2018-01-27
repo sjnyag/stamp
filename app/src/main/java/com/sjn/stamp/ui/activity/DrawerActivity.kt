@@ -25,7 +25,8 @@ abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStack
 
     abstract fun onOptionsItemSelected(itemId: Int): Boolean
 
-    open fun setToolbarTitle(title: CharSequence?) = setTitle(title ?: mDrawer?.selectingDrawerName ?: "")
+    open fun setToolbarTitle(title: CharSequence?) = setTitle(title ?: mDrawer?.selectingDrawerName
+    ?: "")
 
     open fun navigateToBrowser(fragment: Fragment, addToBackStack: Boolean) {
         if (!addToBackStack) {

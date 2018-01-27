@@ -57,7 +57,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
         setDraggable(true);
         setSwipeable(true);
         mSongHistoryId = songHistory.getId();
-        mMediaId = MediaIDHelper.createMediaID(songHistory.getSong().getMediaId(), MediaIDHelper.MEDIA_ID_MUSICS_BY_TIMELINE);
+        mMediaId = MediaIDHelper.INSTANCE.createMediaID(songHistory.getSong().getMediaId(), MediaIDHelper.MEDIA_ID_MUSICS_BY_TIMELINE);
         mArtistName = songHistory.getSong().getArtist().getName();
         mRecordedAt = songHistory.getRecordedAt();
         mTitle = songHistory.getSong().getTitle();
@@ -115,8 +115,8 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
             holder.mTitle.setText(getTitle());
             holder.mSubtitle.setText(getSubtitle());
         }
-        holder.mDate.setText(TimeHelper.getDateText(mRecordedAt, context.getResources()));
-        ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, mAlbumArtUri, mTitle);
+        holder.mDate.setText(TimeHelper.INSTANCE.getDateText(mRecordedAt, context.getResources()));
+        ViewHelper.INSTANCE.updateAlbumArt((Activity) context, holder.mAlbumArtView, mAlbumArtUri, mTitle);
         holder.updateStampList(mMediaId);
     }
 
@@ -146,7 +146,7 @@ public class SongHistoryItem extends AbstractItem<SongHistoryItem.SimpleViewHold
 
         @Override
         public float getActivationElevation() {
-            return ViewHelper.dpToPx(itemView.getContext(), 4f);
+            return ViewHelper.INSTANCE.dpToPx(itemView.getContext(), 4f);
         }
 
         @Override

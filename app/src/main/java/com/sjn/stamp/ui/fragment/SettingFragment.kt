@@ -71,7 +71,10 @@ class SettingFragment : PreferenceFragmentCompat() {
                 when (which) {
                     DialogAction.NEGATIVE -> return@SingleButtonCallback
                     DialogAction.POSITIVE -> {
-                        AnalyticsHelper.trackSetting(context, "import_backup")
+                        context?.let {
+                            AnalyticsHelper.trackSetting(it, "import_backup")
+
+                        }
                         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
                         intent.addCategory(Intent.CATEGORY_OPENABLE)
                         intent.type = "*/*"
@@ -89,11 +92,13 @@ class SettingFragment : PreferenceFragmentCompat() {
                 when (which) {
                     DialogAction.NEGATIVE -> return@SingleButtonCallback
                     DialogAction.POSITIVE -> {
-                        AnalyticsHelper.trackSetting(context, "export_backup")
+                        context?.let {
+                            AnalyticsHelper.trackSetting(it, "export_backup")
+                        }
                         val progressDialog = ProgressDialog(activity)
                         progressDialog.setMessage(getString(R.string.message_processing))
                         progressDialog.show()
-                        RealmHelper.exportBackUp(activity)
+                        activity?.let { RealmHelper.exportBackUp(it) }
                         progressDialog.dismiss()
                     }
                     else -> {
@@ -104,7 +109,9 @@ class SettingFragment : PreferenceFragmentCompat() {
         }
 
         findPreference("licence").onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            AnalyticsHelper.trackSetting(context, "licence")
+            context?.let {
+                AnalyticsHelper.trackSetting(it, "licence")
+            }
             DialogFacade.createLicenceDialog(activity).show()
             true
         }
@@ -116,7 +123,9 @@ class SettingFragment : PreferenceFragmentCompat() {
             true
         }
         findPreference("setting_songs_new_song_days").onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
-            AnalyticsHelper.trackSetting(context, "setting_songs_new_song_days", newValue.toString())
+            context?.let {
+                AnalyticsHelper.trackSetting(it, "setting_songs_new_song_days", newValue.toString())
+            }
             try {
                 val newSongDays = Integer.parseInt(newValue.toString())
                 if (newSongDays in 0..999) {
@@ -136,7 +145,9 @@ class SettingFragment : PreferenceFragmentCompat() {
             true
         }
         findPreference("setting_songs_most_played_song_size").onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
-            AnalyticsHelper.trackSetting(context, "setting_songs_most_played_song_size", newValue.toString())
+            context?.let {
+                AnalyticsHelper.trackSetting(it, "setting_songs_most_played_song_size", newValue.toString())
+            }
             try {
                 val mostPlayedSongSize = Integer.parseInt(newValue.toString())
                 if (mostPlayedSongSize in 0..999) {

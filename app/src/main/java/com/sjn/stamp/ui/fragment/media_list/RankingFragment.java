@@ -27,7 +27,6 @@ import com.sjn.stamp.ui.item.RankedSongItem;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaItemHelper;
 import com.sjn.stamp.utils.RealmHelper;
-import com.sjn.stamp.utils.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +39,7 @@ import io.realm.Realm;
 
 public class RankingFragment extends MediaBrowserListFragment {
 
-    private static final String TAG = LogHelper.makeLogTag(RankingFragment.class);
+    private static final String TAG = LogHelper.INSTANCE.makeLogTag(RankingFragment.class);
 
     private PeriodSelectLayout.Period mPeriod = PeriodSelectLayout.Period.latestWeek();
     private RankKind mRankKind;
@@ -103,12 +102,12 @@ public class RankingFragment extends MediaBrowserListFragment {
      */
     @Override
     public boolean onItemClick(int position) {
-        LogHelper.d(TAG, "onItemClick ");
+        LogHelper.INSTANCE.d(TAG, "onItemClick ");
         AbstractFlexibleItem item = mAdapter.getItem(position);
         if (item instanceof RankedSongItem) {
             mMediaBrowsable.onMediaItemSelected(((RankedSongItem) item).getMediaId());
         } else if (item instanceof RankedArtistItem) {
-            mMediaBrowsable.onMediaItemSelected(MediaItemHelper.createArtistMediaItem(
+            mMediaBrowsable.onMediaItemSelected(MediaItemHelper.INSTANCE.createArtistMediaItem(
                     ((RankedArtistItem) item).getArtistName()
             ));
         }
@@ -283,7 +282,7 @@ public class RankingFragment extends MediaBrowserListFragment {
         protected Void doInBackground(Void... params) {
             Realm realm = null;
             try {
-                realm = RealmHelper.getRealmInstance();
+                realm = RealmHelper.INSTANCE.getRealmInstance();
                 fragment.mItemList = mCallback.createItemList(realm, mPeriod, mSongHistoryController);
                 if (fragment.getActivity() == null) {
                     return null;
@@ -319,7 +318,7 @@ public class RankingFragment extends MediaBrowserListFragment {
             @Override
             public String getRankingShareMessage(Resources resource, SongHistoryController controller, PeriodSelectLayout.Period period, int songNum) {
                 List<Shareable> shareableList = new ArrayList<>();
-                Realm realm = RealmHelper.getRealmInstance();
+                Realm realm = RealmHelper.INSTANCE.getRealmInstance();
                 for (Shareable shareable : controller.getRankedSongList(realm, period)) {
                     shareableList.add(shareable);
                 }
@@ -347,7 +346,7 @@ public class RankingFragment extends MediaBrowserListFragment {
             @Override
             public String getRankingShareMessage(Resources resource, SongHistoryController controller, PeriodSelectLayout.Period period, int songNum) {
                 List<Shareable> shareableList = new ArrayList<>();
-                Realm realm = RealmHelper.getRealmInstance();
+                Realm realm = RealmHelper.INSTANCE.getRealmInstance();
                 for (Shareable shareable : controller.getRankedArtistList(realm, period)) {
                     shareableList.add(shareable);
                 }

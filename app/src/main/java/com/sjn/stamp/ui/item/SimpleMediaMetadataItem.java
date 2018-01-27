@@ -7,9 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,7 +27,7 @@ import eu.davidea.flexibleadapter.utils.FlexibleUtils;
 public class SimpleMediaMetadataItem extends AbstractItem<SimpleMediaMetadataItem.SimpleViewHolder> implements IFilterable, Serializable {
 
     @SuppressWarnings(value = "unused")
-    private static final String TAG = LogHelper.makeLogTag(SimpleMediaMetadataItem.class);
+    private static final String TAG = LogHelper.INSTANCE.makeLogTag(SimpleMediaMetadataItem.class);
 
     @Override
     public String getTitle() {
@@ -46,10 +44,11 @@ public class SimpleMediaMetadataItem extends AbstractItem<SimpleMediaMetadataIte
         setDraggable(true);
         setSwipeable(true);
         mMediaId = metadata.getDescription().getMediaId();
-        mTitle = MediaItemHelper.getTitle(metadata);
-        mSubTitle = MediaItemHelper.getArtist(metadata);
-        mAlbumArt = MediaItemHelper.getAlbumArtUri(metadata);
+        mTitle = MediaItemHelper.INSTANCE.getTitle(metadata);
+        mSubTitle = MediaItemHelper.INSTANCE.getArtist(metadata);
+        mAlbumArt = MediaItemHelper.INSTANCE.getAlbumArtUri(metadata);
     }
+
     public String getMediaId() {
         return mMediaId;
     }
@@ -86,9 +85,9 @@ public class SimpleMediaMetadataItem extends AbstractItem<SimpleMediaMetadataIte
         }
 
         holder.mMediaId = mMediaId;
-        ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, null, mTitle);
+        ViewHelper.INSTANCE.updateAlbumArt((Activity) context, holder.mAlbumArtView, null, mTitle);
         if (mAlbumArt != null && !mAlbumArt.isEmpty()) {
-            ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, mAlbumArt, mTitle);
+            ViewHelper.INSTANCE.updateAlbumArt((Activity) context, holder.mAlbumArtView, mAlbumArt, mTitle);
         }
     }
 
@@ -117,7 +116,7 @@ public class SimpleMediaMetadataItem extends AbstractItem<SimpleMediaMetadataIte
 
         @Override
         public float getActivationElevation() {
-            return ViewHelper.dpToPx(itemView.getContext(), 4f);
+            return ViewHelper.INSTANCE.dpToPx(itemView.getContext(), 4f);
         }
 
         @Override

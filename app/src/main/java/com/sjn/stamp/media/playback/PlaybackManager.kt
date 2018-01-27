@@ -220,24 +220,25 @@ class PlaybackManager(
         }
 
     override fun onSongStart(mediaId: String) {
-        SongHistoryController(context).onStart(mediaId, TimeHelper.getJapanNow().toDate())
+        SongHistoryController(context).onStart(mediaId, TimeHelper.japanNow.toDate())
     }
 
     override fun onSongPlay(mediaId: String) {
-        SongHistoryController(context).onPlay(mediaId, TimeHelper.getJapanNow().toDate())
+        SongHistoryController(context).onPlay(mediaId, TimeHelper.japanNow.toDate())
     }
 
     override fun onSongSkip(mediaId: String) {
-        SongHistoryController(context).onSkip(mediaId, TimeHelper.getJapanNow().toDate())
+        SongHistoryController(context).onSkip(mediaId, TimeHelper.japanNow.toDate())
     }
 
     override fun onSongComplete(mediaId: String) {
-        SongHistoryController(context).onComplete(mediaId, TimeHelper.getJapanNow().toDate())
+        SongHistoryController(context).onComplete(mediaId, TimeHelper.japanNow.toDate())
     }
 
     private inner class MediaSessionCallback : MediaSessionCompat.Callback() {
 
         override fun onPlayFromUri(uri: Uri?, extras: Bundle?) {
+            uri ?: return
             val queueItem = MediaItemHelper.createQueueItem(context, uri) ?: return
             if (playback.state.isPlayable) {
                 mediaLogger.onStart()

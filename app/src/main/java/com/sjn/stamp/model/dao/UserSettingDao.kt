@@ -1,9 +1,8 @@
 package com.sjn.stamp.model.dao
 
+import com.sjn.stamp.model.UserSetting
 import com.sjn.stamp.model.constant.RepeatState
 import com.sjn.stamp.model.constant.ShuffleState
-import com.sjn.stamp.model.UserSetting
-
 import io.realm.Realm
 
 object UserSettingDao : BaseDao<UserSetting>() {

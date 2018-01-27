@@ -9,11 +9,11 @@ import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import com.sjn.stamp.media.playback.PlaybackManager
 import com.sjn.stamp.media.Player
+import com.sjn.stamp.media.notification.NotificationManager
+import com.sjn.stamp.media.playback.PlaybackManager
 import com.sjn.stamp.media.provider.MusicProvider
 import com.sjn.stamp.media.source.LocalMediaSource
-import com.sjn.stamp.media.notification.NotificationManager
 import com.sjn.stamp.ui.observer.MediaControllerObserver
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaIDHelper
@@ -40,7 +40,10 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
     override fun onCreate() {
         super.onCreate()
         LogHelper.d(TAG, "onCreate")
-        musicProvider = MusicProvider(this, LocalMediaSource(this, MediaRetrieveHelper.PermissionRequiredCallback { }))
+        musicProvider = MusicProvider(this, LocalMediaSource(this, object : MediaRetrieveHelper.PermissionRequiredCallback {
+            override fun onPermissionRequired() {
+            }
+        }))
         musicProvider.retrieveMediaAsync(object : MusicProvider.Callback {
             override fun onMusicCatalogReady(success: Boolean) {
                 LogHelper.d(TAG, "MusicProvider.callBack start")
@@ -68,7 +71,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
 
     override fun onStartCommand(startIntent: Intent?, flags: Int, startId: Int): Int {
         LogHelper.d(TAG, "onStartCommand")
-        startIntent?.let{
+        startIntent?.let {
             val action = it.action
             val command = it.getStringExtra(CMD_NAME)
             if (ACTION_CMD == action) {

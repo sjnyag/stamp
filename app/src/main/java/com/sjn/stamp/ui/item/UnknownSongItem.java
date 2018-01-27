@@ -6,9 +6,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,7 +28,7 @@ import eu.davidea.flexibleadapter.utils.FlexibleUtils;
 public class UnknownSongItem extends AbstractItem<UnknownSongItem.SimpleViewHolder> implements IFilterable, Serializable {
 
     @SuppressWarnings(value = "unused")
-    private static final String TAG = LogHelper.makeLogTag(UnknownSongItem.class);
+    private static final String TAG = LogHelper.INSTANCE.makeLogTag(UnknownSongItem.class);
 
     @Override
     public String getTitle() {
@@ -90,13 +88,13 @@ public class UnknownSongItem extends AbstractItem<UnknownSongItem.SimpleViewHold
         } else {
             holder.mTitle.setText(mTitle);
             holder.mSubtitle.setText(mSubTitle);
-            holder.mDate.setText(TimeHelper.getDateText(mLastPlayed, context.getResources()));
+            holder.mDate.setText(TimeHelper.INSTANCE.getDateText(mLastPlayed, context.getResources()));
         }
 
         holder.mMediaId = mMediaId;
-        ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, null, mTitle);
+        ViewHelper.INSTANCE.updateAlbumArt((Activity) context, holder.mAlbumArtView, null, mTitle);
         if (mAlbumArt != null && !mAlbumArt.isEmpty()) {
-            ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, mAlbumArt, mTitle);
+            ViewHelper.INSTANCE.updateAlbumArt((Activity) context, holder.mAlbumArtView, mAlbumArt, mTitle);
         }
     }
 
@@ -127,7 +125,7 @@ public class UnknownSongItem extends AbstractItem<UnknownSongItem.SimpleViewHold
 
         @Override
         public float getActivationElevation() {
-            return ViewHelper.dpToPx(itemView.getContext(), 4f);
+            return ViewHelper.INSTANCE.dpToPx(itemView.getContext(), 4f);
         }
 
         @Override

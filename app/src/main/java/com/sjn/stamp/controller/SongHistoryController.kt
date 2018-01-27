@@ -22,15 +22,16 @@ class SongHistoryController(private val mContext: Context) {
 
     val topSongList: List<MediaMetadataCompat>
         get() {
-            return RealmHelper.getRealmInstance().use { realm ->
+            return RealmHelper.realmInstance.use { realm ->
                 val songList = ArrayList<MediaMetadataCompat>()
-                val list = TotalSongHistoryDao.findPlayed(realm)
-                for (songHistory in list) {
+                TotalSongHistoryDao.findPlayed(realm).forEach loop@ { songHistory ->
                     if (songHistory.playCount == 0 || songList.size >= UserSettingController().mostPlayedSongSize) {
-                        break
+                        return@loop
                     }
-                    if (songHistory.song != null && songHistory.song.isNotEmpty()) {
-                        songList.add(MediaItemHelper.convertToMetadata(songHistory.song.first()))
+                    songHistory.song?.let {
+                        if (it.isNotEmpty()) {
+                            songList.add(MediaItemHelper.convertToMetadata(songHistory.song.first()))
+                        }
                     }
                 }
                 songList
@@ -58,7 +59,7 @@ class SongHistoryController(private val mContext: Context) {
     }
 
     fun delete(songHistoryId: Long) {
-        RealmHelper.getRealmInstance().use { realm ->
+        RealmHelper.realmInstance.use { realm ->
             SongHistoryDao.delete(realm, songHistoryId)
         }
     }
@@ -70,8 +71,10 @@ class SongHistoryController(private val mContext: Context) {
     fun getRankedArtistList(realm: Realm, period: PeriodSelectLayout.Period): List<RankedArtist> = getRankedArtistList(realm, period.from(), period.to(), 30)
 
     private fun register(mediaId: String, recordType: RecordType, date: Date) {
-        RealmHelper.getRealmInstance().use { realm ->
-            val song = SongDao.findOrCreateByMediaId(realm, resolveMusicId(mediaId), mContext)
+        val musicId = resolveMusicId(mediaId) ?: return
+        RealmHelper.realmInstance.use { realm ->
+            val song = SongDao.findOrCreateByMediaId(realm, musicId, mContext)
+            song ?: return
             val playCount = TotalSongHistoryDao.increment(realm, song.id, recordType)
             SongHistoryDao.create(realm, song, recordType, date, playCount)
             if (recordType === RecordType.PLAY) {
@@ -175,7 +178,7 @@ class SongHistoryController(private val mContext: Context) {
 
             val context = WeakReference(context)
             override fun doInBackground(vararg params: Void): Void? {
-                RealmHelper.getRealmInstance().use { realm ->
+                RealmHelper.realmInstance.use { realm ->
                     val historyList = SongHistoryDao.findPlayRecordByArtist(realm, mArtistName)
                     if (!NotificationHelper.isSendPlayedNotification(historyList.size)) {
                         return null

@@ -5,13 +5,13 @@ import io.realm.Realm
 
 object ArtistDao : BaseDao<Artist>() {
 
-    fun findOrCreate(realm: Realm, name: String, uri: String): Artist {
+    fun findOrCreate(realm: Realm, name: String?, uri: String?): Artist {
         var artist: Artist? = realm.where(Artist::class.java).equalTo("name", name).findFirst()
         if (artist == null) {
             realm.beginTransaction()
             artist = realm.createObject(Artist::class.java, getAutoIncrementId(realm))
-            artist.name = name
-            artist.albumArtUri = uri
+            name?.let { artist.name = it }
+            uri?.let { artist.albumArtUri = it }
             realm.commitTransaction()
             return artist
         }

@@ -24,10 +24,12 @@ object SongHistoryDao : BaseDao<SongHistory>() {
             findAll(realm, recordType)
 
     fun findAll(realm: Realm, recordType: String): List<SongHistory> =
-            realm.where(SongHistory::class.java).equalTo("recordType", recordType).findAllSorted("recordedAt", Sort.DESCENDING) ?: emptyList()
+            realm.where(SongHistory::class.java).equalTo("recordType", recordType).findAllSorted("recordedAt", Sort.DESCENDING)
+                    ?: emptyList()
 
     fun findPlayRecordByArtist(realm: Realm, artistName: String): List<SongHistory> =
-            realm.where(SongHistory::class.java).equalTo("recordType", RecordType.PLAY.databaseValue).equalTo("song.artist.name", artistName).findAll() ?: emptyList()
+            realm.where(SongHistory::class.java).equalTo("recordType", RecordType.PLAY.databaseValue).equalTo("song.artist.name", artistName).findAll()
+                    ?: emptyList()
 
     fun findOldestByArtist(realm: Realm, artistName: String): SongHistory? =
             realm.where(SongHistory::class.java).equalTo("recordType", RecordType.PLAY.databaseValue).equalTo("song.artist.name", artistName).findAllSorted("recordedAt", Sort.ASCENDING).first()

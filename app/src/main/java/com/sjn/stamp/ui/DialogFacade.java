@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.sjn.stamp.R;
 
 import net.yslibrary.licenseadapter.LicenseAdapter;

@@ -8,7 +8,8 @@ import io.realm.Sort
 object TotalSongHistoryDao : BaseDao<TotalSongHistory>() {
 
     fun findPlayed(realm: Realm): List<TotalSongHistory> =
-            realm.where(TotalSongHistory::class.java).greaterThanOrEqualTo("playCount", 1).findAll().sort("playCount", Sort.DESCENDING) ?: emptyList()
+            realm.where(TotalSongHistory::class.java).greaterThanOrEqualTo("playCount", 1).findAll().sort("playCount", Sort.DESCENDING)
+                    ?: emptyList()
 
     fun findOrCreate(realm: Realm, songId: Long): TotalSongHistory {
         var totalSongHistory: TotalSongHistory? = realm.where(TotalSongHistory::class.java).equalTo("song.id", songId).findFirst()

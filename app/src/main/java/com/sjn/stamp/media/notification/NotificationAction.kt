@@ -45,28 +45,28 @@ enum class NotificationAction(val action: String) {
             return NotificationAction.values().firstOrNull { it.action == action }
         }
 
-        fun contentIntent(context: Context, description: MediaDescriptionCompat?): PendingIntent {
-            val openUI = Intent(context, MusicPlayerListActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-                putExtra(MusicPlayerListActivity.EXTRA_START_FULLSCREEN, true)
-            }
-            description?.let {
-                openUI.putExtra(MusicPlayerListActivity.EXTRA_CURRENT_MEDIA_DESCRIPTION, it)
-            }
-            return PendingIntent.getActivity(context, REQUEST_CODE,
-                    openUI,
-                    PendingIntent.FLAG_CANCEL_CURRENT)
-        }
-
-        fun killIntent(context: Context): PendingIntent? =
-                PendingIntent.getService(context, REQUEST_CODE,
-                        Intent(context, MusicService::class.java).setAction(NotificationHelper.ACTION_CMD).putExtra(NotificationHelper.CMD_NAME, NotificationHelper.CMD_KILL),
+        fun contentIntent(context: Context, description: MediaDescriptionCompat?): PendingIntent =
+                PendingIntent.getActivity(context, REQUEST_CODE,
+                        Intent(context, MusicPlayerListActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                            putExtra(MusicPlayerListActivity.EXTRA_START_FULLSCREEN, true)
+                            description?.let {
+                                putExtra(MusicPlayerListActivity.EXTRA_CURRENT_MEDIA_DESCRIPTION, it)
+                            }
+                        },
                         PendingIntent.FLAG_CANCEL_CURRENT)
 
-        fun createIntentFilter(): IntentFilter? {
-            val filter = IntentFilter()
-            NotificationAction.values().forEach { filter.addAction(it.action) }
-            return filter
-        }
+        fun killIntent(context: Context): PendingIntent =
+                PendingIntent.getService(context, REQUEST_CODE,
+                        Intent(context, MusicService::class.java).apply {
+                            action = NotificationHelper.ACTION_CMD
+                            putExtra(NotificationHelper.CMD_NAME, NotificationHelper.CMD_KILL)
+                        },
+                        PendingIntent.FLAG_CANCEL_CURRENT)
+
+        fun createIntentFilter(): IntentFilter =
+                IntentFilter().apply {
+                    NotificationAction.values().forEach { addAction(it.action) }
+                }
     }
 }

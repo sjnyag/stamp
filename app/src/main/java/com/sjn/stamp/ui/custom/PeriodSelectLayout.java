@@ -32,7 +32,7 @@ public class PeriodSelectLayout extends LinearLayout {
         LocalDate mTo;
 
         public static Period latestWeek() {
-            return new Period(PeriodType.CUSTOM, TimeHelper.getJapanToday().minusWeeks(1), TimeHelper.getJapanToday());
+            return new Period(PeriodType.CUSTOM, TimeHelper.INSTANCE.getJapanToday().minusWeeks(1), TimeHelper.INSTANCE.getJapanToday());
         }
 
         Period(PeriodType periodType, LocalDate from, LocalDate to) {
@@ -259,7 +259,7 @@ public class PeriodSelectLayout extends LinearLayout {
     void initDaySpinner() {
         Integer[] days = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
         mSpinnerDay.setAdapter(createSpinnerAdapter(days));
-        mSpinnerDay.setSelection(findOr0(days, TimeHelper.getJapanNow().getDayOfMonth()));
+        mSpinnerDay.setSelection(findOr0(days, TimeHelper.INSTANCE.getJapanNow().getDayOfMonth()));
         mSpinnerDay.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -277,7 +277,7 @@ public class PeriodSelectLayout extends LinearLayout {
     void initMonthSpinner() {
         Integer[] months = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
         mSpinnerMonth.setAdapter(createSpinnerAdapter(months));
-        mSpinnerMonth.setSelection(findOr0(months, TimeHelper.getJapanNow().getMonthOfYear()));
+        mSpinnerMonth.setSelection(findOr0(months, TimeHelper.INSTANCE.getJapanNow().getMonthOfYear()));
         mSpinnerMonth.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -287,7 +287,7 @@ public class PeriodSelectLayout extends LinearLayout {
                     days.add(day);
                 }
                 mSpinnerDay.setAdapter(createSpinnerAdapter(days.toArray()));
-                mSpinnerDay.setSelection(findOr0(days.toArray(new Integer[days.size()]), TimeHelper.getJapanNow().getDayOfMonth()));
+                mSpinnerDay.setSelection(findOr0(days.toArray(new Integer[days.size()]), TimeHelper.INSTANCE.getJapanNow().getDayOfMonth()));
                 updatePeriodBySpinner();
                 onPeriodChange();
             }
@@ -302,7 +302,7 @@ public class PeriodSelectLayout extends LinearLayout {
     void initYearSpinner() {
         Integer[] years = {2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030};
         mSpinnerYear.setAdapter(createSpinnerAdapter(years));
-        mSpinnerYear.setSelection(findOr0(years, TimeHelper.getJapanNow().getYear()));
+        mSpinnerYear.setSelection(findOr0(years, TimeHelper.INSTANCE.getJapanNow().getYear()));
         mSpinnerYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {

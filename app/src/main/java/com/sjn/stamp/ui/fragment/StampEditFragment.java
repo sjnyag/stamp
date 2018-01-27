@@ -30,7 +30,7 @@ import java.util.List;
 public class StampEditFragment extends Fragment implements StampEditStateObserver.Listener {
 
     @SuppressWarnings(value = "unused")
-    private static final String TAG = LogHelper.makeLogTag(StampEditFragment.class);
+    private static final String TAG = LogHelper.INSTANCE.makeLogTag(StampEditFragment.class);
     private AnimationWrapLayout mStampListLayout;
     private ButtonFloatSmall mRegisterButton;
     private TextView mEmptyString;

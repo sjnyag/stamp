@@ -35,7 +35,8 @@ object MediaPlayerHelper {
         private var mediaPlayer: MediaPlayer? = null
 
         var state: Int = PlaybackStateCompat.STATE_STOPPED
-        val isPlaying: Boolean get() = audioManager.playOnFocusGain || (mediaPlayer?.isPlaying ?: false)
+        val isPlaying: Boolean
+            get() = audioManager.playOnFocusGain || (mediaPlayer?.isPlaying ?: false)
         val currentStreamPosition: Int get() = mediaPlayer?.currentPosition ?: currentPosition
 
         fun play(item: MediaSessionCompat.QueueItem) {
@@ -58,17 +59,21 @@ object MediaPlayerHelper {
             state = PlaybackStateCompat.STATE_STOPPED
             createMediaPlayerIfNeeded()
             state = PlaybackStateCompat.STATE_BUFFERING
-            mediaPlayer?.setAudioStreamType(AudioManager.STREAM_MUSIC)
-            if (!DataSourceHelper.setMediaPlayerDataSource(context, mediaPlayer, item.description.mediaUri?.toString())) {
-                listener.onError("Failed to retrieve media.")
-                return
+            mediaPlayer?.let {
+                it.setAudioStreamType(AudioManager.STREAM_MUSIC)
+                item.description.mediaUri?.toString()?.let { path ->
+                    if (!DataSourceHelper.setMediaPlayerDataSource(context, it, path)) {
+                        listener.onError("Failed to retrieve media.")
+                        return
+                    }
+                }
+                // Starts preparing the media player in the background. When
+                // it's done, it will call our OnPreparedListener (that is,
+                // the onPrepared() method on this class, since we set the
+                // listener to 'this'). Until the media player is prepared,
+                // we *cannot* call start() on it!
+                it.prepareAsync()
             }
-            // Starts preparing the media player in the background. When
-            // it's done, it will call our OnPreparedListener (that is,
-            // the onPrepared() method on this class, since we set the
-            // listener to 'this'). Until the media player is prepared,
-            // we *cannot* call start() on it!
-            mediaPlayer?.prepareAsync()
             listener.onPlaybackStatusChanged(state)
         }
 

@@ -39,7 +39,9 @@ open class CastPlayback(internal val context: Context, private val callback: Pla
     private var currentPosition: Int = initialStreamPosition
 
     override var state: Int = 0
-    override val isConnected: Boolean get() = CastContext.getSharedInstance(context).sessionManager.currentCastSession?.isConnected ?: false
+    override val isConnected: Boolean
+        get() = CastContext.getSharedInstance(context).sessionManager.currentCastSession?.isConnected
+                ?: false
     override val isPlaying: Boolean get() = isConnected && remoteMediaClient.isPlaying
     override val currentStreamPosition: Int get() = if (!isConnected) currentPosition else remoteMediaClient.approximateStreamPosition.toInt()
 

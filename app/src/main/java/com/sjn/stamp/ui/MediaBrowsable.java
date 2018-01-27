@@ -4,8 +4,6 @@ package com.sjn.stamp.ui;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
 
-import java.util.List;
-
 
 public interface MediaBrowsable {
     MediaBrowserCompat getMediaBrowser();

@@ -101,7 +101,7 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
         LogHelper.d(TAG, "onFragmentChange START")
         //mRecyclerView = recyclerView;
 
-        if(recyclerView.adapter is FlexibleAdapter<*>) {
+        if (recyclerView.adapter is FlexibleAdapter<*>) {
             mAdapter = recyclerView.adapter as FlexibleAdapter<AbstractFlexibleItem<*>>
         }
         //mSwipeRefreshLayout = swipeRefreshLayout;

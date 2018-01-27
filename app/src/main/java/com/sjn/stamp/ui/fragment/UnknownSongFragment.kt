@@ -221,8 +221,9 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
     }
 
 
-    @Synchronized private fun createItemList(): List<AbstractFlexibleItem<*>> =
-            SongDao.findUnknown(RealmHelper.getRealmInstance()).mapIndexedTo(ArrayList()) { id, song -> UnknownSongItem(id.toString(), song) }
+    @Synchronized
+    private fun createItemList(): List<AbstractFlexibleItem<*>> =
+            SongDao.findUnknown(RealmHelper.realmInstance).mapIndexedTo(ArrayList()) { id, song -> UnknownSongItem(id.toString(), song) }
 
     companion object {
         private const val LIST_STATE_KEY = "LIST_STATE_KEY"
@@ -230,10 +231,15 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
 
     private class CreateMergeSongListAsyncTask constructor(val fragment: UnknownSongFragment) : AsyncTask<Void, Void, List<MediaMetadataCompat>>() {
 
-        override fun doInBackground(vararg params: Void): List<MediaMetadataCompat> =
-                MediaRetrieveHelper.allMediaMetadataCompat(fragment.context, null)
+        override fun doInBackground(vararg params: Void): List<MediaMetadataCompat> {
+            fragment.context?.let {
+                return MediaRetrieveHelper.allMediaMetadataCompat(it, null)
+            }
+            return emptyList()
+        }
 
         override fun onPostExecute(result: List<MediaMetadataCompat>) {
+            if (result.isEmpty()) return
             fragment.activity?.runOnUiThread(Runnable {
                 if (!fragment.isAdded) {
                     return@Runnable

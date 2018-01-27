@@ -24,7 +24,8 @@ object SongDao : BaseDao<Song>() {
 
     fun findUnknown(realm: Realm): List<Song> {
         val mediaId: String? = null
-        return realm.where(Song::class.java).equalTo("mediaId", "").or().equalTo("mediaId", mediaId).findAll() ?: emptyList()
+        return realm.where(Song::class.java).equalTo("mediaId", "").or().equalTo("mediaId", mediaId).findAll()
+                ?: emptyList()
     }
 
     fun findAll(realm: Realm): List<Song> =
@@ -48,10 +49,11 @@ object SongDao : BaseDao<Song>() {
         return song
     }
 
-    fun findOrCreateByMediaId(realm: Realm, mediaId: String, context: Context): Song {
+    fun findOrCreateByMediaId(realm: Realm, mediaId: String, context: Context): Song? {
         var song: Song? = findByMediaId(realm, mediaId)
         if (song == null) {
             val metadata = MediaRetrieveHelper.findByMusicId(context, mediaId.toLong(), null)
+            metadata ?: return null
             song = Song()
             song.id = getAutoIncrementId(realm)
             val artist = ArtistDao.findOrCreate(realm, MediaItemHelper.getArtist(metadata), MediaItemHelper.getAlbumArtUri(metadata))

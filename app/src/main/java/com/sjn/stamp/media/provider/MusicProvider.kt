@@ -129,7 +129,9 @@ class MusicProvider(private val context: Context, private val source: MusicProvi
 
     @Synchronized
     fun updateMusicArt(musicId: String, albumArt: Bitmap, icon: Bitmap) {
-        musicMap[musicId] = MediaItemHelper.updateMusicArt(getMusicByMusicId(musicId), albumArt, icon)
+        getMusicByMusicId(musicId)?.let {
+            musicMap[musicId] = MediaItemHelper.updateMusicArt(it, albumArt, icon)
+        }
     }
 
     fun getChildren(mediaId: String, resources: Resources): List<MediaBrowserCompat.MediaItem> {

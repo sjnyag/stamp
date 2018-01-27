@@ -56,7 +56,7 @@ class StampContainsViewHolder extends LongClickDisableViewHolder {
     }
 
     protected boolean isStampMedia(String mediaId) {
-        return MediaIDHelper.getCategoryType(mediaId) != null || MediaIDHelper.isTrack(mediaId);
+        return MediaIDHelper.INSTANCE.getCategoryType(mediaId) != null || MediaIDHelper.INSTANCE.isTrack(mediaId);
     }
 
     private View.OnClickListener mOnNewStamp = new View.OnClickListener() {

@@ -64,7 +64,7 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
     }
 
     @Override
-    public SimpleViewHolder createViewHolder(View view, FlexibleAdapter adapter){
+    public SimpleViewHolder createViewHolder(View view, FlexibleAdapter adapter) {
         return new SimpleViewHolder(view, adapter);
     }
 
@@ -82,7 +82,7 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
             holder.mOrderView.setText(String.valueOf(mOrder));
         }
         if (mArtUrl != null) {
-            ViewHelper.updateAlbumArt((Activity) context, holder.mAlbumArtView, mArtUrl, mArtistName);
+            ViewHelper.INSTANCE.updateAlbumArt((Activity) context, holder.mAlbumArtView, mArtUrl, mArtistName);
         }
     }
 
@@ -130,7 +130,7 @@ public class RankedArtistItem extends AbstractItem<RankedArtistItem.SimpleViewHo
 
         @Override
         public float getActivationElevation() {
-            return ViewHelper.dpToPx(itemView.getContext(), 4f);
+            return ViewHelper.INSTANCE.dpToPx(itemView.getContext(), 4f);
         }
 
         @Override

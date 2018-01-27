@@ -1,8 +1,7 @@
 package com.sjn.stamp.model.dao
 
-import com.sjn.stamp.model.constant.CategoryType
 import com.sjn.stamp.model.CategoryStamp
-
+import com.sjn.stamp.model.constant.CategoryType
 import io.realm.Realm
 
 object CategoryStampDao : BaseDao<CategoryStamp>() {
@@ -11,10 +10,12 @@ object CategoryStampDao : BaseDao<CategoryStamp>() {
             realm.where(CategoryStamp::class.java).findAll() ?: emptyList()
 
     fun findByName(realm: Realm, name: String, isSystem: Boolean): List<CategoryStamp> =
-            realm.where(CategoryStamp::class.java).equalTo("name", name).equalTo("isSystem", isSystem).findAll() ?: emptyList()
+            realm.where(CategoryStamp::class.java).equalTo("name", name).equalTo("isSystem", isSystem).findAll()
+                    ?: emptyList()
 
     fun findCategoryStampList(realm: Realm, categoryType: CategoryType, categoryValue: String): List<CategoryStamp> =
-            realm.where(CategoryStamp::class.java).equalTo("type", categoryType.databaseValue).equalTo("value", categoryValue).findAll() ?: emptyList()
+            realm.where(CategoryStamp::class.java).equalTo("type", categoryType.databaseValue).equalTo("value", categoryValue).findAll()
+                    ?: emptyList()
 
     fun findOrCreate(realm: Realm, name: String, categoryType: CategoryType, categoryValue: String, isSystem: Boolean): CategoryStamp {
         var categoryStamp: CategoryStamp? = realm.where(CategoryStamp::class.java).equalTo("name", name).equalTo("type", categoryType.databaseValue).equalTo("value", categoryValue).equalTo("isSystem", isSystem).findFirst()

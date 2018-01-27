@@ -6,12 +6,12 @@ import com.sjn.stamp.model.dao.SongDao
 import com.sjn.stamp.model.dao.SongHistoryDao
 import com.sjn.stamp.utils.RealmHelper
 
-internal enum class SmartStamp(var mStampName: String) {
+internal enum class SmartStamp(var stampName: String) {
     HEAVY_ROTATION("Heavy Rotation") {
         override fun isTarget(context: Context, songId: Long, playCount: Int, recordType: RecordType): Boolean {
             var result = false
             var counter = 0
-            RealmHelper.getRealmInstance().use { realm ->
+            RealmHelper.realmInstance.use { realm ->
                 SongDao.findById(realm, songId)?.let { song ->
                     for (songHistory in SongHistoryDao.findAll(realm, RecordType.PLAY.databaseValue)) {
                         if (songHistory.song != song) {
@@ -29,8 +29,8 @@ internal enum class SmartStamp(var mStampName: String) {
         }
 
         override fun register(context: Context, songId: Long, playCount: Int, recordType: RecordType) {
-            StampController(context).register(mStampName, true)
-            SongController(context).registerStamp(songId, mStampName, true)
+            StampController(context).register(stampName, true)
+            SongController(context).registerStamp(songId, stampName, true)
         }
     },
     ARTIST_BEST("Artist Best") {
@@ -38,28 +38,25 @@ internal enum class SmartStamp(var mStampName: String) {
                 playCount >= 10
 
         override fun register(context: Context, songId: Long, playCount: Int, recordType: RecordType) {
-            val stampController = StampController(context)
-            val songController = SongController(context)
-            StampController(context).register(mStampName, true)
-            RealmHelper.getRealmInstance().use { r ->
-                stampController.delete(r, mStampName, true)
-                val artistList = SongHistoryController(context).getRankedArtistList(r, null, null, null)
-                artistList.forEach { artist ->
-                    artist.orderedSongList().filter { it.playCount >= 10 }.take(3).forEach { rankedSong ->
-                        songController.registerStamp(rankedSong.song.id, mStampName, true)
+            StampController(context).run {
+                register(stampName, true)
+                RealmHelper.realmInstance.use { r ->
+                    delete(r, stampName, true)
+                    SongHistoryController(context).getRankedArtistList(r, null, null, null).forEach { artist ->
+                        artist.orderedSongList().filter { it.playCount >= 10 }.take(3).forEach { rankedSong ->
+                            SongController(context).registerStamp(rankedSong.song.id, stampName, true)
+                        }
                     }
+                    notifyStampChange()
                 }
-                stampController.notifyStampChange()
+
             }
         }
     },
     BREAK_SONG("Break Song") {
-        override fun isTarget(context: Context, songId: Long, playCount: Int, recordType: RecordType): Boolean =
-                false
+        override fun isTarget(context: Context, songId: Long, playCount: Int, recordType: RecordType): Boolean = false
 
-        override fun register(context: Context, songId: Long, playCount: Int, recordType: RecordType) {
-
-        }
+        override fun register(context: Context, songId: Long, playCount: Int, recordType: RecordType) {}
     };
 
     internal abstract fun isTarget(context: Context, songId: Long, playCount: Int, recordType: RecordType): Boolean

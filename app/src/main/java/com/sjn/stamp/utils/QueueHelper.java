@@ -33,14 +33,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.sjn.stamp.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_SEARCH;
-
 /**
  * Utility class to help on queue related tasks.
  */
 public class QueueHelper {
 
-    private static final String TAG = LogHelper.makeLogTag(QueueHelper.class);
+    private static final String TAG = LogHelper.INSTANCE.makeLogTag(QueueHelper.class);
 
     private static final int RANDOM_QUEUE_SIZE = 10;
 
@@ -85,8 +83,8 @@ public class QueueHelper {
             if (track == null) {
                 break;
             }
-            String hierarchyAwareMediaID = MediaIDHelper.createMediaID(track.getDescription().getMediaId(), category);
-            queueList.add(MediaItemHelper.convertToQueueItem(track, hierarchyAwareMediaID, count++));
+            String hierarchyAwareMediaID = MediaIDHelper.INSTANCE.createMediaID(track.getDescription().getMediaId(), category);
+            queueList.add(MediaItemHelper.INSTANCE.convertToQueueItem(track, hierarchyAwareMediaID, count++));
         }
         return queueList;
     }
@@ -94,14 +92,14 @@ public class QueueHelper {
     public static List<MediaSessionCompat.QueueItem> getPlayingQueue(String mediaId,
                                                                      MusicProvider musicProvider) {
 
-        LogHelper.d(TAG, "getPlayingQueue mediaId: ", mediaId);
+        LogHelper.INSTANCE.d(TAG, "getPlayingQueue mediaId: ", mediaId);
         // extract the browsing hierarchy from the media ID:
-        String[] hierarchy = MediaIDHelper.getHierarchy(mediaId);
-        LogHelper.d(TAG, "getPlayingQueue hierarchy.length: ", hierarchy.length);
-        LogHelper.d(TAG, "getPlayingQueue hierarchy[0]: ", hierarchy[0]);
+        String[] hierarchy = MediaIDHelper.INSTANCE.getHierarchy(mediaId);
+        LogHelper.INSTANCE.d(TAG, "getPlayingQueue hierarchy.length: ", hierarchy.length);
+        LogHelper.INSTANCE.d(TAG, "getPlayingQueue hierarchy[0]: ", hierarchy[0]);
         if (hierarchy.length == 1) {
-            if (MediaIDHelper.isDirect(hierarchy[0])) {
-                return convertToQueue(new ArrayList<>(Collections.singletonList(musicProvider.getMusicByMusicId(MediaIDHelper.extractMusicIDFromMediaID(mediaId)))), hierarchy[0]);
+            if (MediaIDHelper.INSTANCE.isDirect(hierarchy[0])) {
+                return convertToQueue(new ArrayList<>(Collections.singletonList(musicProvider.getMusicByMusicId(MediaIDHelper.INSTANCE.extractMusicIDFromMediaID(mediaId)))), hierarchy[0]);
             }
             return convertToQueue(musicProvider.getMusicsHierarchy(hierarchy[0], null), hierarchy[0]);
         }
@@ -136,12 +134,12 @@ public class QueueHelper {
     public static List<MediaSessionCompat.QueueItem> getPlayingQueueFromSearch(String query,
                                                                                Bundle queryParams, MusicProvider musicProvider) {
 
-        LogHelper.d(TAG, "Creating playing queue for musics from search: ", query,
+        LogHelper.INSTANCE.d(TAG, "Creating playing queue for musics from search: ", query,
                 " params=", queryParams);
 
         VoiceSearchParams params = new VoiceSearchParams(query, queryParams);
 
-        LogHelper.d(TAG, "VoiceSearchParams: ", params);
+        LogHelper.INSTANCE.d(TAG, "VoiceSearchParams: ", params);
 
         if (params.isAny) {
             // If isAny is true, we will play anything. This is app-dependent, and can be,
@@ -171,7 +169,7 @@ public class QueueHelper {
             result = musicProvider.searchMusicBySongTitle(query);
         }
 
-        return convertToQueue(result, MEDIA_ID_MUSICS_BY_SEARCH, query);
+        return convertToQueue(result, MediaIDHelper.MEDIA_ID_MUSICS_BY_SEARCH, query);
     }
 
 
@@ -182,7 +180,7 @@ public class QueueHelper {
             return -1;
         }
         for (MediaSessionCompat.QueueItem item : queue) {
-            if (musicId.equals(MediaIDHelper.extractMusicIDFromMediaID(item.getDescription().getMediaId()))) {
+            if (musicId.equals(MediaIDHelper.INSTANCE.extractMusicIDFromMediaID(item.getDescription().getMediaId()))) {
                 return index;
             }
             index++;
@@ -220,7 +218,7 @@ public class QueueHelper {
     private static List<MediaSessionCompat.QueueItem> convertToQueue(
             Iterable<MediaMetadataCompat> tracks, String... categories) {
         List<MediaSessionCompat.QueueItem> queue = new ArrayList<>();
-        LogHelper.d(TAG, "convertToQueue Start");
+        LogHelper.INSTANCE.d(TAG, "convertToQueue Start");
         int count = 0;
         if (tracks == null) {
             return queue;
@@ -231,10 +229,10 @@ public class QueueHelper {
             }
             // We create a hierarchy-aware mediaID, so we know what the queue is about by looking
             // at the QueueItem media IDs.
-            String hierarchyAwareMediaID = MediaIDHelper.createMediaID(track.getDescription().getMediaId(), categories);
-            queue.add(MediaItemHelper.convertToQueueItem(track, hierarchyAwareMediaID, count++));
+            String hierarchyAwareMediaID = MediaIDHelper.INSTANCE.createMediaID(track.getDescription().getMediaId(), categories);
+            queue.add(MediaItemHelper.INSTANCE.convertToQueueItem(track, hierarchyAwareMediaID, count++));
         }
-        LogHelper.d(TAG, "convertToQueue End");
+        LogHelper.INSTANCE.d(TAG, "convertToQueue End");
         return queue;
 
     }
@@ -254,9 +252,9 @@ public class QueueHelper {
             }
             result.add(metadata);
         }
-        LogHelper.d(TAG, "getRandomQueue: result.size=", result.size());
+        LogHelper.INSTANCE.d(TAG, "getRandomQueue: result.size=", result.size());
 
-        return convertToQueue(result, MEDIA_ID_MUSICS_BY_SEARCH, "random");
+        return convertToQueue(result, MediaIDHelper.MEDIA_ID_MUSICS_BY_SEARCH, "random");
     }
 
     public static boolean isIndexPlayable(int index, List<MediaSessionCompat.QueueItem> queue) {
@@ -302,7 +300,7 @@ public class QueueHelper {
             long currentPlayingQueueId = controller.getPlaybackState().getActiveQueueItemId();
             String currentPlayingMediaId = controller.getMetadata().getDescription()
                     .getMediaId();
-            String itemMusicId = MediaIDHelper.extractMusicIDFromMediaID(
+            String itemMusicId = MediaIDHelper.INSTANCE.extractMusicIDFromMediaID(
                     queueItem.getDescription().getMediaId());
             if (queueItem.getQueueId() == currentPlayingQueueId
                     && currentPlayingMediaId != null

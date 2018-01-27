@@ -2,7 +2,6 @@ package com.sjn.stamp.ui.custom;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
@@ -43,7 +42,7 @@ public class RankingSelectLayout extends PeriodSelectLayout {
         });
     }
 
-    int getResourceId(){
+    int getResourceId() {
         return R.layout.layout_ranking_select;
     }
 

@@ -22,7 +22,6 @@ import com.sjn.stamp.ui.SongAdapter;
 import com.sjn.stamp.ui.item.SongItem;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.MediaIDHelper;
-import com.sjn.stamp.utils.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +37,12 @@ import eu.davidea.viewholders.FlexibleViewHolder;
 
 public class MyStampListFragment extends SongListFragment implements
         UndoHelper.OnUndoListener, FlexibleAdapter.OnItemSwipeListener {
-    private static final String TAG = LogHelper.makeLogTag(MyStampListFragment.class);
+    private static final String TAG = LogHelper.INSTANCE.makeLogTag(MyStampListFragment.class);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        LogHelper.d(TAG, "onCreateView START" + getMediaId());
+        LogHelper.INSTANCE.d(TAG, "onCreateView START" + getMediaId());
         final View rootView = inflater.inflate(R.layout.fragment_list, container, false);
 
         mLoading = rootView.findViewById(R.id.progressBar);
@@ -82,14 +81,14 @@ public class MyStampListFragment extends SongListFragment implements
             notifyFragmentChange();
         }
         draw();
-        LogHelper.d(TAG, "onCreateView END");
+        LogHelper.INSTANCE.d(TAG, "onCreateView END");
         return rootView;
     }
 
 
     @Override
     public void onItemSwipe(final int position, int direction) {
-        LogHelper.i(TAG, "onItemSwipe position=" + position +
+        LogHelper.INSTANCE.i(TAG, "onItemSwipe position=" + position +
                 " direction=" + (direction == ItemTouchHelper.LEFT ? "LEFT" : "RIGHT"));
         final List<Integer> positions = new ArrayList<>(1);
         positions.add(position);
@@ -101,7 +100,7 @@ public class MyStampListFragment extends SongListFragment implements
         if (direction == ItemTouchHelper.RIGHT) {
             SongItem subItem = (SongItem) abstractItem;
             StampController stampController = new StampController(getActivity());
-            if (stampController.isCategoryStamp(MediaIDHelper.extractBrowseCategoryValueFromMediaID(mMediaId), false, subItem.getMediaId())) {
+            if (stampController.isCategoryStamp(MediaIDHelper.INSTANCE.extractBrowseCategoryValueFromMediaID(mMediaId), false, subItem.getMediaId())) {
                 Toast.makeText(getActivity(), R.string.error_message_stamp_failed, Toast.LENGTH_LONG).show();
                 final RecyclerView.ViewHolder holder = mRecyclerView.findViewHolderForLayoutPosition(position);
                 final View view = ((ItemTouchHelperCallback.ViewHolderCallback) holder).getFrontView();
@@ -135,7 +134,7 @@ public class MyStampListFragment extends SongListFragment implements
             }
 
             message.append(subItem.getTitle()).append(" ");
-            DialogFacade.createRemoveStampSongDialog(getActivity(), subItem.getTitle(), MediaIDHelper.extractBrowseCategoryValueFromMediaID(mMediaId), new MaterialDialog.SingleButtonCallback() {
+            DialogFacade.createRemoveStampSongDialog(getActivity(), subItem.getTitle(), MediaIDHelper.INSTANCE.extractBrowseCategoryValueFromMediaID(mMediaId), new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             switch (which) {
@@ -234,13 +233,13 @@ public class MyStampListFragment extends SongListFragment implements
 
     @Override
     public void onActionStateChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
-        LogHelper.i(TAG, "onActionStateChanged actionState=" + actionState);
+        LogHelper.INSTANCE.i(TAG, "onActionStateChanged actionState=" + actionState);
         mSwipeRefreshLayout.setEnabled(actionState == ItemTouchHelper.ACTION_STATE_IDLE);
     }
 
     @Override
     public void onActionCanceled(int action) {
-        LogHelper.i(TAG, "onUndoConfirmed action=" + action);
+        LogHelper.INSTANCE.i(TAG, "onUndoConfirmed action=" + action);
         if (action == UndoHelper.ACTION_UPDATE) {
         } else if (action == UndoHelper.ACTION_REMOVE) {
             // Custom action is restore deleted items
@@ -257,7 +256,7 @@ public class MyStampListFragment extends SongListFragment implements
 
     @Override
     public void onActionConfirmed(int action, int event) {
-        LogHelper.i(TAG, "onDeleteConfirmed action=" + action);
+        LogHelper.INSTANCE.i(TAG, "onDeleteConfirmed action=" + action);
         mSwipeRefreshLayout.setRefreshing(false);
         for (AbstractFlexibleItem adapterItem : mAdapter.getDeletedItems()) {
             try {
@@ -265,9 +264,9 @@ public class MyStampListFragment extends SongListFragment implements
                     case R.layout.recycler_song_item:
                         SongItem subItem = (SongItem) adapterItem;
                         if (getActivity() != null) {
-                            new StampController(getActivity()).removeSong(MediaIDHelper.extractBrowseCategoryValueFromMediaID(mMediaId), false, subItem.getMediaId());
+                            new StampController(getActivity()).removeSong(MediaIDHelper.INSTANCE.extractBrowseCategoryValueFromMediaID(mMediaId), false, subItem.getMediaId());
                         }
-                        LogHelper.i(TAG, "Confirm removed " + subItem.toString());
+                        LogHelper.INSTANCE.i(TAG, "Confirm removed " + subItem.toString());
                         break;
                 }
 

@@ -26,7 +26,7 @@ import java.util.List;
 
 public abstract class FabFragment extends Fragment implements StampEditStateObserver.Listener {
 
-    private static final String TAG = LogHelper.makeLogTag(FabFragment.class);
+    private static final String TAG = LogHelper.INSTANCE.makeLogTag(FabFragment.class);
 
     protected RecyclerView mRecyclerView;
     protected SongAdapter mAdapter;
@@ -36,7 +36,7 @@ public abstract class FabFragment extends Fragment implements StampEditStateObse
 
     protected boolean mIsVisibleToUser = true;
 
-    public boolean isVisibleToUser(){
+    public boolean isVisibleToUser() {
         return mIsVisibleToUser;
     }
 
@@ -56,7 +56,7 @@ public abstract class FabFragment extends Fragment implements StampEditStateObse
     };
 
     private void openStampEdit() {
-        if(mCenteredMaterialSheetFab == null || mFab == null){
+        if (mCenteredMaterialSheetFab == null || mFab == null) {
             return;
         }
         if (!mCenteredMaterialSheetFab.isSheetVisible()) {
@@ -70,7 +70,7 @@ public abstract class FabFragment extends Fragment implements StampEditStateObse
 
 
     private void closeStampEdit() {
-        if(mCenteredMaterialSheetFab == null || mFab == null){
+        if (mCenteredMaterialSheetFab == null || mFab == null) {
             return;
         }
         if (mCenteredMaterialSheetFab.isSheetVisible()) {
@@ -163,21 +163,21 @@ public abstract class FabFragment extends Fragment implements StampEditStateObse
 
     @Override
     public void onStart() {
-        LogHelper.d(TAG, "onStart START");
+        LogHelper.INSTANCE.d(TAG, "onStart START");
         super.onStart();
         StampEditStateObserver.getInstance().addListener(this);
-        LogHelper.d(TAG, "onStart END");
+        LogHelper.INSTANCE.d(TAG, "onStart END");
     }
 
     @Override
     public void onStop() {
-        LogHelper.d(TAG, "onStop START");
+        LogHelper.INSTANCE.d(TAG, "onStop START");
         super.onStop();
         if (mCenteredMaterialSheetFab != null && mCenteredMaterialSheetFab.isSheetVisible()) {
             mCenteredMaterialSheetFab.hideSheet();
         }
         StampEditStateObserver.getInstance().removeListener(this);
-        LogHelper.d(TAG, "onStop END");
+        LogHelper.INSTANCE.d(TAG, "onStop END");
     }
 
     @Override
@@ -194,8 +194,8 @@ public abstract class FabFragment extends Fragment implements StampEditStateObse
      */
     @Override
     public void onStampStateChange(StampEditStateObserver.State state) {
-        LogHelper.d(TAG, "onStampStateChange: ", state);
-        if(mCenteredMaterialSheetFab == null || mFab == null){
+        LogHelper.INSTANCE.d(TAG, "onStampStateChange: ", state);
+        if (mCenteredMaterialSheetFab == null || mFab == null) {
             return;
         }
         switch (state) {
@@ -209,7 +209,7 @@ public abstract class FabFragment extends Fragment implements StampEditStateObse
                 if (mCenteredMaterialSheetFab.isSheetVisible()) {
                     mCenteredMaterialSheetFab.hideSheet();
                 }
-                if (mIsVisibleToUser && !SpotlightHelper.isShown(getActivity(), SpotlightHelper.KEY_STAMP_ADD)) {
+                if (mIsVisibleToUser && !SpotlightHelper.INSTANCE.isShown(getActivity(), SpotlightHelper.KEY_STAMP_ADD)) {
                     showSpotlight();
                 }
                 break;
@@ -220,7 +220,7 @@ public abstract class FabFragment extends Fragment implements StampEditStateObse
     }
 
     private void showSpotlight() {
-        if(mRecyclerView == null){
+        if (mRecyclerView == null) {
             return;
         }
         LinearLayoutManager layoutManager = ((LinearLayoutManager) mRecyclerView.getLayoutManager());
@@ -238,7 +238,7 @@ public abstract class FabFragment extends Fragment implements StampEditStateObse
                                 .setDescription(getString(R.string.spotlight_stamp_add_description))
                                 .build())
                         .start();
-                SpotlightHelper.setShown(getActivity(), SpotlightHelper.KEY_STAMP_ADD);
+                SpotlightHelper.INSTANCE.setShown(getActivity(), SpotlightHelper.KEY_STAMP_ADD);
             }
         }
     }

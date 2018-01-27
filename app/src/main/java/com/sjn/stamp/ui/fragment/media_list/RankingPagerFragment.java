@@ -30,8 +30,6 @@ import java.util.List;
 
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 
-import static com.sjn.stamp.utils.MediaIDHelper.MEDIA_ID_MUSICS_BY_RANKING;
-
 public class RankingPagerFragment extends PagerFragment implements PagerFragment.PageFragmentContainer.Creator {
 
     private PeriodSelectLayout.Period mPeriod;
@@ -66,9 +64,9 @@ public class RankingPagerFragment extends PagerFragment implements PagerFragment
                 if (trackList.isEmpty()) {
                     return;
                 }
-                bundle.putParcelable(MusicService.CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_QUEUE, QueueHelper.createQueue(trackList, MEDIA_ID_MUSICS_BY_RANKING));
+                bundle.putParcelable(MusicService.CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_QUEUE, QueueHelper.createQueue(trackList, MediaIDHelper.MEDIA_ID_MUSICS_BY_RANKING));
                 bundle.putString(MusicService.CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_TITLE, mPeriod.toString(getResources()));
-                bundle.putString(MusicService.CUSTOM_ACTION_SET_QUEUE_BUNDLE_MEDIA_ID, MediaIDHelper.createMediaID(trackList.get(0).getDescription().getMediaId(), MEDIA_ID_MUSICS_BY_RANKING));
+                bundle.putString(MusicService.CUSTOM_ACTION_SET_QUEUE_BUNDLE_MEDIA_ID, MediaIDHelper.INSTANCE.createMediaID(trackList.get(0).getDescription().getMediaId(), MediaIDHelper.MEDIA_ID_MUSICS_BY_RANKING));
                 fragment.mMediaBrowsable.sendCustomAction(MusicService.CUSTOM_ACTION_SET_QUEUE, bundle, null);
             }
         });
@@ -98,7 +96,7 @@ public class RankingPagerFragment extends PagerFragment implements PagerFragment
                                         return;
                                     }
                                     setTitle(periodSelectLayout.getPeriod().toString(getResources()));
-                                    AnalyticsHelper.trackRankingTerm(getContext(), periodSelectLayout.getPeriod().from(), periodSelectLayout.getPeriod().to());
+                                    AnalyticsHelper.INSTANCE.trackRankingTerm(getContext(), periodSelectLayout.getPeriod().from(), periodSelectLayout.getPeriod().to());
                                     for (int i = 0; i < mAdapter.getCount(); i++) {
                                         Fragment fragment = mAdapter.getItem(i);
                                         if (fragment != null && fragment instanceof RankingFragment) {

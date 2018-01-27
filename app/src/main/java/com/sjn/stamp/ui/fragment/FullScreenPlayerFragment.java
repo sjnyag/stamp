@@ -59,7 +59,7 @@ import static android.view.View.VISIBLE;
  * depicting the album art. The activity also has controls to seek/pause/play the audio.
  */
 public class FullScreenPlayerFragment extends Fragment implements CustomController.RepeatStateListener, CustomController.ShuffleStateListener, MediaControllerObserver.Listener {
-    private static final String TAG = LogHelper.makeLogTag(FullScreenPlayerFragment.class);
+    private static final String TAG = LogHelper.INSTANCE.makeLogTag(FullScreenPlayerFragment.class);
     private static final long PROGRESS_UPDATE_INTERNAL = 1000;
     private static final long PROGRESS_UPDATE_INITIAL_INTERVAL = 100;
 
@@ -102,7 +102,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
 
     @Override
     public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
-        LogHelper.i(TAG, "onPlaybackstate changed", state);
+        LogHelper.INSTANCE.i(TAG, "onPlaybackstate changed", state);
         updatePlaybackState(state);
     }
 
@@ -122,7 +122,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        LogHelper.i(TAG, "onCreateView");
+        LogHelper.INSTANCE.i(TAG, "onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_full_player, container, false);
 
         mBackgroundImage = rootView.findViewById(R.id.background_image);
@@ -192,7 +192,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
                             scheduleSeekbarUpdate();
                             break;
                         default:
-                            LogHelper.d(TAG, "onClick with state ", state.getState());
+                            LogHelper.INSTANCE.d(TAG, "onClick with state ", state.getState());
                     }
                 }
             }
@@ -292,7 +292,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
 
     @Override
     public void onStart() {
-        LogHelper.i(TAG, "onStart");
+        LogHelper.INSTANCE.i(TAG, "onStart");
         super.onStart();
         MediaControllerObserver.getInstance().addListener(this);
         onMediaControllerConnected();
@@ -304,7 +304,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
 
     @Override
     public void onStop() {
-        LogHelper.i(TAG, "onStop");
+        LogHelper.INSTANCE.i(TAG, "onStop");
         super.onStop();
         MediaControllerObserver.getInstance().removeListener(this);
         CustomController.INSTANCE.removeRepeatStateListenerSet(this);
@@ -313,7 +313,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
 
     @Override
     public void onDestroy() {
-        LogHelper.i(TAG, "onDestroy");
+        LogHelper.INSTANCE.i(TAG, "onDestroy");
         super.onDestroy();
         stopSeekbarUpdate();
         mExecutorService.shutdown();
@@ -337,7 +337,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
                 mRepeat.setImageDrawable(mRepeatAllDrawable);
                 break;
             default:
-                LogHelper.d(TAG, "Unhandled state ", state);
+                LogHelper.INSTANCE.d(TAG, "Unhandled state ", state);
         }
     }
 
@@ -354,7 +354,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
                 mShuffleDrawable.setAlpha(50);
                 break;
             default:
-                LogHelper.d(TAG, "Unhandled state ", state);
+                LogHelper.INSTANCE.d(TAG, "Unhandled state ", state);
         }
     }
 
@@ -364,14 +364,14 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
             return;
         }
         mCurrentArtUrl = description.getIconUri().toString();
-        ViewHelper.updateAlbumArt(getActivity(), mBackgroundImage, mCurrentArtUrl, description.getTitle().toString(), 800, 800);
+        ViewHelper.INSTANCE.updateAlbumArt(getActivity(), mBackgroundImage, mCurrentArtUrl, description.getTitle().toString(), 800, 800);
     }
 
     private void updateMediaDescription(MediaDescriptionCompat description) {
         if (description == null) {
             return;
         }
-        LogHelper.d(TAG, "updateMediaDescription called ");
+        LogHelper.INSTANCE.d(TAG, "updateMediaDescription called ");
         mLine1.setText(description.getTitle());
         mLine2.setText(description.getSubtitle());
         fetchImageAsync(description);
@@ -381,7 +381,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
         if (metadata == null) {
             return;
         }
-        LogHelper.d(TAG, "updateDuration called ");
+        LogHelper.INSTANCE.d(TAG, "updateDuration called ");
         int duration = (int) metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
         mSeekbar.setMax(duration);
         mEnd.setText(DateUtils.formatElapsedTime(duration / 1000));
@@ -427,7 +427,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
                 stopSeekbarUpdate();
                 break;
             default:
-                LogHelper.d(TAG, "Unhandled state ", state.getState());
+                LogHelper.INSTANCE.d(TAG, "Unhandled state ", state.getState());
         }
 
         mSkipNext.setVisibility((state.getActions() & PlaybackStateCompat.ACTION_SKIP_TO_NEXT) == 0

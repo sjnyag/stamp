@@ -94,7 +94,9 @@ class QueueManager(private val context: Context,
     private fun setCurrentQueueIndex(index: Int): Boolean {
         if (index >= 0 && index < playingQueue.size) {
             currentIndex = index
-            UserSettingController().lastMusicId = MediaIDHelper.extractMusicIDFromMediaID(currentMusic!!.description.mediaId!!)
+            MediaIDHelper.extractMusicIDFromMediaID(currentMusic!!.description.mediaId!!)?.let {
+                UserSettingController().lastMusicId = it
+            }
             return true
         }
         return false
@@ -201,6 +203,7 @@ class QueueManager(private val context: Context,
             return
         }
         val musicId = MediaIDHelper.extractMusicIDFromMediaID(currentMusic!!.description.mediaId!!)
+                ?: return
         val metadata = musicProvider.getMusicByMusicId(musicId) ?: return
 
         listener.onMetadataChanged(metadata)
@@ -234,7 +237,7 @@ class QueueManager(private val context: Context,
                     }
                 }
             }
-            ViewHelper.readBitmapAsync(context, albumUri, mTarget)
+            ViewHelper.readBitmapAsync(context, albumUri, mTarget!!)
         }
     }
 

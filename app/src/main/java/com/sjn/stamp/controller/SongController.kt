@@ -10,22 +10,21 @@ import com.sjn.stamp.model.constant.RecordType
 import com.sjn.stamp.model.dao.CategoryStampDao
 import com.sjn.stamp.model.dao.SongDao
 import com.sjn.stamp.model.dao.SongStampDao
-import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaIDHelper
 import com.sjn.stamp.utils.MediaRetrieveHelper
 import com.sjn.stamp.utils.RealmHelper
 import io.realm.Realm
 
-class SongController(private val mContext: Context) {
+class SongController(private val context: Context) {
 
     fun findSong(songId: Long): Song? {
-        return RealmHelper.getRealmInstance().use { realm ->
+        return RealmHelper.realmInstance.use { realm ->
             SongDao.findById(realm, songId)
         }
     }
 
     fun mergeSong(unknownSong: Song, mediaMetadata: MediaMetadataCompat): Boolean {
-        RealmHelper.getRealmInstance().use { realm ->
+        RealmHelper.realmInstance.use { realm ->
             SongDao.findByMediaMetadata(realm, mediaMetadata)?.let {
                 return SongDao.merge(realm, unknownSong.id, it.id)
             }
@@ -36,13 +35,13 @@ class SongController(private val mContext: Context) {
     fun calculateSmartStamp(songId: Long, playCount: Int, recordType: RecordType) {
         Thread(Runnable {
             SmartStamp.values()
-                    .filter { it.isTarget(mContext, songId, playCount, recordType) }
-                    .forEach { it.register(mContext, songId, playCount, recordType) }
+                    .filter { it.isTarget(context, songId, playCount, recordType) }
+                    .forEach { it.register(context, songId, playCount, recordType) }
         }).start()
     }
 
     fun refreshAllSongs(musicList: Collection<MediaMetadataCompat>) {
-        RealmHelper.getRealmInstance().use { realm ->
+        RealmHelper.realmInstance.use { realm ->
             SongDao.findAll(realm).forEach {
                 SongDao.loadLocalMedia(realm, it.id, musicList)
             }
@@ -51,20 +50,18 @@ class SongController(private val mContext: Context) {
 
     fun findStampsByMediaId(mediaId: String): List<Stamp> {
         val mediaMetadata = resolveMediaMetadata(mediaId)
-        return if (MediaIDHelper.isTrack(mediaId) && mediaMetadata != null) {
-            findSongStampListByMediaMetadata(mediaMetadata)
+        if (MediaIDHelper.isTrack(mediaId) && mediaMetadata != null) {
+            return findSongStampListByMediaMetadata(mediaMetadata)
         } else {
-            val categoryType = resolveCategory(mediaId)
-            if (categoryType == null) {
-                ArrayList()
-            } else {
-                findCategoryStampList(categoryType.first, categoryType.second)
+            resolveCategory(mediaId)?.let {
+                return findCategoryStampList(it.first, it.second)
             }
+            return ArrayList()
         }
     }
 
     fun registerStamp(songId: Long, stampName: String, isSystem: Boolean) {
-        RealmHelper.getRealmInstance().use { realm ->
+        RealmHelper.realmInstance.use { realm ->
             SongStampDao.register(realm, songId, stampName, isSystem)
         }
     }
@@ -81,7 +78,7 @@ class SongController(private val mContext: Context) {
                 registerCategoryStampList(stampNameList, categoryType.first, categoryType.second, isSystem)
             }
         }
-        StampController(mContext).notifyStampChange()
+        StampController(context).notifyStampChange()
     }
 
     fun removeStamp(stampName: String, mediaId: String, isSystem: Boolean) {
@@ -96,12 +93,12 @@ class SongController(private val mContext: Context) {
                 removeCategoryStamp(stampName, categoryType.first, categoryType.second, isSystem)
             }
         }
-        StampController(mContext).notifyStampChange()
+        StampController(context).notifyStampChange()
     }
 
     private fun findSongStampListByMediaMetadata(mediaMetadata: MediaMetadataCompat): List<Stamp> {
         val stampList = ArrayList<Stamp>()
-        RealmHelper.getRealmInstance().use { realm: Realm ->
+        RealmHelper.realmInstance.use { realm: Realm ->
             SongDao.findByMediaMetadata(realm, mediaMetadata)?.let { song ->
                 for (songStamp in song.songStampList) {
                     songStamp.let { s -> stampList.add(Stamp(s.name, s.isSystem)) }
@@ -112,7 +109,7 @@ class SongController(private val mContext: Context) {
     }
 
     private fun registerSongStampList(stampNameList: List<String>, track: MediaMetadataCompat, isSystem: Boolean) {
-        RealmHelper.getRealmInstance().use { realm ->
+        RealmHelper.realmInstance.use { realm ->
             for (stampName in stampNameList) {
                 SongDao.findByMediaMetadata(realm, track)?.let {
                     SongStampDao.register(realm, it.id, stampName, isSystem)
@@ -122,7 +119,7 @@ class SongController(private val mContext: Context) {
     }
 
     private fun removeSongStamp(mediaMetadata: MediaMetadataCompat, stampName: String, isSystem: Boolean) {
-        RealmHelper.getRealmInstance().use { realm: Realm ->
+        RealmHelper.realmInstance.use { realm: Realm ->
             SongDao.findByMediaMetadata(realm, mediaMetadata)?.let { song ->
                 SongStampDao.remove(realm, song.id, stampName, isSystem)
             }
@@ -130,13 +127,13 @@ class SongController(private val mContext: Context) {
     }
 
     private fun findCategoryStampList(categoryType: CategoryType, categoryValue: String): List<Stamp> {
-        return RealmHelper.getRealmInstance().use { realm ->
+        return RealmHelper.realmInstance.use { realm ->
             CategoryStampDao.findCategoryStampList(realm, categoryType, categoryValue).map { Stamp(it.name, it.isSystem) }
         }
     }
 
     private fun registerCategoryStampList(stampNameList: List<String>, categoryType: CategoryType, categoryValue: String, isSystem: Boolean) {
-        RealmHelper.getRealmInstance().use { realm ->
+        RealmHelper.realmInstance.use { realm ->
             for (stampName in stampNameList) {
                 CategoryStampDao.create(realm, stampName, categoryType, categoryValue, isSystem)
             }
@@ -144,23 +141,20 @@ class SongController(private val mContext: Context) {
     }
 
     private fun removeCategoryStamp(stampName: String, categoryType: CategoryType, categoryValue: String, isSystem: Boolean) {
-        RealmHelper.getRealmInstance().use { realm ->
+        RealmHelper.realmInstance.use { realm ->
             CategoryStampDao.delete(realm, stampName, categoryType, categoryValue, isSystem)
         }
     }
 
     private fun resolveCategory(mediaId: String): Pair<CategoryType, String>? {
-        val hierarchy = MediaIDHelper.getHierarchy(mediaId)
-        return if (hierarchy.size <= 1) {
-            null
-        } else {
-            val providerType = ProviderType.of(hierarchy[0])
-            if (providerType?.categoryType != null) {
-                Pair(providerType.categoryType!!, hierarchy[1])
-            } else {
-                null
+        MediaIDHelper.getHierarchy(mediaId).run {
+            if (this.size > 1) {
+                ProviderType.of(this[0])?.categoryType?.let {
+                    return Pair(it, this[1])
+                }
             }
         }
+        return null
     }
 
     fun resolveMediaMetadata(musicIdOrMediaId: String): MediaMetadataCompat? {
@@ -170,13 +164,10 @@ class SongController(private val mContext: Context) {
         } catch (e: NumberFormatException) {
             return null
         }
-        return MediaRetrieveHelper.findByMusicId(mContext, longMusicId) { }
-    }
-
-    companion object {
-
-        @Suppress("unused")
-        private val TAG = LogHelper.makeLogTag(SongController::class.java)
+        return MediaRetrieveHelper.findByMusicId(context, longMusicId, object : MediaRetrieveHelper.PermissionRequiredCallback {
+            override fun onPermissionRequired() {
+            }
+        })
     }
 
 }

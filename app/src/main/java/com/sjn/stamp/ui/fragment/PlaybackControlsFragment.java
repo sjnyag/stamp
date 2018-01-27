@@ -35,15 +35,14 @@ import com.sjn.stamp.R;
 import com.sjn.stamp.media.StampSession;
 import com.sjn.stamp.ui.observer.MediaControllerObserver;
 import com.sjn.stamp.utils.LogHelper;
-
-import static com.sjn.stamp.utils.ViewHelper.updateAlbumArt;
+import com.sjn.stamp.utils.ViewHelper;
 
 /**
  * A class that shows the Media Queue to the user.
  */
 public class PlaybackControlsFragment extends Fragment implements MediaControllerObserver.Listener {
 
-    private static final String TAG = LogHelper.makeLogTag(PlaybackControlsFragment.class);
+    private static final String TAG = LogHelper.INSTANCE.makeLogTag(PlaybackControlsFragment.class);
 
     private ImageButton mPlayPause;
     private TextView mTitle;
@@ -71,7 +70,7 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
     @Override
     public void onStart() {
         super.onStart();
-        LogHelper.d(TAG, "fragment.onStart");
+        LogHelper.INSTANCE.d(TAG, "fragment.onStart");
         MediaControllerObserver.getInstance().addListener(this);
         onMediaControllerConnected();
     }
@@ -79,14 +78,14 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
     @Override
     public void onStop() {
         super.onStop();
-        LogHelper.d(TAG, "fragment.onStop");
+        LogHelper.INSTANCE.d(TAG, "fragment.onStop");
         MediaControllerObserver.getInstance().removeListener(this);
     }
 
     @Override
     public void onMediaControllerConnected() {
         MediaControllerCompat controller = MediaControllerCompat.getMediaController(getActivity());
-        LogHelper.d(TAG, "onMediaControllerConnected, mediaController==null? ", controller == null);
+        LogHelper.INSTANCE.d(TAG, "onMediaControllerConnected, mediaController==null? ", controller == null);
         if (controller != null) {
             onMetadataChanged(controller.getMetadata());
             onPlaybackStateChanged(controller.getPlaybackState());
@@ -100,9 +99,9 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
 
     @Override
     public void onMetadataChanged(MediaMetadataCompat metadata) {
-        LogHelper.d(TAG, "onMetadataChanged ", metadata);
+        LogHelper.INSTANCE.d(TAG, "onMetadataChanged ", metadata);
         if (getActivity() == null) {
-            LogHelper.w(TAG, "onMetadataChanged called when getActivity null," +
+            LogHelper.INSTANCE.w(TAG, "onMetadataChanged called when getActivity null," +
                     "this should not happen if the callback was properly unregistered. Ignoring.");
             return;
         }
@@ -118,7 +117,7 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
         }
         if (!TextUtils.equals(artUrl, mArtUrl)) {
             mArtUrl = artUrl;
-            updateAlbumArt(getActivity(), mAlbumArt, mArtUrl, metadata.getDescription().getTitle().toString());
+            ViewHelper.INSTANCE.updateAlbumArt(getActivity(), mAlbumArt, mArtUrl, metadata.getDescription().getTitle().toString());
         }
     }
 
@@ -133,9 +132,9 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
 
     @Override
     public void onPlaybackStateChanged(@NonNull PlaybackStateCompat state) {
-        LogHelper.d(TAG, "onPlaybackStateChanged ", state);
+        LogHelper.INSTANCE.d(TAG, "onPlaybackStateChanged ", state);
         if (getActivity() == null) {
-            LogHelper.w(TAG, "onPlaybackStateChanged called when getActivity null," +
+            LogHelper.INSTANCE.w(TAG, "onPlaybackStateChanged called when getActivity null," +
                     "this should not happen if the callback was properly unregistered. Ignoring.");
             return;
         }
@@ -150,7 +149,7 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
                 mPlayPause.setVisibility(View.VISIBLE);
                 break;
             case PlaybackStateCompat.STATE_ERROR:
-                LogHelper.e(TAG, "error playbackstate: ", state.getErrorMessage());
+                LogHelper.INSTANCE.e(TAG, "error playbackstate: ", state.getErrorMessage());
                 Toast.makeText(getActivity(), state.getErrorMessage(), Toast.LENGTH_LONG).show();
                 mPlayPause.setVisibility(View.INVISIBLE);
                 break;
@@ -188,10 +187,10 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
             PlaybackStateCompat stateObj = controller.getPlaybackState();
             final int state = stateObj == null ?
                     PlaybackStateCompat.STATE_NONE : stateObj.getState();
-            LogHelper.d(TAG, "Button pressed, in state " + state);
+            LogHelper.INSTANCE.d(TAG, "Button pressed, in state " + state);
             switch (v.getId()) {
                 case R.id.play_pause:
-                    LogHelper.d(TAG, "Play button pressed, in state " + state);
+                    LogHelper.INSTANCE.d(TAG, "Play button pressed, in state " + state);
                     if (state == PlaybackStateCompat.STATE_PAUSED ||
                             state == PlaybackStateCompat.STATE_STOPPED ||
                             state == PlaybackStateCompat.STATE_NONE) {
