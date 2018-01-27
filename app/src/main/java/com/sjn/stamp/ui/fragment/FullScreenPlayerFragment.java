@@ -38,7 +38,7 @@ import android.widget.TextView;
 
 import com.sjn.stamp.R;
 import com.sjn.stamp.media.CustomController;
-import com.sjn.stamp.media.player.StampSession;
+import com.sjn.stamp.media.StampSession;
 import com.sjn.stamp.model.constant.RepeatState;
 import com.sjn.stamp.model.constant.ShuffleState;
 import com.sjn.stamp.ui.activity.MusicPlayerListActivity;

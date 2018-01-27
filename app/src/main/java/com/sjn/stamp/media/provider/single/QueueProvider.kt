@@ -4,7 +4,6 @@ import android.content.Context
 import android.support.v4.media.MediaMetadataCompat
 import com.google.common.collect.Lists
 import com.sjn.stamp.R
-import com.sjn.stamp.model.constant.RepeatState
 import com.sjn.stamp.utils.MediaIDHelper
 import java.util.*
 
@@ -17,29 +16,13 @@ class QueueProvider(context: Context) : SingleListProvider(context) {
     override val titleId: Int = R.string.media_item_label_queue
 
     interface QueueListener {
-        val playingQueueMetadata: Iterable<MediaMetadataCompat>?
-
-        val currentIndex: Int
-
-        val repeatState: RepeatState
+        val playingQueueMetadata: Iterable<MediaMetadataCompat>
     }
 
     override fun createTrackList(musicListById: Map<String, MediaMetadataCompat>): List<MediaMetadataCompat> {
-        var queueList: List<MediaMetadataCompat> = ArrayList()
-        queueListener?.playingQueueMetadata?.let {
-            queueList = Lists.newArrayList(it)
+        queueListener?.let {
+            return Lists.newArrayList(it.playingQueueMetadata)
         }
-        //queueList = sortCurrentSongTop(queueList);
-        return queueList
-    }
-
-    @Suppress("unused")
-    private fun sortCurrentSongTop(queueList: List<MediaMetadataCompat>): List<MediaMetadataCompat> {
-        val startIndex = queueListener!!.currentIndex
-        val orderedList = (startIndex until queueList.size).mapTo(ArrayList()) { queueList[it] }
-        if (queueListener?.repeatState === RepeatState.ALL) {
-            (0 until startIndex).mapTo(orderedList) { queueList[it] }
-        }
-        return orderedList
+        return ArrayList()
     }
 }

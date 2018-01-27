@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package com.sjn.stamp.media.player
+package com.sjn.stamp.media.playback
 
 import android.content.Context
 import android.net.Uri
@@ -26,7 +26,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import com.sjn.stamp.controller.SongHistoryController
 import com.sjn.stamp.media.CustomController
 import com.sjn.stamp.media.MediaLogger
-import com.sjn.stamp.media.playback.Playback
+import com.sjn.stamp.media.QueueManager
 import com.sjn.stamp.model.constant.RepeatState
 import com.sjn.stamp.utils.AnalyticsHelper
 import com.sjn.stamp.utils.LogHelper
@@ -184,13 +184,10 @@ class PlaybackManager(
     fun switchToPlayback(playbackType: Playback.Type, resumePlaying: Boolean) {
         // suspend the current one.
         val oldState = playback.state
-        val pos = playback.currentStreamPosition
         val currentMediaId = playback.currentMediaId
         playback.stop(false)
-        val playback = playbackType.createInstance(context, this, if (pos < 0) 0 else pos, currentMediaId)
+        playback = playbackType.createInstance(context, this, Math.max(playback.currentStreamPosition, 0), currentMediaId)
         playback.start()
-        // finally swap the instance
-        this.playback = playback
         when (oldState) {
             PlaybackStateCompat.STATE_BUFFERING, PlaybackStateCompat.STATE_CONNECTING, PlaybackStateCompat.STATE_PAUSED -> this.playback.pause()
             PlaybackStateCompat.STATE_PLAYING -> {
@@ -242,8 +239,7 @@ class PlaybackManager(
 
         override fun onPlayFromUri(uri: Uri?, extras: Bundle?) {
             val queueItem = MediaItemHelper.createQueueItem(context, uri) ?: return
-            val playBackState = playback.state
-            if (playBackState == PlaybackStateCompat.STATE_PLAYING || playBackState == PlaybackStateCompat.STATE_STOPPED || playBackState == PlaybackStateCompat.STATE_NONE) {
+            if (playback.state.isPlayable) {
                 mediaLogger.onStart()
             }
             serviceCallback.onPlaybackStart()
@@ -339,10 +335,8 @@ class PlaybackManager(
          */
         override fun onPlayFromSearch(query: String, extras: Bundle) {
             LogHelper.d(TAG, "playFromSearch  query=", query, " extras=", extras)
-
             playback.state = PlaybackStateCompat.STATE_CONNECTING
-            val successSearch = queueManager.setQueueFromSearch(query, extras)
-            if (successSearch) {
+            if (queueManager.setQueueFromSearch(query, extras)) {
                 handlePlayRequest()
                 queueManager.updateMetadata()
             } else {

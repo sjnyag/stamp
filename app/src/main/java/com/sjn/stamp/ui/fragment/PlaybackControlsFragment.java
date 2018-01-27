@@ -32,7 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sjn.stamp.R;
-import com.sjn.stamp.media.player.StampSession;
+import com.sjn.stamp.media.StampSession;
 import com.sjn.stamp.ui.observer.MediaControllerObserver;
 import com.sjn.stamp.utils.LogHelper;
 

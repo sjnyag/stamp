@@ -3,12 +3,12 @@ package com.sjn.stamp.media.provider
 import android.content.Context
 import android.content.res.Resources
 import com.sjn.stamp.R
-import com.sjn.stamp.model.constant.CategoryType
 import com.sjn.stamp.media.provider.multiple.*
 import com.sjn.stamp.media.provider.single.AllProvider
 import com.sjn.stamp.media.provider.single.NewProvider
 import com.sjn.stamp.media.provider.single.QueueProvider
 import com.sjn.stamp.media.provider.single.TopSongProvider
+import com.sjn.stamp.model.constant.CategoryType
 import com.sjn.stamp.utils.MediaIDHelper
 
 enum class ProviderType(internal val keyId: String, private val emptyMessageResourceId: Int) {
@@ -92,6 +92,16 @@ enum class ProviderType(internal val keyId: String, private val emptyMessageReso
                 return null
             }
             return ProviderType.values().firstOrNull { value.startsWith(it.keyId) }
+        }
+
+        fun setUp(context: Context): HashMap<ProviderType, ListProvider> {
+            return HashMap<ProviderType, ListProvider>().apply {
+                ProviderType.values().forEach { type ->
+                    type.newProvider(context)?.let { provider ->
+                        this[type] = provider
+                    }
+                }
+            }
         }
     }
 }

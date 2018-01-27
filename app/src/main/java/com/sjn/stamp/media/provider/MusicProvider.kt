@@ -30,66 +30,51 @@ import com.sjn.stamp.utils.MediaIDHelper
 import com.sjn.stamp.utils.MediaIDHelper.MEDIA_ID_ROOT
 import com.sjn.stamp.utils.MediaItemHelper
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Simple data provider for music tracks. The actual metadata source is delegated to a
  * MusicProviderSource defined by a constructor argument of this class.
  */
-class MusicProvider(private val mContext: Context, private val mSource: MusicProviderSource) {
+class MusicProvider(private val context: Context, private val source: MusicProviderSource) {
 
-    // Categorized caches for music track data:
-    private var mMusicListById: HashMap<String, MediaMetadataCompat> = hashMapOf()
-    private val mListProviderMap = HashMap<ProviderType, ListProvider>()
-    private val mFavoriteTracks: MutableSet<String>
-    private var mAsyncTask: RetrieveMediaAsyncTask? = null
-
+    private var musicMap: HashMap<String, MediaMetadataCompat> = hashMapOf()
+    private val providerMap = ProviderType.setUp(context)
+    private var asyncTask: RetrieveMediaAsyncTask? = null
     @Volatile
-    private var mCurrentState: ListProvider.ProviderState = ListProvider.ProviderState.NON_INITIALIZED
+    private var currentState: ListProvider.ProviderState = ListProvider.ProviderState.NON_INITIALIZED
 
     /**
      * Get an iterator over a shuffled collection of all songs
      */
     val shuffledMusic: Iterable<MediaMetadataCompat>
         get() {
-            if (mCurrentState != ListProvider.ProviderState.INITIALIZED) {
+            if (currentState != ListProvider.ProviderState.INITIALIZED) {
                 return emptyList()
             }
-            val shuffled = ArrayList<MediaMetadataCompat>(mMusicListById.size)
-            shuffled += mMusicListById.values
-            Collections.shuffle(shuffled)
-            return shuffled
+            return ArrayList<MediaMetadataCompat>(musicMap.size).apply {
+                this += musicMap.values
+                Collections.shuffle(this)
+            }
         }
 
     val isInitialized: Boolean
-        get() = mCurrentState == ListProvider.ProviderState.INITIALIZED
+        get() = currentState == ListProvider.ProviderState.INITIALIZED
 
     interface Callback {
         fun onMusicCatalogReady(success: Boolean)
     }
 
-    init {
-        mMusicListById = HashMap()
-        mFavoriteTracks = Collections.newSetFromMap(ConcurrentHashMap())
-        for (providerType in ProviderType.values()) {
-            val listProvider = providerType.newProvider(mContext)
-            if (listProvider != null) {
-                mListProviderMap[providerType] = listProvider
-            }
-        }
-    }
-
     fun setQueueListener(queueListener: QueueProvider.QueueListener) {
-        val provider = getProvider(ProviderType.QUEUE)
-        if (provider != null && provider is QueueProvider) {
-            provider.queueListener = queueListener
+        getProvider(ProviderType.QUEUE)?.let {
+            if (it is QueueProvider) {
+                it.queueListener = queueListener
+            }
         }
     }
 
     fun getMusicsHierarchy(categoryType: String, categoryValue: String?): List<MediaMetadataCompat>? {
         LogHelper.d(TAG, "getMusicsHierarchy categoryType: ", categoryType, ", categoryValue: ", categoryValue)
-        val listProvider = mListProviderMap[ProviderType.of(categoryType)] ?: return null
-        return listProvider.getListByKey(categoryValue, mCurrentState, mMusicListById)
+        return providerMap[ProviderType.of(categoryType)]?.getListByKey(categoryValue, currentState, musicMap)
     }
 
     /**
@@ -125,13 +110,13 @@ class MusicProvider(private val mContext: Context, private val mSource: MusicPro
     }
 
     private fun searchMusic(metadataField: String, query: String?): Iterable<MediaMetadataCompat> {
-        if (mCurrentState != ListProvider.ProviderState.INITIALIZED || query == null || query.isEmpty()) {
+        if (currentState != ListProvider.ProviderState.INITIALIZED || query == null || query.isEmpty()) {
             return emptyList()
         }
-        val lowerQuery = query.toLowerCase(Locale.getDefault())
-        return mMusicListById.values.filter { it.getString(metadataField).toLowerCase(Locale.getDefault()).contains(lowerQuery) }
+        return query.toLowerCase(Locale.getDefault()).run {
+            musicMap.values.filter { it.getString(metadataField).toLowerCase(Locale.getDefault()).contains(this) }
+        }
     }
-
 
     /**
      * Return the MediaMetadataCompat for the given musicID.
@@ -139,12 +124,12 @@ class MusicProvider(private val mContext: Context, private val mSource: MusicPro
      * @param musicId The unique, non-hierarchical music ID.
      */
     fun getMusicByMusicId(musicId: String): MediaMetadataCompat? {
-        return if (mMusicListById.containsKey(musicId)) mMusicListById[musicId] else null
+        return if (musicMap.containsKey(musicId)) musicMap[musicId] else null
     }
 
     @Synchronized
     fun updateMusicArt(musicId: String, albumArt: Bitmap, icon: Bitmap) {
-        mMusicListById[musicId] = MediaItemHelper.updateMusicArt(getMusicByMusicId(musicId), albumArt, icon)
+        musicMap[musicId] = MediaItemHelper.updateMusicArt(getMusicByMusicId(musicId), albumArt, icon)
     }
 
     fun getChildren(mediaId: String, resources: Resources): List<MediaBrowserCompat.MediaItem> {
@@ -154,22 +139,18 @@ class MusicProvider(private val mContext: Context, private val mSource: MusicPro
         if (!MediaIDHelper.isBrowseable(mediaId)) {
             return mediaItems
         }
-
         if (MEDIA_ID_ROOT == mediaId) {
-            mListProviderMap.values.mapTo(mediaItems) { it.getRootMenu(resources) }
+            providerMap.values.mapTo(mediaItems) { it.getRootMenu(resources) }
         } else {
-            val type = ProviderType.of(mediaId)
-            if (type != null) {
-                return getProvider(type)!!.getListItems(mediaId, resources, mCurrentState, mMusicListById)
-            }
+            ProviderType.of(mediaId)?.let { getProvider(it)?.let { return it.getListItems(mediaId, resources, currentState, musicMap) } }
         }
         return mediaItems
     }
 
     private fun getProvider(type: ProviderType?): ListProvider? {
-        return if (type == null || !mListProviderMap.containsKey(type)) {
+        return if (type == null || !providerMap.containsKey(type)) {
             null
-        } else mListProviderMap[type]
+        } else providerMap[type]
     }
 
     /**
@@ -179,79 +160,78 @@ class MusicProvider(private val mContext: Context, private val mSource: MusicPro
     @Synchronized
     fun retrieveMediaAsync(callback: Callback?) {
         LogHelper.d(TAG, "retrieveMediaAsync called")
-        if (mCurrentState == ListProvider.ProviderState.INITIALIZED) {
+        if (currentState == ListProvider.ProviderState.INITIALIZED) {
             callback?.onMusicCatalogReady(true)
             return
         }
-        if (mAsyncTask != null) {
-            mAsyncTask!!.cancel(true)
-        }
-        mAsyncTask = RetrieveMediaAsyncTask(callback)
-        mAsyncTask!!.execute()
+        asyncTask?.cancel(true)
+        asyncTask = RetrieveMediaAsyncTask(this, callback)
+        asyncTask?.execute()
     }
 
     fun cacheAndNotifyLatestMusicMap() {
         Thread(Runnable {
-            mMusicListById = createLatestMusicMap()
-            ProviderCache.saveCache(mContext, mMusicListById)
+            musicMap = createLatestMusicMap()
+            ProviderCache.saveCache(context, musicMap)
             MusicListObserver.getInstance().notifyMediaListUpdated()
         }).start()
     }
 
     private fun createLatestMusicMap(): HashMap<String, MediaMetadataCompat> {
         val musicListById = HashMap<String, MediaMetadataCompat>()
-        val tracks = mSource.iterator()
-        while (tracks.hasNext()) {
-            val item = tracks.next()
-            val musicId = item.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)
-            musicListById[musicId] = item
+        while (source.iterator().hasNext()) {
+            source.iterator().next().run {
+                this.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)?.let {
+                    musicListById[it] = this
+                }
+            }
         }
         return musicListById
     }
 
-    private inner class RetrieveMediaAsyncTask internal constructor(internal val callback: Callback?) : AsyncTask<Void, Void, ListProvider.ProviderState>() {
+    companion object {
 
-        override fun doInBackground(vararg params: Void): ListProvider.ProviderState {
-            retrieveMedia()
-            LogHelper.i(TAG, "RetrieveMediaAsyncTask.doInBackground end")
-            return mCurrentState
-        }
+        private class RetrieveMediaAsyncTask internal constructor(val musicProvider: MusicProvider, internal val callback: Callback?) : AsyncTask<Void, Void, ListProvider.ProviderState>() {
 
-        override fun onPostExecute(current: ListProvider.ProviderState) {
-            callback?.onMusicCatalogReady(current == ListProvider.ProviderState.INITIALIZED)
-            cacheAndNotifyLatestMusicMap()
-        }
+            override fun doInBackground(vararg params: Void): ListProvider.ProviderState {
+                retrieveMedia()
+                LogHelper.i(TAG, "RetrieveMediaAsyncTask.doInBackground end")
+                return musicProvider.currentState
+            }
 
-        override fun onCancelled(current: ListProvider.ProviderState) {
-            callback?.onMusicCatalogReady(current == ListProvider.ProviderState.INITIALIZED)
-            mCurrentState = ListProvider.ProviderState.NON_INITIALIZED
-        }
+            override fun onPostExecute(current: ListProvider.ProviderState) {
+                callback?.onMusicCatalogReady(current == ListProvider.ProviderState.INITIALIZED)
+                musicProvider.cacheAndNotifyLatestMusicMap()
+            }
 
-        @Synchronized
-        private fun retrieveMedia() {
-            try {
-                if (mCurrentState == ListProvider.ProviderState.NON_INITIALIZED) {
-                    mCurrentState = ListProvider.ProviderState.INITIALIZING
-                    mMusicListById = ProviderCache.readCache(mContext)
-                    LogHelper.i(TAG, "Read " + mMusicListById.size + " songs from cache")
-                    if (mMusicListById.size == 0) {
-                        mMusicListById = createLatestMusicMap()
+            override fun onCancelled(current: ListProvider.ProviderState) {
+                callback?.onMusicCatalogReady(current == ListProvider.ProviderState.INITIALIZED)
+                musicProvider.currentState = ListProvider.ProviderState.NON_INITIALIZED
+            }
+
+            @Synchronized
+            private fun retrieveMedia() {
+                try {
+                    if (musicProvider.currentState == ListProvider.ProviderState.NON_INITIALIZED) {
+                        musicProvider.currentState = ListProvider.ProviderState.INITIALIZING
+                        musicProvider.musicMap = ProviderCache.readCache(musicProvider.context)
+                        LogHelper.i(TAG, "Read " + musicProvider.musicMap.size + " songs from cache")
+                        if (musicProvider.musicMap.size == 0) {
+                            musicProvider.musicMap = musicProvider.createLatestMusicMap()
+                        }
+                        musicProvider.currentState = ListProvider.ProviderState.INITIALIZED
                     }
-                    mCurrentState = ListProvider.ProviderState.INITIALIZED
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            } finally {
-                if (mCurrentState != ListProvider.ProviderState.INITIALIZED) {
-                    // Something bad happened, so we reset ProviderState to NON_INITIALIZED to allow
-                    // retries (eg if the network connection is temporary unavailable)
-                    mCurrentState = ListProvider.ProviderState.NON_INITIALIZED
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                } finally {
+                    if (musicProvider.currentState != ListProvider.ProviderState.INITIALIZED) {
+                        // Something bad happened, so we reset ProviderState to NON_INITIALIZED to allow
+                        // retries (eg if the network connection is temporary unavailable)
+                        musicProvider.currentState = ListProvider.ProviderState.NON_INITIALIZED
+                    }
                 }
             }
         }
-    }
-
-    companion object {
 
         private val TAG = LogHelper.makeLogTag(MusicProvider::class.java)
     }

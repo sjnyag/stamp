@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sjn.stamp.media.player
+package com.sjn.stamp.media
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -24,7 +24,6 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import com.sjn.stamp.R
 import com.sjn.stamp.controller.UserSettingController
-import com.sjn.stamp.media.CustomController
 import com.sjn.stamp.media.provider.MusicProvider
 import com.sjn.stamp.media.provider.single.QueueProvider
 import com.sjn.stamp.model.constant.RepeatState
@@ -39,51 +38,48 @@ import java.util.*
  * queue. Also provides methods to set the current queue based on common queries, relying on a
  * given MusicProvider to provide the actual media metadata.
  */
-class QueueManager(private val mContext: Context,
-                   private val mMusicProvider: MusicProvider,
-                   private val mListener: MetadataUpdateListener) : QueueProvider.QueueListener, CustomController.ShuffleStateListener {
-    override val playingQueueMetadata: Iterable<MediaMetadataCompat>?
-        get() = playingQueue.map { MediaItemHelper.convertToMetadata(it, currentMusic!!.description.mediaId) }
-    override val currentIndex: Int
-        get() = mCurrentIndex
-    override val repeatState: RepeatState
-        get() = CustomController.repeatState
+class QueueManager(private val context: Context,
+                   private val musicProvider: MusicProvider,
+                   private val listener: MetadataUpdateListener) : QueueProvider.QueueListener, CustomController.ShuffleStateListener {
+
+    override val playingQueueMetadata: Iterable<MediaMetadataCompat>
+        get() = playingQueue.map { MediaItemHelper.convertToMetadata(it, currentMusic?.description?.mediaId) }
 
     // "Now playing" queue:
-    private var mOrderedQueue: List<MediaSessionCompat.QueueItem> = Collections.synchronizedList(ArrayList())
-    private var mShuffledQueue: MutableList<MediaSessionCompat.QueueItem> = Collections.synchronizedList(ArrayList())
-    private var mCurrentIndex: Int = 0
+    private var orderedQueue: List<MediaSessionCompat.QueueItem> = Collections.synchronizedList(ArrayList())
+    private var shuffledQueue: MutableList<MediaSessionCompat.QueueItem> = Collections.synchronizedList(ArrayList())
+    private var currentIndex: Int = 0
     //to avoid GC
     private var mTarget: Target? = null
 
     private val playingQueue: List<MediaSessionCompat.QueueItem>
         get() = if (CustomController.shuffleState === ShuffleState.SHUFFLE) {
-            mShuffledQueue
-        } else mOrderedQueue
+            shuffledQueue
+        } else orderedQueue
 
     val currentMusic: MediaSessionCompat.QueueItem?
-        get() = if (!QueueHelper.isIndexPlayable(mCurrentIndex, playingQueue)) {
+        get() = if (!QueueHelper.isIndexPlayable(currentIndex, playingQueue)) {
             null
-        } else playingQueue[mCurrentIndex]
+        } else playingQueue[currentIndex]
 
     override fun onShuffleStateChanged(state: ShuffleState) {
         if (state === ShuffleState.SHUFFLE) {
             updateShuffleQueue()
         } else {
             //TODO Bug will occur when Callback called but ShuffleState won't change
-            setCurrentQueueIndex(Math.max(QueueHelper.getMusicIndexOnQueueByMediaId(playingQueue, mShuffledQueue[mCurrentIndex].description.mediaId), 0))
+            setCurrentQueueIndex(Math.max(QueueHelper.getMusicIndexOnQueueByMediaId(playingQueue, shuffledQueue[currentIndex].description.mediaId), 0))
         }
     }
 
     private fun updateShuffleQueue() {
-        mShuffledQueue = ArrayList(mOrderedQueue)
-        shuffleQueue(mShuffledQueue as ArrayList<MediaSessionCompat.QueueItem>, currentMusic)
+        shuffledQueue = ArrayList(orderedQueue)
+        shuffleQueue(shuffledQueue as ArrayList<MediaSessionCompat.QueueItem>, currentMusic)
         setCurrentQueueIndex(0)
     }
 
     init {
         CustomController.addShuffleStateListenerSet(this)
-        mMusicProvider.setQueueListener(this)
+        musicProvider.setQueueListener(this)
     }
 
     fun restorePreviousState(lastMusicId: String?, queueIdentifyMediaId: String) {
@@ -97,7 +93,7 @@ class QueueManager(private val mContext: Context,
 
     private fun setCurrentQueueIndex(index: Int): Boolean {
         if (index >= 0 && index < playingQueue.size) {
-            mCurrentIndex = index
+            currentIndex = index
             UserSettingController().lastMusicId = MediaIDHelper.extractMusicIDFromMediaID(currentMusic!!.description.mediaId!!)
             return true
         }
@@ -108,7 +104,7 @@ class QueueManager(private val mContext: Context,
         // set the current index on queue from the queue Id:
         val index = QueueHelper.getMusicIndexOnQueue(playingQueue, queueId)
         if (setCurrentQueueIndex(index)) {
-            mListener.onCurrentQueueIndexUpdated(mCurrentIndex)
+            listener.onCurrentQueueIndexUpdated(currentIndex)
         }
         return index >= 0
     }
@@ -117,13 +113,13 @@ class QueueManager(private val mContext: Context,
         // set the current index on queue from the music Id:
         val index = QueueHelper.getMusicIndexOnQueueByMediaId(playingQueue, mediaId)
         if (setCurrentQueueIndex(index)) {
-            mListener.onCurrentQueueIndexUpdated(mCurrentIndex)
+            listener.onCurrentQueueIndexUpdated(currentIndex)
         }
         return index >= 0
     }
 
     fun skipQueuePosition(amount: Int): Boolean {
-        var index = mCurrentIndex + amount
+        var index = currentIndex + amount
         if (index < 0) {
             // skip backwards before the first song will keep you on the first song
             index = 0
@@ -132,7 +128,7 @@ class QueueManager(private val mContext: Context,
             index %= playingQueue.size
         }
         if (!QueueHelper.isIndexPlayable(index, playingQueue)) {
-            LogHelper.e(TAG, "Cannot increment queue index by ", amount, ". Current=", mCurrentIndex, " queue length=", playingQueue.size)
+            LogHelper.e(TAG, "Cannot increment queue index by ", amount, ". Current=", currentIndex, " queue length=", playingQueue.size)
             return false
         }
         setCurrentQueueIndex(index)
@@ -144,14 +140,14 @@ class QueueManager(private val mContext: Context,
     }
 
     fun setQueueFromSearch(query: String, extras: Bundle): Boolean {
-        val queue = QueueHelper.getPlayingQueueFromSearch(query, extras, mMusicProvider)
-        setCurrentQueue(mContext.getString(R.string.search_queue_title), queue)
+        val queue = QueueHelper.getPlayingQueueFromSearch(query, extras, musicProvider)
+        setCurrentQueue(context.getString(R.string.search_queue_title), queue)
         updateMetadata()
         return queue != null && !queue.isEmpty()
     }
 
     fun setRandomQueue() {
-        setCurrentQueue(mContext.getString(R.string.random_queue_title), QueueHelper.getRandomQueue(mMusicProvider))
+        setCurrentQueue(context.getString(R.string.random_queue_title), QueueHelper.getRandomQueue(musicProvider))
         updateMetadata()
     }
 
@@ -168,16 +164,16 @@ class QueueManager(private val mContext: Context,
             canReuseQueue = setCurrentQueueItem(mediaId)
         }
         if (!canReuseQueue) {
-            val queueTitle = mContext.getString(R.string.browse_musics_by_genre_subtitle,
+            val queueTitle = context.getString(R.string.browse_musics_by_genre_subtitle,
                     MediaIDHelper.extractBrowseCategoryValueFromMediaID(mediaId))
-            setCurrentQueue(queueTitle, QueueHelper.getPlayingQueue(mediaId, mMusicProvider), mediaId, startMusicId)
+            setCurrentQueue(queueTitle, QueueHelper.getPlayingQueue(mediaId, musicProvider), mediaId, startMusicId)
         }
         updateMetadata()
     }
 
     fun setCurrentQueue(title: String, newQueue: List<MediaSessionCompat.QueueItem>,
                         initialMediaId: String? = null, startMusicId: String? = null) {
-        mOrderedQueue = newQueue
+        orderedQueue = newQueue
         if (CustomController.shuffleState === ShuffleState.SHUFFLE) {
             updateShuffleQueue()
         }
@@ -195,7 +191,7 @@ class QueueManager(private val mContext: Context,
             UserSettingController().queueIdentifyMediaId = initialMediaId
         }
         setCurrentQueueIndex(Math.max(index, 0))
-        mListener.onQueueUpdated(title, newQueue)
+        listener.onQueueUpdated(title, newQueue)
     }
 
     //TODO:
@@ -205,9 +201,9 @@ class QueueManager(private val mContext: Context,
             return
         }
         val musicId = MediaIDHelper.extractMusicIDFromMediaID(currentMusic!!.description.mediaId!!)
-        val metadata = mMusicProvider.getMusicByMusicId(musicId) ?: return
+        val metadata = musicProvider.getMusicByMusicId(musicId) ?: return
 
-        mListener.onMetadataChanged(metadata)
+        listener.onMetadataChanged(metadata)
 
         // Set the proper album artwork on the media session, so it can be shown in the
         // locked screen and in other places.
@@ -227,18 +223,18 @@ class QueueManager(private val mContext: Context,
 
                 private fun setMetadataMusicArt(bitmap: Bitmap) {
                     val icon = ViewHelper.createIcon(bitmap)
-                    mMusicProvider.updateMusicArt(musicId, bitmap, icon)
+                    musicProvider.updateMusicArt(musicId, bitmap, icon)
 
                     // If we are still playing the same music, notify the listeners:
                     val currentPlayingId = MediaIDHelper.extractMusicIDFromMediaID(currentMusic?.description?.mediaId!!)
                     if (musicId == currentPlayingId) {
-                        mMusicProvider.getMusicByMusicId(currentPlayingId)?.let {
-                            mListener.onMetadataChanged(it)
+                        musicProvider.getMusicByMusicId(currentPlayingId)?.let {
+                            listener.onMetadataChanged(it)
                         }
                     }
                 }
             }
-            ViewHelper.readBitmapAsync(mContext, albumUri, mTarget)
+            ViewHelper.readBitmapAsync(context, albumUri, mTarget)
         }
     }
 

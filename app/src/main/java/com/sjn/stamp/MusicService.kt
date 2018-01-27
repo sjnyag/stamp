@@ -9,8 +9,8 @@ import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import com.sjn.stamp.media.player.PlaybackManager
-import com.sjn.stamp.media.player.Player
+import com.sjn.stamp.media.playback.PlaybackManager
+import com.sjn.stamp.media.Player
 import com.sjn.stamp.media.provider.MusicProvider
 import com.sjn.stamp.media.source.LocalMediaSource
 import com.sjn.stamp.media.notification.NotificationManager

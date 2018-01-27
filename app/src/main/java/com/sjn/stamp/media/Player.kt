@@ -1,4 +1,4 @@
-package com.sjn.stamp.media.player
+package com.sjn.stamp.media
 
 
 import android.content.Context
@@ -9,6 +9,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import com.sjn.stamp.R
 import com.sjn.stamp.controller.UserSettingController
 import com.sjn.stamp.media.playback.Playback
+import com.sjn.stamp.media.playback.PlaybackManager
 import com.sjn.stamp.media.provider.MusicProvider
 import com.sjn.stamp.utils.MediaControllerHelper
 

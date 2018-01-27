@@ -1,4 +1,4 @@
-package com.sjn.stamp.media.player
+package com.sjn.stamp.media
 
 import android.app.PendingIntent
 import android.content.Context
