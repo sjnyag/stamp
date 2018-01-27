@@ -394,7 +394,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
         mLastPlaybackState = state;
         MediaControllerCompat controller = getController();
         if (controller != null && controller.getExtras() != null) {
-            String castName = controller.getExtras().getString(StampSession.Companion.getEXTRA_CONNECTED_CAST());
+            String castName = controller.getExtras().getString(StampSession.EXTRA_CONNECTED_CAST);
             String line3Text = castName == null ? "" : getResources()
                     .getString(R.string.casting_to_device, castName);
             mLine3.setText(line3Text);

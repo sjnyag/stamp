@@ -7,7 +7,7 @@ class Migration : RealmMigration {
 
     companion object {
         private val TAG = LogHelper.makeLogTag(Migration::class.java)
-        val VERSION = 5
+        const val VERSION = 5
     }
 
     override fun migrate(realm: DynamicRealm, version: Long, newVersion: Long) {

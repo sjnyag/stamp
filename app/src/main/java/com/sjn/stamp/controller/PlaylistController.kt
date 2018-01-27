@@ -3,26 +3,20 @@ package com.sjn.stamp.controller
 import android.content.ContentResolver
 import android.content.Context
 import android.support.v4.media.MediaMetadataCompat
-
 import com.sjn.stamp.utils.LocalPlaylistHelper
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentMap
 
 @Suppress("unused")
 class PlaylistController(context: Context) {
 
     private val mContentResolver: ContentResolver = context.contentResolver
 
-    val allPlaylist: ConcurrentMap<String, List<MediaMetadataCompat>>
-        get() {
-            return try {
-                LocalPlaylistHelper.findAllPlaylist(mContentResolver)
-            } catch (e: SecurityException) {
-                e.printStackTrace()
-                ConcurrentHashMap<String, List<MediaMetadataCompat>>()
-            }
-
+    fun loadAllPlaylist(map: MutableMap<String, MutableList<MediaMetadataCompat>>) {
+        try {
+            LocalPlaylistHelper.findAllPlaylist(mContentResolver, map)
+        } catch (e: SecurityException) {
+            e.printStackTrace()
         }
+    }
 
     fun isExistAudioId(audioId: Int, playlistId: Int): Boolean = LocalPlaylistHelper.isExistAudioId(mContentResolver, audioId, playlistId)
 

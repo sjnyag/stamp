@@ -149,7 +149,7 @@ class StampSession internal constructor(context: Context, callback: MediaSession
     companion object {
 
         // Extra on MediaSession that contains the Cast device name currently connected to
-        val EXTRA_CONNECTED_CAST = "com.sjn.stamp.CAST_NAME"
+        const val EXTRA_CONNECTED_CAST = "com.sjn.stamp.CAST_NAME"
         private val TAG = LogHelper.makeLogTag(StampSession::class.java)
     }
 }

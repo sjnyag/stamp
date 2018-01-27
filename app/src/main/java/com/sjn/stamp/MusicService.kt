@@ -13,7 +13,7 @@ import com.sjn.stamp.media.player.PlaybackManager
 import com.sjn.stamp.media.player.Player
 import com.sjn.stamp.media.provider.MusicProvider
 import com.sjn.stamp.media.source.LocalMediaSource
-import com.sjn.stamp.notification.NotificationManager
+import com.sjn.stamp.media.notification.NotificationManager
 import com.sjn.stamp.ui.observer.MediaControllerObserver
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaIDHelper

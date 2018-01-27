@@ -1,4 +1,4 @@
-package com.sjn.stamp.media.provider;
+package com.sjn.stamp.utils;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;

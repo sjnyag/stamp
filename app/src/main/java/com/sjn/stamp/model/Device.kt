@@ -13,6 +13,6 @@ open class Device(
     constructor() : this(model = OS_NAME, os = Build.MODEL)
 
     companion object {
-        private val OS_NAME = "android"
+        private const val OS_NAME = "android"
     }
 }

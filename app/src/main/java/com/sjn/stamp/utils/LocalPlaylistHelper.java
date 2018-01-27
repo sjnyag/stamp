@@ -9,8 +9,7 @@ import android.support.v4.media.MediaMetadataCompat;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Map;
 
 
 public class LocalPlaylistHelper {
@@ -94,8 +93,7 @@ public class LocalPlaylistHelper {
         return mediaList;
     }
 
-    public static ConcurrentMap<String, List<MediaMetadataCompat>> findAllPlaylist(ContentResolver resolver) {
-        ConcurrentMap<String, List<MediaMetadataCompat>> playlistMap = new ConcurrentHashMap<>();
+    public static void findAllPlaylist(ContentResolver resolver, Map<String, List<MediaMetadataCompat>> playlistMap) {
         Cursor playlistCursor = findAllPlaylistCursor(resolver);
         if (playlistCursor.moveToFirst()) {
             do {
@@ -105,7 +103,6 @@ public class LocalPlaylistHelper {
             } while (playlistCursor.moveToNext());
         }
         playlistCursor.close();
-        return playlistMap;
     }
 
     public static boolean create(ContentResolver resolver, String name) {

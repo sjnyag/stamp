@@ -16,16 +16,14 @@ abstract class ListProvider {
         NON_INITIALIZED, INITIALIZING, INITIALIZED
     }
 
-    fun getRootMenu(resources: Resources): MediaBrowserCompat.MediaItem {
-        return MediaItemHelper.createBrowsableItem(providerMediaId, resources.getString(titleId))
-    }
+    fun getRootMenu(resources: Resources): MediaBrowserCompat.MediaItem = MediaItemHelper.createBrowsableItem(providerMediaId, resources.getString(titleId))
 
     abstract fun reset()
 
     abstract fun getListItems(mediaId: String, resources: Resources, state: ProviderState,
-                              musicListById: Map<String, MediaMetadataCompat>): List<MediaBrowserCompat.MediaItem>
+                              musicListById: MutableMap<String, MediaMetadataCompat>): List<MediaBrowserCompat.MediaItem>
 
-    abstract fun getListByKey(key: String?, state: ProviderState, musicListById: Map<String, MediaMetadataCompat>): List<MediaMetadataCompat>
+    abstract fun getListByKey(key: String?, state: ProviderState, musicListById: MutableMap<String, MediaMetadataCompat>): List<MediaMetadataCompat>
 
     protected abstract fun createMediaItem(metadata: MediaMetadataCompat, key: String): MediaBrowserCompat.MediaItem
 }

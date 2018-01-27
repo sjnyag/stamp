@@ -1,4 +1,4 @@
-package com.sjn.stamp.notification
+package com.sjn.stamp.media.notification
 
 import android.app.PendingIntent
 import android.content.Context

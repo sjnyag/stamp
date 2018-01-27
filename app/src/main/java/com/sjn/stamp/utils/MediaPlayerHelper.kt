@@ -17,9 +17,9 @@ object MediaPlayerHelper {
 
     // The volume we set the media player to when we lose audio focus, but are
     // allowed to reduce the volume instead of stopping playback.
-    private val VOLUME_DUCK = 0.2f
+    private const val VOLUME_DUCK = 0.2f
     // The volume we set the media player when we have audio focus.
-    private val VOLUME_NORMAL = 1.0f
+    private const val VOLUME_NORMAL = 1.0f
 
     class MediaPlayerManager(private val context: Context, initialStreamPosition: Int, var currentMediaId: String?, private val listener: Listener) :
             OnCompletionListener, OnErrorListener, OnPreparedListener, OnSeekCompleteListener, AudioFocusHelper.AudioFocusManager.Listener {

@@ -187,6 +187,6 @@ open class CastPlayback(internal val context: Context, private val callback: Pla
 
     companion object {
         private val TAG = LogHelper.makeLogTag(CastPlayback::class.java)
-        val ITEM_ID = "itemId"
+        const val ITEM_ID = "itemId"
     }
 }

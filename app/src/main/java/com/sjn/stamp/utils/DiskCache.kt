@@ -1,4 +1,4 @@
-package com.sjn.stamp.media.provider
+package com.sjn.stamp.utils
 
 interface DiskCache<T> {
 

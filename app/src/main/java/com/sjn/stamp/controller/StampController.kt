@@ -2,9 +2,9 @@ package com.sjn.stamp.controller
 
 import android.content.Context
 import android.support.v4.media.MediaMetadataCompat
-import com.sjn.stamp.model.constant.CategoryType
 import com.sjn.stamp.model.CategoryStamp
 import com.sjn.stamp.model.SongStamp
+import com.sjn.stamp.model.constant.CategoryType
 import com.sjn.stamp.model.dao.CategoryStampDao
 import com.sjn.stamp.model.dao.SongDao
 import com.sjn.stamp.model.dao.SongStampDao
@@ -79,14 +79,13 @@ class StampController(private val mContext: Context) {
         }
     }
 
-    fun createStampMap(musicListById: MutableMap<String, MediaMetadataCompat>, isSystem: Boolean): MutableMap<String, MutableList<MediaMetadataCompat>> {
+    fun createStampMap(musicListById: MutableMap<String, MediaMetadataCompat>, stampToList: MutableMap<String, MutableList<MediaMetadataCompat>>, isSystem: Boolean): MutableMap<String, MutableList<MediaMetadataCompat>> {
         val stampToMap = findSongStamp(isSystem)
         if (!isSystem) {
             stampToMap.merge(findCategoryStamp(musicListById))
         }
-        val stampToList = ConcurrentHashMap<String, MutableList<MediaMetadataCompat>>()
         for ((key, value) in stampToMap) {
-            stampToList.put(key, ArrayList(value.values))
+            stampToList[key] = ArrayList(value.values)
         }
         return stampToList
     }
@@ -155,8 +154,8 @@ class StampController(private val mContext: Context) {
             this[stampName]?.put(song.description.mediaId!!, song)
         } else {
             val songMap = ConcurrentHashMap<String, MediaMetadataCompat>()
-            songMap.put(song.description.mediaId!!, song)
-            this.put(stampName, songMap)
+            songMap[song.description.mediaId!!] = song
+            this[stampName] = songMap
         }
     }
 
@@ -168,7 +167,7 @@ class StampController(private val mContext: Context) {
         if (this.containsKey(stampName)) {
             this[stampName]?.putAll(songMap)
         } else {
-            this.put(stampName, songMap)
+            this[stampName] = songMap
         }
     }
 
@@ -182,7 +181,7 @@ class StampController(private val mContext: Context) {
         } else {
             val queryMap = ConcurrentHashMap<CategoryType, MutableList<String>>()
             queryMap.putQuery(categoryStamp)
-            this.put(categoryStamp.name, queryMap)
+            this[categoryStamp.name] = queryMap
         }
     }
 
@@ -196,14 +195,14 @@ class StampController(private val mContext: Context) {
         if (this.containsKey(categoryType) && !this[categoryType]!!.isEmpty()) {
             this[categoryType]?.add(query)
         } else {
-            this.put(categoryType, ArrayList(listOf(query)))
+            this[categoryType] = ArrayList(listOf(query))
         }
     }
 
     private fun SongStamp.songMap(): MutableMap<String, MediaMetadataCompat> {
         val songMap = ConcurrentHashMap<String, MediaMetadataCompat>()
         for (song in this.songList) {
-            songMap.put(song.mediaId, song.buildMediaMetadataCompat())
+            songMap[song.mediaId] = song.buildMediaMetadataCompat()
         }
         return songMap
     }

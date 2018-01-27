@@ -1,7 +1,6 @@
 package com.sjn.stamp.controller
 
 import android.content.Context
-import com.sjn.stamp.model.Song
 import com.sjn.stamp.model.constant.RecordType
 import com.sjn.stamp.model.dao.SongDao
 import com.sjn.stamp.model.dao.SongHistoryDao

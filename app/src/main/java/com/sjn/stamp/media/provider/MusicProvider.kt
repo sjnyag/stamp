@@ -82,7 +82,7 @@ class MusicProvider(private val mContext: Context, private val mSource: MusicPro
     fun setQueueListener(queueListener: QueueProvider.QueueListener) {
         val provider = getProvider(ProviderType.QUEUE)
         if (provider != null && provider is QueueProvider) {
-            provider.setQueueListener(queueListener)
+            provider.queueListener = queueListener
         }
     }
 

@@ -42,6 +42,12 @@ import java.util.*
 class QueueManager(private val mContext: Context,
                    private val mMusicProvider: MusicProvider,
                    private val mListener: MetadataUpdateListener) : QueueProvider.QueueListener, CustomController.ShuffleStateListener {
+    override val playingQueueMetadata: Iterable<MediaMetadataCompat>?
+        get() = playingQueue.map { MediaItemHelper.convertToMetadata(it, currentMusic!!.description.mediaId) }
+    override val currentIndex: Int
+        get() = mCurrentIndex
+    override val repeatState: RepeatState
+        get() = CustomController.repeatState
 
     // "Now playing" queue:
     private var mOrderedQueue: List<MediaSessionCompat.QueueItem> = Collections.synchronizedList(ArrayList())
@@ -236,18 +242,6 @@ class QueueManager(private val mContext: Context,
         }
     }
 
-    override fun getPlayingQueueMetadata(): Iterable<MediaMetadataCompat> {
-        return playingQueue.map { MediaItemHelper.convertToMetadata(it, currentMusic!!.description.mediaId) }
-    }
-
-    override fun getCurrentIndex(): Int {
-        return mCurrentIndex
-    }
-
-    override fun getRepeatState(): RepeatState {
-        return CustomController.repeatState
-    }
-
     interface MetadataUpdateListener {
         fun onMetadataChanged(metadata: MediaMetadataCompat)
 
@@ -264,10 +258,10 @@ class QueueManager(private val mContext: Context,
         private fun shuffleQueue(queueItemList: MutableList<MediaSessionCompat.QueueItem>, initialQueue: MediaSessionCompat.QueueItem?) {
             if (initialQueue != null) {
                 queueItemList.remove(initialQueue)
-                Collections.shuffle(queueItemList)
+                queueItemList.shuffle()
                 queueItemList.add(0, initialQueue)
             } else {
-                Collections.shuffle(queueItemList)
+                queueItemList.shuffle()
             }
         }
     }

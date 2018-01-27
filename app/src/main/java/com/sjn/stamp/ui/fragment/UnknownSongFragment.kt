@@ -225,7 +225,7 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
             SongDao.findUnknown(RealmHelper.getRealmInstance()).mapIndexedTo(ArrayList()) { id, song -> UnknownSongItem(id.toString(), song) }
 
     companion object {
-        private val LIST_STATE_KEY = "LIST_STATE_KEY"
+        private const val LIST_STATE_KEY = "LIST_STATE_KEY"
     }
 
     private class CreateMergeSongListAsyncTask constructor(val fragment: UnknownSongFragment) : AsyncTask<Void, Void, List<MediaMetadataCompat>>() {

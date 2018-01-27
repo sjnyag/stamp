@@ -170,7 +170,7 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
         MediaControllerCompat controller = MediaControllerCompat.getMediaController(getActivity());
         String extraInfo = null;
         if (controller != null && controller.getExtras() != null) {
-            String castName = controller.getExtras().getString(StampSession.Companion.getEXTRA_CONNECTED_CAST());
+            String castName = controller.getExtras().getString(StampSession.EXTRA_CONNECTED_CAST);
             if (castName != null) {
                 extraInfo = getResources().getString(R.string.casting_to_device, castName);
             }

@@ -10,11 +10,11 @@ object AudioFocusHelper {
     private val TAG = LogHelper.makeLogTag(AudioFocusHelper::class.java)
 
     // we don't have audio focus, and can't duck (play at a low volume)
-    val AUDIO_NO_FOCUS_NO_DUCK = 0
+    const val AUDIO_NO_FOCUS_NO_DUCK = 0
     // we don't have focus, but can duck (play at a low volume)
-    val AUDIO_NO_FOCUS_CAN_DUCK = 1
+    const val AUDIO_NO_FOCUS_CAN_DUCK = 1
     // we have full audio focus
-    val AUDIO_FOCUSED = 2
+    const val AUDIO_FOCUSED = 2
 
     class AudioFocusManager(private val context: Context, private val listener: Listener) : AudioManager.OnAudioFocusChangeListener {
         interface Listener {

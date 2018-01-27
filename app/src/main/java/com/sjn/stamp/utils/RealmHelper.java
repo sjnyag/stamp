@@ -57,7 +57,7 @@ public class RealmHelper {
         if (com.sjn.stamp.BuildConfig.BUILD_TYPE.equals("debug")) {
             //builder.deleteRealmIfMigrationNeeded();
         }
-        builder.schemaVersion(Migration.Companion.getVERSION());
+        builder.schemaVersion(Migration.VERSION);
         return builder.build();
     }
 

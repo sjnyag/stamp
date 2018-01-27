@@ -194,7 +194,7 @@ class SettingFragment : PreferenceFragmentCompat() {
     companion object {
 
         private val TAG = LogHelper.makeLogTag(SettingFragment::class.java)
-        private val REQUEST_BACKUP = 1
+        private const val REQUEST_BACKUP = 1
     }
 
 }

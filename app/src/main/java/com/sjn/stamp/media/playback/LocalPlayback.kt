@@ -17,7 +17,6 @@ package com.sjn.stamp.media.playback
 
 import android.content.Context
 import android.support.v4.media.session.MediaSessionCompat.QueueItem
-import android.support.v4.media.session.PlaybackStateCompat
 import com.sjn.stamp.utils.MediaPlayerHelper
 
 /**

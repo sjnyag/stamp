@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sjn.stamp.notification
+package com.sjn.stamp.media.notification
 
 import android.os.RemoteException
 import android.support.v4.media.MediaMetadataCompat
