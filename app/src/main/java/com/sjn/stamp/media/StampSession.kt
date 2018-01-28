@@ -125,7 +125,11 @@ class StampSession internal constructor(context: Context, callback: MediaSession
     }
 
     fun setPlaybackState(playbackState: PlaybackStateCompat) {
-        session.setPlaybackState(playbackState)
+        try {
+            session.setPlaybackState(playbackState)
+        } catch (e: IllegalStateException) {
+            e.printStackTrace()
+        }
     }
 
     fun stopCasting(context: Context) {
