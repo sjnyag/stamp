@@ -31,6 +31,9 @@ class StampController(private val mContext: Context) {
     }
 
     fun register(name: String, isSystem: Boolean): Boolean {
+        if (name == "") {
+            return false
+        }
         if (RealmHelper.realmInstance.use { SongStampDao.find(it, name, isSystem) } != null) {
             return false
         }
