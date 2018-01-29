@@ -64,7 +64,7 @@ public class RankingPagerFragment extends PagerFragment implements PagerFragment
                 if (trackList.isEmpty()) {
                     return;
                 }
-                bundle.putParcelable(MusicService.CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_QUEUE, QueueHelper.createQueue(trackList, MediaIDHelper.MEDIA_ID_MUSICS_BY_RANKING));
+                bundle.putParcelable(MusicService.CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_QUEUE, QueueHelper.INSTANCE.createQueue(trackList, MediaIDHelper.MEDIA_ID_MUSICS_BY_RANKING));
                 bundle.putString(MusicService.CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_TITLE, mPeriod.toString(getResources()));
                 bundle.putString(MusicService.CUSTOM_ACTION_SET_QUEUE_BUNDLE_MEDIA_ID, MediaIDHelper.INSTANCE.createMediaID(trackList.get(0).getDescription().getMediaId(), MediaIDHelper.MEDIA_ID_MUSICS_BY_RANKING));
                 fragment.mMediaBrowsable.sendCustomAction(MusicService.CUSTOM_ACTION_SET_QUEUE, bundle, null);
