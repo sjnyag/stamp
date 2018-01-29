@@ -106,7 +106,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
         LogHelper.d(TAG, "onRequestPermissionsResult: permissions " + Arrays.toString(permissions))
         LogHelper.d(TAG, "onRequestPermissionsResult: grantResults " + Arrays.toString(grantResults))
         if (!PermissionHelper.hasPermission(this, MediaRetrieveHelper.PERMISSIONS)) {
-            DialogFacade.createPermissionNecessaryDialog(this) { dialog, which -> finish() }.show()
+            DialogFacade.createPermissionNecessaryDialog(this) { _, _ -> finish() }.show()
         }
         if (Arrays.asList(*permissions).contains(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
             sendCustomAction(MusicService.CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER, null, null)
@@ -142,7 +142,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
         newIntent = intent
     }
 
-    override fun search(query: String, extras: Bundle, callback: MediaBrowserCompat.SearchCallback) {
+    override fun search(query: String, extras: Bundle?, callback: MediaBrowserCompat.SearchCallback) {
         mediaBrowser?.search(query, extras, callback)
     }
 
@@ -172,9 +172,9 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
         }
     }
 
-    override fun setToolbarTitle(newTitle: CharSequence?) {
+    override fun setToolbarTitle(title: CharSequence?) {
         LogHelper.d(TAG, "Setting toolbar title to ", title)
-        title = newTitle ?: getString(R.string.app_name)
+        this.title = title ?: getString(R.string.app_name)
     }
 
     override fun onMediaControllerConnected() {

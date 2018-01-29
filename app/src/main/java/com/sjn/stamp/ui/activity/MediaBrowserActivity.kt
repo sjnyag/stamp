@@ -46,8 +46,8 @@ abstract class MediaBrowserActivity : DrawerActivity(), MediaBrowsable, MediaCon
     }
 
     override fun sendCustomAction(action: String, extras: Bundle?, callback: MediaBrowserCompat.CustomActionCallback?) {
-        if (mMediaBrowser != null && mMediaBrowser!!.isConnected) {
-            mMediaBrowser!!.sendCustomAction(action, extras, callback)
+        if (mMediaBrowser?.isConnected == true) {
+            mMediaBrowser?.sendCustomAction(action, extras, callback)
         }
     }
 

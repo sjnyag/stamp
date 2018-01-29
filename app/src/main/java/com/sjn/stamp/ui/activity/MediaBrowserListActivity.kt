@@ -32,18 +32,20 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         LogHelper.d(TAG, "onPrepareOptionsMenu START")
-        if (mSearchView != null && mAdapter != null) {
-            //Has searchText?
-            if (!mAdapter!!.hasSearchText()) {
-                LogHelper.i(TAG, "onPrepareOptionsMenu Clearing SearchView!")
-                mSearchView!!.isIconified = true// This also clears the text in SearchView widget
-            } else {
-                //Necessary after the restoreInstanceState
-                menu.findItem(R.id.action_search).expandActionView()//must be called first
-                //This restores the text, must be after the expandActionView()
-                mSearchView!!.setQuery(mAdapter!!.searchText, false)//submit = false!!!
-                mSearchView!!.clearFocus()//Optionally the keyboard can be closed
-                //mSearchView.setIconified(false);//This is not necessary
+        mAdapter?.let { adapter ->
+            mSearchView?.let { searchView ->
+                //Has searchText?
+                if (!adapter.hasSearchText()) {
+                    LogHelper.i(TAG, "onPrepareOptionsMenu Clearing SearchView!")
+                    searchView.isIconified = true// This also clears the text in SearchView widget
+                } else {
+                    //Necessary after the restoreInstanceState
+                    menu.findItem(R.id.action_search).expandActionView()//must be called first
+                    //This restores the text, must be after the expandActionView()
+                    searchView.setQuery(adapter.searchText, false)//submit = false!!!
+                    searchView.clearFocus()//Optionally the keyboard can be closed
+                    //mSearchView.setIconified(false);//This is not necessary
+                }
             }
         }
         LogHelper.d(TAG, "onPrepareOptionsMenu END")
@@ -54,14 +56,14 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
         // Associate searchable configuration with the SearchView
         LogHelper.d(TAG, "initSearchView START")
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        val searchItem = menu.findItem(R.id.action_search)
-        if (searchItem != null) {
-            mSearchView = searchItem.actionView as SearchView
-            //mSearchView!!.inputType = InputType.TYPE_TEXT_VARIATION_FILTER
-            mSearchView!!.imeOptions = EditorInfo.IME_ACTION_DONE or EditorInfo.IME_FLAG_NO_FULLSCREEN
-            mSearchView!!.queryHint = getString(R.string.action_search)
-            mSearchView!!.setSearchableInfo(searchManager.getSearchableInfo(componentName))
-            mSearchView!!.setOnQueryTextListener(this)
+        menu.findItem(R.id.action_search)?.let { item ->
+            mSearchView = (item.actionView as SearchView).apply {
+                //inputType = InputType.TYPE_TEXT_VARIATION_FILTER
+                imeOptions = EditorInfo.IME_ACTION_DONE or EditorInfo.IME_FLAG_NO_FULLSCREEN
+                queryHint = getString(R.string.action_search)
+                setSearchableInfo(searchManager.getSearchableInfo(componentName))
+                setOnQueryTextListener(this@MediaBrowserListActivity)
+            }
         }
         LogHelper.d(TAG, "initSearchView END")
     }
@@ -70,12 +72,8 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
         LogHelper.d(TAG, "initializeActionModeHelper START")
         mActionModeHelper = object : ActionModeHelper(mAdapter!!, menuResourceId, this) {
             override fun updateContextTitle(count: Int) {
-                if (mActionMode != null) {//You can use the internal ActionMode instance
-                    mActionMode.title = if (count == 1)
-                        getString(R.string.action_selected_one, Integer.toString(count))
-                    else
-                        getString(R.string.action_selected_many, Integer.toString(count))
-                }
+                //You can use the internal ActionMode instance
+                mActionMode?.title = if (count == 1) getString(R.string.action_selected_one, Integer.toString(count)) else getString(R.string.action_selected_many, Integer.toString(count))
             }
         }.withDefaultMode(mode)
         LogHelper.d(TAG, "initializeActionModeHelper END")
@@ -83,17 +81,13 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
 
     override fun startActionModeByLongClick(position: Int) {
         LogHelper.d(TAG, "startActionModeByLongClick START")
-        if (mActionModeHelper != null) {
-            mActionModeHelper!!.onLongClick(this, position)
-        }
+        mActionModeHelper?.onLongClick(this, position)
         LogHelper.d(TAG, "startActionModeByLongClick END")
     }
 
     override fun destroyActionModeIfCan() {
         LogHelper.d(TAG, "destroyActionModeIfCan START")
-        if (mActionModeHelper != null) {
-            mActionModeHelper!!.destroyActionModeIfCan()
-        }
+        mActionModeHelper?.destroyActionModeIfCan()
         LogHelper.d(TAG, "destroyActionModeIfCan END")
     }
 
@@ -112,17 +106,17 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
 
     override fun onQueryTextChange(newText: String): Boolean {
         LogHelper.d(TAG, "onQueryTextChange START")
-        if (mAdapter!!.hasNewSearchText(newText)) {
-            LogHelper.i(TAG, "onQueryTextChange newText: " + newText)
-            mAdapter!!.searchText = newText
-            // Fill and Filter mItems with your custom list and automatically animate the changes
-            // Watch out! The original list must be a copy
-            var items: List<AbstractFlexibleItem<*>>? = currentMediaItems
-            if (items == null) {
-                items = ArrayList()
+        mAdapter?.let {
+            if (it.hasNewSearchText(newText)) {
+                LogHelper.i(TAG, "onQueryTextChange newText: " + newText)
+                it.searchText = newText
+                // Fill and Filter mItems with your custom list and automatically animate the changes
+                // Watch out! The original list must be a copy
+                val items: ArrayList<AbstractFlexibleItem<*>> = ArrayList()
+                currentMediaItems.forEach { items.add(it) }
+                it.filterItems(items, 200)
             }
-            LogHelper.i(TAG, "onQueryTextChange items.size(): " + items.size)
-            mAdapter!!.filterItems(items, 200)
+
         }
         // Disable SwipeRefresh if search is active!!
         //mSwipeRefreshLayout.setEnabled(!mAdapter.hasSearchText());
@@ -141,12 +135,12 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
             return
         }
         // If ActionMode is active, back key closes it
-        if (mActionModeHelper != null && mActionModeHelper!!.destroyActionModeIfCan()) {
+        if (mActionModeHelper?.destroyActionModeIfCan() == true) {
             return
         }
         // If SearchView is visible, back key cancels search and iconify it
-        if (mSearchView != null && !mSearchView!!.isIconified) {
-            mSearchView!!.isIconified = true
+        if (mSearchView?.isIconified == false) {
+            mSearchView?.isIconified = true
             return
         }
         super.onBackPressed()

@@ -181,8 +181,9 @@ class MusicProvider(private val context: Context, private val source: MusicProvi
 
     private fun createLatestMusicMap(): HashMap<String, MediaMetadataCompat> {
         val musicListById = HashMap<String, MediaMetadataCompat>()
-        while (source.iterator().hasNext()) {
-            source.iterator().next().run {
+        val iterator = source.iterator()
+        while (iterator.hasNext()) {
+            iterator.next().run {
                 this.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)?.let {
                     musicListById[it] = this
                 }

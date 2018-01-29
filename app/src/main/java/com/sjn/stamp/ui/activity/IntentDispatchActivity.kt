@@ -12,11 +12,12 @@ class IntentDispatchActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         LogHelper.d(TAG, "onCreate")
-        val newIntent = Intent(this, MusicPlayerListActivity::class.java)
-        if (intent != null) {
-            newIntent.action = intent.action
-            newIntent.data = intent.data
-            newIntent.putExtras(intent.extras)
+        val newIntent = Intent(this, MusicPlayerListActivity::class.java).apply {
+            intent?.let {
+                action = it.action
+                data = it.data
+                putExtras(it.extras)
+            }
         }
         if (NotificationHelper.ACTION_CMD == newIntent.action && NotificationHelper.CMD_SHARE == newIntent.getStringExtra(NotificationHelper.CMD_NAME)) {
             ShareHelper.share(this, newIntent.extras.getString(NotificationHelper.SHARE_MESSAGE), newIntent.extras.getStringArrayList(NotificationHelper.HASH_TAG_LIST))

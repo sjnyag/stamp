@@ -25,19 +25,16 @@ abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStack
 
     abstract fun onOptionsItemSelected(itemId: Int): Boolean
 
-    open fun setToolbarTitle(title: CharSequence?) = setTitle(title ?: mDrawer?.selectingDrawerName
-    ?: "")
+    open fun setToolbarTitle(title: CharSequence?) = setTitle(title ?: mDrawer?.selectingDrawerName ?: "")
 
     open fun navigateToBrowser(fragment: Fragment, addToBackStack: Boolean) {
         if (!addToBackStack) {
             supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         }
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.container, fragment, FRAGMENT_TAG)
-        if (addToBackStack) {
-            transaction.addToBackStack(null)
-        }
-        transaction.commit()
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.container, fragment, FRAGMENT_TAG)
+            if (addToBackStack) { addToBackStack(null) }
+        }.commit()
         findViewById<AppBarLayout>(R.id.app_bar).setExpanded(true, true)
     }
 
@@ -46,7 +43,7 @@ abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStack
         if (mToolbar == null) {
             throw IllegalStateException("Layout is required to include a Toolbar with id " + "'toolbar'")
         }
-        mToolbar!!.let {
+        mToolbar?.let {
             it.inflateMenu(R.menu.main)
             setSupportActionBar(it)
             mDrawer = DrawerHelper.Drawer(this, it, object : DrawerHelper.Drawer.Listener {
