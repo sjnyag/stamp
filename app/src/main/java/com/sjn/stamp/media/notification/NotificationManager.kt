@@ -80,7 +80,7 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
             }
             // The notification must be updated after setting started to true
             notificationContainer?.let {
-                MediaControllerObserver.getInstance().addListener(this)
+                MediaControllerObserver.addListener(this)
                 receiver?.let {
                     mService.registerReceiver(it, NotificationAction.createIntentFilter())
                 }
@@ -100,7 +100,7 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
         LogHelper.i(TAG, "stopNotification")
         if (started) {
             started = false
-            MediaControllerObserver.getInstance().removeListener(this)
+            MediaControllerObserver.removeListener(this)
             try {
                 notificationContainer?.cancel()
                 receiver?.let { mService.unregisterReceiver(it) }
@@ -122,7 +122,7 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
         val freshToken = mService.sessionToken
         if (sessionToken == null && freshToken != null || sessionToken != null && sessionToken != freshToken) {
             controller?.let {
-                MediaControllerObserver.getInstance().removeListener(this)
+                MediaControllerObserver.removeListener(this)
             }
             sessionToken = freshToken
             sessionToken?.let {
@@ -130,7 +130,7 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
                 receiver = NotificationReceiver(controller!!)
                 notificationContainer = NotificationContainer(mService, it, controller!!)
                 if (started) {
-                    MediaControllerObserver.getInstance().addListener(this)
+                    MediaControllerObserver.addListener(this)
                 }
             }
         }
@@ -138,10 +138,10 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
 
     override fun onMediaControllerConnected() = Unit
 
-    override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
+    override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
         LogHelper.d(TAG, "Received new playback state", state)
         playbackState = state
-        if (state.state == PlaybackStateCompat.STATE_STOPPED || state.state == PlaybackStateCompat.STATE_NONE) {
+        if (playbackState?.state == PlaybackStateCompat.STATE_STOPPED || playbackState?.state == PlaybackStateCompat.STATE_NONE) {
             stopNotification()
         } else {
             if (playbackState == null || !started) {

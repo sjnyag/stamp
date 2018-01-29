@@ -30,7 +30,7 @@ class StampContainsViewHolder extends LongClickDisableViewHolder {
     }
 
     void updateStampList(String mediaId) {
-        if (!StampEditStateObserver.getInstance().isStampMode()) {
+        if (!StampEditStateObserver.INSTANCE.isStampMode()) {
             mStampListLayout.setVisibility(View.GONE);
             return;
         }
@@ -62,7 +62,7 @@ class StampContainsViewHolder extends LongClickDisableViewHolder {
     private View.OnClickListener mOnNewStamp = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            StampEditStateObserver stampEditStateObserver = StampEditStateObserver.getInstance();
+            StampEditStateObserver stampEditStateObserver = StampEditStateObserver.INSTANCE;
             final String mediaId = (String) v.getTag(R.id.text_view_new_stamp_media_id);
             SongController songController = new SongController(mActivity);
             songController.registerStampList(stampEditStateObserver.getSelectedStampList(), mediaId, false);

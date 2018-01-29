@@ -71,7 +71,7 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
     public void onStart() {
         super.onStart();
         LogHelper.INSTANCE.d(TAG, "fragment.onStart");
-        MediaControllerObserver.getInstance().addListener(this);
+        MediaControllerObserver.INSTANCE.addListener(this);
         onMediaControllerConnected();
     }
 
@@ -79,7 +79,7 @@ public class PlaybackControlsFragment extends Fragment implements MediaControlle
     public void onStop() {
         super.onStop();
         LogHelper.INSTANCE.d(TAG, "fragment.onStop");
-        MediaControllerObserver.getInstance().removeListener(this);
+        MediaControllerObserver.INSTANCE.removeListener(this);
     }
 
     @Override

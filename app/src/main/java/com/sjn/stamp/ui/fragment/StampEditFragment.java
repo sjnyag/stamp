@@ -65,12 +65,12 @@ public class StampEditFragment extends Fragment implements StampEditStateObserve
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                StampEditStateObserver stampEditStateObserver = StampEditStateObserver.getInstance();
+                StampEditStateObserver stampEditStateObserver = StampEditStateObserver.INSTANCE;
                 StampEditStateObserver.State state = StampEditStateObserver.State.STAMPING;
                 if (stampEditStateObserver.getSelectedStampList() == null || stampEditStateObserver.getSelectedStampList().isEmpty()) {
                     state = StampEditStateObserver.State.NO_EDIT;
                 }
-                StampEditStateObserver.getInstance().notifyStateChange(state);
+                StampEditStateObserver.INSTANCE.notifyStateChange(state);
             }
         });
         drawStampList(getContext(), new StampController(getContext()).findAllMyStamps());
@@ -147,19 +147,19 @@ public class StampEditFragment extends Fragment implements StampEditStateObserve
                 }
             }
         }
-        StampEditStateObserver.getInstance().notifySelectedStampListChange(stampList);
+        StampEditStateObserver.INSTANCE.notifySelectedStampListChange(stampList);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        StampEditStateObserver.getInstance().addListener(this);
+        StampEditStateObserver.INSTANCE.addListener(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        StampEditStateObserver.getInstance().removeListener(this);
+        StampEditStateObserver.INSTANCE.removeListener(this);
     }
 
     @Override

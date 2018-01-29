@@ -44,14 +44,14 @@ public abstract class FabFragment extends Fragment implements StampEditStateObse
     View.OnClickListener startStampEdit = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.EDITING);
+            StampEditStateObserver.INSTANCE.notifyStateChange(StampEditStateObserver.State.EDITING);
         }
     };
 
     View.OnClickListener stopStampEdit = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.NO_EDIT);
+            StampEditStateObserver.INSTANCE.notifyStateChange(StampEditStateObserver.State.NO_EDIT);
         }
     };
 
@@ -109,7 +109,7 @@ public abstract class FabFragment extends Fragment implements StampEditStateObse
         if (Integer.valueOf(resourceId).equals(mFab.getTag(R.id.fab_type))) {
             return;
         }
-        StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.NO_EDIT);
+        StampEditStateObserver.INSTANCE.notifyStateChange(StampEditStateObserver.State.NO_EDIT);
         mFab.setTag(R.id.fab_type, resourceId);
         mFab.setImageResource(resourceId);
         mFab.setBackgroundTintList(color);
@@ -139,7 +139,7 @@ public abstract class FabFragment extends Fragment implements StampEditStateObse
 
             @Override
             public void onSheetShown() {
-                StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.EDITING);
+                StampEditStateObserver.INSTANCE.notifyStateChange(StampEditStateObserver.State.EDITING);
             }
 
             @Override
@@ -148,10 +148,10 @@ public abstract class FabFragment extends Fragment implements StampEditStateObse
 
             public void onSheetHidden() {
                 StampEditStateObserver.State state = StampEditStateObserver.State.STAMPING;
-                if (StampEditStateObserver.getInstance().getSelectedStampList() == null || StampEditStateObserver.getInstance().getSelectedStampList().isEmpty()) {
+                if (StampEditStateObserver.INSTANCE.getSelectedStampList() == null || StampEditStateObserver.INSTANCE.getSelectedStampList().isEmpty()) {
                     state = StampEditStateObserver.State.NO_EDIT;
                 }
-                StampEditStateObserver.getInstance().notifyStateChange(state);
+                StampEditStateObserver.INSTANCE.notifyStateChange(state);
             }
         });
     }
@@ -165,7 +165,7 @@ public abstract class FabFragment extends Fragment implements StampEditStateObse
     public void onStart() {
         LogHelper.INSTANCE.d(TAG, "onStart START");
         super.onStart();
-        StampEditStateObserver.getInstance().addListener(this);
+        StampEditStateObserver.INSTANCE.addListener(this);
         LogHelper.INSTANCE.d(TAG, "onStart END");
     }
 
@@ -176,7 +176,7 @@ public abstract class FabFragment extends Fragment implements StampEditStateObse
         if (mCenteredMaterialSheetFab != null && mCenteredMaterialSheetFab.isSheetVisible()) {
             mCenteredMaterialSheetFab.hideSheet();
         }
-        StampEditStateObserver.getInstance().removeListener(this);
+        StampEditStateObserver.INSTANCE.removeListener(this);
         LogHelper.INSTANCE.d(TAG, "onStop END");
     }
 

@@ -284,7 +284,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
     public void onStart() {
         LogHelper.INSTANCE.d(TAG, "onStart START");
         super.onStart();
-        MusicListObserver.getInstance().addListener(this);
+        MusicListObserver.INSTANCE.addListener(this);
         mAdapter.notifyDataSetChanged();
         LogHelper.INSTANCE.d(TAG, "onStart END");
     }
@@ -306,7 +306,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
         if (mCreateListAsyncTask != null) {
             mCreateListAsyncTask.cancel(true);
         }
-        MusicListObserver.getInstance().removeListener(this);
+        MusicListObserver.INSTANCE.removeListener(this);
         LogHelper.INSTANCE.d(TAG, "onStop END");
     }
 

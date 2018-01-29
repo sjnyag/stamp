@@ -55,7 +55,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
                         MediaControllerObserver.register(it)
                     }
                 }
-                MediaControllerObserver.getInstance().notifyConnected()
+                MediaControllerObserver.notifyConnected()
                 Thread(Runnable {
                     player?.restorePreviousState()
                     try {

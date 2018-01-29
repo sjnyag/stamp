@@ -175,7 +175,7 @@ class MusicProvider(private val context: Context, private val source: MusicProvi
         Thread(Runnable {
             musicMap = createLatestMusicMap()
             ProviderCache.saveCache(context, musicMap)
-            MusicListObserver.getInstance().notifyMediaListUpdated()
+            MusicListObserver.notifyMediaListUpdated()
         }).start()
     }
 

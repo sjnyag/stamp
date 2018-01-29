@@ -33,7 +33,7 @@ abstract class MediaBrowserActivity : DrawerActivity(), MediaBrowsable, MediaCon
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         LogHelper.i(TAG, "Activity onCreate")
-        MediaControllerObserver.getInstance().addListener(this)
+        MediaControllerObserver.addListener(this)
         mMediaBrowser = MediaBrowserCompat(this, ComponentName(this, MusicService::class.java), mConnectionCallback, null)
         mMediaBrowser?.connect()
     }
@@ -41,7 +41,7 @@ abstract class MediaBrowserActivity : DrawerActivity(), MediaBrowsable, MediaCon
     override fun onDestroy() {
         super.onDestroy()
         LogHelper.i(TAG, "Activity onDestroy")
-        MediaControllerObserver.getInstance().removeListener(this)
+        MediaControllerObserver.removeListener(this)
         mMediaBrowser?.disconnect()
     }
 

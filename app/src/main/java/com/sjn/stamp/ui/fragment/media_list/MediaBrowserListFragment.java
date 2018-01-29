@@ -80,7 +80,7 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
         LogHelper.INSTANCE.d(TAG, "onStart START");
         super.onStart();
         updateTitle();
-        MediaControllerObserver.getInstance().addListener(this);
+        MediaControllerObserver.INSTANCE.addListener(this);
         LogHelper.INSTANCE.d(TAG, "onStart END");
     }
 
@@ -102,7 +102,7 @@ public abstract class MediaBrowserListFragment extends ListFragment implements M
     public void onStop() {
         LogHelper.INSTANCE.d(TAG, "onStop START");
         super.onStop();
-        MediaControllerObserver.getInstance().removeListener(this);
+        MediaControllerObserver.INSTANCE.removeListener(this);
         LogHelper.INSTANCE.d(TAG, "onStop END");
     }
 

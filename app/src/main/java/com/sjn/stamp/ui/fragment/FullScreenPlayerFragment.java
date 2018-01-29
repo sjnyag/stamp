@@ -294,7 +294,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
     public void onStart() {
         LogHelper.INSTANCE.i(TAG, "onStart");
         super.onStart();
-        MediaControllerObserver.getInstance().addListener(this);
+        MediaControllerObserver.INSTANCE.addListener(this);
         onMediaControllerConnected();
         CustomController.INSTANCE.addRepeatStateListenerSet(this);
         CustomController.INSTANCE.addShuffleStateListenerSet(this);
@@ -306,7 +306,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
     public void onStop() {
         LogHelper.INSTANCE.i(TAG, "onStop");
         super.onStop();
-        MediaControllerObserver.getInstance().removeListener(this);
+        MediaControllerObserver.INSTANCE.removeListener(this);
         CustomController.INSTANCE.removeRepeatStateListenerSet(this);
         CustomController.INSTANCE.removeShuffleStateListenerSet(this);
     }

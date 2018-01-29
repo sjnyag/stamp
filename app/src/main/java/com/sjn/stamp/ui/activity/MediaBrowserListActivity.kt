@@ -112,9 +112,7 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
                 it.searchText = newText
                 // Fill and Filter mItems with your custom list and automatically animate the changes
                 // Watch out! The original list must be a copy
-                val items: ArrayList<AbstractFlexibleItem<*>> = ArrayList()
-                currentMediaItems.forEach { items.add(it) }
-                it.filterItems(items, 200)
+                it.filterItems(ArrayList(currentMediaItems), 200)
             }
 
         }
@@ -130,8 +128,8 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
     }
 
     override fun onBackPressed() {
-        if (StampEditStateObserver.getInstance().isStampMode) {
-            StampEditStateObserver.getInstance().notifyStateChange(StampEditStateObserver.State.NO_EDIT)
+        if (StampEditStateObserver.isStampMode) {
+            StampEditStateObserver.notifyStateChange(StampEditStateObserver.State.NO_EDIT)
             return
         }
         // If ActionMode is active, back key closes it
