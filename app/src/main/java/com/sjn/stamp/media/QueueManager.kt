@@ -130,7 +130,7 @@ class QueueManager(private val context: Context,
             index %= playingQueue.size
         }
         if (!QueueHelper.isIndexPlayable(index, playingQueue)) {
-            LogHelper.e(TAG, "Cannot increment queue index by ", amount, ". Current=", currentIndex, " queue length=", playingQueue.size)
+            LogHelper.i(TAG, "Cannot increment queue index by ", amount, ". Current=", currentIndex, " queue length=", playingQueue.size)
             return false
         }
         setCurrentQueueIndex(index)

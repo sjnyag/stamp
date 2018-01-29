@@ -1,16 +1,9 @@
 package com.sjn.stamp.media.notification
 
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.ContentResolver
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Color
-import android.net.Uri
-import android.os.AsyncTask
-import android.provider.MediaStore
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.media.MediaMetadataCompat
@@ -19,10 +12,9 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.sjn.stamp.R
 import com.sjn.stamp.media.StampSession.Companion.EXTRA_CONNECTED_CAST
-import com.sjn.stamp.utils.CompatibleHelper
 import com.sjn.stamp.utils.LogHelper
+import com.sjn.stamp.utils.NotificationHelper
 import com.sjn.stamp.utils.ViewHelper
-import java.io.FileNotFoundException
 
 class NotificationContainer(
         private val context: Context,
@@ -33,56 +25,17 @@ class NotificationContainer(
         private val TAG = LogHelper.makeLogTag(Notification::class.java)
         const val NOTIFICATION_ID = 412
         const val CHANNEL_ID = "stamp_channel_01"
-
-        private class SetNotificationBitmapAsyncTask(
-                internal val contentResolver: ContentResolver,
-                internal val title: String,
-                internal val albumArtUri: Uri,
-                internal val builder: NotificationCompat.Builder,
-                internal val container: NotificationContainer
-        ) : AsyncTask<Void, Void, Void>() {
-            var bitmap: Bitmap? = null
-
-            override fun onPreExecute() {
-                bitmap = null
-            }
-
-            override fun doInBackground(vararg params: Void): Void? {
-                bitmap = try {
-                    MediaStore.Images.Media.getBitmap(contentResolver, albumArtUri)
-                } catch (e: FileNotFoundException) {
-                    ViewHelper.toBitmap(ViewHelper.createTextDrawable(title))
-                }
-                bitmap?.let { setAndNotify(builder, container, it) }
-                return null
-            }
-
-            fun loadPreparedBitmap(builder: NotificationCompat.Builder, container: NotificationContainer, albumArtUri: Uri): Boolean {
-                if (albumArtUri == this.albumArtUri) {
-                    bitmap?.let {
-                        setAndNotify(builder, container, it)
-                        return true
-                    }
-                }
-                return false
-            }
-
-            private fun setAndNotify(builder: NotificationCompat.Builder, container: NotificationContainer, bitmap: Bitmap) {
-                builder.setLargeIcon(bitmap)
-                container.notification = builder.build()
-                container.start()
-            }
-        }
+        const val CHANNEL_NAME = "Controller"
     }
 
     var notification: Notification? = null
 
-    private var bitmapLoadTask: SetNotificationBitmapAsyncTask? = null
+    private var bitmapLoadTask: NotificationHelper.SetNotificationBitmapAsyncTask? = null
     private val notificationColor: Int = ViewHelper.getThemeColor(context, R.attr.colorPrimary, Color.DKGRAY)
     private val notificationManager: NotificationManagerCompat = NotificationManagerCompat.from(context)
 
     init {
-        createNotificationChannel()
+        NotificationHelper.createChannel(context, CHANNEL_ID, CHANNEL_NAME)
         // Cancel all notifications to handle the case where the Service was killed and
         // restarted by the system.
         notificationManager.cancelAll()
@@ -108,21 +61,19 @@ class NotificationContainer(
 
     fun cancel() = notificationManager.cancel(NOTIFICATION_ID)
 
-    private fun createNotificationChannel() {
-        if (CompatibleHelper.hasOreo()) {
-            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            manager.createNotificationChannel(NotificationChannel(CHANNEL_ID, "Controller", NotificationManager.IMPORTANCE_LOW))
-        }
-    }
-
     private fun fetchBitmapFromURLAsync(builder: NotificationCompat.Builder, metadata: MediaMetadataCompat) {
         metadata.description.iconUri?.let {
-            if (bitmapLoadTask != null && bitmapLoadTask!!.loadPreparedBitmap(builder, this@NotificationContainer, it)) {
+            if (bitmapLoadTask?.loadPreparedBitmap(builder, it) == true) {
                 return
             }
             builder.setLargeIcon(metadata.getTextDrawableBitmap())
             bitmapLoadTask?.cancel(true)
-            bitmapLoadTask = SetNotificationBitmapAsyncTask(context.contentResolver, metadata.description.title.toString(), it, builder, this@NotificationContainer)
+            bitmapLoadTask = NotificationHelper.SetNotificationBitmapAsyncTask(context, object : NotificationHelper.SetNotificationBitmapAsyncTask.Callback {
+                override fun onLoad(builder: NotificationCompat.Builder) {
+                    this@NotificationContainer.notification = builder.build()
+                    this@NotificationContainer.start()
+                }
+            }, metadata.description.title.toString(), it, builder)
             bitmapLoadTask?.execute()
         }
     }

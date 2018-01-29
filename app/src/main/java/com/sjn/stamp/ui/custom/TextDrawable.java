@@ -77,7 +77,6 @@ public class TextDrawable extends ShapeDrawable {
         super.draw(canvas);
         Rect r = getBounds();
 
-
         // draw border
         if (borderThickness > 0) {
             drawBorder(canvas);
@@ -93,7 +92,6 @@ public class TextDrawable extends ShapeDrawable {
         int fontSize = this.fontSize < 0 ? ((int) (Math.min(width, height) * 1.5)) : this.fontSize;
         textPaint.setTextSize(fontSize);
         canvas.drawText(text, width / 2, height / 2 - ((textPaint.descent() + textPaint.ascent()) / 2), textPaint);
-
         canvas.restoreToCount(count);
 
     }

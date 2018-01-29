@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.sjn.stamp.utils.LogHelper
-import com.sjn.stamp.utils.NotificationHelper.*
+import com.sjn.stamp.utils.NotificationHelper
 import com.sjn.stamp.utils.ShareHelper
 
 class IntentDispatchActivity : AppCompatActivity() {
@@ -18,8 +18,8 @@ class IntentDispatchActivity : AppCompatActivity() {
             newIntent.data = intent.data
             newIntent.putExtras(intent.extras)
         }
-        if (ACTION_CMD == newIntent.action && CMD_SHARE == newIntent.getStringExtra(CMD_NAME)) {
-            ShareHelper.share(this, newIntent.extras.getString(SHARE_MESSAGE), newIntent.extras.getStringArrayList(HASH_TAG_LIST))
+        if (NotificationHelper.ACTION_CMD == newIntent.action && NotificationHelper.CMD_SHARE == newIntent.getStringExtra(NotificationHelper.CMD_NAME)) {
+            ShareHelper.share(this, newIntent.extras.getString(NotificationHelper.SHARE_MESSAGE), newIntent.extras.getStringArrayList(NotificationHelper.HASH_TAG_LIST))
         } else {
             startActivity(newIntent)
         }

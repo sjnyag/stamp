@@ -18,7 +18,7 @@ import com.sjn.stamp.ui.observer.MediaControllerObserver
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaIDHelper
 import com.sjn.stamp.utils.MediaRetrieveHelper
-import com.sjn.stamp.utils.NotificationHelper.*
+import com.sjn.stamp.utils.NotificationHelper
 import java.util.*
 
 class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServiceCallback {
@@ -73,8 +73,8 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
         LogHelper.d(TAG, "onStartCommand")
         startIntent?.let {
             val action = it.action
-            val command = it.getStringExtra(CMD_NAME)
-            if (ACTION_CMD == action) {
+            val command = it.getStringExtra(NotificationHelper.CMD_NAME)
+            if (NotificationHelper.ACTION_CMD == action) {
                 handleActionCommand(command)
             } else {
                 player?.handleIntent(it)
@@ -175,9 +175,9 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
     private fun handleActionCommand(command: String) {
         LogHelper.d(TAG, "handleActionCommand ", command)
         when (command) {
-            CMD_PAUSE -> player?.pause()
-            CMD_STOP_CASTING -> player?.stopCasting()
-            CMD_KILL -> player?.let { stopSelf() }
+            NotificationHelper.CMD_PAUSE -> player?.pause()
+            NotificationHelper.CMD_STOP_CASTING -> player?.stopCasting()
+            NotificationHelper.CMD_KILL -> player?.let { stopSelf() }
         }
     }
 
