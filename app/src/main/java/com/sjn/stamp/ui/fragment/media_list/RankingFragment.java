@@ -1,6 +1,7 @@
 package com.sjn.stamp.ui.fragment.media_list;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -274,7 +275,7 @@ public class RankingFragment extends MediaBrowserListFragment {
         }
 
         interface Callback {
-            List<AbstractFlexibleItem<?>> createItemList(Realm realm, PeriodSelectLayout.Period period, SongHistoryController songHistoryController);
+            List<AbstractFlexibleItem<?>> createItemList(Context context, Realm realm, PeriodSelectLayout.Period period, SongHistoryController songHistoryController);
         }
 
         @Override
@@ -282,7 +283,7 @@ public class RankingFragment extends MediaBrowserListFragment {
             Realm realm = null;
             try {
                 realm = RealmHelper.INSTANCE.getRealmInstance();
-                fragment.mItemList = mCallback.createItemList(realm, mPeriod, mSongHistoryController);
+                fragment.mItemList = mCallback.createItemList(fragment.getContext(), realm, mPeriod, mSongHistoryController);
                 if (fragment.getActivity() == null) {
                     return null;
                 }
@@ -327,7 +328,7 @@ public class RankingFragment extends MediaBrowserListFragment {
             }
 
             @Override
-            public List<AbstractFlexibleItem<?>> createItemList(Realm realm, PeriodSelectLayout.Period period, SongHistoryController songHistoryController) {
+            public List<AbstractFlexibleItem<?>> createItemList(Context context, Realm realm, PeriodSelectLayout.Period period, SongHistoryController songHistoryController) {
                 List<AbstractFlexibleItem<?>> itemList = new ArrayList<>();
                 int order = 1;
                 for (RankedSong rankedSong : songHistoryController.getRankedSongList(realm, period)) {
@@ -355,17 +356,17 @@ public class RankingFragment extends MediaBrowserListFragment {
             }
 
             @Override
-            public List<AbstractFlexibleItem<?>> createItemList(Realm realm, PeriodSelectLayout.Period period, SongHistoryController songHistoryController) {
+            public List<AbstractFlexibleItem<?>> createItemList(Context context, Realm realm, PeriodSelectLayout.Period period, SongHistoryController songHistoryController) {
                 List<AbstractFlexibleItem<?>> itemList = new ArrayList<>();
                 int order = 1;
                 for (RankedArtist rankedArtist : songHistoryController.getRankedArtistList(realm, period)) {
-                    itemList.add(newSimpleItem(rankedArtist, order++));
+                    itemList.add(newSimpleItem(context, rankedArtist, order++));
                 }
                 return itemList;
             }
 
-            private RankedArtistItem newSimpleItem(RankedArtist rankedArtist, int order) {
-                return new RankedArtistItem(rankedArtist.mostPlayedSong().buildMediaMetadataCompat(), rankedArtist.getArtist().getName(), rankedArtist.getArtist().getAlbumArtUri(), rankedArtist.getPlayCount(), order);
+            private RankedArtistItem newSimpleItem(Context context, RankedArtist rankedArtist, int order) {
+                return new RankedArtistItem(context, rankedArtist.mostPlayedSong().buildMediaMetadataCompat(), rankedArtist.getArtist().getName(), rankedArtist.getArtist().getAlbumArtUri(), rankedArtist.getPlayCount(), order);
             }
 
         },;

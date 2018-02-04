@@ -81,7 +81,7 @@ object ViewHelper {
     }
 
     @JvmOverloads
-    fun updateAlbumArt(activity: Activity, view: ImageView, artUrl: String?, text: String, targetWidth: Int = 128, targetHeight: Int = 128) {
+    fun updateAlbumArt(activity: Activity, view: ImageView, artUrl: String, text: String, targetWidth: Int = 128, targetHeight: Int = 128) {
         view.tag = artUrl
         if (artUrl == null || artUrl.isEmpty()) {
             //view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));

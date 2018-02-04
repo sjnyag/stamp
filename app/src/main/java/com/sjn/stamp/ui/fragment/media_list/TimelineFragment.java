@@ -259,7 +259,6 @@ public class TimelineFragment extends MediaBrowserListFragment implements
 
     public SongHistoryItem newSimpleItem(SongHistory songHistory, IHeader header, Resources resources) {
         SongHistoryItem item = new SongHistoryItem(songHistory, (DateHeaderItem) header, resources, getActivity());
-        item.setTitle(songHistory.getSong().getTitle());
         return item;
     }
 

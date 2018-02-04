@@ -15,7 +15,7 @@ import com.sjn.stamp.R;
 import com.sjn.stamp.ui.SongAdapter;
 import com.sjn.stamp.ui.custom.CenteredMaterialSheetFab;
 import com.sjn.stamp.ui.custom.Fab;
-import com.sjn.stamp.ui.item.SongItem;
+import com.sjn.stamp.ui.item.holder.SongViewHolder;
 import com.sjn.stamp.ui.observer.StampEditStateObserver;
 import com.sjn.stamp.utils.LogHelper;
 import com.sjn.stamp.utils.SpotlightHelper;
@@ -225,21 +225,19 @@ public abstract class FabFragment extends Fragment implements StampEditStateObse
         }
         LinearLayoutManager layoutManager = ((LinearLayoutManager) mRecyclerView.getLayoutManager());
         RecyclerView.ViewHolder view = mRecyclerView.findViewHolderForAdapterPosition(layoutManager.findFirstVisibleItemPosition());
-        if (view != null && view instanceof SongItem.SimpleViewHolder) {
-            View addStampView = ((SongItem.SimpleViewHolder) view).getShowTapTargetView();
-            if (addStampView != null) {
-                Spotlight.with(getActivity())
-                        .setDuration(200L)
-                        .setAnimation(new DecelerateInterpolator(2f))
-                        .setTargets(new SimpleTarget.Builder(getActivity())
-                                .setPoint(addStampView)
-                                .setRadius(120f)
-                                .setTitle(getString(R.string.spotlight_stamp_add_title))
-                                .setDescription(getString(R.string.spotlight_stamp_add_description))
-                                .build())
-                        .start();
-                SpotlightHelper.INSTANCE.setShown(getActivity(), SpotlightHelper.KEY_STAMP_ADD);
-            }
+        if (view != null && view instanceof SongViewHolder) {
+            View addStampView = ((SongViewHolder) view).getShowTapTargetView();
+            Spotlight.with(getActivity())
+                    .setDuration(200L)
+                    .setAnimation(new DecelerateInterpolator(2f))
+                    .setTargets(new SimpleTarget.Builder(getActivity())
+                            .setPoint(addStampView)
+                            .setRadius(120f)
+                            .setTitle(getString(R.string.spotlight_stamp_add_title))
+                            .setDescription(getString(R.string.spotlight_stamp_add_description))
+                            .build())
+                    .start();
+            SpotlightHelper.INSTANCE.setShown(getActivity(), SpotlightHelper.KEY_STAMP_ADD);
         }
     }
 }
