@@ -75,7 +75,6 @@ public class MyStampListFragment extends SongListFragment implements
                 .setDisplayHeadersAtStartUp(false)
                 .setStickyHeaders(false)
                 .showAllHeaders();
-        mAdapter.addUserLearnedSelection(savedInstanceState == null);
         initializeFabWithStamp();
         if (mIsVisibleToUser) {
             notifyFragmentChange();
@@ -134,7 +133,7 @@ public class MyStampListFragment extends SongListFragment implements
             }
 
             message.append(subItem.getTitle()).append(" ");
-            DialogFacade.createRemoveStampSongDialog(getActivity(), subItem.getTitle(), MediaIDHelper.INSTANCE.extractBrowseCategoryValueFromMediaID(mMediaId), new MaterialDialog.SingleButtonCallback() {
+            DialogFacade.INSTANCE.createRemoveStampSongDialog(getActivity(), subItem.getTitle(), MediaIDHelper.INSTANCE.extractBrowseCategoryValueFromMediaID(mMediaId), new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             switch (which) {

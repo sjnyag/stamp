@@ -76,7 +76,6 @@
                 android:clickable="true"
                 app:borderWidth="0dp"
                 app:fabSize="normal"
-                app:layout_behavior="com.sjn.stamp.ui.ScrollAwareFABBehavior"
                 app:rippleColor="@color/primary"/>
 
             <!-- Overlay that dims the screen -->

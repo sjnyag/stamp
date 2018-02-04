@@ -114,7 +114,7 @@ public class StampEditFragment extends Fragment implements StampEditStateObserve
                 if (context == null || stamp.isEmpty()) {
                     return false;
                 }
-                DialogFacade.createRemoveStampSongDialog(context, stamp, new MaterialDialog.SingleButtonCallback() {
+                DialogFacade.INSTANCE.createRemoveStampSongDialog(context, stamp, new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         switch (which) {
@@ -142,7 +142,7 @@ public class StampEditFragment extends Fragment implements StampEditStateObserve
             View view = mStampListLayout.getChildAt(i);
             if (view instanceof ToggleTextView) {
                 ToggleTextView toggleTextView = ((ToggleTextView) view);
-                if (toggleTextView.isBooleanValue()) {
+                if (toggleTextView.getValue()) {
                     stampList.add(toggleTextView.getText().toString());
                 }
             }

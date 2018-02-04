@@ -27,6 +27,7 @@
     <color name="fullscreen_line_color">#E5FFFFFF</color>
     <color name="white">#FFFFFF</color>
     <color name="default_background">#0096a6</color>
+    <color name="material_blue_grey">#ff37474f</color>
 
     <color name="toggle_off_stroke">#B2B2B2</color>
     <color name="toggle_on_stroke">#24C48E</color>

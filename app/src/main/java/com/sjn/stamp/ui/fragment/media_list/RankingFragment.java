@@ -41,7 +41,7 @@ public class RankingFragment extends MediaBrowserListFragment {
 
     private static final String TAG = LogHelper.INSTANCE.makeLogTag(RankingFragment.class);
 
-    private PeriodSelectLayout.Period mPeriod = PeriodSelectLayout.Period.latestWeek();
+    private PeriodSelectLayout.Period mPeriod = PeriodSelectLayout.Period.Companion.latestWeek();
     private RankKind mRankKind;
     private SongHistoryController mSongHistoryController;
     private CalculateAsyncTask mAsyncTask;
@@ -177,7 +177,6 @@ public class RankingFragment extends MediaBrowserListFragment {
                 .setDisplayHeadersAtStartUp(false)
                 .setStickyHeaders(false)
                 .showAllHeaders();
-        mAdapter.addUserLearnedSelection(savedInstanceState == null);
         //mAdapter.addScrollableHeaderWithDelay(new DateHeaderItem(TimeHelper.getJapanNow().toDate()), 900L, false);
         //mAdapter.showLayoutInfo(savedInstanceState == null);
         //mAdapter.addScrollableFooter();

@@ -15,7 +15,6 @@ import android.view.MenuInflater
 import android.view.View
 import android.widget.Toast
 import com.afollestad.materialdialogs.DialogAction
-import com.afollestad.materialdialogs.MaterialDialog
 import com.sjn.stamp.R
 import com.sjn.stamp.controller.SongController
 import com.sjn.stamp.controller.UserSettingController
@@ -40,19 +39,21 @@ class SettingFragment : PreferenceFragmentCompat() {
         setHasOptionsMenu(true)
 
         findPreference("song_db_refresh").onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            DialogFacade.createConfirmDialog(activity, R.string.dialog_confirm_song_db_refresh, MaterialDialog.SingleButtonCallback { _, which ->
-                when (which) {
-                    DialogAction.NEGATIVE -> return@SingleButtonCallback
-                    DialogAction.POSITIVE -> {
-                        context?.let {
-                            AnalyticsHelper.trackSetting(it, "song_db_refresh")
-                            Thread(Runnable { SongController(it).refreshAllSongs(MediaRetrieveHelper.allMediaMetadataCompat(it, null)) }).start()
+            activity?.let {
+                DialogFacade.createConfirmDialog(it, R.string.dialog_confirm_song_db_refresh, { _, which ->
+                    when (which) {
+                        DialogAction.NEGATIVE -> return@createConfirmDialog
+                        DialogAction.POSITIVE -> {
+                            context?.let {
+                                AnalyticsHelper.trackSetting(it, "song_db_refresh")
+                                Thread(Runnable { SongController(it).refreshAllSongs(MediaRetrieveHelper.allMediaMetadataCompat(it, null)) }).start()
+                            }
+                        }
+                        else -> {
                         }
                     }
-                    else -> {
-                    }
-                }
-            }, DialogInterface.OnDismissListener { }).show()
+                }, DialogInterface.OnDismissListener { }).show()
+            }
             true
         }
 
@@ -67,44 +68,48 @@ class SettingFragment : PreferenceFragmentCompat() {
         }
 
         findPreference("import_backup").onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            DialogFacade.createConfirmDialog(activity, R.string.dialog_confirm_import, MaterialDialog.SingleButtonCallback { _, which ->
-                when (which) {
-                    DialogAction.NEGATIVE -> return@SingleButtonCallback
-                    DialogAction.POSITIVE -> {
-                        context?.let {
-                            AnalyticsHelper.trackSetting(it, "import_backup")
+            activity?.let {
+                DialogFacade.createConfirmDialog(it, R.string.dialog_confirm_import, { _, which ->
+                    when (which) {
+                        DialogAction.NEGATIVE -> return@createConfirmDialog
+                        DialogAction.POSITIVE -> {
+                            context?.let {
+                                AnalyticsHelper.trackSetting(it, "import_backup")
 
+                            }
+                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+                            intent.addCategory(Intent.CATEGORY_OPENABLE)
+                            intent.type = "*/*"
+                            startActivityForResult(intent, REQUEST_BACKUP)
                         }
-                        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-                        intent.addCategory(Intent.CATEGORY_OPENABLE)
-                        intent.type = "*/*"
-                        startActivityForResult(intent, REQUEST_BACKUP)
+                        else -> {
+                        }
                     }
-                    else -> {
-                    }
-                }
-            }, DialogInterface.OnDismissListener { }).show()
+                }, DialogInterface.OnDismissListener { }).show()
+            }
             true
         }
 
         findPreference("export_backup").onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            DialogFacade.createConfirmDialog(activity, R.string.dialog_confirm_export, MaterialDialog.SingleButtonCallback { _, which ->
-                when (which) {
-                    DialogAction.NEGATIVE -> return@SingleButtonCallback
-                    DialogAction.POSITIVE -> {
-                        context?.let {
-                            AnalyticsHelper.trackSetting(it, "export_backup")
+            activity?.let {
+                DialogFacade.createConfirmDialog(it, R.string.dialog_confirm_export, { _, which ->
+                    when (which) {
+                        DialogAction.NEGATIVE -> return@createConfirmDialog
+                        DialogAction.POSITIVE -> {
+                            context?.let {
+                                AnalyticsHelper.trackSetting(it, "export_backup")
+                            }
+                            val progressDialog = ProgressDialog(activity)
+                            progressDialog.setMessage(getString(R.string.message_processing))
+                            progressDialog.show()
+                            activity?.let { RealmHelper.exportBackUp(it) }
+                            progressDialog.dismiss()
                         }
-                        val progressDialog = ProgressDialog(activity)
-                        progressDialog.setMessage(getString(R.string.message_processing))
-                        progressDialog.show()
-                        activity?.let { RealmHelper.exportBackUp(it) }
-                        progressDialog.dismiss()
+                        else -> {
+                        }
                     }
-                    else -> {
-                    }
-                }
-            }, DialogInterface.OnDismissListener { }).show()
+                }, DialogInterface.OnDismissListener { }).show()
+            }
             true
         }
 
@@ -112,7 +117,9 @@ class SettingFragment : PreferenceFragmentCompat() {
             context?.let {
                 AnalyticsHelper.trackSetting(it, "licence")
             }
-            DialogFacade.createLicenceDialog(activity).show()
+            activity?.let {
+                DialogFacade.createLicenceDialog(it).show()
+            }
             true
         }
 

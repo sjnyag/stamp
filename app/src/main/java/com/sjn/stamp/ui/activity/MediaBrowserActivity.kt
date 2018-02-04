@@ -14,7 +14,7 @@ import com.sjn.stamp.utils.LogHelper
 
 abstract class MediaBrowserActivity : DrawerActivity(), MediaBrowsable, MediaControllerObserver.Listener {
 
-    private var mMediaBrowser: MediaBrowserCompat? = null
+    override var mediaBrowser: MediaBrowserCompat? = null
     private val mediaController: MediaControllerCompat?
         get() = MediaControllerCompat.getMediaController(this)
 
@@ -22,7 +22,7 @@ abstract class MediaBrowserActivity : DrawerActivity(), MediaBrowsable, MediaCon
         override fun onConnected() {
             try {
                 LogHelper.i(TAG, "onMediaControllerConnected")
-                MediaControllerCompat.setMediaController(this@MediaBrowserActivity, MediaControllerCompat(this@MediaBrowserActivity, mMediaBrowser!!.sessionToken))
+                MediaControllerCompat.setMediaController(this@MediaBrowserActivity, MediaControllerCompat(this@MediaBrowserActivity, mediaBrowser!!.sessionToken))
             } catch (e: RemoteException) {
                 LogHelper.e(TAG, e, "could not connect media controller")
             }
@@ -34,24 +34,22 @@ abstract class MediaBrowserActivity : DrawerActivity(), MediaBrowsable, MediaCon
         super.onCreate(savedInstanceState)
         LogHelper.i(TAG, "Activity onCreate")
         MediaControllerObserver.addListener(this)
-        mMediaBrowser = MediaBrowserCompat(this, ComponentName(this, MusicService::class.java), mConnectionCallback, null)
-        mMediaBrowser?.connect()
+        mediaBrowser = MediaBrowserCompat(this, ComponentName(this, MusicService::class.java), mConnectionCallback, null)
+        mediaBrowser?.connect()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         LogHelper.i(TAG, "Activity onDestroy")
         MediaControllerObserver.removeListener(this)
-        mMediaBrowser?.disconnect()
+        mediaBrowser?.disconnect()
     }
 
     override fun sendCustomAction(action: String, extras: Bundle?, callback: MediaBrowserCompat.CustomActionCallback?) {
-        if (mMediaBrowser?.isConnected == true) {
-            mMediaBrowser?.sendCustomAction(action, extras, callback)
+        if (mediaBrowser?.isConnected == true) {
+            mediaBrowser?.sendCustomAction(action, extras, callback)
         }
     }
-
-    override fun getMediaBrowser(): MediaBrowserCompat? = mMediaBrowser
 
     override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {}
 

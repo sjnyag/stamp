@@ -2,6 +2,9 @@ package com.sjn.stamp.utils
 
 import android.annotation.SuppressLint
 import android.content.res.Resources
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.RectF
 import android.os.Build
 
 object CompatibleHelper {
@@ -29,5 +32,11 @@ object CompatibleHelper {
             resources.getColor(resourceId)
         }
         return null
+    }
+
+    fun saveLayer(canvas: Canvas, bounds: RectF?, paint: Paint): Int = if (hasLollipop()) {
+        canvas.saveLayer(bounds, paint)
+    } else {
+        canvas.saveLayer(bounds, paint,  Canvas.HAS_ALPHA_LAYER_SAVE_FLAG or Canvas.FULL_COLOR_LAYER_SAVE_FLAG)
     }
 }

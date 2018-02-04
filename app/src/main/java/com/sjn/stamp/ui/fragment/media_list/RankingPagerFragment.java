@@ -37,7 +37,7 @@ public class RankingPagerFragment extends PagerFragment implements PagerFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mPeriod = PeriodSelectLayout.Period.latestWeek();
+        mPeriod = PeriodSelectLayout.Period.Companion.latestWeek();
         setHasOptionsMenu(true);
         initializeFab(R.drawable.ic_play_arrow, ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.bt_accent)), new View.OnClickListener() {
             @Override
@@ -83,7 +83,7 @@ public class RankingPagerFragment extends PagerFragment implements PagerFragment
         switch (item.getItemId()) {
             case R.id.period:
                 if (getActivity() != null) {
-                    final PeriodSelectLayout periodSelectLayout = new PeriodSelectLayout(getActivity(), null, mPeriod);
+                    final PeriodSelectLayout periodSelectLayout = new PeriodSelectLayout(getActivity(), mPeriod);
                     new MaterialDialog.Builder(getContext())
                             .title(R.string.dialog_period_select)
                             .customView(periodSelectLayout, true)

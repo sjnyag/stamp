@@ -184,7 +184,6 @@ public class TimelineFragment extends MediaBrowserListFragment implements
                 .setDisplayHeadersAtStartUp(true)
                 .setStickyHeaders(true)
                 .showAllHeaders();
-        mAdapter.addUserLearnedSelection(savedInstanceState == null);
         mAdapter.setEndlessScrollListener(this, mProgressItem);
         initializeFabWithStamp();
         notifyFragmentChange();
@@ -313,7 +312,7 @@ public class TimelineFragment extends MediaBrowserListFragment implements
         // Here, option 2A) is implemented
         if (direction == ItemTouchHelper.RIGHT) {
             AbstractItem subItem = (AbstractItem) abstractItem;
-            DialogFacade.createHistoryDeleteDialog(getActivity(), subItem.toString(), new MaterialDialog.SingleButtonCallback() {
+            DialogFacade.INSTANCE.createHistoryDeleteDialog(getActivity(), subItem.toString(), new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             switch (which) {

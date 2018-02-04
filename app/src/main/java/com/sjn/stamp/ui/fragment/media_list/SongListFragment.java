@@ -123,7 +123,7 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
         if (mSwipeRefreshLayout == null || getActivity() == null) {
             return;
         }
-        DialogFacade.createRetrieveMediaDialog(getActivity(), new MaterialDialog.SingleButtonCallback() {
+        DialogFacade.INSTANCE.createRetrieveMediaDialog(getActivity(), new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                 switch (which) {
@@ -244,7 +244,6 @@ public class SongListFragment extends MediaBrowserListFragment implements MusicL
                 .setDisplayHeadersAtStartUp(false)
                 .setStickyHeaders(false)
                 .showAllHeaders();
-        mAdapter.addUserLearnedSelection(savedInstanceState == null);
         initializeFabWithStamp();
         if (mIsVisibleToUser) {
             notifyFragmentChange();

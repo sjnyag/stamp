@@ -53,21 +53,22 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
     private var mSongSelectDialog: MaterialDialog? = null
 
     override fun onRefresh() {
-        DialogFacade.createConfirmDialog(activity, R.string.dialog_confirm_song_db_refresh, { _, which ->
-            when (which) {
-                DialogAction.NEGATIVE -> {
-                    mSwipeRefreshLayout?.let {
-                        it.isRefreshing = false
+        activity?.let {
+            DialogFacade.createConfirmDialog(it, R.string.dialog_confirm_song_db_refresh, { _, which ->
+                when (which) {
+                    DialogAction.NEGATIVE -> {
+                        mSwipeRefreshLayout?.let {
+                            it.isRefreshing = false
+                        }
+                    }
+                    DialogAction.POSITIVE -> {
+                        CreateUnknownSongListAsyncTask(this).execute()
+                    }
+                    else -> {
                     }
                 }
-                DialogAction.POSITIVE -> {
-                    CreateUnknownSongListAsyncTask(this).execute()
-                }
-                else -> {
-                }
-            }
-        }, { }).show()
-
+            }, DialogInterface.OnDismissListener { }).show()
+        }
     }
 
     override fun onSelectedStampChange(selectedStampList: List<String>) {
@@ -155,7 +156,6 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
                         .setDisplayHeadersAtStartUp(false)
                         .setStickyHeaders(false)
                         .showAllHeaders()
-                adapter.addUserLearnedSelection(savedInstanceState == null)
             }
         }
         mLoading?.let {
@@ -199,25 +199,26 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
     }
 
     private fun openMergeConfirmDialog(position: Int, unknownSong: Song, mediaMetadata: MediaMetadataCompat) {
-        DialogFacade.createConfirmDialog(activity, resources.getString(R.string.dialog_confirm_merge_song, unknownSong.title, MediaItemHelper.getTitle(mediaMetadata)), MaterialDialog.SingleButtonCallback { _, which ->
-            when (which) {
-                DialogAction.NEGATIVE -> return@SingleButtonCallback
-                DialogAction.POSITIVE -> {
-                    activity?.let {
-                        if (SongController(it).mergeSong(unknownSong, mediaMetadata)) {
-                            it.runOnUiThread({
-                                mUnknownSongAdapter?.removeItem(position)
-                                mUnknownSongAdapter?.notifyItemRemoved(position)
-                                mSongSelectDialog?.dismiss()
-                            })
+        activity?.let {
+            DialogFacade.createConfirmDialog(it, resources.getString(R.string.dialog_confirm_merge_song, unknownSong.title, MediaItemHelper.getTitle(mediaMetadata)), { _, which ->
+                when (which) {
+                    DialogAction.NEGATIVE -> return@createConfirmDialog
+                    DialogAction.POSITIVE -> {
+                        activity?.let {
+                            if (SongController(it).mergeSong(unknownSong, mediaMetadata)) {
+                                it.runOnUiThread({
+                                    mUnknownSongAdapter?.removeItem(position)
+                                    mUnknownSongAdapter?.notifyItemRemoved(position)
+                                    mSongSelectDialog?.dismiss()
+                                })
+                            }
                         }
                     }
+                    else -> {
+                    }
                 }
-                else -> {
-                }
-            }
-        }, DialogInterface.OnDismissListener { }).show()
-
+            }, DialogInterface.OnDismissListener { }).show()
+        }
     }
 
 
