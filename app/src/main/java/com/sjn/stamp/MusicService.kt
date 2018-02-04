@@ -50,9 +50,8 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
                 player = Player(this@MusicService, this@MusicService, musicProvider)
                 sessionToken = player?.sessionToken
                 sessionToken?.let {
-                    mediaController = MediaControllerCompat(this@MusicService, it)
-                    mediaController?.let {
-                        MediaControllerObserver.register(it)
+                    mediaController = MediaControllerCompat(this@MusicService, it).apply {
+                        MediaControllerObserver.register(this)
                     }
                 }
                 MediaControllerObserver.notifyConnected()
