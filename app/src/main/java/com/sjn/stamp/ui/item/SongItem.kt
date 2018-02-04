@@ -46,9 +46,8 @@ class SongItem(
         }
 
         holder.mMediaId = mediaId
-        ViewHelper.updateAlbumArt(context as Activity, holder.albumArtView, "", title)
         if (albumArt.isNotEmpty()) {
-            ViewHelper.updateAlbumArt(context, holder.albumArtView, albumArt, title)
+            ViewHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArt, title)
         } else {
             mediaBrowsable.search(mediaId, null, object : MediaBrowserCompat.SearchCallback() {
                 override fun onSearchResult(query: String, extras: Bundle?, items: List<MediaBrowserCompat.MediaItem>) {
@@ -57,7 +56,7 @@ class SongItem(
                             continue
                         }
                         if (query == holder.mMediaId && metadata.description.iconUri != null) {
-                            ViewHelper.updateAlbumArt(context, holder.albumArtView, metadata.description.iconUri.toString(), title)
+                            ViewHelper.updateAlbumArt(context as Activity, holder.albumArtView, metadata.description.iconUri.toString(), title)
                         }
                         break
                     }
