@@ -253,15 +253,15 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
     companion object {
 
         private val TAG = LogHelper.makeLogTag(MusicPlayerListActivity::class.java)
-        private val SAVED_MEDIA_ID = "com.sjn.stamp.MEDIA_ID"
+        private const val SAVED_MEDIA_ID = "com.sjn.stamp.MEDIA_ID"
 
-        val EXTRA_START_FULLSCREEN = "com.sjn.stamp.EXTRA_START_FULLSCREEN"
+        const val EXTRA_START_FULLSCREEN = "com.sjn.stamp.EXTRA_START_FULLSCREEN"
 
         /**
          * Optionally used with [.EXTRA_START_FULLSCREEN] to carry a MediaDescription to
          * the [FullScreenPlayerFragment], speeding up the screen rendering
          * while the [android.support.v4.media.session.MediaControllerCompat] is connecting.
          */
-        val EXTRA_CURRENT_MEDIA_DESCRIPTION = "com.sjn.stamp.CURRENT_MEDIA_DESCRIPTION"
+        const val EXTRA_CURRENT_MEDIA_DESCRIPTION = "com.sjn.stamp.CURRENT_MEDIA_DESCRIPTION"
     }
 }

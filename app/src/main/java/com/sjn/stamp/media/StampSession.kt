@@ -20,7 +20,7 @@ import com.sjn.stamp.ui.activity.IntentDispatchActivity
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.TvHelper
 
-class StampSession internal constructor(context: Context, callback: MediaSessionCompat.Callback, private val mSessionListener: SessionListener?) {
+class StampSession internal constructor(context: Context, callback: MediaSessionCompat.Callback, private val sessionListener: SessionListener?) {
 
     private val mediaRouter: MediaRouter = MediaRouter.getInstance(context.applicationContext)
     private val sessionExtras: Bundle = Bundle()
@@ -59,7 +59,7 @@ class StampSession internal constructor(context: Context, callback: MediaSession
          */
         override fun onSessionEnded(castSession: CastSession, error: Int) {
             LogHelper.i(TAG, "onSessionEnded error: ", error)
-            mSessionListener?.let {
+            sessionListener?.let {
                 sessionExtras.remove(EXTRA_CONNECTED_CAST)
                 session.setExtras(sessionExtras)
                 mediaRouter.setMediaSessionCompat(null)
@@ -72,7 +72,7 @@ class StampSession internal constructor(context: Context, callback: MediaSession
         // In case we are casting, send the device name as an extra on MediaSession metadata.
         override fun onSessionStarted(castSession: CastSession, sessionId: String) {
             LogHelper.i(TAG, "onSessionStarted sessionId: ", sessionId)
-            mSessionListener?.let {
+            sessionListener?.let {
                 sessionExtras.putString(EXTRA_CONNECTED_CAST, castSession.castDevice.friendlyName)
                 session.setExtras(sessionExtras)
                 mediaRouter.setMediaSessionCompat(session)
@@ -89,7 +89,7 @@ class StampSession internal constructor(context: Context, callback: MediaSession
         // is disconnected and hence we update our local value of stream position
         // to the latest position.
         override fun onSessionEnding(castSession: CastSession) {
-            mSessionListener?.onSessionEnd()
+            sessionListener?.onSessionEnd()
         }
 
         override fun onSessionResuming(castSession: CastSession, sessionId: String) {}

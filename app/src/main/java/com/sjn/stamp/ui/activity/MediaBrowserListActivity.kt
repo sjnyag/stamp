@@ -23,17 +23,17 @@ import java.util.*
 
 abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQueryTextListener, ListFragment.FragmentInteractionListener, ActionMode.Callback {
 
-    private var mSearchView: SearchView? = null
-    private var mAdapter: FlexibleAdapter<AbstractFlexibleItem<*>>? = null
-    private var mActionModeHelper: ActionModeHelper? = null
+    private var searchView: SearchView? = null
+    private var adapter: FlexibleAdapter<AbstractFlexibleItem<*>>? = null
+    private var actionModeHelper: ActionModeHelper? = null
 
     abstract val currentMediaItems: List<AbstractFlexibleItem<*>>
     abstract val menuResourceId: Int
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         LogHelper.d(TAG, "onPrepareOptionsMenu START")
-        mAdapter?.let { adapter ->
-            mSearchView?.let { searchView ->
+        adapter?.let { adapter ->
+            searchView?.let { searchView ->
                 //Has searchText?
                 if (!adapter.hasSearchText()) {
                     LogHelper.i(TAG, "onPrepareOptionsMenu Clearing SearchView!")
@@ -57,7 +57,7 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
         LogHelper.d(TAG, "initSearchView START")
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         menu.findItem(R.id.action_search)?.let { item ->
-            mSearchView = (item.actionView as SearchView).apply {
+            searchView = (item.actionView as SearchView).apply {
                 //inputType = InputType.TYPE_TEXT_VARIATION_FILTER
                 imeOptions = EditorInfo.IME_ACTION_DONE or EditorInfo.IME_FLAG_NO_FULLSCREEN
                 queryHint = getString(R.string.action_search)
@@ -70,7 +70,7 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
 
     private fun initializeActionModeHelper(mode: Int) {
         LogHelper.d(TAG, "initializeActionModeHelper START")
-        mActionModeHelper = object : ActionModeHelper(mAdapter!!, menuResourceId, this) {
+        actionModeHelper = object : ActionModeHelper(adapter!!, menuResourceId, this) {
             override fun updateContextTitle(count: Int) {
                 //You can use the internal ActionMode instance
                 mActionMode?.title = if (count == 1) getString(R.string.action_selected_one, Integer.toString(count)) else getString(R.string.action_selected_many, Integer.toString(count))
@@ -81,13 +81,13 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
 
     override fun startActionModeByLongClick(position: Int) {
         LogHelper.d(TAG, "startActionModeByLongClick START")
-        mActionModeHelper?.onLongClick(this, position)
+        actionModeHelper?.onLongClick(this, position)
         LogHelper.d(TAG, "startActionModeByLongClick END")
     }
 
     override fun destroyActionModeIfCan() {
         LogHelper.d(TAG, "destroyActionModeIfCan START")
-        mActionModeHelper?.destroyActionModeIfCan()
+        actionModeHelper?.destroyActionModeIfCan()
         LogHelper.d(TAG, "destroyActionModeIfCan END")
     }
 
@@ -96,7 +96,7 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
         //mRecyclerView = recyclerView;
 
         if (recyclerView.adapter is FlexibleAdapter<*>) {
-            mAdapter = recyclerView.adapter as FlexibleAdapter<AbstractFlexibleItem<*>>
+            adapter = recyclerView.adapter as FlexibleAdapter<AbstractFlexibleItem<*>>
         }
         //mSwipeRefreshLayout = swipeRefreshLayout;
         //initializeSwipeToRefresh();
@@ -106,7 +106,7 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
 
     override fun onQueryTextChange(newText: String): Boolean {
         LogHelper.d(TAG, "onQueryTextChange START")
-        mAdapter?.let {
+        adapter?.let {
             if (it.hasNewSearchText(newText)) {
                 LogHelper.i(TAG, "onQueryTextChange newText: " + newText)
                 it.searchText = newText
@@ -133,12 +133,12 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
             return
         }
         // If ActionMode is active, back key closes it
-        if (mActionModeHelper?.destroyActionModeIfCan() == true) {
+        if (actionModeHelper?.destroyActionModeIfCan() == true) {
             return
         }
         // If SearchView is visible, back key cancels search and iconify it
-        if (mSearchView?.isIconified == false) {
-            mSearchView?.isIconified = true
+        if (searchView?.isIconified == false) {
+            searchView?.isIconified = true
             return
         }
         super.onBackPressed()
@@ -165,14 +165,14 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
 
     override fun updateContextTitle(selectedItemCount: Int) {
         LogHelper.d(TAG, "updateContextTitle START")
-        mActionModeHelper!!.updateContextTitle(selectedItemCount)
+        actionModeHelper!!.updateContextTitle(selectedItemCount)
         LogHelper.d(TAG, "updateContextTitle END")
     }
 
 
     override fun restoreSelection() {
         LogHelper.d(TAG, "restoreSelection START")
-        mActionModeHelper!!.restoreSelection(this)
+        actionModeHelper!!.restoreSelection(this)
         LogHelper.d(TAG, "restoreSelection END")
     }
 

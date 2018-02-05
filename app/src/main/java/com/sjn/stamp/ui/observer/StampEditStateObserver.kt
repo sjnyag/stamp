@@ -12,7 +12,7 @@ object StampEditStateObserver {
     var selectedStampList: List<String> = ArrayList()
         internal set
 
-    private val mListenerList = Collections.synchronizedList(ArrayList<Listener>())
+    private val listenerList = Collections.synchronizedList(ArrayList<Listener>())
 
     val isStampMode: Boolean
         get() = state == State.EDITING || state == State.STAMPING
@@ -24,16 +24,16 @@ object StampEditStateObserver {
     }
 
     fun notifyAllStampChange(stamp: String) {
-        LogHelper.i(TAG, "notifyAllStampChange ", mListenerList!!.size)
-        for (listener in ArrayList(mListenerList)) {
+        LogHelper.i(TAG, "notifyAllStampChange ", listenerList!!.size)
+        for (listener in ArrayList(listenerList)) {
             listener.onNewStampCreated(stamp)
         }
     }
 
     fun notifySelectedStampListChange(stampList: List<String>) {
-        LogHelper.i(TAG, "notifySelectedStampListChange ", mListenerList!!.size)
+        LogHelper.i(TAG, "notifySelectedStampListChange ", listenerList!!.size)
         selectedStampList = stampList
-        for (listener in ArrayList(mListenerList)) {
+        for (listener in ArrayList(listenerList)) {
             listener.onSelectedStampChange(selectedStampList)
         }
     }
@@ -41,7 +41,7 @@ object StampEditStateObserver {
     fun notifyStateChange(state: State) {
         LogHelper.i(TAG, "notifyStateChange ", state)
         this.state = state
-        for (listener in ArrayList(mListenerList)) {
+        for (listener in ArrayList(listenerList)) {
             listener.onStampStateChange(this.state)
         }
     }
@@ -55,14 +55,14 @@ object StampEditStateObserver {
     }
 
     fun addListener(listener: Listener) {
-        if (!mListenerList.contains(listener)) {
-            mListenerList.add(listener)
+        if (!listenerList.contains(listener)) {
+            listenerList.add(listener)
         }
     }
 
     fun removeListener(listener: Listener) {
-        if (mListenerList.contains(listener)) {
-            mListenerList.remove(listener)
+        if (listenerList.contains(listener)) {
+            listenerList.remove(listener)
         }
     }
 

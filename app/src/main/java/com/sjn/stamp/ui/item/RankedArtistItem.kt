@@ -16,7 +16,7 @@ class RankedArtistItem(
         val context: Context,
         val track: MediaMetadataCompat,
         val artistName: String,
-        private val artUrl: String?,
+        artUrl: String?,
         val playCount: Int,
         val order: Int)
     : AbstractItem<RankedViewHolder>(artistName), IFilterable, Serializable {

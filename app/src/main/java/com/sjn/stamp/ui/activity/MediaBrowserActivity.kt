@@ -18,7 +18,7 @@ abstract class MediaBrowserActivity : DrawerActivity(), MediaBrowsable, MediaCon
     private val mediaController: MediaControllerCompat?
         get() = MediaControllerCompat.getMediaController(this)
 
-    private val mConnectionCallback = object : MediaBrowserCompat.ConnectionCallback() {
+    private val connectionCallback = object : MediaBrowserCompat.ConnectionCallback() {
         override fun onConnected() {
             try {
                 LogHelper.i(TAG, "onMediaControllerConnected")
@@ -34,7 +34,7 @@ abstract class MediaBrowserActivity : DrawerActivity(), MediaBrowsable, MediaCon
         super.onCreate(savedInstanceState)
         LogHelper.i(TAG, "Activity onCreate")
         MediaControllerObserver.addListener(this)
-        mediaBrowser = MediaBrowserCompat(this, ComponentName(this, MusicService::class.java), mConnectionCallback, null)
+        mediaBrowser = MediaBrowserCompat(this, ComponentName(this, MusicService::class.java), connectionCallback, null)
         mediaBrowser?.connect()
     }
 
@@ -55,7 +55,7 @@ abstract class MediaBrowserActivity : DrawerActivity(), MediaBrowsable, MediaCon
 
     override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
         LogHelper.d(TAG, "onMetadataChanged")
-        mDrawer?.updateHeader(metadata)
+        drawer?.updateHeader(metadata)
     }
 
     override fun onMediaControllerConnected() {

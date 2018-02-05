@@ -6,11 +6,11 @@ import java.util.*
 object MusicListObserver {
     private val TAG = LogHelper.makeLogTag(MusicListObserver::class.java)
 
-    private val mListenerList = Collections.synchronizedList(ArrayList<Listener>())
+    private val listenerList = Collections.synchronizedList(ArrayList<Listener>())
 
     fun notifyMediaListUpdated() {
-        LogHelper.i(TAG, "notifyMediaListUpdated:", mListenerList!!.size)
-        for (listener in ArrayList(mListenerList)) {
+        LogHelper.i(TAG, "notifyMediaListUpdated:", listenerList!!.size)
+        for (listener in ArrayList(listenerList)) {
             listener.onMediaListUpdated()
         }
     }
@@ -20,14 +20,14 @@ object MusicListObserver {
     }
 
     fun addListener(listener: Listener) {
-        if (!mListenerList.contains(listener)) {
-            mListenerList.add(listener)
+        if (!listenerList.contains(listener)) {
+            listenerList.add(listener)
         }
     }
 
     fun removeListener(listener: Listener) {
-        if (mListenerList.contains(listener)) {
-            mListenerList.remove(listener)
+        if (listenerList.contains(listener)) {
+            listenerList.remove(listener)
         }
     }
 

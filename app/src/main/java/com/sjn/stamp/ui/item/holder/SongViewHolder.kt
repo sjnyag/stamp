@@ -11,7 +11,7 @@ import eu.davidea.flexibleadapter.FlexibleAdapter
 
 class SongViewHolder constructor(view: View, adapter: FlexibleAdapter<*>, activity: Activity) : StampContainsViewHolder(view, adapter, activity) {
 
-    internal var mMediaId: String? = null
+    internal var mediaId: String? = null
     internal var albumArtView: ImageView = view.findViewById(R.id.image)
     internal var title: TextView = view.findViewById(R.id.title)
     internal var subtitle: TextView = view.findViewById(R.id.subtitle)

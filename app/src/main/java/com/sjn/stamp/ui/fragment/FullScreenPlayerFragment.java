@@ -263,7 +263,7 @@ public class FullScreenPlayerFragment extends Fragment implements CustomControll
     private void updateFromParams(Intent intent) {
         if (intent != null) {
             MediaDescriptionCompat description = intent.getParcelableExtra(
-                    MusicPlayerListActivity.Companion.getEXTRA_CURRENT_MEDIA_DESCRIPTION());
+                    MusicPlayerListActivity.EXTRA_CURRENT_MEDIA_DESCRIPTION);
             if (description != null) {
                 updateMediaDescription(description);
             }

@@ -19,13 +19,13 @@ import com.sjn.stamp.utils.LogHelper
 
 abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStackChangedListener {
 
-    private var mToolbar: Toolbar? = null
-    private var mToolbarInitialized: Boolean = false
-    protected var mDrawer: DrawerHelper.Drawer? = null
+    private var toolbar: Toolbar? = null
+    private var toolbarInitialized: Boolean = false
+    protected var drawer: DrawerHelper.Drawer? = null
 
     abstract fun onOptionsItemSelected(itemId: Int): Boolean
 
-    open fun setToolbarTitle(title: CharSequence?) = setTitle(title ?: mDrawer?.selectingDrawerName ?: "")
+    open fun setToolbarTitle(title: CharSequence?) = setTitle(title ?: drawer?.selectingDrawerName ?: "")
 
     open fun navigateToBrowser(fragment: Fragment, addToBackStack: Boolean) {
         if (!addToBackStack) {
@@ -39,21 +39,21 @@ abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStack
     }
 
     protected fun initializeToolbar() {
-        mToolbar = findViewById<View>(R.id.toolbar) as Toolbar
-        if (mToolbar == null) {
+        toolbar = findViewById<View>(R.id.toolbar) as Toolbar
+        if (toolbar == null) {
             throw IllegalStateException("Layout is required to include a Toolbar with id " + "'toolbar'")
         }
-        mToolbar?.let {
+        toolbar?.let {
             it.inflateMenu(R.menu.main)
             setSupportActionBar(it)
-            mDrawer = DrawerHelper.Drawer(this, it, object : DrawerHelper.Drawer.Listener {
+            drawer = DrawerHelper.Drawer(this, it, object : DrawerHelper.Drawer.Listener {
                 override fun changeFragmentByDrawer(menu: Long) {
                     val drawerMenu = DrawerMenu.of(menu) ?: return
                     navigateToBrowser(drawerMenu.fragment, false, menu)
                     setToolbarTitle(null)
                 }
             })
-            mToolbarInitialized = true
+            toolbarInitialized = true
         }
     }
 
@@ -69,7 +69,7 @@ abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStack
     }
 
     override fun onBackStackChanged() {
-        mDrawer?.updateDrawerToggleState()
+        drawer?.updateDrawerToggleState()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,7 +85,7 @@ abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStack
 
     override fun onStart() {
         super.onStart()
-        if (!mToolbarInitialized) {
+        if (!toolbarInitialized) {
             throw IllegalStateException("You must run super.initializeToolbar at " + "the end of your onCreate method")
         }
     }
@@ -102,16 +102,16 @@ abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStack
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        mDrawer?.sync()
+        drawer?.sync()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        mDrawer?.onConfigurationChanged(newConfig)
+        drawer?.onConfigurationChanged(newConfig)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        mDrawer?.let {
+        drawer?.let {
             if (it.onOptionItemSelected(item)) {
                 return true
             }
@@ -128,7 +128,7 @@ abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStack
     }
 
     override fun onBackPressed() {
-        mDrawer?.let {
+        drawer?.let {
             if (it.closeDrawer()) {
                 return
             }
@@ -143,17 +143,17 @@ abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStack
 
     override fun setTitle(title: CharSequence) {
         super.setTitle(title)
-        mToolbar?.title = title
+        toolbar?.title = title
     }
 
     override fun setTitle(titleId: Int) {
         super.setTitle(titleId)
-        mToolbar?.setTitle(titleId)
+        toolbar?.setTitle(titleId)
     }
 
     private fun navigateToBrowser(fragment: Fragment, addToBackStack: Boolean, selection: Long) {
         navigateToBrowser(fragment, addToBackStack)
-        mDrawer?.setSelection(selection)
+        drawer?.setSelection(selection)
     }
 
     companion object {

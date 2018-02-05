@@ -15,23 +15,23 @@ import io.realm.Realm
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-class StampController(private val mContext: Context) {
-    private val mListenerSet = ArrayList<Listener>()
+class StampController(private val context: Context) {
+    private val listenerSet = ArrayList<Listener>()
 
     interface Listener {
         fun onStampChange()
     }
 
     fun addListener(listener: Listener) {
-        mListenerSet.add(listener)
+        listenerSet.add(listener)
     }
 
     fun removeListener(listener: Listener) {
-        mListenerSet.remove(listener)
+        listenerSet.remove(listener)
     }
 
     fun register(name: String, isSystem: Boolean): Boolean {
-        if (name == "") {
+        if (name.isEmpty()) {
             return false
         }
         if (RealmHelper.realmInstance.use { SongStampDao.find(it, name, isSystem) } != null) {
@@ -39,19 +39,19 @@ class StampController(private val mContext: Context) {
         }
         RealmHelper.realmInstance.use { realm -> SongStampDao.findOrCreate(realm, name, isSystem) }
         notifyStampChange()
-        AnalyticsHelper.trackStamp(mContext, name)
+        AnalyticsHelper.trackStamp(context, name)
         return true
     }
 
     fun isCategoryStamp(name: String, isSystem: Boolean, mediaId: String): Boolean {
-        val mediaMetadata = SongController(mContext).resolveMediaMetadata(mediaId) ?: return false
+        val mediaMetadata = SongController(context).resolveMediaMetadata(mediaId) ?: return false
         RealmHelper.realmInstance.use { realm ->
             return CategoryStampDao.findByName(realm, name, isSystem).find { categoryStamp -> categoryStamp.contain(mediaMetadata) } != null
         }
     }
 
     fun removeSong(name: String, isSystem: Boolean, mediaId: String): Boolean {
-        val mediaMetadata = SongController(mContext).resolveMediaMetadata(mediaId) ?: return false
+        val mediaMetadata = SongController(context).resolveMediaMetadata(mediaId) ?: return false
         RealmHelper.realmInstance.use { realm ->
             val song = SongDao.findByMediaMetadata(realm, mediaMetadata) ?: return false
             return SongStampDao.remove(realm, song.id, name, isSystem)
@@ -93,7 +93,7 @@ class StampController(private val mContext: Context) {
     }
 
     internal fun notifyStampChange() {
-        for (listener in mListenerSet) {
+        for (listener in listenerSet) {
             listener.onStampChange()
         }
     }

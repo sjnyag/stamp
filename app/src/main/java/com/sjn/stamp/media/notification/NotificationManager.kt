@@ -30,7 +30,7 @@ import com.sjn.stamp.utils.LogHelper
  * MediaSession. Maintaining a visible notification (usually) guarantees that the music service
  * won't be killed during playback.
  */
-class NotificationManager @Throws(RemoteException::class) constructor(private val mService: MusicService) : MediaControllerObserver.Listener {
+class NotificationManager @Throws(RemoteException::class) constructor(private val service: MusicService) : MediaControllerObserver.Listener {
 
     companion object {
         private val TAG = LogHelper.makeLogTag(NotificationManager::class.java)
@@ -55,13 +55,13 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
     fun startForeground() {
         LogHelper.i(TAG, "startForeground")
         notificationContainer?.notification?.let {
-            mService.startForeground(NotificationContainer.NOTIFICATION_ID, it)
+            service.startForeground(NotificationContainer.NOTIFICATION_ID, it)
         }
     }
 
     fun stopForeground(removeNotification: Boolean) {
         LogHelper.i(TAG, "stopForeground")
-        mService.stopForeground(removeNotification)
+        service.stopForeground(removeNotification)
     }
 
     /**
@@ -82,7 +82,7 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
             notificationContainer?.let {
                 MediaControllerObserver.addListener(this)
                 receiver?.let {
-                    mService.registerReceiver(it, NotificationAction.createIntentFilter())
+                    service.registerReceiver(it, NotificationAction.createIntentFilter())
                 }
                 it.create(currentMetadata, playbackState)
                 it.start()
@@ -103,7 +103,7 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
             MediaControllerObserver.removeListener(this)
             try {
                 notificationContainer?.cancel()
-                receiver?.let { mService.unregisterReceiver(it) }
+                receiver?.let { service.unregisterReceiver(it) }
             } catch (ex: IllegalArgumentException) {
                 // ignore if the receiver is not registered.
             }
@@ -119,16 +119,16 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
     @Throws(RemoteException::class)
     private fun updateSessionToken() {
         LogHelper.i(TAG, "updateSessionToken")
-        val freshToken = mService.sessionToken
+        val freshToken = service.sessionToken
         if (sessionToken == null && freshToken != null || sessionToken != null && sessionToken != freshToken) {
             controller?.let {
                 MediaControllerObserver.removeListener(this)
             }
             sessionToken = freshToken
             sessionToken?.let {
-                controller = MediaControllerCompat(mService, it)
+                controller = MediaControllerCompat(service, it)
                 receiver = NotificationReceiver(controller!!)
-                notificationContainer = NotificationContainer(mService, it, controller!!)
+                notificationContainer = NotificationContainer(service, it, controller!!)
                 if (started) {
                     MediaControllerObserver.addListener(this)
                 }

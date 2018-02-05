@@ -8,36 +8,36 @@ import com.sjn.stamp.utils.LocalPlaylistHelper
 @Suppress("unused")
 class PlaylistController(context: Context) {
 
-    private val mContentResolver: ContentResolver = context.contentResolver
+    private val contentResolver: ContentResolver = context.contentResolver
 
     fun loadAllPlaylist(map: MutableMap<String, MutableList<MediaMetadataCompat>>) {
         try {
-            LocalPlaylistHelper.findAllPlaylist(mContentResolver, map)
+            LocalPlaylistHelper.findAllPlaylist(contentResolver, map)
         } catch (e: SecurityException) {
             e.printStackTrace()
         }
     }
 
-    fun isExistAudioId(audioId: Int, playlistId: Int): Boolean = LocalPlaylistHelper.isExistAudioId(mContentResolver, audioId, playlistId)
+    fun isExistAudioId(audioId: Int, playlistId: Int): Boolean = LocalPlaylistHelper.isExistAudioId(contentResolver, audioId, playlistId)
 
-    fun isExistPlayListName(name: String): Boolean = LocalPlaylistHelper.isExistPlayListName(mContentResolver, name)
+    fun isExistPlayListName(name: String): Boolean = LocalPlaylistHelper.isExistPlayListName(contentResolver, name)
 
-    fun addToPlaylist(audioId: Int, playlistId: Int): Boolean = LocalPlaylistHelper.add(mContentResolver, audioId, playlistId)
+    fun addToPlaylist(audioId: Int, playlistId: Int): Boolean = LocalPlaylistHelper.add(contentResolver, audioId, playlistId)
 
-    fun removeFromPlaylist(audioId: Int, playlistId: Int): Boolean = LocalPlaylistHelper.remove(mContentResolver, audioId, playlistId)
+    fun removeFromPlaylist(audioId: Int, playlistId: Int): Boolean = LocalPlaylistHelper.remove(contentResolver, audioId, playlistId)
 
-    fun getPlaylistName(playlistId: Int): String = LocalPlaylistHelper.findPlaylistName(mContentResolver, playlistId)
+    fun getPlaylistName(playlistId: Int): String = LocalPlaylistHelper.findPlaylistName(contentResolver, playlistId)
 
-    fun getPlaylistId(name: String): Int = LocalPlaylistHelper.findPlaylistId(mContentResolver, name)
+    fun getPlaylistId(name: String): Int = LocalPlaylistHelper.findPlaylistId(contentResolver, name)
 
-    fun createPlaylist(name: String): Boolean = LocalPlaylistHelper.create(mContentResolver, name)
+    fun createPlaylist(name: String): Boolean = LocalPlaylistHelper.create(contentResolver, name)
 
-    fun updatePlaylist(srcValue: String, dstValue: String): Int = LocalPlaylistHelper.update(mContentResolver, srcValue, dstValue)
+    fun updatePlaylist(srcValue: String, dstValue: String): Int = LocalPlaylistHelper.update(contentResolver, srcValue, dstValue)
 
-    fun deletePlaylist(name: String): Int = LocalPlaylistHelper.delete(mContentResolver, name)
+    fun deletePlaylist(name: String): Int = LocalPlaylistHelper.delete(contentResolver, name)
 
-    fun getMediaList(playlistId: Int): List<MediaMetadataCompat> = getMediaList(playlistId, LocalPlaylistHelper.findPlaylistName(mContentResolver, playlistId))
+    fun getMediaList(playlistId: Int): List<MediaMetadataCompat> = getMediaList(playlistId, LocalPlaylistHelper.findPlaylistName(contentResolver, playlistId))
 
-    private fun getMediaList(playlistId: Int, playlistTitle: String): List<MediaMetadataCompat> = LocalPlaylistHelper.findAllPlaylistMedia(mContentResolver, playlistId, playlistTitle)
+    private fun getMediaList(playlistId: Int, playlistTitle: String): List<MediaMetadataCompat> = LocalPlaylistHelper.findAllPlaylistMedia(contentResolver, playlistId, playlistTitle)
 
 }

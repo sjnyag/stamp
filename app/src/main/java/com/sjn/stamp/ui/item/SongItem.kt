@@ -45,7 +45,7 @@ class SongItem(
             holder.subtitle.text = subtitle
         }
 
-        holder.mMediaId = mediaId
+        holder.mediaId = mediaId
         if (albumArt.isNotEmpty()) {
             ViewHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArt, title)
         } else {
@@ -55,7 +55,7 @@ class SongItem(
                         if (metadata.description.iconUri == null) {
                             continue
                         }
-                        if (query == holder.mMediaId && metadata.description.iconUri != null) {
+                        if (query == holder.mediaId && metadata.description.iconUri != null) {
                             ViewHelper.updateAlbumArt(context as Activity, holder.albumArtView, metadata.description.iconUri.toString(), title)
                         }
                         break

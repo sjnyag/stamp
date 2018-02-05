@@ -25,17 +25,17 @@ internal object ProviderCache {
 
         return if (mediaMapCache == null) {
             HashMap()
-        } else mediaMapCache.mMap
+        } else mediaMapCache.map
     }
 
-    private data class MediaMapCache internal constructor(internal val mMap: HashMap<String, MediaMetadataCompat>) : Parcelable {
+    private data class MediaMapCache internal constructor(internal val map: HashMap<String, MediaMetadataCompat>) : Parcelable {
 
         override fun describeContents(): Int = 0
 
         override fun writeToParcel(dest: Parcel, flags: Int) {
             dest.run {
-                writeInt(mMap.size)
-                for ((key, value) in mMap) {
+                writeInt(map.size)
+                for ((key, value) in map) {
                     writeString(key)
                     writeParcelable(value, Parcelable.PARCELABLE_WRITE_RETURN_VALUE)
                 }

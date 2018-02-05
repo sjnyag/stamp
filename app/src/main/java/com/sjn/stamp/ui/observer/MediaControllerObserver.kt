@@ -9,7 +9,7 @@ import java.util.*
 object MediaControllerObserver : MediaControllerCompat.Callback() {
 
     private val TAG = LogHelper.makeLogTag(MediaControllerObserver::class.java)
-    private val mListenerList = Collections.synchronizedList(ArrayList<Listener>())
+    private val listenerList = Collections.synchronizedList(ArrayList<Listener>())
 
     interface Listener {
         fun onPlaybackStateChanged(state: PlaybackStateCompat?)
@@ -30,36 +30,36 @@ object MediaControllerObserver : MediaControllerCompat.Callback() {
     }
 
     fun notifyConnected() {
-        LogHelper.i(TAG, "notifyConnected ", mListenerList?.size)
-        for (listener in ArrayList(mListenerList)) {
+        LogHelper.i(TAG, "notifyConnected ", listenerList?.size)
+        for (listener in ArrayList(listenerList)) {
             listener.onMediaControllerConnected()
         }
     }
 
     fun addListener(listener: Listener) {
         LogHelper.i(TAG, "addListener")
-        if (!mListenerList.contains(listener)) {
-            mListenerList.add(listener)
+        if (!listenerList.contains(listener)) {
+            listenerList.add(listener)
         }
     }
 
     fun removeListener(listener: Listener) {
         LogHelper.i(TAG, "removeListener")
-        if (mListenerList.contains(listener)) {
-            mListenerList.remove(listener)
+        if (listenerList.contains(listener)) {
+            listenerList.remove(listener)
         }
     }
 
     override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
-        LogHelper.i(TAG, "onPlaybackStateChanged ", mListenerList?.size)
-        for (listener in ArrayList(mListenerList)) {
+        LogHelper.i(TAG, "onPlaybackStateChanged ", listenerList?.size)
+        for (listener in ArrayList(listenerList)) {
             listener.onPlaybackStateChanged(state)
         }
     }
 
     override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
-        LogHelper.i(TAG, "onMetadataChanged ", mListenerList?.size)
-        for (listener in ArrayList(mListenerList)) {
+        LogHelper.i(TAG, "onMetadataChanged ", listenerList?.size)
+        for (listener in ArrayList(listenerList)) {
             listener.onMetadataChanged(metadata)
         }
     }
@@ -67,8 +67,8 @@ object MediaControllerObserver : MediaControllerCompat.Callback() {
 
     override fun onSessionDestroyed() {
         super.onSessionDestroyed()
-        LogHelper.i(TAG, "onSessionDestroyed ", mListenerList?.size)
-        for (listener in ArrayList(mListenerList)) {
+        LogHelper.i(TAG, "onSessionDestroyed ", listenerList?.size)
+        for (listener in ArrayList(listenerList)) {
             listener.onSessionDestroyed()
         }
     }
