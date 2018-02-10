@@ -102,7 +102,7 @@ object ViewHelper {
         }
         Picasso.with(activity).load(artUrl).placeholder(createTextDrawable(text)).resize(targetWidth, targetHeight).into(view, object : Callback {
             override fun onSuccess() {
-                if (artUrl != view.tag) {
+                if (view.tag != null && artUrl != view.tag) {
                     updateAlbumArt(activity, view, view.tag as String, text)
                 }
             }
