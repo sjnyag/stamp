@@ -80,10 +80,22 @@ object ViewHelper {
         else -> R.color.colorPrimaryDark
     }
 
+    fun updateAlbumArtIfEnable(activity: Activity?, view: ImageView?, artUrl: String?, text: String?, targetWidth: Int = 128, targetHeight: Int = 128) {
+        activity?.let { _activity ->
+            view?.let { view ->
+                artUrl?.let { artUrl ->
+                    text?.let { text ->
+                        ViewHelper.updateAlbumArt(_activity, view, artUrl, text, targetWidth, targetHeight)
+                    }
+                }
+            }
+        }
+    }
+
     @JvmOverloads
     fun updateAlbumArt(activity: Activity, view: ImageView, artUrl: String, text: String, targetWidth: Int = 128, targetHeight: Int = 128) {
         view.tag = artUrl
-        if (artUrl == null || artUrl.isEmpty()) {
+        if (artUrl.isEmpty()) {
             //view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));
             view.setImageDrawable(createTextDrawable(text))
             return

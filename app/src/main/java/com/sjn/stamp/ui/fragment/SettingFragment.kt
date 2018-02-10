@@ -27,7 +27,7 @@ import com.sjn.stamp.utils.RealmHelper
 class SettingFragment : PreferenceFragmentCompat() {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        menu!!.clear()
+        menu?.clear()
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -99,11 +99,12 @@ class SettingFragment : PreferenceFragmentCompat() {
                             context?.let {
                                 AnalyticsHelper.trackSetting(it, "export_backup")
                             }
-                            val progressDialog = ProgressDialog(activity)
-                            progressDialog.setMessage(getString(R.string.message_processing))
-                            progressDialog.show()
-                            activity?.let { RealmHelper.exportBackUp(it) }
-                            progressDialog.dismiss()
+                            ProgressDialog(activity).run {
+                                setMessage(getString(R.string.message_processing))
+                                show()
+                                activity?.let { RealmHelper.exportBackUp(it) }
+                                dismiss()
+                            }
                         }
                         else -> {
                         }
@@ -151,7 +152,7 @@ class SettingFragment : PreferenceFragmentCompat() {
             }
             true
         }
-        findPreference("setting_songs_most_played_song_size").onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
+        findPreference("setting_songs_most_played_song_size").onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
             context?.let {
                 AnalyticsHelper.trackSetting(it, "setting_songs_most_played_song_size", newValue.toString())
             }
@@ -194,12 +195,13 @@ class SettingFragment : PreferenceFragmentCompat() {
         if (requestCode == REQUEST_BACKUP) {
             if (resultCode == AppCompatActivity.RESULT_OK) {
                 activity?.let {
-                    if (data != null && data.data != null && data.data.path.endsWith(".realm")) {
-                        val progressDialog = ProgressDialog(it)
-                        progressDialog.setMessage(getString(R.string.message_processing))
-                        progressDialog.show()
-                        RealmHelper.importBackUp(it, data.data)
-                        progressDialog.dismiss()
+                    if (data?.data?.path?.endsWith(".realm") == true) {
+                        ProgressDialog(it).run {
+                            setMessage(getString(R.string.message_processing))
+                            show()
+                            RealmHelper.importBackUp(it, data.data)
+                            dismiss()
+                        }
                         DialogFacade.createRestartDialog(it) { _, _ -> it.recreate() }.show()
                     } else {
                         Toast.makeText(it, R.string.invalid_backup_selected, Toast.LENGTH_SHORT).show()

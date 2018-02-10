@@ -38,26 +38,26 @@ import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 
 class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, FastScroller.OnScrollStateChangeListener, FlexibleAdapter.OnItemClickListener, FlexibleAdapter.OnItemLongClickListener, FlexibleAdapter.EndlessScrollListener, FlexibleAdapter.OnUpdateListener, StampEditStateObserver.Listener {
 
-    private var mUnknownSongRecyclerView: RecyclerView? = null
-    private var mMergeSongRecyclerView: RecyclerView? = null
-    private var mUnknownSongAdapter: SongAdapter? = null
-    private var mMergeSongAdapter: SongAdapter? = null
+    private var unknownSongRecyclerView: RecyclerView? = null
+    private var mergeSongRecyclerView: RecyclerView? = null
+    private var unknownSongAdapter: SongAdapter? = null
+    private var mergeSongAdapter: SongAdapter? = null
 
-    private var mLoading: ProgressBar? = null
-    private var mEmptyView: View? = null
-    private var mEmptyTextView: TextView? = null
-    private var mSwipeRefreshLayout: SwipeRefreshLayout? = null
-    private var mFastScroller: FastScroller? = null
-    private var mListState: Parcelable? = null
+    private var loading: ProgressBar? = null
+    private var emptyView: View? = null
+    private var emptyTextView: TextView? = null
+    private var swipeRefreshLayout: SwipeRefreshLayout? = null
+    private var fastScroller: FastScroller? = null
+    private var listState: Parcelable? = null
 
-    private var mSongSelectDialog: MaterialDialog? = null
+    private var songSelectDialog: MaterialDialog? = null
 
     override fun onRefresh() {
         activity?.let {
             DialogFacade.createConfirmDialog(it, R.string.dialog_confirm_song_db_refresh, { _, which ->
                 when (which) {
                     DialogAction.NEGATIVE -> {
-                        mSwipeRefreshLayout?.let {
+                        swipeRefreshLayout?.let {
                             it.isRefreshing = false
                         }
                     }
@@ -71,32 +71,20 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
         }
     }
 
-    override fun onSelectedStampChange(selectedStampList: List<String>) {
+    override fun onSelectedStampChange(selectedStampList: List<String>) {}
 
-    }
+    override fun onNewStampCreated(stamp: String) {}
 
-    override fun onNewStampCreated(stamp: String) {
+    override fun onStampStateChange(state: StampEditStateObserver.State) {}
 
-    }
+    override fun onFastScrollerStateChange(scrolling: Boolean) {}
 
-    override fun onStampStateChange(state: StampEditStateObserver.State) {
+    override fun noMoreLoad(newItemsSize: Int) {}
 
-    }
-
-    override fun onFastScrollerStateChange(scrolling: Boolean) {
-
-    }
-
-    override fun noMoreLoad(newItemsSize: Int) {
-
-    }
-
-    override fun onLoadMore(lastPosition: Int, currentPage: Int) {
-
-    }
+    override fun onLoadMore(lastPosition: Int, currentPage: Int) {}
 
     override fun onItemClick(position: Int): Boolean {
-        mUnknownSongAdapter?.let {
+        unknownSongAdapter?.let {
             val item = it.getItem(position)
             if (item is UnknownSongItem) {
                 openSongSelectDialog(item.songId)
@@ -105,48 +93,42 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
         return false
     }
 
-    override fun onItemLongClick(position: Int) {
+    override fun onItemLongClick(position: Int) {}
 
-    }
-
-    override fun onUpdateEmptyView(size: Int) {
-
-    }
+    override fun onUpdateEmptyView(size: Int) {}
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_list, container, false)
 
-        mLoading = rootView.findViewById(R.id.progressBar)
-        mEmptyView = rootView.findViewById(R.id.empty_view)
-        mFastScroller = rootView.findViewById(R.id.fast_scroller)
-        mEmptyTextView = rootView.findViewById(R.id.empty_text)
+        loading = rootView.findViewById(R.id.progressBar)
+        emptyView = rootView.findViewById(R.id.empty_view)
+        fastScroller = rootView.findViewById(R.id.fast_scroller)
+        emptyTextView = rootView.findViewById(R.id.empty_text)
 
-        mSwipeRefreshLayout = rootView.findViewById(R.id.refresh)
-        mSwipeRefreshLayout?.let {
+        swipeRefreshLayout = rootView.findViewById(R.id.refresh)
+        swipeRefreshLayout?.let {
             it.setOnRefreshListener(this)
             it.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW)
         }
 
-        mUnknownSongAdapter = SongAdapter(createItemList(), this)
-        mUnknownSongAdapter?.let {
+        unknownSongAdapter = SongAdapter(createItemList(), this)
+        unknownSongAdapter?.let {
             it.setNotifyChangeOfUnfilteredItems(true)
             it.setAnimationOnScrolling(false)
         }
-        mUnknownSongRecyclerView = rootView.findViewById(R.id.recycler_view)
-        if (savedInstanceState != null) {
-            mListState = savedInstanceState.getParcelable(LIST_STATE_KEY)
-        }
+        unknownSongRecyclerView = rootView.findViewById(R.id.recycler_view)
+        listState = savedInstanceState?.getParcelable(LIST_STATE_KEY)
         val layoutManager = SmoothScrollLinearLayoutManager(activity)
-        if (mListState != null) {
-            layoutManager.onRestoreInstanceState(mListState)
+        listState.let {
+            layoutManager.onRestoreInstanceState(listState)
         }
-        mUnknownSongRecyclerView?.let {
+        unknownSongRecyclerView?.let {
             it.layoutManager = layoutManager
-            it.adapter = mUnknownSongAdapter
+            it.adapter = unknownSongAdapter
         }
-        mUnknownSongAdapter?.let { adapter ->
+        unknownSongAdapter?.let { adapter ->
             activity?.let {
                 adapter.fastScroller = rootView.findViewById<View>(R.id.fast_scroller) as FastScroller
                 adapter.setLongPressDragEnabled(false)
@@ -158,16 +140,16 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
                         .showAllHeaders()
             }
         }
-        mLoading?.let {
+        loading?.let {
             it.visibility = View.GONE
         }
         return rootView
     }
 
     private fun openSongSelectDialog(unknownSongId: Long) {
-        mMergeSongRecyclerView = RecyclerView(activity, null)
-        mMergeSongAdapter = SongAdapter(emptyList(), FlexibleAdapter.OnItemClickListener({ p ->
-            mMergeSongAdapter?.let {
+        mergeSongRecyclerView = RecyclerView(activity, null)
+        mergeSongAdapter = SongAdapter(emptyList(), FlexibleAdapter.OnItemClickListener({ p ->
+            mergeSongAdapter?.let {
                 val item = it.getItem(p)
                 if (item is SimpleMediaMetadataItem) {
                     context?.let {
@@ -181,11 +163,11 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
             }
             false
         }))
-        mMergeSongRecyclerView?.let { view ->
+        mergeSongRecyclerView?.let { view ->
             view.layoutManager = SmoothScrollLinearLayoutManager(activity)
-            view.adapter = mMergeSongAdapter
+            view.adapter = mergeSongAdapter
             context?.let {
-                mSongSelectDialog = MaterialDialog.Builder(it)
+                songSelectDialog = MaterialDialog.Builder(it)
                         .title(R.string.dialog_merge_song)
                         .customView(view, false)
                         .negativeText(R.string.dialog_cancel)
@@ -207,9 +189,9 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
                         activity?.let {
                             if (SongController(it).mergeSong(unknownSong, mediaMetadata)) {
                                 it.runOnUiThread({
-                                    mUnknownSongAdapter?.removeItem(position)
-                                    mUnknownSongAdapter?.notifyItemRemoved(position)
-                                    mSongSelectDialog?.dismiss()
+                                    unknownSongAdapter?.removeItem(position)
+                                    unknownSongAdapter?.notifyItemRemoved(position)
+                                    songSelectDialog?.dismiss()
                                 })
                             }
                         }
@@ -245,7 +227,7 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
                 if (!fragment.isAdded) {
                     return@Runnable
                 }
-                fragment.mMergeSongAdapter?.updateDataSet(result.map { SimpleMediaMetadataItem(it) })
+                fragment.mergeSongAdapter?.updateDataSet(result.map { SimpleMediaMetadataItem(it) })
             })
         }
 
@@ -265,8 +247,8 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
                 if (!fragment.isAdded) {
                     return@Runnable
                 }
-                fragment.mUnknownSongAdapter?.updateDataSet(fragment.createItemList())
-                fragment.mSwipeRefreshLayout?.let {
+                fragment.unknownSongAdapter?.updateDataSet(fragment.createItemList())
+                fragment.swipeRefreshLayout?.let {
                     it.isRefreshing = false
                 }
             })

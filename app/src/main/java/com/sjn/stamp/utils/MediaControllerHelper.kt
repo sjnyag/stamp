@@ -8,7 +8,8 @@ import android.support.v4.media.session.MediaSessionCompat
 object MediaControllerHelper {
     private val TAG = LogHelper.makeLogTag(MediaControllerHelper::class.java)
 
-    fun getController(activity: Activity): MediaControllerCompat? {
+    fun getController(activity: Activity?): MediaControllerCompat? {
+        activity ?: return null
         return MediaControllerCompat.getMediaController(activity)
     }
 
