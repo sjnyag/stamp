@@ -9,7 +9,8 @@ object SpotlightHelper {
 
     private const val PREFIX = "shown_"
 
-    fun isShown(activity: Activity, key: String): Boolean {
+    fun isShown(activity: Activity?, key: String): Boolean {
+        activity ?: return false
         return try {
             activity.getPreferences(MODE_PRIVATE).getBoolean(PREFIX + key + activity.packageManager.getPackageInfo(activity.packageName, 0).versionCode, false)
         } catch (e: PackageManager.NameNotFoundException) {
@@ -18,7 +19,8 @@ object SpotlightHelper {
         }
     }
 
-    fun setShown(activity: Activity, key: String) {
+    fun setShown(activity: Activity?, key: String) {
+        activity ?: return
         try {
             activity.getPreferences(MODE_PRIVATE).edit().apply {
                 putBoolean(PREFIX + key + activity.packageManager.getPackageInfo(activity.packageName, 0).versionCode, true)

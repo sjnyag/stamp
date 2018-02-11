@@ -1,8 +1,8 @@
 package com.sjn.stamp.ui
 
 import com.sjn.stamp.media.provider.ProviderType
-import com.sjn.stamp.ui.fragment.media_list.MyStampListFragment
-import com.sjn.stamp.ui.fragment.media_list.SongListFragment
+import com.sjn.stamp.ui.fragment.media.MyStampListFragment
+import com.sjn.stamp.ui.fragment.media.SongListFragment
 
 
 object SongListFragmentFactory {

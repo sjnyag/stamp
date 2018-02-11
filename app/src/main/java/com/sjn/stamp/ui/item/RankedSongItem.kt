@@ -12,15 +12,15 @@ import eu.davidea.flexibleadapter.utils.FlexibleUtils
 import java.io.Serializable
 
 class RankedSongItem(
-        val track: MediaMetadataCompat?,
+        val track: MediaMetadataCompat,
         private val playCount: Int,
         private val order: Int)
-    : AbstractItem<RankedViewHolder>(track?.description?.mediaId ?: ""), IFilterable, Serializable {
+    : AbstractItem<RankedViewHolder>(track.description?.mediaId ?: ""), IFilterable, Serializable {
 
-    val mediaId = track?.description?.mediaId ?: ""
-    override val title = track?.description?.title?.toString() ?: ""
-    override val subtitle = track?.description?.subtitle?.toString() ?: ""
-    private val albumArt = track?.description?.iconUri?.toString() ?: ""
+    val mediaId = track.description?.mediaId ?: ""
+    override val title = track.description?.title?.toString() ?: ""
+    override val subtitle = track.description?.subtitle?.toString() ?: ""
+    private val albumArt = track.description?.iconUri?.toString() ?: ""
 
     init {
         isDraggable = true
@@ -47,7 +47,7 @@ class RankedSongItem(
     }
 
     override fun filter(constraint: String): Boolean =
-            track?.description?.title?.toString()?.toLowerCase()?.trim { it <= ' ' }?.contains(constraint) == true
-                    || track?.description?.subtitle?.toString()?.toLowerCase()?.trim { it <= ' ' }?.contains(constraint) == true
+            track.description?.title?.toString()?.toLowerCase()?.trim { it <= ' ' }?.contains(constraint) == true
+                    || track.description?.subtitle?.toString()?.toLowerCase()?.trim { it <= ' ' }?.contains(constraint) == true
 
 }

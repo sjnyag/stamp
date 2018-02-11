@@ -11,7 +11,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import com.sjn.stamp.R
-import com.sjn.stamp.ui.fragment.media_list.ListFragment
+import com.sjn.stamp.ui.fragment.media.ListFragment
 import com.sjn.stamp.ui.observer.StampEditStateObserver
 import com.sjn.stamp.utils.CompatibleHelper
 import com.sjn.stamp.utils.LogHelper
@@ -52,11 +52,11 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
         return super.onPrepareOptionsMenu(menu)
     }
 
-    override fun initSearchView(menu: Menu) {
+    override fun initSearchView(menu: Menu?) {
         // Associate searchable configuration with the SearchView
         LogHelper.d(TAG, "initSearchView START")
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        menu.findItem(R.id.action_search)?.let { item ->
+        menu?.findItem(R.id.action_search)?.let { item ->
             searchView = (item.actionView as SearchView).apply {
                 //inputType = InputType.TYPE_TEXT_VARIATION_FILTER
                 imeOptions = EditorInfo.IME_ACTION_DONE or EditorInfo.IME_FLAG_NO_FULLSCREEN
@@ -91,14 +91,14 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
         LogHelper.d(TAG, "destroyActionModeIfCan END")
     }
 
-    override fun onFragmentChange(swipeRefreshLayout: SwipeRefreshLayout, recyclerView: RecyclerView, mode: Int) {
+    override fun onFragmentChange(swipeRefreshLayout: SwipeRefreshLayout?, recyclerView: RecyclerView?, mode: Int) {
         LogHelper.d(TAG, "onFragmentChange START")
-        //mRecyclerView = recyclerView;
+        //recyclerView = recyclerView;
 
-        if (recyclerView.adapter is FlexibleAdapter<*>) {
+        if (recyclerView?.adapter is FlexibleAdapter<*>) {
             adapter = recyclerView.adapter as FlexibleAdapter<AbstractFlexibleItem<*>>
         }
-        //mSwipeRefreshLayout = swipeRefreshLayout;
+        //swipeRefreshLayout = swipeRefreshLayout;
         //initializeSwipeToRefresh();
         initializeActionModeHelper(mode)
         LogHelper.d(TAG, "onFragmentChange END")
@@ -117,7 +117,7 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
 
         }
         // Disable SwipeRefresh if search is active!!
-        //mSwipeRefreshLayout.setEnabled(!mAdapter.hasSearchText());
+        //swipeRefreshLayout.setEnabled(!adapter.hasSearchText());
         LogHelper.d(TAG, "onQueryTextChange END")
         return true
     }

@@ -3,7 +3,7 @@ package com.sjn.stamp.ui
 import android.support.v4.app.Fragment
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.fragment.SettingFragment
-import com.sjn.stamp.ui.fragment.media_list.*
+import com.sjn.stamp.ui.fragment.media.*
 
 enum class DrawerMenu(val menuId: Int) {
     HOME(R.id.navigation_home) {

@@ -29,8 +29,8 @@ import com.sjn.stamp.ui.DialogFacade
 import com.sjn.stamp.ui.DrawerMenu
 import com.sjn.stamp.ui.SongListFragmentFactory
 import com.sjn.stamp.ui.fragment.FullScreenPlayerFragment
-import com.sjn.stamp.ui.fragment.media_list.MediaBrowserListFragment
-import com.sjn.stamp.ui.fragment.media_list.PagerFragment
+import com.sjn.stamp.ui.fragment.media.MediaBrowserListFragment
+import com.sjn.stamp.ui.fragment.media.PagerFragment
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaIDHelper
 import com.sjn.stamp.utils.MediaRetrieveHelper
