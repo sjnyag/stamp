@@ -2,6 +2,7 @@ package com.sjn.stamp.ui
 
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
+import android.view.View
 
 interface MediaBrowsable {
     val mediaBrowser: MediaBrowserCompat?
@@ -10,11 +11,9 @@ interface MediaBrowsable {
 
     fun playByCategory(mediaId: String)
 
-    fun onMediaItemSelected(musicId: String)
+    fun playByMediaId(mediaId: String)
 
-    fun onMediaItemSelected(mediaId: String?, isPlayable: Boolean, isBrowsable: Boolean)
-
-    fun onMediaItemSelected(item: MediaBrowserCompat.MediaItem)
+    fun navigateToBrowser(mediaId: String?, sharedElement: View?, sharedElementName: String?)
 
     fun sendCustomAction(action: String, extras: Bundle?, callback: MediaBrowserCompat.CustomActionCallback?)
 }

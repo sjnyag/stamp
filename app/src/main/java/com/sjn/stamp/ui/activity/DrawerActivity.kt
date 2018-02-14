@@ -25,7 +25,24 @@ abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStack
 
     abstract fun onOptionsItemSelected(itemId: Int): Boolean
 
-    open fun setToolbarTitle(title: CharSequence?) = setTitle(title ?: drawer?.selectingDrawerName ?: "")
+    open fun setToolbarTitle(title: CharSequence?) = setTitle(title ?: drawer?.selectingDrawerName
+    ?: "")
+
+    open fun navigateToBrowser(fragment: Fragment, addToBackStack: Boolean, sharedElement: View?, sharedElementName: String?) {
+        if (!addToBackStack) {
+            supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        }
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.container, fragment, FRAGMENT_TAG)
+            if (sharedElement != null && sharedElementName != null) {
+                addSharedElement(sharedElement, sharedElementName)
+            }
+            if (addToBackStack) {
+                addToBackStack(null)
+            }
+        }.commit()
+        findViewById<AppBarLayout>(R.id.app_bar).setExpanded(true, true)
+    }
 
     open fun navigateToBrowser(fragment: Fragment, addToBackStack: Boolean) {
         if (!addToBackStack) {
@@ -33,7 +50,9 @@ abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStack
         }
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.container, fragment, FRAGMENT_TAG)
-            if (addToBackStack) { addToBackStack(null) }
+            if (addToBackStack) {
+                addToBackStack(null)
+            }
         }.commit()
         findViewById<AppBarLayout>(R.id.app_bar).setExpanded(true, true)
     }

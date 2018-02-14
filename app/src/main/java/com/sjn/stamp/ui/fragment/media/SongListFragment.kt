@@ -111,7 +111,13 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
         LogHelper.d(TAG, "onItemClick ")
         val item = adapter?.getItem(position)
         if (item is SongItem) {
-            mediaBrowsable?.onMediaItemSelected(item.mediaId, item.isPlayable, item.isBrowsable)
+            when {
+                item.isPlayable -> {
+                    mediaBrowsable?.playByMediaId(item.mediaId)
+                }
+                item.isBrowsable -> mediaBrowsable?.navigateToBrowser(item.mediaId, null, null)
+                else -> LogHelper.w(TAG, "Ignoring MediaItem that is neither browsable nor playable: ", "mediaId=", item.mediaId)
+            }
         }
         return false
     }

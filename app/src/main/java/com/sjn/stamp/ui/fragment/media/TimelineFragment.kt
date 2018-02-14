@@ -6,8 +6,6 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
-import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -82,7 +80,7 @@ class TimelineFragment : MediaBrowserListFragment(), UndoHelper.OnUndoListener, 
         LogHelper.d(TAG, "onItemClick ")
         val item = adapter?.getItem(position)
         if (item is SongHistoryItem) {
-            mediaBrowsable?.onMediaItemSelected(MediaIDHelper.extractMusicIDFromMediaID(item.mediaId)!!)
+            mediaBrowsable?.playByMediaId(MediaIDHelper.createDirectMediaId(MediaIDHelper.extractMusicIDFromMediaID(item.mediaId)!!))
         }
         return false
     }
