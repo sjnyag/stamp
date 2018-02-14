@@ -105,6 +105,8 @@ class PlaybackControlsFragment : Fragment(), MediaControllerObserver.Listener {
         MediaControllerHelper.getController(activity)?.let {
             onMetadataChanged(it.metadata)
             onPlaybackStateChanged(it.playbackState)
+        } ?: run{
+            LogHelper.d(TAG, "media controller not found.")
         }
     }
 

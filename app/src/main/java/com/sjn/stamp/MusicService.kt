@@ -36,6 +36,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
     private var notificationManager: NotificationManager? = null
     private var player: Player? = null
     private var mediaController: MediaControllerCompat? = null
+    private var playOnPrepared = false
 
     override fun onCreate() {
         super.onCreate()
@@ -61,6 +62,10 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
                         notificationManager = NotificationManager(this@MusicService)
                     } catch (e: RemoteException) {
                         throw IllegalStateException("Could not create a NotificationManager", e)
+                    }
+                    if (playOnPrepared) {
+                        playOnPrepared = false
+                        player?.play()
                     }
                     LogHelper.d(TAG, "MusicProvider.callBack end")
                 }).start()
@@ -174,7 +179,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
     private fun handleActionCommand(command: String) {
         LogHelper.d(TAG, "handleActionCommand ", command)
         when (command) {
-            NotificationHelper.CMD_PLAY -> player?.play()
+            NotificationHelper.CMD_PLAY -> player?.play() ?: run { playOnPrepared = true }
             NotificationHelper.CMD_PAUSE -> player?.pause()
             NotificationHelper.CMD_STOP_CASTING -> player?.stopCasting()
             NotificationHelper.CMD_KILL -> player?.let { stopSelf() }

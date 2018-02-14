@@ -25,6 +25,7 @@ abstract class MediaBrowserActivity : DrawerActivity(), MediaBrowsable, MediaCon
                 LogHelper.i(TAG, "onMediaControllerConnected")
                 MediaControllerCompat.setMediaController(this@MediaBrowserActivity, MediaControllerCompat(this@MediaBrowserActivity, mediaBrowser!!.sessionToken))
                 MediaBrowserObserver.notifyConnected()
+                MediaControllerObserver.notifyConnected()
             } catch (e: RemoteException) {
                 LogHelper.e(TAG, e, "could not connect media controller")
             }
