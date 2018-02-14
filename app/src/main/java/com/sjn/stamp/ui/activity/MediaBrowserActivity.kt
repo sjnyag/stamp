@@ -9,6 +9,7 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.sjn.stamp.MusicService
 import com.sjn.stamp.ui.MediaBrowsable
+import com.sjn.stamp.ui.observer.MediaBrowserObserver
 import com.sjn.stamp.ui.observer.MediaControllerObserver
 import com.sjn.stamp.utils.LogHelper
 
@@ -23,6 +24,7 @@ abstract class MediaBrowserActivity : DrawerActivity(), MediaBrowsable, MediaCon
             try {
                 LogHelper.i(TAG, "onMediaControllerConnected")
                 MediaControllerCompat.setMediaController(this@MediaBrowserActivity, MediaControllerCompat(this@MediaBrowserActivity, mediaBrowser!!.sessionToken))
+                MediaBrowserObserver.notifyConnected()
             } catch (e: RemoteException) {
                 LogHelper.e(TAG, e, "could not connect media controller")
             }

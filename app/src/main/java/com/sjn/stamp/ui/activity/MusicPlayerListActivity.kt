@@ -186,7 +186,6 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
             MediaControllerCompat.getMediaController(this)?.transportControls?.playFromSearch(it.getString(SearchManager.QUERY), voiceSearchParams)
             voiceSearchParams = null
         }
-        mediaBrowserListFragment?.onMediaControllerConnected()
         reservedUri?.let { uri ->
             MediaControllerCompat.getMediaController(this)?.let { controller ->
                 controller.transportControls.playFromUri(uri, null)

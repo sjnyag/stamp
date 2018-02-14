@@ -6,13 +6,12 @@ import android.support.v4.media.MediaBrowserCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
 import com.sjn.stamp.ui.MediaBrowsable
-import com.sjn.stamp.ui.observer.MediaControllerObserver
+import com.sjn.stamp.ui.observer.MediaBrowserObserver
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaIDHelper
 
-abstract class MediaBrowserListFragment : ListFragment(), MediaControllerObserver.Listener {
+abstract class MediaBrowserListFragment : ListFragment(), MediaBrowserObserver.Listener {
 
     var mediaBrowsable: MediaBrowsable? = null
     var mediaId: String?
@@ -52,7 +51,7 @@ abstract class MediaBrowserListFragment : ListFragment(), MediaControllerObserve
         }
         LogHelper.d(TAG, "fragment.onAttach, mediaId=", mediaId)
         if (mediaBrowsable?.mediaBrowser?.isConnected == true) {
-            onMediaControllerConnected()
+            onMediaBrowserConnected()
         }
         LogHelper.d(TAG, "onAttach END")
     }
@@ -69,7 +68,7 @@ abstract class MediaBrowserListFragment : ListFragment(), MediaControllerObserve
         LogHelper.d(TAG, "onStart START")
         super.onStart()
         updateTitle()
-        MediaControllerObserver.addListener(this)
+        MediaBrowserObserver.addListener(this)
         LogHelper.d(TAG, "onStart END")
     }
 
@@ -88,7 +87,7 @@ abstract class MediaBrowserListFragment : ListFragment(), MediaControllerObserve
     override fun onStop() {
         LogHelper.d(TAG, "onStop START")
         super.onStop()
-        MediaControllerObserver.removeListener(this)
+        MediaBrowserObserver.removeListener(this)
         LogHelper.d(TAG, "onStop END")
     }
 
@@ -105,7 +104,7 @@ abstract class MediaBrowserListFragment : ListFragment(), MediaControllerObserve
     // Called when the MediaBrowser is connected. This method is either called by the
     // fragment.onStart() or explicitly by the activity in the case where the connection
     // completes after the onStart()
-    override fun onMediaControllerConnected() {
+    override fun onMediaBrowserConnected() {
         LogHelper.d(TAG, "onMediaControllerConnected START")
         if (isDetached || mediaBrowsable == null) {
             LogHelper.d(TAG, "onMediaControllerConnected SKIP")
@@ -131,8 +130,6 @@ abstract class MediaBrowserListFragment : ListFragment(), MediaControllerObserve
         // MediaControllerObserver.getInstance().addListener(this);
         LogHelper.d(TAG, "onMediaControllerConnected END")
     }
-
-    override fun onSessionDestroyed() {}
 
     protected fun reloadList() {
         LogHelper.d(TAG, "reloadList START")

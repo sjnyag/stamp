@@ -34,6 +34,7 @@ import com.sjn.stamp.R
 import com.sjn.stamp.ui.DialogFacade
 import com.sjn.stamp.ui.SongAdapter
 import com.sjn.stamp.ui.item.SongItem
+import com.sjn.stamp.ui.observer.MediaControllerObserver
 import com.sjn.stamp.ui.observer.MusicListObserver
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaIDHelper
@@ -51,7 +52,7 @@ import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
  * Once connected, the fragment subscribes to get all the children.
  * All [MediaBrowserCompat.MediaItem]'s that can be browsed are shown in a ListView.
  */
-open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.Listener {
+open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.Listener, MediaControllerObserver.Listener {
     private var createListAsyncTask: CreateListAsyncTask? = null
     private var loadingVisibility = View.VISIBLE
 
@@ -70,14 +71,6 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
     /**
      * [MediaBrowserListFragment]
      */
-    override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
-        adapter?.notifyDataSetChanged()
-    }
-
-    override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
-        adapter?.notifyDataSetChanged()
-    }
-
     override fun onMediaBrowserChildrenLoaded(parentId: String,
                                               children: List<MediaBrowserCompat.MediaItem>) {
         LogHelper.d(TAG, "onMediaBrowserChildrenLoaded")
@@ -159,6 +152,21 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
 
     }
 
+    /**
+     * [MediaControllerObserver]
+     */
+    override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
+        adapter?.notifyDataSetChanged()
+    }
+
+    override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
+        adapter?.notifyDataSetChanged()
+    }
+
+    override fun onMediaControllerConnected() {}
+
+    override fun onSessionDestroyed() {}
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         LogHelper.d(TAG, "onCreateView START" + mediaId!!)
@@ -231,6 +239,7 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
         LogHelper.d(TAG, "onStart START")
         super.onStart()
         MusicListObserver.addListener(this)
+        MediaControllerObserver.addListener(this)
         adapter?.notifyDataSetChanged()
         LogHelper.d(TAG, "onStart END")
     }
@@ -248,6 +257,7 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
         LogHelper.d(TAG, "onStop START")
         super.onStop()
         createListAsyncTask?.cancel(true)
+        MediaControllerObserver.addListener(this)
         MusicListObserver.removeListener(this)
         LogHelper.d(TAG, "onStop END")
     }

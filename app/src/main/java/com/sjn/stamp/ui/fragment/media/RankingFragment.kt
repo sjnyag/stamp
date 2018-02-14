@@ -7,8 +7,6 @@ import android.graphics.Color
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
-import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.View
@@ -52,10 +50,6 @@ class RankingFragment : MediaBrowserListFragment() {
     /**
      * [MediaBrowserListFragment]
      */
-    override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {}
-
-    override fun onMetadataChanged(metadata: MediaMetadataCompat?) {}
-
     override fun onMediaBrowserChildrenLoaded(parentId: String, children: List<MediaBrowserCompat.MediaItem>) {}
 
     override fun onMediaBrowserError(parentId: String) {}

@@ -67,7 +67,9 @@ class QueueManager(private val context: Context,
             updateShuffleQueue()
         } else {
             //TODO Bug will occur when Callback called but ShuffleState won't change
-            setCurrentQueueIndex(Math.max(QueueHelper.getMusicIndexOnQueueByMediaId(playingQueue, shuffledQueue[currentIndex].description.mediaId), 0))
+            if (shuffledQueue.isNotEmpty()) {
+                setCurrentQueueIndex(Math.max(QueueHelper.getMusicIndexOnQueueByMediaId(playingQueue, shuffledQueue[currentIndex].description.mediaId), 0))
+            }
         }
     }
 

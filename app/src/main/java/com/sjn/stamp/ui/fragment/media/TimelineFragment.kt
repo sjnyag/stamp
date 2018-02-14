@@ -59,10 +59,6 @@ class TimelineFragment : MediaBrowserListFragment(), UndoHelper.OnUndoListener, 
     /**
      * [MediaBrowserListFragment]
      */
-    override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {}
-
-    override fun onMetadataChanged(metadata: MediaMetadataCompat?) {}
-
     override fun onMediaBrowserChildrenLoaded(parentId: String, children: List<MediaBrowserCompat.MediaItem>) {}
 
     override fun onMediaBrowserError(parentId: String) {}
