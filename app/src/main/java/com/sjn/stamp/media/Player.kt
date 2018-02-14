@@ -32,6 +32,10 @@ class Player(private val context: Context, callback: PlaybackManager.PlaybackSer
         playbackManager.updatePlaybackState(null)
     }
 
+    fun play() {
+        MediaControllerHelper.getController(context, sessionToken)?.transportControls?.play()
+    }
+
     fun stop() {
         MediaControllerHelper.getController(context, sessionToken)?.transportControls?.stop()
         sessionManager.release()

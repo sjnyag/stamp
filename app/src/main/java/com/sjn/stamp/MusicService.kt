@@ -174,6 +174,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
     private fun handleActionCommand(command: String) {
         LogHelper.d(TAG, "handleActionCommand ", command)
         when (command) {
+            NotificationHelper.CMD_PLAY -> player?.play()
             NotificationHelper.CMD_PAUSE -> player?.pause()
             NotificationHelper.CMD_STOP_CASTING -> player?.stopCasting()
             NotificationHelper.CMD_KILL -> player?.let { stopSelf() }

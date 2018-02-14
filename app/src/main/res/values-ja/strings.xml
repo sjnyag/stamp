@@ -223,4 +223,8 @@
     <string name="dialog_remove_stamp_title">Stampから削除</string>
     <string name="dialog_remove_stamp_content">Stamp[%2$s]から[%1$s]を取り除きます。</string>
     <string name="error_message_stamp_failed">この曲はアーティストかアルバムでスタンプされているので削除できません。</string>
+
+    <string name="shortcut_disable_label_play">Failed to play a recent playlist</string>
+    <string name="shortcut_long_label_play">Play a recent playlist</string>
+    <string name="shortcut_short_label_play">Play</string>
 </resources>

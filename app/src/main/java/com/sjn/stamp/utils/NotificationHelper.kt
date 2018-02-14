@@ -23,6 +23,7 @@ object NotificationHelper {
 
     val ACTION_CMD = "com.sjn.stamp.ACTION_CMD"
     val CMD_NAME = "CMD_NAME"
+    val CMD_PLAY = "CMD_PLAY"
     val CMD_PAUSE = "CMD_PAUSE"
     val CMD_STOP_CASTING = "CMD_STOP_CASTING"
     val CMD_KILL = "CMD_KILL"
