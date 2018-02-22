@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
+import android.support.transition.TransitionInflater
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
@@ -22,13 +23,12 @@ import com.sjn.stamp.controller.SongHistoryController
 import com.sjn.stamp.model.SongHistory
 import com.sjn.stamp.ui.DialogFacade
 import com.sjn.stamp.ui.SongAdapter
+import com.sjn.stamp.ui.fragment.DetailFragment
 import com.sjn.stamp.ui.item.AbstractItem
 import com.sjn.stamp.ui.item.DateHeaderItem
 import com.sjn.stamp.ui.item.SongHistoryItem
-import com.sjn.stamp.utils.LogHelper
-import com.sjn.stamp.utils.MediaIDHelper
-import com.sjn.stamp.utils.RealmHelper
-import com.sjn.stamp.utils.SwipeHelper
+import com.sjn.stamp.ui.item.holder.SongHistoryViewHolder
+import com.sjn.stamp.utils.*
 import eu.davidea.fastscroller.FastScroller
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager
@@ -78,6 +78,38 @@ class TimelineFragment : MediaBrowserListFragment(), UndoHelper.OnUndoListener, 
      */
     override fun onItemClick(position: Int): Boolean {
         LogHelper.d(TAG, "onItemClick ")
+        val viewHolder = recyclerView?.findViewHolderForAdapterPosition(position)
+        if (viewHolder is SongHistoryViewHolder) {
+            var imageTransitionName = ""
+            var textTransitionName = ""
+            activity?.let {
+                val endFragment = DetailFragment().apply {
+                    if (CompatibleHelper.hasLollipop()) {
+                        sharedElementReturnTransition = TransitionInflater.from(it).inflateTransition(R.transition.change_image_trans)
+                        exitTransition = TransitionInflater.from(it).inflateTransition(android.R.transition.fade)
+                        sharedElementEnterTransition = TransitionInflater.from(it).inflateTransition(R.transition.change_image_trans)
+                        enterTransition = TransitionInflater.from(it).inflateTransition(android.R.transition.fade)
+                        imageTransitionName = viewHolder.albumArtView.transitionName
+                        textTransitionName = viewHolder.title.transitionName
+                    }
+                    arguments = Bundle().apply {
+                        putString("TRANS_TITLE", textTransitionName)
+                        putString("TITLE", viewHolder.title.text.toString())
+                        putString("TRANS_IMAGE", imageTransitionName)
+                        putParcelable("IMAGE", ViewHelper.toBitmap(viewHolder.albumArtView.drawable))
+                    }
+                }
+                fragmentManager?.run {
+                    beginTransaction()
+                            .replace(R.id.container, endFragment)
+                            .addToBackStack("Payment")
+                            .addSharedElement(viewHolder.albumArtView, imageTransitionName)
+                            .addSharedElement(viewHolder.title, textTransitionName)
+                            .commit()
+                }
+            }
+            return false
+        }
         val item = adapter?.getItem(position)
         if (item is SongHistoryItem) {
             mediaBrowsable?.playByMediaId(MediaIDHelper.createDirectMediaId(MediaIDHelper.extractMusicIDFromMediaID(item.mediaId)!!))

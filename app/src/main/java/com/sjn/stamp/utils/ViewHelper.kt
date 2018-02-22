@@ -1,23 +1,18 @@
 package com.sjn.stamp.utils
 
-import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.PorterDuff
 import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.LayerDrawable
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.DisplayMetrics
-import android.view.View
 import android.widget.ImageView
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.custom.TextDrawable
@@ -35,22 +30,7 @@ object ViewHelper {
     private const val MAX_ART_WIDTH_ICON = 128  // pixels
     private const val MAX_ART_HEIGHT_ICON = 128  // pixels
 
-    private var colorAccent = -1
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    fun getColorAccent(context: Context): Int {
-        if (colorAccent < 0) {
-            val accentAttr = if (CompatibleHelper.hasLollipop()) android.R.attr.colorAccent else R.attr.colorAccent
-            val androidAttr = context.theme.obtainStyledAttributes(intArrayOf(accentAttr))
-            colorAccent = androidAttr.getColor(0, -0xff6978) //Default: material_deep_teal_500
-            androidAttr.recycle()
-        }
-        return colorAccent
-    }
-
     fun dpToPx(context: Context, dp: Float): Float = Math.round(dp * getDisplayMetrics(context).density).toFloat()
-
-    private fun getDisplayMetrics(context: Context): DisplayMetrics = context.resources.displayMetrics
 
     fun setFragmentTitle(activity: Activity?, title: String) {
         if (activity == null || activity !is AppCompatActivity) {
@@ -69,17 +49,6 @@ object ViewHelper {
 
     fun getRankingColor(context: Context, position: Int): Int = ContextCompat.getColor(context, getRankingColorResourceId(position))
 
-    private fun getRankingColorResourceId(position: Int): Int = when (position) {
-        0 -> R.color.color_1
-        1 -> R.color.color_2
-        2 -> R.color.color_3
-        3 -> R.color.color_4
-        4 -> R.color.color_5
-        5 -> R.color.color_6
-        6 -> R.color.color_7
-        else -> R.color.colorPrimaryDark
-    }
-
     fun updateAlbumArtIfEnable(activity: Activity?, view: ImageView?, artUrl: String?, text: String?, targetWidth: Int = 128, targetHeight: Int = 128) {
         activity?.let { _activity ->
             view?.let { view ->
@@ -92,7 +61,6 @@ object ViewHelper {
         }
     }
 
-    @JvmOverloads
     fun updateAlbumArt(activity: Activity, view: ImageView, artUrl: String, text: String, targetWidth: Int = 128, targetHeight: Int = 128) {
         view.tag = artUrl
         if (artUrl.isEmpty()) {
@@ -112,13 +80,6 @@ object ViewHelper {
                 //view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));
             }
         })
-    }
-
-    fun setDrawableLayerColor(activity: Activity, view: View, color: Int, drawableId: Int, layerId: Int) {
-        (ContextCompat.getDrawable(activity, drawableId) as LayerDrawable?)?.let {
-            it.findDrawableByLayerId(layerId).mutate().setColorFilter(color, PorterDuff.Mode.SRC_IN)
-            view.background = it
-        }
     }
 
     fun createTextDrawable(text: CharSequence?): TextDrawable =
@@ -177,11 +138,22 @@ object ViewHelper {
         Handler(Looper.getMainLooper()).post { Picasso.with(context).load(url).into(target) }
     }
 
-    fun createIcon(bitmap: Bitmap): Bitmap = scaleBitmap(bitmap, MAX_ART_WIDTH_ICON, MAX_ART_HEIGHT_ICON)
+    fun createIcon(bitmap: Bitmap): Bitmap {
+        val scaleFactor = Math.min(MAX_ART_WIDTH_ICON.toDouble() / bitmap.width, MAX_ART_HEIGHT_ICON.toDouble() / bitmap.height)
+        return Bitmap.createScaledBitmap(bitmap, (bitmap.width * scaleFactor).toInt(), (bitmap.height * scaleFactor).toInt(), false)
+    }
 
-    private fun scaleBitmap(src: Bitmap, maxWidth: Int, maxHeight: Int): Bitmap {
-        val scaleFactor = Math.min(maxWidth.toDouble() / src.width, maxHeight.toDouble() / src.height)
-        return Bitmap.createScaledBitmap(src, (src.width * scaleFactor).toInt(), (src.height * scaleFactor).toInt(), false)
+    private fun getDisplayMetrics(context: Context): DisplayMetrics = context.resources.displayMetrics
+
+    private fun getRankingColorResourceId(position: Int): Int = when (position) {
+        0 -> R.color.color_1
+        1 -> R.color.color_2
+        2 -> R.color.color_3
+        3 -> R.color.color_4
+        4 -> R.color.color_5
+        5 -> R.color.color_6
+        6 -> R.color.color_7
+        else -> R.color.colorPrimaryDark
     }
 
     private class ColorGenerator private constructor(private val colors: List<Int>) {

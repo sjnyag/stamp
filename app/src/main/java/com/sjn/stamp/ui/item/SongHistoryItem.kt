@@ -3,11 +3,13 @@ package com.sjn.stamp.ui.item
 import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
+import android.os.Build
 import android.view.View
 import com.sjn.stamp.R
 import com.sjn.stamp.controller.SongHistoryController
 import com.sjn.stamp.model.SongHistory
 import com.sjn.stamp.ui.item.holder.SongHistoryViewHolder
+import com.sjn.stamp.utils.CompatibleHelper
 import com.sjn.stamp.utils.MediaIDHelper
 import com.sjn.stamp.utils.TimeHelper
 import com.sjn.stamp.utils.ViewHelper
@@ -58,6 +60,11 @@ class SongHistoryItem constructor(songHistory: SongHistory, private var header: 
         holder.date.text = TimeHelper.getDateText(recordedAt, context.resources)
         if (albumArtUri.isNotEmpty()) ViewHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArtUri, title)
         holder.updateStampList(mediaId)
+
+        if (CompatibleHelper.hasLollipop()) {
+            holder.title.transitionName = "trans_text" + position
+            holder.albumArtView.transitionName = "trans_image" + position
+        }
     }
 
     override fun filter(constraint: String): Boolean =
