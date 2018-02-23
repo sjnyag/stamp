@@ -30,7 +30,7 @@ object AudioFocusHelper {
         private var audioNoisyReceiverRegistered: Boolean = false
         private val audioManager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         private val audioNoisyIntentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
-        private val audioNoisyReceiver = object : BroadcastReceiver() {
+        private val audioNoisyReceiver: BroadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 if (AudioManager.ACTION_AUDIO_BECOMING_NOISY == intent.action) {
                     LogHelper.d(TAG, "Headphones disconnected.")

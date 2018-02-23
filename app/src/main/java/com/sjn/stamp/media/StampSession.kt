@@ -52,7 +52,7 @@ class StampSession internal constructor(context: Context, callback: MediaSession
         initCastSession(context)
     }
 
-    private val castSessionCallback = object : SessionManagerListener<CastSession> {
+    private val castSessionCallback: SessionManagerListener<CastSession> = object : SessionManagerListener<CastSession> {
         /**
          * Session Manager Listener responsible for switching the Playback instances
          * depending on whether it is connected to a remote player.
