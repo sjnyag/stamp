@@ -135,8 +135,21 @@ class TimelineFragment : MediaBrowserListFragment(), UndoHelper.OnUndoListener, 
 
     override fun onLoadMore(lastPosition: Int, currentPage: Int) {
         adapter?.let {
-            it.onLoadMoreComplete(createItemList(it.mainItemCount - it.headerItems.size, 30), 5000L)
+            createItemList(it.mainItemCount - it.headerItems.size, 30).run {
+                currentItems = currentItems.plus(this)
+                it.onLoadMoreComplete(this, 5000L)
+            }
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        realm = RealmHelper.realmInstance
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        realm?.close()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -146,7 +159,6 @@ class TimelineFragment : MediaBrowserListFragment(), UndoHelper.OnUndoListener, 
         context?.let {
             songHistoryController = SongHistoryController(it)
         }
-        realm = RealmHelper.realmInstance
         if (savedInstanceState != null) {
             listState = savedInstanceState.getParcelable(ListFragment.LIST_STATE_KEY)
         }
@@ -195,11 +207,6 @@ class TimelineFragment : MediaBrowserListFragment(), UndoHelper.OnUndoListener, 
         }
 
         return rootView
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        realm?.close()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
