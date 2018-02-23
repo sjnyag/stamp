@@ -34,6 +34,7 @@ import com.sjn.stamp.R
 import com.sjn.stamp.ui.DialogFacade
 import com.sjn.stamp.ui.SongAdapter
 import com.sjn.stamp.ui.item.SongItem
+import com.sjn.stamp.ui.item.holder.SongViewHolder
 import com.sjn.stamp.ui.observer.MediaControllerObserver
 import com.sjn.stamp.ui.observer.MusicListObserver
 import com.sjn.stamp.utils.LogHelper
@@ -115,7 +116,16 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
                 item.isPlayable -> {
                     mediaBrowsable?.playByMediaId(item.mediaId)
                 }
-                item.isBrowsable -> mediaBrowsable?.navigateToBrowser(item.mediaId, null, null)
+                item.isBrowsable -> {
+                    //mediaBrowsable?.navigateToBrowser(item.mediaId, SongListFragmentFactory.create(item.mediaId), emptyList())}
+                    val viewHolder = recyclerView?.findViewHolderForAdapterPosition(position)
+                    if (viewHolder is SongViewHolder) {
+                        activity?.let {
+                            val pair = viewHolder.createNextFragment(it)
+                            mediaBrowsable?.navigateToBrowser(item.mediaId, pair.first, pair.second)
+                        }
+                    }
+                }
                 else -> LogHelper.w(TAG, "Ignoring MediaItem that is neither browsable nor playable: ", "mediaId=", item.mediaId)
             }
         }

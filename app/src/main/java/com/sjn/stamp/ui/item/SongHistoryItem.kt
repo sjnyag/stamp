@@ -60,11 +60,6 @@ class SongHistoryItem constructor(songHistory: SongHistory, private var header: 
         holder.date.text = TimeHelper.getDateText(recordedAt, context.resources)
         if (albumArtUri.isNotEmpty()) ViewHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArtUri, title)
         holder.updateStampList(mediaId)
-
-        if (CompatibleHelper.hasLollipop()) {
-            holder.title.transitionName = "trans_text" + position
-            holder.albumArtView.transitionName = "trans_image" + position
-        }
     }
 
     override fun filter(constraint: String): Boolean =

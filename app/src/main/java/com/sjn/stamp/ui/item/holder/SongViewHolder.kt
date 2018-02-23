@@ -1,13 +1,20 @@
 package com.sjn.stamp.ui.item.holder
 
 import android.app.Activity
+import android.content.Context
+import android.os.Bundle
+import android.support.transition.TransitionInflater
+import android.support.v4.app.Fragment
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.sjn.stamp.R
+import com.sjn.stamp.ui.fragment.DetailFragment
+import com.sjn.stamp.utils.CompatibleHelper
 import com.sjn.stamp.utils.SongStateHelper
 import com.sjn.stamp.utils.ViewHelper
 import eu.davidea.flexibleadapter.FlexibleAdapter
+import java.util.ArrayList
 
 class SongViewHolder constructor(view: View, adapter: FlexibleAdapter<*>, activity: Activity) : StampContainsViewHolder(view, adapter, activity) {
 
@@ -23,6 +30,30 @@ class SongViewHolder constructor(view: View, adapter: FlexibleAdapter<*>, activi
         this.imageView.setOnClickListener {
             mAdapter.mItemLongClickListener?.onItemLongClick(adapterPosition)
         }
+    }
+
+    fun createNextFragment(context: Context): Pair<Fragment, ArrayList<Pair<String, View>>> {
+        var imageTransitionName = ""
+        var textTransitionName = ""
+        return Pair(DetailFragment().apply {
+            if (CompatibleHelper.hasLollipop()) {
+                sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.change_image_trans)
+                exitTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
+                sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.change_image_trans)
+                enterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
+                imageTransitionName = albumArtView.transitionName
+                textTransitionName = title.transitionName
+            }
+            arguments = Bundle().apply {
+                putString("TRANS_TITLE", textTransitionName)
+                putString("TITLE", title.text.toString())
+                putString("TRANS_IMAGE", imageTransitionName)
+                putParcelable("IMAGE", ViewHelper.toBitmap(albumArtView.drawable))
+            }
+        }, ArrayList<Pair<String, View>>().apply {
+            add(Pair(imageTransitionName, albumArtView))
+            add(Pair(textTransitionName, title))
+        })
     }
 
     override fun getActivationElevation(): Float = ViewHelper.dpToPx(itemView.context, 4f)

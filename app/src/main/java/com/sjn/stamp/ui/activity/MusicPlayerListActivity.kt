@@ -20,6 +20,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.support.v4.app.ActivityCompat
+import android.support.v4.app.Fragment
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.text.TextUtils
@@ -33,7 +35,6 @@ import com.sjn.stamp.ui.fragment.FullScreenPlayerFragment
 import com.sjn.stamp.ui.fragment.media.MediaBrowserListFragment
 import com.sjn.stamp.ui.fragment.media.PagerFragment
 import com.sjn.stamp.utils.LogHelper
-import com.sjn.stamp.utils.MediaIDHelper
 import com.sjn.stamp.utils.MediaRetrieveHelper
 import com.sjn.stamp.utils.PermissionHelper
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
@@ -88,6 +89,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
         super.onCreate(savedInstanceState)
         LogHelper.d(TAG, "Activity onCreate")
 
+        ActivityCompat.postponeEnterTransition(this)
         setContentView(R.layout.activity_player)
         initializeToolbar()
         if (savedInstanceState == null) {
@@ -153,7 +155,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
 
     }
 
-    override fun playByMediaId(mediaId: String){
+    override fun playByMediaId(mediaId: String) {
         MediaControllerCompat.getMediaController(this)?.transportControls?.playFromMediaId(mediaId, null)
     }
 
@@ -211,16 +213,17 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
             // If there is a saved media ID, use it
             savedInstanceState?.let { mediaId = it.getString(SAVED_MEDIA_ID) }
         }
-        navigateToBrowser(mediaId, null, null)
+        mediaId?.let {
+            navigateToBrowser(it, SongListFragmentFactory.create(it), emptyList())
+        }
         startFullScreenIfNeeded(intent)
     }
 
-    override fun navigateToBrowser(mediaId: String?, sharedElement: View?, sharedElementName: String?) {
-        mediaId ?: return
+    override fun navigateToBrowser(mediaId: String, fragment: Fragment, sharedElements: List<Pair<String, View>>) {
         LogHelper.d(TAG, "navigateToBrowser, mediaId=" + mediaId)
         mediaBrowserListFragment?.let {
             if (!TextUtils.equals(it.mediaId, mediaId)) {
-                navigateToBrowser(SongListFragmentFactory.create(mediaId), true, sharedElement, sharedElementName)
+                navigateToBrowser(fragment, true, sharedElements)
             }
 
         }

@@ -17,6 +17,7 @@ import com.sjn.stamp.model.RankedArtist
 import com.sjn.stamp.model.RankedSong
 import com.sjn.stamp.model.Shareable
 import com.sjn.stamp.ui.SongAdapter
+import com.sjn.stamp.ui.SongListFragmentFactory
 import com.sjn.stamp.ui.custom.PeriodSelectLayout
 import com.sjn.stamp.ui.item.RankedArtistItem
 import com.sjn.stamp.ui.item.RankedSongItem
@@ -77,11 +78,9 @@ class RankingFragment : MediaBrowserListFragment() {
             MediaItemHelper.createArtistMediaItem(item.artistName).let { mediaItem ->
                 when {
                     mediaItem.isPlayable -> {
-                        mediaItem.mediaId?.let {
-                            mediaBrowsable?.playByMediaId(it)
-                        }
+                        mediaItem.mediaId?.let { mediaBrowsable?.playByMediaId(it) }
                     }
-                    mediaItem.isBrowsable -> mediaBrowsable?.navigateToBrowser(mediaItem.mediaId, null, null)
+                    mediaItem.isBrowsable && mediaItem.mediaId != null -> mediaItem.mediaId?.let { mediaBrowsable?.navigateToBrowser(it, SongListFragmentFactory.create(it), emptyList()) }
                     else -> LogHelper.w(TAG, "Ignoring MediaItem that is neither browsable nor playable: ", "mediaId=", mediaItem.mediaId)
                 }
             }

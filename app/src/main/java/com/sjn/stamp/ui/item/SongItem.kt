@@ -7,6 +7,7 @@ import android.view.View
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.MediaBrowsable
 import com.sjn.stamp.ui.item.holder.SongViewHolder
+import com.sjn.stamp.utils.CompatibleHelper
 import com.sjn.stamp.utils.ViewHelper
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.IFilterable
@@ -66,6 +67,11 @@ class SongItem(
         }
         holder.update(holder.imageView, mediaId, isPlayable)
         holder.updateStampList(mediaId)
+
+        if (CompatibleHelper.hasLollipop()) {
+            holder.title.transitionName = "trans_text" + mediaId + position
+            holder.albumArtView.transitionName = "trans_image" + mediaId + position
+        }
     }
 
     override fun filter(constraint: String): Boolean =
