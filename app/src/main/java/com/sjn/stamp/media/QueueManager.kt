@@ -220,7 +220,7 @@ class QueueManager(private val context: Context,
                 }
 
                 override fun onBitmapFailed(errorDrawable: Drawable?) {
-                    val bitmap = ViewHelper.toBitmap(ViewHelper.createTextDrawable(metadata.description.title!!.toString()))
+                    val bitmap = ViewHelper.toBitmap(ViewHelper.createTextDrawable(128F, 128, 128, metadata.description.title!!.toString()))
                     setMetadataMusicArt(bitmap)
                 }
 

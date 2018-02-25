@@ -14,7 +14,7 @@ import com.sjn.stamp.utils.CompatibleHelper
 import com.sjn.stamp.utils.SongStateHelper
 import com.sjn.stamp.utils.ViewHelper
 import eu.davidea.flexibleadapter.FlexibleAdapter
-import java.util.ArrayList
+import java.util.*
 
 class SongViewHolder constructor(view: View, adapter: FlexibleAdapter<*>, activity: Activity) : StampContainsViewHolder(view, adapter, activity) {
 
@@ -41,14 +41,19 @@ class SongViewHolder constructor(view: View, adapter: FlexibleAdapter<*>, activi
                 exitTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
                 sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.change_image_trans)
                 enterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
-                imageTransitionName = albumArtView.transitionName
-                textTransitionName = title.transitionName
+                albumArtView.transitionName?.let {
+                    imageTransitionName = it
+                }
+                title.transitionName?.let {
+                    textTransitionName = it
+                }
             }
             arguments = Bundle().apply {
                 putString("TRANS_TITLE", textTransitionName)
                 putString("TITLE", title.text.toString())
-                putString("TRANS_IMAGE", imageTransitionName)
-                putParcelable("IMAGE", ViewHelper.toBitmap(albumArtView.drawable))
+                putString("IMAGE_TYPE", albumArtView.getTag(R.id.image_view_album_art_type)?.toString())
+                putString("IMAGE_URL", albumArtView.getTag(R.id.image_view_album_art_url)?.toString())
+                putString("IMAGE_TEXT", albumArtView.getTag(R.id.image_view_album_art_text)?.toString())
             }
         }, ArrayList<Pair<String, View>>().apply {
             add(Pair(imageTransitionName, albumArtView))

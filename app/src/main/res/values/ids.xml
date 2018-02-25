@@ -21,5 +21,8 @@
     <item type="id" name="text_view_remove_stamp_media_id"/>
     <item type="id" name="text_view_remove_stamp_is_system"/>
     <item type="id" name="media_item_view_holder_type"/>
+    <item type="id" name="image_view_album_art_type"/>
+    <item type="id" name="image_view_album_art_url"/>
+    <item type="id" name="image_view_album_art_text"/>
     <item type="id" name="fab_type"/>
 </resources>
