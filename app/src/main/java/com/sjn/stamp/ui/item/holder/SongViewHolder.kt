@@ -35,25 +35,28 @@ class SongViewHolder constructor(view: View, adapter: FlexibleAdapter<*>, activi
     fun createNextFragment(context: Context): Pair<Fragment, ArrayList<Pair<String, View>>> {
         var imageTransitionName = ""
         var textTransitionName = ""
+
+        if (CompatibleHelper.hasLollipop()) {
+            title.transitionName = "trans_text_" + mediaId + adapterPosition
+            albumArtView.transitionName = "trans_image_" + mediaId + adapterPosition
+        }
         return Pair(DetailFragment().apply {
             if (CompatibleHelper.hasLollipop()) {
                 sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.change_image_trans)
                 exitTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
                 sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.change_image_trans)
                 enterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
-                albumArtView.transitionName?.let {
-                    imageTransitionName = it
-                }
-                title.transitionName?.let {
-                    textTransitionName = it
-                }
+                imageTransitionName = albumArtView.transitionName
+                textTransitionName = title.transitionName
             }
             arguments = Bundle().apply {
                 putString("TRANS_TITLE", textTransitionName)
+                putString("TRANS_IMAGE", imageTransitionName)
                 putString("TITLE", title.text.toString())
                 putString("IMAGE_TYPE", albumArtView.getTag(R.id.image_view_album_art_type)?.toString())
                 putString("IMAGE_URL", albumArtView.getTag(R.id.image_view_album_art_url)?.toString())
                 putString("IMAGE_TEXT", albumArtView.getTag(R.id.image_view_album_art_text)?.toString())
+                putParcelable("IMAGE_BITMAP", ViewHelper.toBitmap(albumArtView.drawable))
             }
         }, ArrayList<Pair<String, View>>().apply {
             add(Pair(imageTransitionName, albumArtView))

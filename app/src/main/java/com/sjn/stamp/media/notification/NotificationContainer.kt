@@ -143,5 +143,5 @@ class NotificationContainer(
     }
 
     private fun MediaMetadataCompat.getTextDrawableBitmap() =
-            ViewHelper.toBitmap(ViewHelper.createTextDrawable(128F, 128, 128, description.title.toString()))
+            ViewHelper.createTextBitmap(description.title)
 }

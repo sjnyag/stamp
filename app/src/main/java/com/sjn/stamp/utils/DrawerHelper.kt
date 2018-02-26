@@ -159,7 +159,7 @@ object DrawerHelper {
     private fun createDefaultHeader(metadata: MediaMetadataCompat, accountHeader: AccountHeader) {
         accountHeader.clear()
         accountHeader.addProfiles(createProfileItem(metadata).apply {
-            withIcon(ViewHelper.toBitmap(ViewHelper.createTextDrawable(128F, 128, 128, metadata.description.title)))
+            withIcon(ViewHelper.createTextBitmap(metadata.description.title))
         })
     }
 

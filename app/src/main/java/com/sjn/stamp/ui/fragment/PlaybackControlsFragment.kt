@@ -124,7 +124,7 @@ class PlaybackControlsFragment : Fragment(), MediaControllerObserver.Listener {
         val newArtUrl = metadata.description.iconUri?.toString()
         if (newArtUrl != null && !TextUtils.equals(newArtUrl, artUrl)) {
             artUrl = newArtUrl
-            ViewHelper.updateAlbumArtIfEnable(activity, albumArt, artUrl, metadata.description.title?.toString())
+            ViewHelper.updateAlbumArt(activity, albumArt, artUrl, metadata.description.title)
         }
     }
 

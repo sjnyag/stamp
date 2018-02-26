@@ -150,7 +150,7 @@ object NotificationHelper {
             bitmap = try {
                 context.get()?.let { MediaStore.Images.Media.getBitmap(it.contentResolver, albumArtUri) }
             } catch (e: FileNotFoundException) {
-                ViewHelper.toBitmap(ViewHelper.createTextDrawable(128F, 128, 128, title))
+                ViewHelper.createTextBitmap(title)
             }
             bitmap?.let { bitmap -> callback.get()?.let { callback -> setAndNotify(builder, callback, bitmap) } }
             return null

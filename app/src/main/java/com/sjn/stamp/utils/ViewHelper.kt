@@ -13,6 +13,7 @@ import android.os.Looper
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.DisplayMetrics
+import android.view.View
 import android.widget.ImageView
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.custom.TextDrawable
@@ -20,6 +21,7 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import java.util.*
+
 
 @Suppress("unused")
 object ViewHelper {
@@ -51,69 +53,77 @@ object ViewHelper {
 
     fun getRankingColor(context: Context, position: Int): Int = ContextCompat.getColor(context, getRankingColorResourceId(position))
 
-    fun loadAlbumArt(activity: Activity, view: ImageView, imageType: String, artUrl: String?, text: String?) {
-        view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP)
+    fun loadAlbumArt(activity: Activity, view: ImageView, bitmap: Bitmap?, imageType: String?, artUrl: String?, text: String?) {
         view.setTag(R.id.image_view_album_art_url, artUrl)
         view.setTag(R.id.image_view_album_art_text, text)
-        if (imageType == IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP) {
-            view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP)
-            artUrl?.let { _artUrl ->
-                text?.let { text ->
-                    updateAlbumArt(activity, view, _artUrl, text)
+        view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
+        if (imageType == "bitmap") {
+            Picasso.with(activity).load(artUrl).placeholder(BitmapDrawable(activity.resources, bitmap)).into(view, object : Callback {
+                override fun onSuccess() {
+                    view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP)
                 }
-            }
-        } else if (imageType == IMAGE_VIEW_ALBUM_ART_TYPE_TEXT) {
+
+                override fun onError() {
+                    view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
+                    view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+                    view.setImageDrawable(createTextDrawable(text ?: ""))
+                }
+            })
+        } else if (imageType == "text") {
             view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
-            view.setImageDrawable(createTextDrawable(256, 256, text))
+            view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+            view.setImageDrawable(createTextDrawable(text ?: ""))
         }
+
     }
 
-    fun updateAlbumArtIfEnable(activity: Activity?, view: ImageView?, artUrl: String?, text: String?, targetWidth: Int = 128, targetHeight: Int = 128) {
+    fun updateAlbumArt(activity: Activity?, view: ImageView?, artUrl: String?, text: CharSequence?, targetWidth: Int = 128, targetHeight: Int = 128) {
         activity?.let { _activity ->
-            view?.let { view ->
-                artUrl?.let { artUrl ->
-                    text?.let { text ->
-                        ViewHelper.updateAlbumArt(_activity, view, artUrl, text, targetWidth, targetHeight)
-                    }
+            view?.let { _view ->
+                artUrl?.let { _artUrl ->
+                    ViewHelper.updateAlbumArtImpl(_activity, _view, _artUrl, text?.toString()
+                            ?: "", targetWidth, targetHeight)
                 }
             }
         }
     }
 
-    fun updateAlbumArt(activity: Activity, view: ImageView, artUrl: String, text: String, targetWidth: Int = 128, targetHeight: Int = 128) {
+    private fun updateAlbumArtImpl(activity: Activity, view: ImageView, artUrl: String, text: String, targetWidth: Int, targetHeight: Int) {
         view.setTag(R.id.image_view_album_art_url, artUrl)
         view.setTag(R.id.image_view_album_art_text, text)
-        view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP)
+        view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
         if (artUrl.isEmpty()) {
             //view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));
             view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
-            view.setImageDrawable(createTextDrawable(targetWidth, targetHeight, text))
+            view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+            view.setImageDrawable(createTextDrawable(text))
             return
         }
-        Picasso.with(activity).load(artUrl).placeholder(createTextDrawable(targetWidth, targetHeight, text)).resize(targetWidth, targetHeight).into(view, object : Callback {
+        Picasso.with(activity).load(artUrl).placeholder(createTextDrawable(text)).resize(targetWidth, targetHeight).into(view, object : Callback {
             override fun onSuccess() {
                 if (view.getTag(R.id.image_view_album_art_url) != null && artUrl != view.getTag(R.id.image_view_album_art_url)) {
                     updateAlbumArt(activity, view, view.getTag(R.id.image_view_album_art_url) as String, text)
+                } else {
+                    view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP)
                 }
             }
 
             override fun onError() {
                 view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
-                view.setImageDrawable(createTextDrawable(targetWidth, targetHeight, text))
+                view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+                view.setImageDrawable(createTextDrawable(text))
                 //view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));
             }
         })
     }
 
-    fun createTextDrawable(width: Int, height: Int, text: CharSequence?): TextDrawable =
-            if (text == null) createTextDrawable(width, height, "") else createTextDrawable(width, height, text.toString())
+    fun createTextBitmap(text: CharSequence?) =
+            ViewHelper.toBitmap(createTextDrawable(text?.toString() ?: ""))
 
-    fun createTextDrawable(width: Int, height: Int, text: String): TextDrawable = TextDrawable.builder()
+    private fun createTextDrawable(text: String): TextDrawable = TextDrawable.builder()
             .beginConfig()
             .useFont(Typeface.DEFAULT)
             .bold()
-            .width(width)
-            .height(height)
             .toUpperCase()
             .endConfig()
             .rect()

@@ -65,7 +65,6 @@ class TextDrawable private constructor(builder: TextDrawable.Builder) : ShapeDra
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
-        setBounds(0, 0, width, height)
         val r = bounds
 
         // draw border
@@ -80,15 +79,9 @@ class TextDrawable private constructor(builder: TextDrawable.Builder) : ShapeDra
         val width = if (this.width < 0) r.width() else this.width
         val height = if (this.height < 0) r.height() else this.height
         val fontSize = if (this.fontSize < 0) (Math.min(width, height) * 1.5).toFloat() else this.fontSize
-        LogHelper.e(TAG, "    text ", text)
-        LogHelper.e(TAG, "  bounds ", bounds)
-        LogHelper.e(TAG, "   width ", width)
-        LogHelper.e(TAG, "  height ", height)
-        LogHelper.e(TAG, "fontSize ", fontSize)
-        LogHelper.e(TAG, "  result ", (width / 2).toFloat(), ", ", height / 2 - (textPaint.descent() + textPaint.ascent()) / 2)
         textPaint.textSize = fontSize
         text?.let {
-            canvas.drawText(it, (width / 2).toFloat(), height / 2 - (textPaint.descent() + textPaint.ascent()) / 2, textPaint)
+            canvas.drawText(it, width / 2F, height / 2F - (textPaint.descent() + textPaint.ascent()) / 2, textPaint)
         }
         canvas.restoreToCount(count)
 

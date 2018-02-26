@@ -268,7 +268,7 @@ class FullScreenPlayerFragment : Fragment(), CustomController.RepeatStateListene
     private fun fetchImageAsync(description: MediaDescriptionCompat) {
         description.iconUri ?: return
         currentArtUrl = description.iconUri.toString()
-        ViewHelper.updateAlbumArtIfEnable(activity, backgroundImage, currentArtUrl, description.title?.toString(), 800, 800)
+        ViewHelper.updateAlbumArt(activity, backgroundImage, currentArtUrl, description.title, 800, 800)
     }
 
     private fun updateMediaDescription(description: MediaDescriptionCompat?) {

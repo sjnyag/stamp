@@ -69,8 +69,8 @@ class SongItem(
         holder.updateStampList(mediaId)
 
         if (CompatibleHelper.hasLollipop()) {
-            holder.title.transitionName = "trans_text" + mediaId + position
-            holder.albumArtView.transitionName = "trans_image" + mediaId + position
+            holder.title.transitionName = "trans_text_" + mediaId + position
+            holder.albumArtView.transitionName = "trans_image_" + mediaId + position
         }
     }
 

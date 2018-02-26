@@ -15,20 +15,18 @@ class DetailFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
             inflater.inflate(R.layout.fragment_detail, container, false).also { view ->
-                arguments?.let {
+                arguments?.also {
                     it.getString("TITLE")?.let { activity?.title = it }
-                    if (CompatibleHelper.hasLollipop()) {
-                        view.findViewById<View>(R.id.textView).transitionName = it.getString("TRANS_TITLE")
-                        view.findViewById<View>(R.id.image).transitionName = it.getString("TRANS_IMAGE")
+                    view.findViewById<TextView>(R.id.textView)?.also { textView ->
+                        if (CompatibleHelper.hasLollipop()) textView.transitionName = it.getString("TRANS_TITLE")
+                        textView.text = it.getString("TITLE")
                     }
-                    view.findViewById<TextView>(R.id.textView).text = it.getString("TITLE")
-                    activity?.let { activity ->
-                        view.findViewById<ImageView>(R.id.image)?.let { view ->
-                            view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-                            ViewHelper.loadAlbumArt(activity, view, it.getString("IMAGE_TYPE"), it.getString("IMAGE_URL"), it.getString("IMAGE_TEXT"))
+                    view.findViewById<ImageView>(R.id.image)?.also { imageView ->
+                        if (CompatibleHelper.hasLollipop()) imageView.transitionName = it.getString("TRANS_IMAGE")
+                        activity?.let { activity ->
+                            ViewHelper.loadAlbumArt(activity, imageView, it.getParcelable("IMAGE_BITMAP"), it.getString("IMAGE_TYPE"), it.getString("IMAGE_URL"), it.getString("IMAGE_TEXT"))
                         }
                     }
                 }
             }
-
 }
