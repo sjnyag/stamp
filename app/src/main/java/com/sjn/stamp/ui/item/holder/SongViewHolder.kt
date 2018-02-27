@@ -4,12 +4,14 @@ import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.support.transition.TransitionInflater
+import android.support.transition.TransitionListenerAdapter
 import android.support.v4.app.Fragment
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.fragment.DetailFragment
+import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.CompatibleHelper
 import com.sjn.stamp.utils.SongStateHelper
 import com.sjn.stamp.utils.ViewHelper
@@ -44,7 +46,10 @@ class SongViewHolder constructor(view: View, adapter: FlexibleAdapter<*>, activi
             if (CompatibleHelper.hasLollipop()) {
                 sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.change_image_trans)
                 exitTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
-                sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.change_image_trans)
+                // https://stackoverflow.com/questions/33641752/how-to-know-when-shared-element-transition-ends
+                sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.change_image_trans)?.apply {
+                    addListener(TransitionListenerAdapter())
+                }
                 enterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.fade)
                 imageTransitionName = albumArtView.transitionName
                 textTransitionName = title.transitionName
@@ -56,7 +61,7 @@ class SongViewHolder constructor(view: View, adapter: FlexibleAdapter<*>, activi
                 putString("IMAGE_TYPE", albumArtView.getTag(R.id.image_view_album_art_type)?.toString())
                 putString("IMAGE_URL", albumArtView.getTag(R.id.image_view_album_art_url)?.toString())
                 putString("IMAGE_TEXT", albumArtView.getTag(R.id.image_view_album_art_text)?.toString())
-                putParcelable("IMAGE_BITMAP", ViewHelper.toBitmap(albumArtView.drawable))
+                putParcelable("IMAGE_BITMAP", AlbumArtHelper.toBitmap(albumArtView.drawable))
             }
         }, ArrayList<Pair<String, View>>().apply {
             add(Pair(imageTransitionName, albumArtView))

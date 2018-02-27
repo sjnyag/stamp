@@ -5,8 +5,8 @@ import android.support.v4.media.MediaMetadataCompat
 import android.view.View
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.item.holder.SimpleMediaViewHolder
+import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.MediaItemHelper
-import com.sjn.stamp.utils.ViewHelper
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.IFilterable
 import eu.davidea.flexibleadapter.utils.FlexibleUtils
@@ -39,7 +39,7 @@ class SimpleMediaMetadataItem(metadata: MediaMetadataCompat)
             holder.title.text = title
             holder.subtitle.text = subtitle
         }
-        if (albumArt.isNotEmpty()) ViewHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArt, title)
+        if (albumArt.isNotEmpty()) AlbumArtHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArt, title)
     }
 
     override fun filter(constraint: String): Boolean {

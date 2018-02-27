@@ -7,8 +7,8 @@ import android.view.View
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.MediaBrowsable
 import com.sjn.stamp.ui.item.holder.SongViewHolder
+import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.CompatibleHelper
-import com.sjn.stamp.utils.ViewHelper
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.IFilterable
 import eu.davidea.flexibleadapter.utils.FlexibleUtils
@@ -48,7 +48,7 @@ class SongItem(
 
         holder.mediaId = mediaId
         if (albumArt.isNotEmpty()) {
-            ViewHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArt, title)
+            AlbumArtHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArt, title)
         } else {
             mediaBrowsable.search(mediaId, null, object : MediaBrowserCompat.SearchCallback() {
                 override fun onSearchResult(query: String, extras: Bundle?, items: List<MediaBrowserCompat.MediaItem>) {
@@ -57,7 +57,7 @@ class SongItem(
                             continue
                         }
                         if (query == holder.mediaId && metadata.description.iconUri != null) {
-                            ViewHelper.updateAlbumArt(context as Activity, holder.albumArtView, metadata.description.iconUri.toString(), title)
+                            AlbumArtHelper.updateAlbumArt(context as Activity, holder.albumArtView, metadata.description.iconUri.toString(), title)
                         }
                         break
                     }

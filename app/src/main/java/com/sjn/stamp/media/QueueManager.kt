@@ -220,14 +220,14 @@ class QueueManager(private val context: Context,
                 }
 
                 override fun onBitmapFailed(errorDrawable: Drawable?) {
-                    val bitmap = ViewHelper.createTextBitmap(metadata.description.title)
+                    val bitmap = AlbumArtHelper.createTextBitmap(metadata.description.title)
                     setMetadataMusicArt(bitmap)
                 }
 
                 override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
 
                 private fun setMetadataMusicArt(bitmap: Bitmap) {
-                    val icon = ViewHelper.createIcon(bitmap)
+                    val icon = AlbumArtHelper.createIcon(bitmap)
                     musicProvider.updateMusicArt(musicId, bitmap, icon)
 
                     // If we are still playing the same music, notify the listeners:

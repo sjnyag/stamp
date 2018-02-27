@@ -25,6 +25,10 @@ object CompatibleHelper {
         return android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
     }
 
+    fun hasKitkat(): Boolean {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+    }
+
     fun getColor(resources: Resources, resourceId: Int, theme: Resources.Theme): Int? {
         if (hasMarshmallow()) {
             resources.getColor(resourceId, theme)
@@ -37,6 +41,6 @@ object CompatibleHelper {
     fun saveLayer(canvas: Canvas, bounds: RectF?, paint: Paint): Int = if (hasLollipop()) {
         canvas.saveLayer(bounds, paint)
     } else {
-        canvas.saveLayer(bounds, paint,  Canvas.HAS_ALPHA_LAYER_SAVE_FLAG or Canvas.FULL_COLOR_LAYER_SAVE_FLAG)
+        canvas.saveLayer(bounds, paint, Canvas.HAS_ALPHA_LAYER_SAVE_FLAG or Canvas.FULL_COLOR_LAYER_SAVE_FLAG)
     }
 }

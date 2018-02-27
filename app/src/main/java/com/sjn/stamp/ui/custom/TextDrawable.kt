@@ -72,13 +72,13 @@ class TextDrawable private constructor(builder: TextDrawable.Builder) : ShapeDra
             drawBorder(canvas)
         }
 
-        val count = canvas.save()
-        canvas.rotate(20f)
-        canvas.translate(10f, -10f)
-
         val width = if (this.width < 0) r.width() else this.width
         val height = if (this.height < 0) r.height() else this.height
         val fontSize = if (this.fontSize < 0) (Math.min(width, height) * 1.5).toFloat() else this.fontSize
+
+        val count = canvas.save()
+        canvas.rotate(20f)
+        canvas.translate(width / 10f, height / -10f)
         textPaint.textSize = fontSize
         text?.let {
             canvas.drawText(it, width / 2F, height / 2F - (textPaint.descent() + textPaint.ascent()) / 2, textPaint)

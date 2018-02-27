@@ -1,6 +1,8 @@
 package com.sjn.stamp.ui.fragment
 
 import android.os.Bundle
+import android.support.transition.Transition
+import android.support.transition.TransitionListenerAdapter
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,8 +10,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.sjn.stamp.R
+import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.CompatibleHelper
-import com.sjn.stamp.utils.ViewHelper
 
 class DetailFragment : Fragment() {
 
@@ -23,8 +25,16 @@ class DetailFragment : Fragment() {
                     }
                     view.findViewById<ImageView>(R.id.image)?.also { imageView ->
                         if (CompatibleHelper.hasLollipop()) imageView.transitionName = it.getString("TRANS_IMAGE")
-                        activity?.let { activity ->
-                            ViewHelper.loadAlbumArt(activity, imageView, it.getParcelable("IMAGE_BITMAP"), it.getString("IMAGE_TYPE"), it.getString("IMAGE_URL"), it.getString("IMAGE_TEXT"))
+                        imageView.setImageBitmap(it.getParcelable("IMAGE_BITMAP"))
+                        if (CompatibleHelper.hasKitkat()) {
+                            (sharedElementEnterTransition as Transition?)?.addListener(object : TransitionListenerAdapter() {
+                                override fun onTransitionEnd(transition: Transition) {
+                                    activity?.let { activity ->
+                                        AlbumArtHelper.loadAlbumArt(activity, imageView, it.getParcelable("IMAGE_BITMAP"), it.getString("IMAGE_TYPE"), it.getString("IMAGE_URL"), it.getString("IMAGE_TEXT"))
+                                    }
+
+                                }
+                            })
                         }
                     }
                 }

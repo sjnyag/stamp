@@ -5,8 +5,8 @@ import android.view.View
 import com.sjn.stamp.R
 import com.sjn.stamp.model.Song
 import com.sjn.stamp.ui.item.holder.UnknownSongViewHolder
+import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.TimeHelper
-import com.sjn.stamp.utils.ViewHelper
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.IFilterable
 import eu.davidea.flexibleadapter.utils.FlexibleUtils
@@ -42,7 +42,7 @@ class UnknownSongItem(id: String, song: Song) : AbstractItem<UnknownSongViewHold
             holder.date.text = TimeHelper.getDateText(lastPlayed!!, context.resources)
         }
         holder.mediaId = mediaId
-        if (albumArt.isNotEmpty()) ViewHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArt, title)
+        if (albumArt.isNotEmpty()) AlbumArtHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArt, title)
 
     }
 

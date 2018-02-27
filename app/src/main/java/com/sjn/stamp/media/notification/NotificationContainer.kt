@@ -12,6 +12,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.sjn.stamp.R
 import com.sjn.stamp.media.StampSession.Companion.EXTRA_CONNECTED_CAST
+import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.NotificationHelper
 import com.sjn.stamp.utils.ViewHelper
@@ -143,5 +144,5 @@ class NotificationContainer(
     }
 
     private fun MediaMetadataCompat.getTextDrawableBitmap() =
-            ViewHelper.createTextBitmap(description.title)
+            AlbumArtHelper.createTextBitmap(description.title)
 }
