@@ -1,8 +1,10 @@
 package com.sjn.stamp.ui
 
 import com.sjn.stamp.media.provider.ProviderType
+import com.sjn.stamp.ui.fragment.DetailFragment
 import com.sjn.stamp.ui.fragment.media.MyStampListFragment
 import com.sjn.stamp.ui.fragment.media.SongListFragment
+import com.sjn.stamp.utils.MediaIDHelper
 
 
 object SongListFragmentFactory {
@@ -17,7 +19,9 @@ object SongListFragmentFactory {
                     MyStampListFragment()
                 }
                 else -> {
-                    SongListFragment()
+                    MediaIDHelper.extractBrowseCategoryValueFromMediaID(mediaId)?.let {
+                        DetailFragment()
+                    } ?: SongListFragment()
                 }
             }
 }
