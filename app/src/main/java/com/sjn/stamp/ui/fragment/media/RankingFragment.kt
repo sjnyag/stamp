@@ -17,10 +17,12 @@ import com.sjn.stamp.model.RankedArtist
 import com.sjn.stamp.model.RankedSong
 import com.sjn.stamp.model.Shareable
 import com.sjn.stamp.ui.SongAdapter
+import com.sjn.stamp.ui.SongListFragmentFactory
 import com.sjn.stamp.ui.custom.PeriodSelectLayout
 import com.sjn.stamp.ui.item.RankedArtistItem
 import com.sjn.stamp.ui.item.RankedSongItem
 import com.sjn.stamp.utils.LogHelper
+import com.sjn.stamp.utils.MediaIDHelper
 import com.sjn.stamp.utils.MediaItemHelper
 import com.sjn.stamp.utils.RealmHelper
 import eu.davidea.fastscroller.FastScroller
@@ -71,9 +73,17 @@ class RankingFragment : MediaBrowserListFragment() {
         LogHelper.d(TAG, "onItemClick ")
         val item = adapter?.getItem(position)
         if (item is RankedSongItem) {
-            mediaBrowsable?.onMediaItemSelected(item.mediaId)
+            mediaBrowsable?.playByMediaId(MediaIDHelper.createDirectMediaId(item.mediaId))
         } else if (item is RankedArtistItem) {
-            mediaBrowsable?.onMediaItemSelected(MediaItemHelper.createArtistMediaItem(item.artistName))
+            MediaItemHelper.createArtistMediaItem(item.artistName).let { mediaItem ->
+                when {
+                    mediaItem.isPlayable -> {
+                        mediaItem.mediaId?.let { mediaBrowsable?.playByMediaId(it) }
+                    }
+                    mediaItem.isBrowsable && mediaItem.mediaId != null -> mediaItem.mediaId?.let { mediaBrowsable?.navigateToBrowser(it, SongListFragmentFactory.create(it), emptyList()) }
+                    else -> LogHelper.w(TAG, "Ignoring MediaItem that is neither browsable nor playable: ", "mediaId=", mediaItem.mediaId)
+                }
+            }
         }
         return false
     }

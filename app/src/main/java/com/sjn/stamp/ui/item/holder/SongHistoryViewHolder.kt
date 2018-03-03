@@ -14,6 +14,7 @@ class SongHistoryViewHolder(view: View, adapter: FlexibleAdapter<*>, activity: A
     var title: TextView = view.findViewById(R.id.title)
     var subtitle: TextView = view.findViewById(R.id.subtitle)
     var date: TextView = view.findViewById(R.id.date)
+
     private var _frontView: View = view.findViewById(R.id.front_view)
 
     override fun getActivationElevation(): Float = ViewHelper.dpToPx(itemView.context, 4f)

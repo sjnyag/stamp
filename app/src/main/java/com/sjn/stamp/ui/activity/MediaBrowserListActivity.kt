@@ -9,7 +9,9 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.ImageView
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.fragment.media.ListFragment
 import com.sjn.stamp.ui.observer.StampEditStateObserver
@@ -101,6 +103,7 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
         //swipeRefreshLayout = swipeRefreshLayout;
         //initializeSwipeToRefresh();
         initializeActionModeHelper(mode)
+        updateAppbar()
         LogHelper.d(TAG, "onFragmentChange END")
     }
 

@@ -42,9 +42,9 @@ import com.sjn.stamp.model.constant.RepeatState
 import com.sjn.stamp.model.constant.ShuffleState
 import com.sjn.stamp.ui.activity.MusicPlayerListActivity
 import com.sjn.stamp.ui.observer.MediaControllerObserver
+import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaControllerHelper
-import com.sjn.stamp.utils.ViewHelper
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
@@ -268,7 +268,7 @@ class FullScreenPlayerFragment : Fragment(), CustomController.RepeatStateListene
     private fun fetchImageAsync(description: MediaDescriptionCompat) {
         description.iconUri ?: return
         currentArtUrl = description.iconUri.toString()
-        ViewHelper.updateAlbumArtIfEnable(activity, backgroundImage, currentArtUrl, description.title?.toString(), 800, 800)
+        AlbumArtHelper.updateAlbumArt(activity, backgroundImage, currentArtUrl, description.title, 800, 800)
     }
 
     private fun updateMediaDescription(description: MediaDescriptionCompat?) {

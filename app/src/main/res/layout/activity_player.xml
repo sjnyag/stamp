@@ -40,22 +40,37 @@
                 android:id="@+id/app_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:elevation="0dp">
 
                 <android.support.design.widget.CollapsingToolbarLayout
                     android:id="@+id/toolbar_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_scrollFlags="scroll|enterAlways"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    app:contentScrim="@color/color_primary"
+                    app:elevation="0dp"
+                    app:expandedTitleTextAppearance="@android:color/transparent"
+                    app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
                     app:titleEnabled="false">
+
+                    <ImageView
+                        android:id="@+id/app_bar_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="350dp"
+                        android:contentDescription="@string/play_item"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/drawer_header"
+                        android:visibility="gone"
+                        app:elevation="0dp"
+                        app:layout_collapseMode="parallax"/>
 
                     <android.support.v7.widget.Toolbar
                         android:id="@+id/toolbar"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="?attr/colorPrimary"
-                        app:layout_scrollFlags="scroll|enterAlways"
-                        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+                        android:layout_height="?attr/actionBarSize"
+                        app:elevation="0dp"
+                        app:layout_collapseMode="pin"/>
 
                 </android.support.design.widget.CollapsingToolbarLayout>
 

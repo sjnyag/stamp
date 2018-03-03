@@ -28,13 +28,12 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-
 import com.sjn.stamp.R
 import com.sjn.stamp.media.StampSession
 import com.sjn.stamp.ui.observer.MediaControllerObserver
+import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaControllerHelper
-import com.sjn.stamp.utils.ViewHelper
 
 /**
  * A class that shows the Media Queue to the user.
@@ -105,7 +104,7 @@ class PlaybackControlsFragment : Fragment(), MediaControllerObserver.Listener {
         MediaControllerHelper.getController(activity)?.let {
             onMetadataChanged(it.metadata)
             onPlaybackStateChanged(it.playbackState)
-        } ?: run{
+        } ?: run {
             LogHelper.d(TAG, "media controller not found.")
         }
     }
@@ -124,7 +123,7 @@ class PlaybackControlsFragment : Fragment(), MediaControllerObserver.Listener {
         val newArtUrl = metadata.description.iconUri?.toString()
         if (newArtUrl != null && !TextUtils.equals(newArtUrl, artUrl)) {
             artUrl = newArtUrl
-            ViewHelper.updateAlbumArtIfEnable(activity, albumArt, artUrl, metadata.description.title?.toString())
+            AlbumArtHelper.updateAlbumArt(activity, albumArt, artUrl, metadata.description.title)
         }
     }
 

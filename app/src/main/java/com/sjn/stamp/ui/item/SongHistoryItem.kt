@@ -8,9 +8,9 @@ import com.sjn.stamp.R
 import com.sjn.stamp.controller.SongHistoryController
 import com.sjn.stamp.model.SongHistory
 import com.sjn.stamp.ui.item.holder.SongHistoryViewHolder
+import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.MediaIDHelper
 import com.sjn.stamp.utils.TimeHelper
-import com.sjn.stamp.utils.ViewHelper
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.IFilterable
 import eu.davidea.flexibleadapter.items.ISectionable
@@ -56,7 +56,7 @@ class SongHistoryItem constructor(songHistory: SongHistory, private var header: 
             holder.subtitle.text = subtitle
         }
         holder.date.text = TimeHelper.getDateText(recordedAt, context.resources)
-        if (albumArtUri.isNotEmpty()) ViewHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArtUri, title)
+        if (albumArtUri.isNotEmpty()) AlbumArtHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArtUri, title)
         holder.updateStampList(mediaId)
     }
 

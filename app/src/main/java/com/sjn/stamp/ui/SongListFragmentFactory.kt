@@ -4,7 +4,6 @@ import com.sjn.stamp.media.provider.ProviderType
 import com.sjn.stamp.ui.fragment.media.MyStampListFragment
 import com.sjn.stamp.ui.fragment.media.SongListFragment
 
-
 object SongListFragmentFactory {
     fun create(mediaId: String): SongListFragment =
             resolveFragment(mediaId).apply {

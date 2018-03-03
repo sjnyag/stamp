@@ -5,7 +5,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.view.View
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.item.holder.RankedViewHolder
-import com.sjn.stamp.utils.ViewHelper
+import com.sjn.stamp.utils.AlbumArtHelper
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.IFilterable
 import eu.davidea.flexibleadapter.utils.FlexibleUtils
@@ -43,7 +43,7 @@ class RankedSongItem(
             holder.countView.text = playCount.toString()
             holder.orderView.text = order.toString()
         }
-        if (albumArt.isNotEmpty()) ViewHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArt, title)
+        if (albumArt.isNotEmpty()) AlbumArtHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArt, title)
     }
 
     override fun filter(constraint: String): Boolean =

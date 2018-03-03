@@ -6,8 +6,6 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
-import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -27,6 +25,7 @@ import com.sjn.stamp.ui.SongAdapter
 import com.sjn.stamp.ui.item.AbstractItem
 import com.sjn.stamp.ui.item.DateHeaderItem
 import com.sjn.stamp.ui.item.SongHistoryItem
+import com.sjn.stamp.ui.item.holder.SongHistoryViewHolder
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaIDHelper
 import com.sjn.stamp.utils.RealmHelper
@@ -82,7 +81,7 @@ class TimelineFragment : MediaBrowserListFragment(), UndoHelper.OnUndoListener, 
         LogHelper.d(TAG, "onItemClick ")
         val item = adapter?.getItem(position)
         if (item is SongHistoryItem) {
-            mediaBrowsable?.onMediaItemSelected(MediaIDHelper.extractMusicIDFromMediaID(item.mediaId)!!)
+            mediaBrowsable?.playByMediaId(MediaIDHelper.createDirectMediaId(MediaIDHelper.extractMusicIDFromMediaID(item.mediaId)!!))
         }
         return false
     }
@@ -105,8 +104,21 @@ class TimelineFragment : MediaBrowserListFragment(), UndoHelper.OnUndoListener, 
 
     override fun onLoadMore(lastPosition: Int, currentPage: Int) {
         adapter?.let {
-            it.onLoadMoreComplete(createItemList(it.mainItemCount - it.headerItems.size, 30), 5000L)
+            createItemList(it.mainItemCount - it.headerItems.size, 30).run {
+                currentItems = currentItems.plus(this)
+                it.onLoadMoreComplete(this, 5000L)
+            }
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        realm = RealmHelper.realmInstance
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        realm?.close()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -116,7 +128,6 @@ class TimelineFragment : MediaBrowserListFragment(), UndoHelper.OnUndoListener, 
         context?.let {
             songHistoryController = SongHistoryController(it)
         }
-        realm = RealmHelper.realmInstance
         if (savedInstanceState != null) {
             listState = savedInstanceState.getParcelable(ListFragment.LIST_STATE_KEY)
         }
@@ -165,11 +176,6 @@ class TimelineFragment : MediaBrowserListFragment(), UndoHelper.OnUndoListener, 
         }
 
         return rootView
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        realm?.close()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

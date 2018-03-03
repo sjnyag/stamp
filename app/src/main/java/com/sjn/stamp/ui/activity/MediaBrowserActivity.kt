@@ -19,7 +19,7 @@ abstract class MediaBrowserActivity : DrawerActivity(), MediaBrowsable, MediaCon
     private val mediaController: MediaControllerCompat?
         get() = MediaControllerCompat.getMediaController(this)
 
-    private val connectionCallback = object : MediaBrowserCompat.ConnectionCallback() {
+    private val connectionCallback: MediaBrowserCompat.ConnectionCallback = object : MediaBrowserCompat.ConnectionCallback() {
         override fun onConnected() {
             try {
                 LogHelper.i(TAG, "onMediaControllerConnected")

@@ -5,6 +5,7 @@ import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
 import android.graphics.drawable.shapes.RectShape
 import android.graphics.drawable.shapes.RoundRectShape
+import com.sjn.stamp.utils.LogHelper
 import java.util.*
 
 class TextDrawable private constructor(builder: TextDrawable.Builder) : ShapeDrawable(builder.shape) {
@@ -16,7 +17,7 @@ class TextDrawable private constructor(builder: TextDrawable.Builder) : ShapeDra
     private val shape: RectShape?
     private val height: Int
     private val width: Int
-    private val fontSize: Int
+    private val fontSize: Float
     private val radius: Float
     private val borderThickness: Int
 
@@ -71,16 +72,17 @@ class TextDrawable private constructor(builder: TextDrawable.Builder) : ShapeDra
             drawBorder(canvas)
         }
 
-        val count = canvas.save()
-        canvas.rotate(20f)
-        canvas.translate(10f, -10f)
-
-        // draw text
         val width = if (this.width < 0) r.width() else this.width
         val height = if (this.height < 0) r.height() else this.height
-        val fontSize = if (this.fontSize < 0) (Math.min(width, height) * 1.5).toInt() else this.fontSize
-        textPaint.textSize = fontSize.toFloat()
-        canvas.drawText(text!!, (width / 2).toFloat(), height / 2 - (textPaint.descent() + textPaint.ascent()) / 2, textPaint)
+        val fontSize = if (this.fontSize < 0) (Math.min(width, height) * 1.5).toFloat() else this.fontSize
+
+        val count = canvas.save()
+        canvas.rotate(20f)
+        canvas.translate(width / 10f, height / -10f)
+        textPaint.textSize = fontSize
+        text?.let {
+            canvas.drawText(it, width / 2F, height / 2F - (textPaint.descent() + textPaint.ascent()) / 2, textPaint)
+        }
         canvas.restoreToCount(count)
 
     }
@@ -126,7 +128,7 @@ class TextDrawable private constructor(builder: TextDrawable.Builder) : ShapeDra
         var font: Typeface? = null
         var shape: RectShape? = null
         var textColor: Int = 0
-        var fontSize: Int = 0
+        var fontSize: Float = 0F
         var isBold: Boolean = false
         var toUpperCase: Boolean = false
 
@@ -141,7 +143,7 @@ class TextDrawable private constructor(builder: TextDrawable.Builder) : ShapeDra
             height = -1
             shape = RectShape()
             font = Typeface.create("sans-serif-light", Typeface.NORMAL)
-            fontSize = -1
+            fontSize = -1F
             isBold = false
             toUpperCase = false
         }
@@ -171,7 +173,7 @@ class TextDrawable private constructor(builder: TextDrawable.Builder) : ShapeDra
             return this
         }
 
-        override fun fontSize(size: Int): TextDrawable.IConfigBuilder {
+        override fun fontSize(size: Float): TextDrawable.IConfigBuilder {
             this.fontSize = size
             return this
         }
@@ -244,7 +246,7 @@ class TextDrawable private constructor(builder: TextDrawable.Builder) : ShapeDra
 
         fun useFont(font: Typeface): TextDrawable.IConfigBuilder
 
-        fun fontSize(size: Int): TextDrawable.IConfigBuilder
+        fun fontSize(size: Float): TextDrawable.IConfigBuilder
 
         fun bold(): TextDrawable.IConfigBuilder
 
@@ -277,6 +279,7 @@ class TextDrawable private constructor(builder: TextDrawable.Builder) : ShapeDra
 
     companion object {
         private const val SHADE_FACTOR = 0.9f
+        private val TAG = LogHelper.makeLogTag(TextDrawable::class.java)
 
         fun builder(): TextDrawable.IShapeBuilder {
             return TextDrawable.Builder()

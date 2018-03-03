@@ -22,7 +22,7 @@ abstract class MediaBrowserListFragment : ListFragment(), MediaBrowserObserver.L
             arguments = Bundle(1).apply { putString(MediaBrowserListFragment.ARG_MEDIA_ID, mediaId) }
         }
 
-    private val mSubscriptionCallback = object : MediaBrowserCompat.SubscriptionCallback() {
+    private val subscriptionCallback: MediaBrowserCompat.SubscriptionCallback = object : MediaBrowserCompat.SubscriptionCallback() {
         override fun onChildrenLoaded(parentId: String,
                                       children: List<MediaBrowserCompat.MediaItem>) {
             LogHelper.d(TAG, "onChildrenLoaded START")
@@ -123,7 +123,7 @@ abstract class MediaBrowserListFragment : ListFragment(), MediaBrowserObserver.L
         // unsubscribe first.
         mediaId?.let {
             mediaBrowsable?.mediaBrowser?.unsubscribe(it)
-            mediaBrowsable?.mediaBrowser?.subscribe(it, mSubscriptionCallback)
+            mediaBrowsable?.mediaBrowser?.subscribe(it, subscriptionCallback)
         }
 
         // Add MediaController callback so we can redraw the list when metadata changes:
@@ -135,7 +135,7 @@ abstract class MediaBrowserListFragment : ListFragment(), MediaBrowserObserver.L
         LogHelper.d(TAG, "reloadList START")
         mediaId?.let {
             mediaBrowsable?.mediaBrowser?.unsubscribe(it)
-            mediaBrowsable?.mediaBrowser?.subscribe(it, mSubscriptionCallback)
+            mediaBrowsable?.mediaBrowser?.subscribe(it, subscriptionCallback)
         }
         LogHelper.d(TAG, "reloadList END")
     }

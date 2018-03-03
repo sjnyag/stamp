@@ -33,9 +33,12 @@ import com.sjn.stamp.MusicService
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.DialogFacade
 import com.sjn.stamp.ui.SongAdapter
+import com.sjn.stamp.ui.activity.DrawerActivity
 import com.sjn.stamp.ui.item.SongItem
+import com.sjn.stamp.ui.item.holder.SongViewHolder
 import com.sjn.stamp.ui.observer.MediaControllerObserver
 import com.sjn.stamp.ui.observer.MusicListObserver
+import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaIDHelper
 import eu.davidea.fastscroller.FastScroller
@@ -111,7 +114,22 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
         LogHelper.d(TAG, "onItemClick ")
         val item = adapter?.getItem(position)
         if (item is SongItem) {
-            mediaBrowsable?.onMediaItemSelected(item.mediaId, item.isPlayable, item.isBrowsable)
+            when {
+                item.isPlayable -> {
+                    mediaBrowsable?.playByMediaId(item.mediaId)
+                }
+                item.isBrowsable -> {
+                    //mediaBrowsable?.navigateToBrowser(item.mediaId, SongListFragmentFactory.create(item.mediaId), emptyList())}
+                    val viewHolder = recyclerView?.findViewHolderForAdapterPosition(position)
+                    if (viewHolder is SongViewHolder) {
+                        activity?.let {
+                            val pair = viewHolder.createNextFragment(it)
+                            mediaBrowsable?.navigateToBrowser(item.mediaId, pair.first, pair.second)
+                        }
+                    }
+                }
+                else -> LogHelper.w(TAG, "Ignoring MediaItem that is neither browsable nor playable: ", "mediaId=", item.mediaId)
+            }
         }
         return false
     }
@@ -169,9 +187,8 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        LogHelper.d(TAG, "onCreateView START" + mediaId!!)
+        LogHelper.d(TAG, "onCreateView START" + mediaId)
         val rootView = inflater.inflate(R.layout.fragment_list, container, false)
-
         if (savedInstanceState != null) {
             listState = savedInstanceState.getParcelable(ListFragment.LIST_STATE_KEY)
         }
@@ -211,6 +228,20 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
         initializeFabWithStamp()
         if (isShowing) {
             notifyFragmentChange()
+        }
+        mediaId?.let {
+            MediaIDHelper.extractBrowseCategoryValueFromMediaID(it)?.let {
+                arguments?.also {
+                    if (activity is DrawerActivity) {
+                        (activity as DrawerActivity).run {
+                            updateAppbar(it.getString("IMAGE_TEXT"), { activity, imageView ->
+                                AlbumArtHelper.loadAlbumArt(activity, imageView, it.getParcelable("IMAGE_BITMAP"), it.getString("IMAGE_TYPE"), it.getString("IMAGE_URL"), it.getString("IMAGE_TEXT"))
+                            })
+                        }
+
+                    }
+                }
+            }
         }
         draw()
         LogHelper.d(TAG, "onCreateView END")

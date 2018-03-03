@@ -20,9 +20,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.support.v4.app.ActivityCompat
+import android.support.v4.app.Fragment
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.text.TextUtils
+import android.view.View
 import com.sjn.stamp.MusicService
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.DialogFacade
@@ -32,7 +35,6 @@ import com.sjn.stamp.ui.fragment.FullScreenPlayerFragment
 import com.sjn.stamp.ui.fragment.media.MediaBrowserListFragment
 import com.sjn.stamp.ui.fragment.media.PagerFragment
 import com.sjn.stamp.utils.LogHelper
-import com.sjn.stamp.utils.MediaIDHelper
 import com.sjn.stamp.utils.MediaRetrieveHelper
 import com.sjn.stamp.utils.PermissionHelper
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
@@ -87,6 +89,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
         super.onCreate(savedInstanceState)
         LogHelper.d(TAG, "Activity onCreate")
 
+        ActivityCompat.postponeEnterTransition(this)
         setContentView(R.layout.activity_player)
         initializeToolbar()
         if (savedInstanceState == null) {
@@ -152,24 +155,8 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
 
     }
 
-    override fun onMediaItemSelected(musicId: String) {
-        LogHelper.d(TAG, "onMediaItemSelected, musicId=" + musicId)
-        MediaControllerCompat.getMediaController(this)?.transportControls?.playFromMediaId(MediaIDHelper.createDirectMediaId(musicId), null)
-    }
-
-    override fun onMediaItemSelected(item: MediaBrowserCompat.MediaItem) {
-        onMediaItemSelected(item.mediaId, item.isPlayable, item.isBrowsable)
-    }
-
-    override fun onMediaItemSelected(mediaId: String?, isPlayable: Boolean, isBrowsable: Boolean) {
-        LogHelper.d(TAG, "onMediaItemSelected, mediaId=" + mediaId!!)
-        when {
-            isPlayable -> {
-                MediaControllerCompat.getMediaController(this)?.transportControls?.playFromMediaId(mediaId, null)
-            }
-            isBrowsable -> navigateToBrowser(mediaId)
-            else -> LogHelper.w(TAG, "Ignoring MediaItem that is neither browsable nor playable: ", "mediaId=", mediaId)
-        }
+    override fun playByMediaId(mediaId: String) {
+        MediaControllerCompat.getMediaController(this)?.transportControls?.playFromMediaId(mediaId, null)
     }
 
     override fun setToolbarTitle(title: CharSequence?) {
@@ -198,7 +185,8 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
 
     private fun startFullScreenIfNeeded(intent: Intent?) {
         if (intent?.getBooleanExtra(EXTRA_START_FULLSCREEN, false) == true) {
-            val slidingUpPanelLayout = findViewById<SlidingUpPanelLayout>(R.id.sliding_layout) ?: return
+            val slidingUpPanelLayout = findViewById<SlidingUpPanelLayout>(R.id.sliding_layout)
+                    ?: return
             slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
         }
     }
@@ -225,16 +213,17 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
             // If there is a saved media ID, use it
             savedInstanceState?.let { mediaId = it.getString(SAVED_MEDIA_ID) }
         }
-        navigateToBrowser(mediaId)
+        mediaId?.let {
+            navigateToBrowser(it, SongListFragmentFactory.create(it), emptyList())
+        }
         startFullScreenIfNeeded(intent)
     }
 
-    private fun navigateToBrowser(mediaId: String?) {
-        mediaId ?: return
+    override fun navigateToBrowser(mediaId: String, fragment: Fragment, sharedElements: List<Pair<String, View>>) {
         LogHelper.d(TAG, "navigateToBrowser, mediaId=" + mediaId)
         mediaBrowserListFragment?.let {
             if (!TextUtils.equals(it.mediaId, mediaId)) {
-                navigateToBrowser(SongListFragmentFactory.create(mediaId), true)
+                navigateToBrowser(fragment, true, sharedElements)
             }
 
         }
