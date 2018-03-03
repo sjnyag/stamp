@@ -15,7 +15,9 @@ import com.sjn.stamp.R
 import com.sjn.stamp.controller.StampController
 import com.sjn.stamp.ui.DialogFacade
 import com.sjn.stamp.ui.SongAdapter
+import com.sjn.stamp.ui.activity.DrawerActivity
 import com.sjn.stamp.ui.item.SongItem
+import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaIDHelper
 import com.sjn.stamp.utils.SwipeHelper
@@ -75,6 +77,20 @@ class MyStampListFragment : SongListFragment(), UndoHelper.OnUndoListener, Flexi
         initializeFabWithStamp()
         if (isShowing) {
             notifyFragmentChange()
+        }
+        mediaId?.let {
+            MediaIDHelper.extractBrowseCategoryValueFromMediaID(it)?.let {
+                arguments?.also {
+                    if (activity is DrawerActivity) {
+                        (activity as DrawerActivity).run {
+                            updateAppbar(it.getString("IMAGE_TEXT"), { activity, imageView ->
+                                AlbumArtHelper.loadAlbumArt(activity, imageView, it.getParcelable("IMAGE_BITMAP"), it.getString("IMAGE_TYPE"), it.getString("IMAGE_URL"), it.getString("IMAGE_TEXT"))
+                            })
+                        }
+
+                    }
+                }
+            }
         }
         draw()
         LogHelper.d(TAG, "onCreateView END")

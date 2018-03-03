@@ -33,10 +33,12 @@ import com.sjn.stamp.MusicService
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.DialogFacade
 import com.sjn.stamp.ui.SongAdapter
+import com.sjn.stamp.ui.activity.DrawerActivity
 import com.sjn.stamp.ui.item.SongItem
 import com.sjn.stamp.ui.item.holder.SongViewHolder
 import com.sjn.stamp.ui.observer.MediaControllerObserver
 import com.sjn.stamp.ui.observer.MusicListObserver
+import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaIDHelper
 import eu.davidea.fastscroller.FastScroller
@@ -187,7 +189,6 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
                               savedInstanceState: Bundle?): View? {
         LogHelper.d(TAG, "onCreateView START" + mediaId)
         val rootView = inflater.inflate(R.layout.fragment_list, container, false)
-
         if (savedInstanceState != null) {
             listState = savedInstanceState.getParcelable(ListFragment.LIST_STATE_KEY)
         }
@@ -227,6 +228,20 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
         initializeFabWithStamp()
         if (isShowing) {
             notifyFragmentChange()
+        }
+        mediaId?.let {
+            MediaIDHelper.extractBrowseCategoryValueFromMediaID(it)?.let {
+                arguments?.also {
+                    if (activity is DrawerActivity) {
+                        (activity as DrawerActivity).run {
+                            updateAppbar(it.getString("IMAGE_TEXT"), { activity, imageView ->
+                                AlbumArtHelper.loadAlbumArt(activity, imageView, it.getParcelable("IMAGE_BITMAP"), it.getString("IMAGE_TYPE"), it.getString("IMAGE_URL"), it.getString("IMAGE_TEXT"))
+                            })
+                        }
+
+                    }
+                }
+            }
         }
         draw()
         LogHelper.d(TAG, "onCreateView END")
