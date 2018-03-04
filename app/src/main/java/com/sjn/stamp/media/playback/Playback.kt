@@ -32,7 +32,7 @@ interface Playback {
     /**
      * Set the latest playback state as determined by the caller.
      */
-    var state: Int
+    val state: Int
 
     /**
      * @return boolean that indicates that this is ready to be used.
@@ -63,7 +63,7 @@ interface Playback {
         },
         LOCAL {
             override fun createInstance(context: Context, callback: Callback, initialStreamPosition: Int, initialMediaId: String?): Playback {
-                return LocalPlayback(context, callback, initialStreamPosition, initialMediaId)
+                return ExoPlayback(context, callback, initialStreamPosition, initialMediaId)
             }
         };
 
