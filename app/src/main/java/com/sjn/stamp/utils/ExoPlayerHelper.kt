@@ -88,15 +88,10 @@ object ExoPlayerHelper {
                             .setUsage(USAGE_MEDIA)
                             .build()
 
-                    // Produces DataSource instances through which media data is loaded.
-                    val dataSourceFactory = DefaultDataSourceFactory(
-                            context, Util.getUserAgent(context, "Stamp"), null)
-                    // Produces Extractor instances for parsing the media data.
-                    val extractorsFactory = DefaultExtractorsFactory()
-                    // The MediaSource represents the media to be played.
-                    val mediaSource = ExtractorMediaSource(
-                            Uri.parse(path), dataSourceFactory, extractorsFactory, null, null)
-
+                    val dataSourceFactory = DefaultDataSourceFactory(context, Util.getUserAgent(context, context.applicationInfo.packageName))
+                    val mediaSource = ExtractorMediaSource.Factory(dataSourceFactory).apply {
+                        setExtractorsFactory(DefaultExtractorsFactory())
+                    }.createMediaSource(Uri.parse(path))
                     // Prepares media to play (happens on background thread) and triggers
                     // {@code onPlayerStateChanged} callback when the stream is ready to play.
                     it.playWhenReady = true
