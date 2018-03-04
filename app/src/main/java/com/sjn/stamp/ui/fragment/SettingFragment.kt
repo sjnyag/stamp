@@ -69,23 +69,10 @@ class SettingFragment : PreferenceFragmentCompat() {
 
         findPreference("import_backup").onPreferenceClickListener = Preference.OnPreferenceClickListener {
             activity?.let {
-                DialogFacade.createConfirmDialog(it, R.string.dialog_confirm_import, { _, which ->
-                    when (which) {
-                        DialogAction.NEGATIVE -> return@createConfirmDialog
-                        DialogAction.POSITIVE -> {
-                            context?.let {
-                                AnalyticsHelper.trackSetting(it, "import_backup")
-
-                            }
-                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-                            intent.addCategory(Intent.CATEGORY_OPENABLE)
-                            intent.type = "*/*"
-                            startActivityForResult(intent, REQUEST_BACKUP)
-                        }
-                        else -> {
-                        }
-                    }
-                }, DialogInterface.OnDismissListener { }).show()
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+                intent.addCategory(Intent.CATEGORY_OPENABLE)
+                intent.type = "*/*"
+                startActivityForResult(intent, REQUEST_BACKUP)
             }
             true
         }
@@ -194,17 +181,29 @@ class SettingFragment : PreferenceFragmentCompat() {
 
         if (requestCode == REQUEST_BACKUP) {
             if (resultCode == AppCompatActivity.RESULT_OK) {
-                activity?.let {
+                activity?.let { activity ->
                     if (data?.data?.path?.endsWith(".realm") == true) {
-                        ProgressDialog(it).run {
-                            setMessage(getString(R.string.message_processing))
-                            show()
-                            RealmHelper.importBackUp(it, data.data)
-                            dismiss()
-                        }
-                        DialogFacade.createRestartDialog(it) { _, _ -> it.recreate() }.show()
+                        DialogFacade.createConfirmDialog(activity, R.string.dialog_confirm_import, { _, which ->
+                            when (which) {
+                                DialogAction.NEGATIVE -> return@createConfirmDialog
+                                DialogAction.POSITIVE -> {
+                                    context?.let {
+                                        AnalyticsHelper.trackSetting(it, "import_backup")
+                                        ProgressDialog(it).run {
+                                            setMessage(getString(R.string.message_processing))
+                                            show()
+                                            RealmHelper.importBackUp(activity, data.data)
+                                            dismiss()
+                                        }
+                                        DialogFacade.createRestartDialog(it) { _, _ -> activity.recreate() }.show()
+                                    }
+                                }
+                                else -> {
+                                }
+                            }
+                        }, DialogInterface.OnDismissListener { }).show()
                     } else {
-                        Toast.makeText(it, R.string.invalid_backup_selected, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity, R.string.invalid_backup_selected, Toast.LENGTH_SHORT).show()
                     }
                 }
             }

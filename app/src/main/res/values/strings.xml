@@ -214,7 +214,7 @@
     <string name="period">Period</string>
     <string name="from">From</string>
     <string name="to">To</string>
-    <string name="invalid_backup_selected">This is invalid.</string>
+    <string name="invalid_backup_selected">Unsupported file was selected.</string>
      <string name="spotlight_stamp_add_title">Tap [Add] button</string>
      <string name="spotlight_stamp_add_description">You can press selected stamps to your song by this button.</string>
     <string name="song_db_refresh">Refresh Song database</string>
