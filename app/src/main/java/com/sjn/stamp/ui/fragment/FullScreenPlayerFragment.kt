@@ -332,7 +332,7 @@ class FullScreenPlayerFragment : Fragment(), CustomController.RepeatStateListene
     private fun updateProgress() {
         lastPlaybackState?.let {
             var currentPosition = it.position
-            if (it.state != PlaybackStateCompat.STATE_PAUSED) {
+            if (it.state == PlaybackStateCompat.STATE_PLAYING) {
                 // Calculate the elapsed time between the last position update and now and unless
                 // paused, we can assume (delta * speed) + current position is approximately the
                 // latest position. This ensure that we do not repeatedly call the getPlaybackState()
