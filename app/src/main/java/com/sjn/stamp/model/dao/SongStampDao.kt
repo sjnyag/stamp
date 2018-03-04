@@ -6,6 +6,10 @@ import io.realm.RealmList
 
 object SongStampDao : BaseDao<SongStamp>() {
 
+    fun isMyStampExists(realm: Realm): Boolean = realm.where(SongStamp::class.java).equalTo("isSystem", false).findFirst() != null
+
+    fun isSmartStampExists(realm: Realm): Boolean = realm.where(SongStamp::class.java).equalTo("isSystem", true).findFirst() != null
+
     fun find(realm: Realm, name: String, isSystem: Boolean): SongStamp? =
             realm.where(SongStamp::class.java).equalTo("name", name).equalTo("isSystem", isSystem).findFirst()
 

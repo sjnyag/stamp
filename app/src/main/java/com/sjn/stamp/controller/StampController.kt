@@ -22,6 +22,18 @@ class StampController(private val context: Context) {
         fun onStampChange()
     }
 
+    val isMyStampExists: Boolean
+        get() =
+            RealmHelper.realmInstance.use { realm ->
+                SongStampDao.isMyStampExists(realm)
+            }
+
+    val isSmartStampExists: Boolean
+        get() =
+            RealmHelper.realmInstance.use { realm ->
+                SongStampDao.isSmartStampExists(realm)
+            }
+
     fun addListener(listener: Listener) {
         listenerSet.add(listener)
     }

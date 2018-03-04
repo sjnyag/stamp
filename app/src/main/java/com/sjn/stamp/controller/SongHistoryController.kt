@@ -21,8 +21,8 @@ import java.util.*
 class SongHistoryController(private val context: Context) {
 
     val topSongList: List<MediaMetadataCompat>
-        get() {
-            return RealmHelper.realmInstance.use { realm ->
+        get() =
+             RealmHelper.realmInstance.use { realm ->
                 val songList = ArrayList<MediaMetadataCompat>()
                 TotalSongHistoryDao.findPlayed(realm).forEach loop@ { songHistory ->
                     if (songHistory.playCount == 0 || songList.size >= UserSettingController().mostPlayedSongSize) {
@@ -36,7 +36,12 @@ class SongHistoryController(private val context: Context) {
                 }
                 songList
             }
-        }
+
+    val hasHistory: Boolean
+        get() =
+            RealmHelper.realmInstance.use { realm ->
+                SongHistoryDao.isExists(realm)
+            }
 
     fun onPlay(mediaId: String, date: Date) {
         LogHelper.d(TAG, "insertPLAY ", mediaId)

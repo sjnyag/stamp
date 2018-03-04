@@ -11,7 +11,7 @@ class StampPagerFragment : PagerFragment(), PagerFragment.PageFragmentContainer.
     override fun setUpFragmentContainer(): List<PagerFragment.PageFragmentContainer> =
             ArrayList<PagerFragment.PageFragmentContainer>().apply {
                 add(PagerFragment.PageFragmentContainer(getString(R.string.stamp_tab_my_stamps), MediaIDHelper.MEDIA_ID_MUSICS_BY_MY_STAMP, this@StampPagerFragment))
-                add(PagerFragment.PageFragmentContainer(getString(R.string.stamp_tab_stamp_stamps), MediaIDHelper.MEDIA_ID_MUSICS_BY_SMART_STAMP, this@StampPagerFragment))
+                add(PagerFragment.PageFragmentContainer(getString(R.string.stamp_tab_smart_stamps), MediaIDHelper.MEDIA_ID_MUSICS_BY_SMART_STAMP, this@StampPagerFragment))
             }
 
     override fun create(fragmentHint: String): Fragment =

@@ -91,7 +91,7 @@
     <string name="ranking_tab_my_artists">Artist</string>
 
     <string name="stamp_tab_my_stamps">My Stamp</string>
-    <string name="stamp_tab_stamp_stamps">Smart Stamp</string>
+    <string name="stamp_tab_smart_stamps">Smart Stamp</string>
 
     <string name="dialog_stamp_register">スタンプ登録</string>
     <string name="dialog_ranking_target">ランキング対象選択</string>

@@ -7,6 +7,7 @@ import io.realm.Realm
 import io.realm.Sort
 import java.util.*
 
+
 object SongHistoryDao : BaseDao<SongHistory>() {
 
     fun where(realm: Realm, from: Date?, to: Date?, recordType: String): List<SongHistory> {
@@ -19,6 +20,8 @@ object SongHistoryDao : BaseDao<SongHistory>() {
         }
         return query.findAll() ?: emptyList()
     }
+
+    fun isExists(realm: Realm): Boolean = realm.where(SongHistory::class.java).findFirst() != null
 
     fun timeline(realm: Realm, recordType: String): List<SongHistory> =
             findAll(realm, recordType)

@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.sjn.stamp.R
+import com.sjn.stamp.controller.SongHistoryController
+import com.sjn.stamp.controller.StampController
 import com.sjn.stamp.ui.SongListFragmentFactory
 import com.sjn.stamp.utils.MediaIDHelper
 import java.util.*
@@ -24,7 +26,17 @@ class AllSongPagerFragment : PagerFragment(), PagerFragment.PageFragmentContaine
 
     override fun setUpFragmentContainer(): List<PagerFragment.PageFragmentContainer> =
             ArrayList<PagerFragment.PageFragmentContainer>().apply {
-                add(PagerFragment.PageFragmentContainer(getString(R.string.all_song_tab_most_played), MediaIDHelper.MEDIA_ID_MUSICS_BY_MOST_PLAYED, this@AllSongPagerFragment))
+                context?.let {
+                    if (StampController(it).isMyStampExists) {
+                        add(PagerFragment.PageFragmentContainer(getString(R.string.stamp_tab_my_stamps), MediaIDHelper.MEDIA_ID_MUSICS_BY_MY_STAMP, this@AllSongPagerFragment))
+                    }
+                    if (StampController(it).isSmartStampExists) {
+                        add(PagerFragment.PageFragmentContainer(getString(R.string.stamp_tab_smart_stamps), MediaIDHelper.MEDIA_ID_MUSICS_BY_SMART_STAMP, this@AllSongPagerFragment))
+                    }
+                    if (SongHistoryController(it).hasHistory) {
+                        add(PagerFragment.PageFragmentContainer(getString(R.string.all_song_tab_most_played), MediaIDHelper.MEDIA_ID_MUSICS_BY_MOST_PLAYED, this@AllSongPagerFragment))
+                    }
+                }
                 add(PagerFragment.PageFragmentContainer(getString(R.string.all_song_tab_artist), MediaIDHelper.MEDIA_ID_MUSICS_BY_ARTIST, this@AllSongPagerFragment))
                 add(PagerFragment.PageFragmentContainer(getString(R.string.all_song_tab_album), MediaIDHelper.MEDIA_ID_MUSICS_BY_ALBUM, this@AllSongPagerFragment))
                 add(PagerFragment.PageFragmentContainer(getString(R.string.all_song_tab_playlist), MediaIDHelper.MEDIA_ID_MUSICS_BY_PLAYLIST, this@AllSongPagerFragment))
