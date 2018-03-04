@@ -17,7 +17,7 @@ internal object ProviderCache {
         var mediaMapCache: MediaMapCache? = null
         try {
             val cache = ParcelDiskCache.open(context, MediaMapCache::class.java.classLoader, SUB_DIR, (1024 * 1024 * 10).toLong())
-            mediaMapCache = cache[CACHE_KEY] as MediaMapCache
+            mediaMapCache = cache[CACHE_KEY] as MediaMapCache?
             cache.close()
         } catch (e: IOException) {
             e.printStackTrace()
