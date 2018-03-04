@@ -1,6 +1,5 @@
 package com.sjn.stamp.ui.fragment.media
 
-import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.widget.RecyclerView
@@ -9,13 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.afollestad.materialdialogs.DialogAction
-import com.afollestad.materialdialogs.MaterialDialog
 import com.sjn.stamp.R
 import com.sjn.stamp.controller.StampController
-import com.sjn.stamp.ui.DialogFacade
 import com.sjn.stamp.ui.SongAdapter
 import com.sjn.stamp.ui.activity.DrawerActivity
+import com.sjn.stamp.ui.item.AbstractItem
 import com.sjn.stamp.ui.item.SongItem
 import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.LogHelper
@@ -25,11 +22,10 @@ import eu.davidea.fastscroller.FastScroller
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager
 import eu.davidea.flexibleadapter.helpers.UndoHelper
-import java.util.*
 
 class MyStampListFragment : SongListFragment(), UndoHelper.OnUndoListener, FlexibleAdapter.OnItemSwipeListener {
 
-    val categoryValue: String?
+    private val categoryValue: String?
         get() = mediaId?.let { MediaIDHelper.extractBrowseCategoryValueFromMediaID(it) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -101,77 +97,43 @@ class MyStampListFragment : SongListFragment(), UndoHelper.OnUndoListener, Flexi
     override fun onItemSwipe(position: Int, direction: Int) {
         LogHelper.i(TAG, "onItemSwipe position=" + position +
                 " direction=" + if (direction == ItemTouchHelper.LEFT) "LEFT" else "RIGHT")
-        val positions = ArrayList<Int>(1)
-        positions.add(position)
-        val abstractItem = adapter?.getItem(position)
-        val message = StringBuilder()
-        if (abstractItem?.isSelectable == true) adapter?.setRestoreSelectionOnUndo(false)
-        if (direction == ItemTouchHelper.RIGHT) {
-            val subItem = abstractItem as SongItem?
-            activity?.let { activity ->
-                val isCategoryStamp = categoryValue?.let {
-                    StampController(activity).isCategoryStamp(it, false, subItem!!.mediaId)
-                }
-                if (isCategoryStamp == true) {
-                    Toast.makeText(activity, R.string.error_message_stamp_failed, Toast.LENGTH_LONG).show()
-                    SwipeHelper.cancel(recyclerView, position)
-                    return
-                }
-                message.append(subItem?.title).append(" ")
-                DialogFacade.createRemoveStampSongDialog(activity, subItem?.title
-                        ?: "", categoryValue
-                        ?: "", MaterialDialog.SingleButtonCallback { _, which ->
-                    when (which) {
-                        DialogAction.NEGATIVE -> {
-                            SwipeHelper.cancel(recyclerView, position)
-                        }
-                        DialogAction.POSITIVE -> {
-                            message.append(getString(R.string.action_deleted))
-                            swipeRefreshLayout?.isRefreshing = true
-                            UndoHelper(adapter, this@MyStampListFragment).apply {
-                                withPayload(null) //You can pass any custom object (in this case Boolean is enough)
-                                withAction(UndoHelper.ACTION_REMOVE, object : UndoHelper.SimpleActionListener() {
-                                    override fun onPostAction() {
-                                        // Handle ActionMode title
-                                        if (adapter?.selectedItemCount == 0) {
-                                            listener?.destroyActionModeIfCan()
-                                        } else {
-                                            adapter?.let {
-                                                listener?.updateContextTitle(it.selectedItemCount)
-                                            }
-                                        }
-                                    }
-                                })
-                                remove(positions, activity.findViewById(R.id.main_view), message,
-                                        getString(R.string.undo), UndoHelper.UNDO_TIMEOUT)
-                            }
-                        }
-                        else -> {
-                        }
-                    }
-                },
-                        DialogInterface.OnDismissListener {
-                            SwipeHelper.cancel(recyclerView, position)
-                        }).show()
+        if (adapter?.getItem(position) !is SongItem) return
+        val item = adapter?.getItem(position) as SongItem
+        activity?.run {
+            if (categoryValue?.let { StampController(this).isCategoryStamp(it, false, item.mediaId) } == true) {
+                Toast.makeText(this, R.string.error_message_stamp_failed, Toast.LENGTH_LONG).show()
+                SwipeHelper.cancel(recyclerView, position)
+                return
             }
+            tryRemove(item, position)
         }
     }
 
-    override fun onActionStateChanged(viewHolder: RecyclerView.ViewHolder, actionState: Int) {
+    private fun tryRemove(item: AbstractItem<*>, position: Int) {
+        val positions = mutableListOf(position)
+        val message = StringBuilder().append(item.title).append(" ").append(getString(R.string.action_deleted))
+        if (item.isSelectable) adapter?.setRestoreSelectionOnUndo(false)
+        adapter?.isPermanentDelete = false
+        swipeRefreshLayout?.isRefreshing = true
+        activity?.let {
+            UndoHelper(adapter, this@MyStampListFragment)
+                    .withPayload(null)
+                    .withConsecutive(true)
+                    .start(positions, it.findViewById(R.id.main_view), message, getString(R.string.undo), UndoHelper.UNDO_TIMEOUT)
+        }
+    }
+
+
+    override fun onActionStateChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
         LogHelper.i(TAG, "onActionStateChanged actionState=" + actionState)
         swipeRefreshLayout?.isEnabled = actionState == ItemTouchHelper.ACTION_STATE_IDLE
     }
 
     override fun onActionCanceled(action: Int) {
         LogHelper.i(TAG, "onUndoConfirmed action=" + action)
-        if (action == UndoHelper.ACTION_UPDATE) {
-        } else if (action == UndoHelper.ACTION_REMOVE) {
-            adapter?.restoreDeletedItems()
-            swipeRefreshLayout?.isRefreshing = false
-            if (adapter?.isRestoreWithSelection == true) {
-                listener?.restoreSelection()
-            }
-        }
+        adapter?.restoreDeletedItems()
+        swipeRefreshLayout?.isRefreshing = false
+        if (adapter?.isRestoreWithSelection == true) listener?.restoreSelection()
     }
 
     override fun onActionConfirmed(action: Int, event: Int) {
@@ -190,7 +152,8 @@ class MyStampListFragment : SongListFragment(), UndoHelper.OnUndoListener, Flexi
                         }
                     }
                 }
-            } catch (ignored: IllegalStateException) {
+            } catch (e: IllegalStateException) {
+                e.printStackTrace()
             }
         }
     }

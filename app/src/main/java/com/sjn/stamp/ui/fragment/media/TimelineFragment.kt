@@ -1,7 +1,6 @@
 package com.sjn.stamp.ui.fragment.media
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
@@ -14,22 +13,17 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import com.afollestad.materialdialogs.DialogAction
-import com.afollestad.materialdialogs.MaterialDialog
 import com.google.common.collect.Iterables
 import com.sjn.stamp.R
 import com.sjn.stamp.controller.SongHistoryController
 import com.sjn.stamp.model.SongHistory
-import com.sjn.stamp.ui.DialogFacade
 import com.sjn.stamp.ui.SongAdapter
 import com.sjn.stamp.ui.item.AbstractItem
 import com.sjn.stamp.ui.item.DateHeaderItem
 import com.sjn.stamp.ui.item.SongHistoryItem
-import com.sjn.stamp.ui.item.holder.SongHistoryViewHolder
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaIDHelper
 import com.sjn.stamp.utils.RealmHelper
-import com.sjn.stamp.utils.SwipeHelper
 import eu.davidea.fastscroller.FastScroller
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager
@@ -245,91 +239,53 @@ class TimelineFragment : MediaBrowserListFragment(), UndoHelper.OnUndoListener, 
     override fun onItemSwipe(position: Int, direction: Int) {
         LogHelper.i(TAG, "onItemSwipe position=" + position +
                 " direction=" + if (direction == ItemTouchHelper.LEFT) "LEFT" else "RIGHT")
-        val positions = ArrayList<Int>(1)
-        positions.add(position)
-        val abstractItem = adapter?.getItem(position)
-        val message = StringBuilder().append(abstractItem?.toString()).append(" ")
-        if (abstractItem?.isSelectable == true) adapter?.setRestoreSelectionOnUndo(false)
-        if (direction == ItemTouchHelper.RIGHT) {
-            val subItem = abstractItem as AbstractItem<*>?
-            activity?.let { activity ->
-                DialogFacade.createHistoryDeleteDialog(activity, subItem?.toString()
-                        ?: "", MaterialDialog.SingleButtonCallback { _, which ->
-                    when (which) {
-                        DialogAction.NEGATIVE -> {
-                            SwipeHelper.cancel(recyclerView, position)
-                        }
-                        DialogAction.POSITIVE -> {
-                            message.append(getString(R.string.action_deleted))
-                            swipeRefreshLayout?.isRefreshing = true
-                            UndoHelper(adapter, this@TimelineFragment).apply {
-                                withPayload(null) //You can pass any custom object (in this case Boolean is enough)
-                                withAction(UndoHelper.ACTION_REMOVE, object : UndoHelper.SimpleActionListener() {
-                                    override fun onPostAction() {
-                                        // Handle ActionMode title
-                                        if (adapter?.selectedItemCount == 0) {
-                                            listener?.destroyActionModeIfCan()
-                                        } else {
-                                            adapter?.let {
-                                                listener?.updateContextTitle(it.selectedItemCount)
-                                            }
-                                        }
-                                    }
-                                })
-                                remove(positions, activity.findViewById(R.id.main_view), message,
-                                        getString(R.string.undo), UndoHelper.UNDO_TIMEOUT)
-                            }
-                        }
-                        else -> {
-                        }
-                    }
-                },
-                        DialogInterface.OnDismissListener {
-                            SwipeHelper.cancel(recyclerView, position)
-                        }).show()
-            }
+        if (adapter?.getItem(position) !is AbstractItem<*>) return
+        val item = adapter?.getItem(position) as AbstractItem<*>
+        activity?.run {
+            tryRemove(item, position)
         }
     }
 
-    override fun onActionStateChanged(viewHolder: RecyclerView.ViewHolder, actionState: Int) {
+    private fun tryRemove(item: AbstractItem<*>, position: Int) {
+        val positions = mutableListOf(position)
+        val message = StringBuilder().append(item.toString()).append(" ").append(getString(R.string.action_deleted))
+        if (item.isSelectable) adapter?.setRestoreSelectionOnUndo(false)
+        adapter?.isPermanentDelete = false
+        swipeRefreshLayout?.isRefreshing = true
+        activity?.let {
+            UndoHelper(adapter, this@TimelineFragment)
+                    .withPayload(null)
+                    .withConsecutive(true)
+                    .start(positions, it.findViewById(R.id.main_view), message, getString(R.string.undo), UndoHelper.UNDO_TIMEOUT)
+        }
+    }
+
+    override fun onActionStateChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
         LogHelper.i(TAG, "onActionStateChanged actionState=" + actionState)
         swipeRefreshLayout?.isEnabled = actionState == ItemTouchHelper.ACTION_STATE_IDLE
     }
 
     override fun onActionCanceled(action: Int) {
         LogHelper.i(TAG, "onUndoConfirmed action=" + action)
-        if (action == UndoHelper.ACTION_UPDATE) {
-        } else if (action == UndoHelper.ACTION_REMOVE) {
-            // Custom action is restore deleted items
-            adapter?.restoreDeletedItems()
-            // Disable Refreshing
-            swipeRefreshLayout?.isRefreshing = false
-            // Check also selection restoration
-            if (adapter?.isRestoreWithSelection == true) {
-                listener?.restoreSelection()
-            }
-        }
-
+        adapter?.restoreDeletedItems()
+        swipeRefreshLayout?.isRefreshing = false
+        if (adapter?.isRestoreWithSelection == true) listener?.restoreSelection()
     }
 
     override fun onActionConfirmed(action: Int, event: Int) {
         LogHelper.i(TAG, "onDeleteConfirmed action=" + action)
-        // Disable Refreshing
         swipeRefreshLayout?.isRefreshing = false
-        // Removing items from Database. Example:
-        adapter?.let {
-            for (adapterItem in it.deletedItems) {
-                try {
-                    // NEW! You can take advantage of AutoMap and differentiate logic by viewType using "switch" statement
-                    when (adapterItem.layoutRes) {
-                        R.layout.recycler_song_history_item -> {
-                            val subItem = adapterItem as AbstractItem<*>
-                            activity?.let { subItem.delete(it) }
-                            LogHelper.i(TAG, "Confirm removed " + subItem.toString())
-                        }
+        for (adapterItem in adapter?.deletedItems ?: emptyList()) {
+            try {
+                when (adapterItem.layoutRes) {
+                    R.layout.recycler_song_history_item -> {
+                        val subItem = adapterItem as AbstractItem<*>
+                        activity?.let { adapterItem.delete(it) }
+                        LogHelper.i(TAG, "Confirm removed " + subItem.toString())
                     }
-                } catch (e: IllegalStateException) {
                 }
+            } catch (e: IllegalStateException) {
+                e.printStackTrace()
             }
         }
     }

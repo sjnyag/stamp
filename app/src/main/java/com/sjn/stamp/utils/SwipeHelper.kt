@@ -16,7 +16,9 @@ object SwipeHelper {
                 addListener(object : Animator.AnimatorListener {
                     override fun onAnimationStart(animator: Animator) {}
 
-                    override fun onAnimationEnd(animator: Animator) {}
+                    override fun onAnimationEnd(animator: Animator) {
+                        view.translationX = 0f
+                    }
 
                     override fun onAnimationCancel(animation: Animator) {
                         view.translationX = 0f
