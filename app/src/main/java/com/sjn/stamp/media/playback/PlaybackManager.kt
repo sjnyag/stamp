@@ -336,7 +336,7 @@ class PlaybackManager(
          */
         override fun onPlayFromSearch(query: String, extras: Bundle) {
             LogHelper.d(TAG, "playFromSearch  query=", query, " extras=", extras)
-            playback.state = PlaybackStateCompat.STATE_CONNECTING
+            //playback.state = PlaybackStateCompat.STATE_CONNECTING
             if (queueManager.setQueueFromSearch(query, extras)) {
                 handlePlayRequest()
                 queueManager.updateMetadata()
