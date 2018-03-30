@@ -93,7 +93,8 @@ dependencies {
     implementation('com.github.afollestad.material-dialogs:core:0.8.5.8@aar') {
         transitive = true
     }
-    implementation 'com.github.sjnyag:AnimationWrapLayout:0.1.0'
+    implementation 'com.github.sjnyag:AnimationWrapLayout:0.3.0'
+    implementation 'com.github.sjnyag:ForceAnimateAppBarLayout:0.4.0'
     implementation 'com.github.takusemba:spotlight:1.1.1'
     implementation 'com.github.vajro:MaterialDesignLibrary:1.6'
     implementation 'com.jakewharton:disklrucache:2.0.2'

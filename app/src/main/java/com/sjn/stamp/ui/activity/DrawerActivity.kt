@@ -14,6 +14,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
+import com.github.sjnyag.forceanimateappbarlayout.ForceAnimateAppBarLayout
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
 import com.sjn.stamp.R
@@ -57,6 +58,9 @@ abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStack
             imageView.visibility = View.VISIBLE
             function(this, imageView)
         }
+        findViewById<ForceAnimateAppBarLayout>(R.id.app_bar).run {
+            animatedExpand()
+        }
     }
 
     fun updateAppbar() {
@@ -67,7 +71,6 @@ abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStack
                     elevation = 0F
                 }
             }
-            setExpanded(true, true)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 if (fragment !is PagerFragment) {
                     elevation = 8F

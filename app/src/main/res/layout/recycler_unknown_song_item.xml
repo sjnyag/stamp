@@ -63,7 +63,7 @@
 
     </RelativeLayout>
 
-    <com.github.sjnyag.AnimationWrapLayout
+    <com.github.sjnyag.animationwraplayout.AnimationWrapLayout
         android:id="@+id/stamp_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

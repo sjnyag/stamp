@@ -13,7 +13,7 @@ import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.Theme
 import com.gc.materialdesign.views.ButtonFloatSmall
-import com.github.sjnyag.AnimationWrapLayout
+import com.github.sjnyag.animationwraplayout.AnimationWrapLayout
 import com.sjn.stamp.R
 import com.sjn.stamp.controller.StampController
 import com.sjn.stamp.ui.DialogFacade

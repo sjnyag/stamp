@@ -26,6 +26,7 @@
         android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
         android:gravity="bottom"
         sothree:umanoPanelHeight="64dp"
         sothree:umanoShadowHeight="8dp">
@@ -33,21 +34,23 @@
         <android.support.design.widget.CoordinatorLayout
             android:id="@+id/main_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true">
 
             <!-- Toolbar -->
-            <android.support.design.widget.AppBarLayout
+            <com.github.sjnyag.forceanimateappbarlayout.ForceAnimateAppBarLayout
                 android:id="@+id/app_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fitsSystemWindows="true"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:elevation="0dp">
 
                 <android.support.design.widget.CollapsingToolbarLayout
                     android:id="@+id/toolbar_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:fitsSystemWindows="true"
                     app:contentScrim="@color/color_primary"
                     app:elevation="0dp"
                     app:expandedTitleTextAppearance="@android:color/transparent"
@@ -59,6 +62,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="350dp"
                         android:contentDescription="@string/play_item"
+                        android:fitsSystemWindows="true"
                         android:scaleType="centerCrop"
                         android:src="@drawable/drawer_header"
                         android:visibility="gone"
@@ -74,7 +78,7 @@
 
                 </android.support.design.widget.CollapsingToolbarLayout>
 
-            </android.support.design.widget.AppBarLayout>
+            </com.github.sjnyag.forceanimateappbarlayout.ForceAnimateAppBarLayout>
 
             <RelativeLayout
                 android:id="@+id/container"

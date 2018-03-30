@@ -135,6 +135,7 @@ object DialogFacade {
         dataSet.add(Licenses.fromGitHubMIT("afollestad/material-dialogs"))
         dataSet.add(Licenses.fromGitHubApacheV2("vajro/MaterialDesignLibrary"))
         dataSet.add(Licenses.fromGitHubApacheV2("sjnyag/AnimationWrapLayout"))
+        dataSet.add(Licenses.fromGitHubApacheV2("sjnyag/ForceAnimateAppBarLayout"))
         dataSet.add(Licenses.fromGitHubApacheV2("TakuSemba/Spotlight"))
         dataSet.add(Licenses.fromGitHubApacheV2("jakewharton/DiskLruCache"))
         dataSet.add(Licenses.fromGitHubApacheV2("mikepenz/MaterialDrawer"))
