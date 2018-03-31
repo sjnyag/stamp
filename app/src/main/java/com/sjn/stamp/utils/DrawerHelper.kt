@@ -96,6 +96,9 @@ object DrawerHelper {
 
         fun setSelection(selection: Long) {
             drawer?.setSelection(selection)
+            nextDrawerMenu = selection
+            selectingDrawerMenu = selection
+            listener.changeFragmentByDrawer(nextDrawerMenu)
         }
 
         fun closeDrawer(): Boolean {

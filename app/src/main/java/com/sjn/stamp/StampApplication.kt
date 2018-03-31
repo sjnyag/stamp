@@ -11,8 +11,8 @@ import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.sjn.stamp.utils.RealmHelper
 import com.squareup.picasso.Picasso
-
 import net.danlew.android.joda.JodaTimeAndroid
+import org.polaric.colorful.Colorful
 
 @Suppress("unused")
 class StampApplication : MultiDexApplication() {
@@ -24,6 +24,12 @@ class StampApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
+        Colorful.defaults()
+                .primaryColor(Colorful.ThemeColor.DEEP_PURPLE)
+                .accentColor(Colorful.ThemeColor.GREEN)
+                .translucent(true)
+                .dark(true)
+        Colorful.init(this)
         RealmHelper.init(this)
         JodaTimeAndroid.init(this)
         DrawerImageLoader.init(object : AbstractDrawerImageLoader() {

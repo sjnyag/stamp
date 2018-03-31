@@ -8,7 +8,6 @@ import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
@@ -22,8 +21,10 @@ import com.sjn.stamp.ui.DrawerMenu
 import com.sjn.stamp.ui.fragment.media.PagerFragment
 import com.sjn.stamp.utils.DrawerHelper
 import com.sjn.stamp.utils.LogHelper
+import org.polaric.colorful.ColorfulActivity
 
-abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStackChangedListener {
+
+abstract class DrawerActivity : ColorfulActivity(), FragmentManager.OnBackStackChangedListener {
 
     private var toolbar: Toolbar? = null
     protected var drawer: DrawerHelper.Drawer? = null
@@ -93,7 +94,7 @@ abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStack
             drawer = DrawerHelper.Drawer(this, it, object : DrawerHelper.Drawer.Listener {
                 override fun changeFragmentByDrawer(menu: Long) {
                     val drawerMenu = DrawerMenu.of(menu) ?: return
-                    navigateToBrowser(drawerMenu.fragment, false, menu)
+                    navigateToBrowser(drawerMenu.fragment, false)
                     setToolbarTitle(null)
                 }
             })
@@ -185,11 +186,6 @@ abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStack
     override fun setTitle(titleId: Int) {
         super.setTitle(titleId)
         toolbar?.setTitle(titleId)
-    }
-
-    private fun navigateToBrowser(fragment: Fragment, addToBackStack: Boolean, selection: Long) {
-        navigateToBrowser(fragment, addToBackStack)
-        drawer?.setSelection(selection)
     }
 
     companion object {

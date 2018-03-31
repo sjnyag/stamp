@@ -1,21 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:colorpicker="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:key="appearance"
+        android:title="@string/setting_appearance">
+
+        <org.polaric.colorful.ColorPickerPreference
+            android:key="primary_theme"
+            android:title="@string/setting_appearance_primary"
+            colorpicker:primary_color="true"/>
+
+        <org.polaric.colorful.ColorPickerPreference
+            android:key="accent_theme"
+            android:title="@string/setting_appearance_accent"
+            colorpicker:accent_color="true"/>
+
+        <android.support.v14.preference.SwitchPreference
+            android:defaultValue="false"
+            android:key="dark_theme"
+            android:title="@string/setting_appearance_dark_theme"/>
+
+        <!--
+        <android.support.v14.preference.SwitchPreference
+            android:defaultValue="false"
+            android:key="translucent"
+            android:title="@string/setting_appearance_translucent"/>
+            -->
+    </PreferenceCategory>
+
     <PreferenceCategory
         android:key="setting_songs"
         android:title="@string/setting_songs">
         <EditTextPreference
-            android:maxLength="3"
             android:defaultValue="30"
             android:dialogTitle="@string/setting_songs_new_song_days"
-            android:numeric="integer"
             android:key="setting_songs_new_song_days"
+            android:maxLength="3"
+            android:numeric="integer"
             android:title="@string/setting_songs_new_song_days"/>
         <EditTextPreference
-            android:maxLength="3"
             android:defaultValue="30"
             android:dialogTitle="@string/setting_songs_most_played_song_size"
-            android:numeric="integer"
             android:key="setting_songs_most_played_song_size"
+            android:maxLength="3"
+            android:numeric="integer"
             android:title="@string/setting_songs_most_played_song_size"/>
     </PreferenceCategory>
     <PreferenceCategory

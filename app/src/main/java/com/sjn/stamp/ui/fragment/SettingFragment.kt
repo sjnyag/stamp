@@ -17,10 +17,14 @@ import com.sjn.stamp.R
 import com.sjn.stamp.controller.SongController
 import com.sjn.stamp.controller.UserSettingController
 import com.sjn.stamp.ui.DialogFacade
+import com.sjn.stamp.ui.DrawerMenu
+import com.sjn.stamp.ui.activity.MusicPlayerListActivity
+import com.sjn.stamp.ui.activity.MusicPlayerListActivity.Companion.START_FRAGMENT_KEY
 import com.sjn.stamp.utils.AnalyticsHelper
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaRetrieveHelper
 import com.sjn.stamp.utils.RealmHelper
+import org.polaric.colorful.Colorful
 
 class SettingFragment : PreferenceFragmentCompat() {
 
@@ -36,7 +40,34 @@ class SettingFragment : PreferenceFragmentCompat() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-        findPreference("song_db_refresh").onPreferenceClickListener = Preference.OnPreferenceClickListener {
+        findPreference("primary_theme")?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
+            reboot()
+            true
+        }
+        findPreference("accent_theme")?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
+            reboot()
+            true
+        }
+        findPreference("dark_theme")?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
+            if (newValue is Boolean) {
+                Colorful.config(context)
+                        .dark(newValue)
+                        .apply()
+                reboot()
+            }
+            true
+        }
+        findPreference("translucent")?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
+            if (newValue is Boolean) {
+                Colorful.config(context)
+                        .translucent(newValue)
+                        .apply()
+                reboot()
+            }
+            true
+        }
+
+        findPreference("song_db_refresh")?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             activity?.let {
                 DialogFacade.createConfirmDialog(it, R.string.dialog_confirm_song_db_refresh, { _, _ ->
                     context?.let {
@@ -48,7 +79,7 @@ class SettingFragment : PreferenceFragmentCompat() {
             true
         }
 
-        findPreference("song_db_unknown").onPreferenceClickListener = Preference.OnPreferenceClickListener {
+        findPreference("song_db_unknown")?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             fragmentManager?.let {
                 val transaction = it.beginTransaction()
                 transaction.add(R.id.container, UnknownSongFragment())
@@ -58,7 +89,7 @@ class SettingFragment : PreferenceFragmentCompat() {
             true
         }
 
-        findPreference("import_backup").onPreferenceClickListener = Preference.OnPreferenceClickListener {
+        findPreference("import_backup")?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             activity?.let {
                 val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
@@ -68,7 +99,7 @@ class SettingFragment : PreferenceFragmentCompat() {
             true
         }
 
-        findPreference("export_backup").onPreferenceClickListener = Preference.OnPreferenceClickListener {
+        findPreference("export_backup")?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             activity?.let {
                 DialogFacade.createConfirmDialog(it, R.string.dialog_confirm_export, { _, _ ->
                     context?.let {
@@ -176,7 +207,9 @@ class SettingFragment : PreferenceFragmentCompat() {
                                     RealmHelper.importBackUp(activity, data.data)
                                     dismiss()
                                 }
-                                DialogFacade.createRestartDialog(it) { _, _ -> activity.recreate() }.show()
+                                DialogFacade.createRestartDialog(it) { _, _ ->
+                                    reboot()
+                                }.show()
                             }
                         }).show()
                     } else {
@@ -185,6 +218,11 @@ class SettingFragment : PreferenceFragmentCompat() {
                 }
             }
         }
+    }
+
+    private fun reboot() {
+        activity?.finish()
+        startActivity(Intent(activity, MusicPlayerListActivity::class.java).apply { putExtra(START_FRAGMENT_KEY, DrawerMenu.SETTING.menuId) })
     }
 
     companion object {

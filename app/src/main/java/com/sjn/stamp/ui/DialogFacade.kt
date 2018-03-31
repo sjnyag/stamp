@@ -137,7 +137,7 @@ object DialogFacade {
         dataSet.add(Licenses.noContent("Firebase", "Google Inc.", "https://firebase.google.com/terms/"))
         dataSet.add(Licenses.fromGitHub("google/guava", LICENSE_APACHE_V2))
         dataSet.add(Licenses.fromGitHubMIT("gowong/material-sheet-fab"))
-        dataSet.add(Licenses.fromGitHubMIT("afollestad/aesthetic"))
+        dataSet.add(Licenses.fromGitHubApacheV2("garretyoder/Colorful"))
         dataSet.add(Licenses.fromGitHubApacheV2("vajro/MaterialDesignLibrary"))
         dataSet.add(Licenses.fromGitHubApacheV2("sjnyag/AnimationWrapLayout"))
         dataSet.add(Licenses.fromGitHubApacheV2("sjnyag/ForceAnimateAppBarLayout"))

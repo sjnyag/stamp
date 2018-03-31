@@ -147,6 +147,12 @@
     <string name="album_art">album art</string>
     <string name="menu_timeline_upward">Go to top</string>
 
+    <string name="setting_appearance">Appearance</string>
+    <string name="setting_appearance_primary">Primary</string>
+    <string name="setting_appearance_accent">Accent</string>
+    <string name="setting_appearance_dark_theme">Dark Theme</string>
+    <string name="setting_appearance_translucent">Translucent</string>
+
     <string name="setting_songs">Songs</string>
     <string name="setting_songs_new_song_days">Days for \"NEW\"(0~999)</string>
     <string name="setting_songs_most_played_song_size">Size of \"MOST PLAYED\"(0~999)</string>

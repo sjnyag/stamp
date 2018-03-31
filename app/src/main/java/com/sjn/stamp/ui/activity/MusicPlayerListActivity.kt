@@ -90,9 +90,6 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
         ActivityCompat.postponeEnterTransition(this)
         setContentView(R.layout.activity_player)
         initializeToolbar()
-        if (savedInstanceState == null) {
-            navigateToBrowser(DrawerMenu.first().fragment, false)
-        }
 
         if (!PermissionHelper.hasPermission(this, MediaRetrieveHelper.PERMISSIONS)) {
             LogHelper.d(TAG, "has no Permission")
@@ -209,9 +206,13 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
             // If there is a saved media ID, use it
             savedInstanceState?.let { mediaId = it.getString(SAVED_MEDIA_ID) }
         }
-        mediaId?.let {
+        val targetDrawer = intent.extras?.getInt(START_FRAGMENT_KEY)?.let { DrawerMenu.of(it) }
+        targetDrawer?.let {
+            drawer?.setSelection(it.menuId.toLong())
+        } ?: mediaId?.let {
             navigateToBrowser(it, SongListFragmentFactory.create(it), emptyList())
-        }
+        } ?: navigateToBrowser(DrawerMenu.first().fragment, false)
+
         startFullScreenIfNeeded(intent)
     }
 
@@ -242,6 +243,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
         const val EXTRA_START_FULLSCREEN = "com.sjn.stamp.EXTRA_START_FULLSCREEN"
 
         const val REQUEST_PERMISSION = 1
+        const val START_FRAGMENT_KEY = "START_FRAGMENT_KEY"
 
         /**
          * Optionally used with [.EXTRA_START_FULLSCREEN] to carry a MediaDescription to

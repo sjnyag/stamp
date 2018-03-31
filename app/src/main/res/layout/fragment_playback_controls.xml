@@ -46,11 +46,11 @@
             android:layout_weight="1"
             android:contentDescription="@string/currently_playing_song"
             android:ellipsize="end"
-            android:gravity="center_vertical"
+            android:gravity="bottom"
             android:maxLines="1"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="?android:attr/textColorPrimary"
-            tools:text="The Best Music EVAH"/>
+            tools:text="The Best Music EVAHg"/>
 
         <TextView
             android:id="@+id/artist"

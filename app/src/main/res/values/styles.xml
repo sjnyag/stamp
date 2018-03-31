@@ -16,11 +16,9 @@
   -->
 <resources>
 
-    <style name="StampAppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="StampAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
-
-    <style name="DatePickerTheme" parent="@android:style/Widget.DatePicker"/>
 
     <style name="AppTheme.PreferenceStyle" parent="@style/PreferenceThemeOverlay">
         <item name="android:listSeparatorTextViewStyle">@style/Preference.ListSeparator</item>

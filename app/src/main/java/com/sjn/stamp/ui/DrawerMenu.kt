@@ -35,6 +35,8 @@ enum class DrawerMenu(val menuId: Int) {
 
     companion object {
 
+        fun of(menuId: Int): DrawerMenu? = DrawerMenu.values().firstOrNull { it.menuId == menuId }
+        
         fun of(menuId: Long): DrawerMenu? = DrawerMenu.values().firstOrNull { it.menuId.toLong() == menuId }
 
         fun first(): DrawerMenu = HOME

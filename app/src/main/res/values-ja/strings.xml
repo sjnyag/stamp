@@ -141,6 +141,12 @@
     <string name="album_art">album art</string>
     <string name="menu_timeline_upward">最上部へ</string>
 
+    <string name="setting_appearance">表示</string>
+    <string name="setting_appearance_primary">メインカラー</string>
+    <string name="setting_appearance_accent">アクセントカラー</string>
+    <string name="setting_appearance_dark_theme">Darkテーマ</string>
+    <string name="setting_appearance_translucent">透過</string>
+
     <string name="setting_songs">プレイリスト</string>
     <string name="setting_songs_new_song_days">\"NEW\" の日数(0~999)</string>
     <string name="setting_songs_most_played_song_size">\"MOST PLAYED\"の曲数(0~999)</string>
