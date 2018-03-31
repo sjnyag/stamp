@@ -90,13 +90,11 @@ dependencies {
     implementation "com.google.firebase:firebase-crash:$versions.firebase"
     implementation 'com.google.guava:guava:20.0'
     implementation 'com.gordonwong:material-sheet-fab:1.2.1'
-    implementation('com.github.afollestad.material-dialogs:core:0.8.5.8@aar') {
-        transitive = true
-    }
     implementation 'com.github.sjnyag:AnimationWrapLayout:0.3.0'
     implementation 'com.github.sjnyag:ForceAnimateAppBarLayout:0.4.0'
     implementation 'com.github.takusemba:spotlight:1.1.1'
     implementation 'com.github.vajro:MaterialDesignLibrary:1.6'
+    implementation 'com.afollestad:aesthetic:0.4.6'
     implementation 'com.jakewharton:disklrucache:2.0.2'
     implementation('com.mikepenz:materialdrawer:5.3.0@aar') {
         transitive = true

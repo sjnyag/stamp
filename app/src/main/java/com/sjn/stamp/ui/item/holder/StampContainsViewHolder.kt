@@ -14,8 +14,8 @@ import eu.davidea.flexibleadapter.FlexibleAdapter
 abstract class StampContainsViewHolder(view: View, adapter: FlexibleAdapter<*>, var activity: Activity) : LongClickDisableViewHolder(view, adapter) {
     private val stampListLayout: ViewGroup = view.findViewById(R.id.stamp_info)
 
-    val showTapTargetView: TextView
-        get() = stampListLayout.getChildAt(0) as TextView
+    val showTapTargetView: TextView?
+        get() = stampListLayout.getChildAt(0) as TextView?
 
     private val onNewStamp = View.OnClickListener { v ->
         val mediaId = v.getTag(R.id.text_view_new_stamp_media_id) as String

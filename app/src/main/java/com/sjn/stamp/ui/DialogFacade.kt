@@ -2,11 +2,12 @@ package com.sjn.stamp.ui
 
 import android.content.Context
 import android.content.DialogInterface
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.Theme
 import com.sjn.stamp.R
+import com.sjn.stamp.ui.custom.PeriodSelectLayout
+import com.sjn.stamp.ui.custom.StampRegisterLayout
 import net.yslibrary.licenseadapter.LicenseAdapter
 import net.yslibrary.licenseadapter.LicenseEntry
 import net.yslibrary.licenseadapter.Licenses
@@ -15,116 +16,119 @@ import java.util.*
 
 @Suppress("unused")
 object DialogFacade {
-    fun createConfirmDialog(context: Context, content: String, callback: (Any, Any) -> Unit, dismissListener: DialogInterface.OnDismissListener): MaterialDialog.Builder {
-        return MaterialDialog.Builder(context)
-                .title(R.string.dialog_confirm_title)
-                .content(content)
-                .positiveText(R.string.dialog_ok)
-                .negativeText(R.string.dialog_cancel)
-                .onAny(callback)
-                .dismissListener(dismissListener)
-                .contentColorRes(android.R.color.white)
-                .backgroundColorRes(R.color.material_blue_grey)
-                .theme(Theme.DARK)
+
+    fun createRankingPeriodSelectDialog(context: Context, period: PeriodSelectLayout.Period, updateRankingPeriod: (PeriodSelectLayout) -> Unit): AlertDialog =
+            PeriodSelectLayout(context, period).run {
+                AlertDialog.Builder(context)
+                        .setTitle(R.string.dialog_period_select)
+                        .setView(this)
+                        .setPositiveButton(R.string.dialog_ok, { _, _ -> updateRankingPeriod(this) })
+                        .show()
+            }
+
+    fun createSelectValidSongDialog(context: Context, view: RecyclerView): AlertDialog =
+            AlertDialog.Builder(context).apply {
+                setTitle(R.string.dialog_merge_song)
+                setView(view)
+                setNegativeButton(R.string.dialog_cancel, { _, _ -> })
+            }.show()
+
+
+    fun createRegisterStampDialog(context: Context): AlertDialog =
+            AlertDialog.Builder(context).apply {
+                setTitle(R.string.dialog_stamp_register)
+                setView(StampRegisterLayout(context, null))
+                setPositiveButton(R.string.dialog_close, { _, _ -> })
+            }.show()
+
+
+    fun createConfirmDialog(context: Context, content: String, onPositive: (Any, Any) -> Unit): AlertDialog.Builder =
+            AlertDialog.Builder(context)
+                    .setTitle(R.string.dialog_confirm_title)
+                    .setMessage(content)
+                    .setPositiveButton(R.string.dialog_ok, onPositive)
+                    .setNegativeButton(R.string.dialog_cancel, { _, _ -> })
+                    .setOnDismissListener({ })
+
+    fun createConfirmDialog(context: Context, content: String, onPositive: (Any, Any) -> Unit, onNegative: (Any, Any) -> Unit, onDismiss: DialogInterface.OnDismissListener): AlertDialog.Builder =
+            AlertDialog.Builder(context)
+                    .setTitle(R.string.dialog_confirm_title)
+                    .setMessage(content)
+                    .setPositiveButton(R.string.dialog_ok, onPositive)
+                    .setNegativeButton(R.string.dialog_cancel, onNegative)
+                    .setOnDismissListener(onDismiss)
+
+    fun createConfirmDialog(context: Context, content: Int, onPositive: (Any, Any) -> Unit): AlertDialog.Builder =
+            AlertDialog.Builder(context)
+                    .setTitle(R.string.dialog_confirm_title)
+                    .setMessage(content)
+                    .setPositiveButton(R.string.dialog_ok, onPositive)
+                    .setNegativeButton(R.string.dialog_cancel, { _, _ -> })
+                    .setOnDismissListener({ })
+
+    fun createConfirmDialog(context: Context, content: Int, onPositive: (Any, Any) -> Unit, onNegative: (Any, Any) -> Unit, onDismiss: DialogInterface.OnDismissListener): AlertDialog.Builder =
+            AlertDialog.Builder(context)
+                    .setTitle(R.string.dialog_confirm_title)
+                    .setMessage(content)
+                    .setPositiveButton(R.string.dialog_ok, onPositive)
+                    .setNegativeButton(R.string.dialog_cancel, onNegative)
+                    .setOnDismissListener(onDismiss)
+
+    fun createPermissionNecessaryDialog(context: Context, onPositive: (Any, Any) -> Unit): AlertDialog.Builder =
+            AlertDialog.Builder(context)
+                    .setTitle(R.string.dialog_permission_necessary_title)
+                    .setMessage(R.string.dialog_permission_necessary_content)
+                    .setPositiveButton(R.string.dialog_ok, onPositive)
+                    .setCancelable(false)
+
+    fun createRestartDialog(context: Context, onPositive: (Any, Any) -> Unit): AlertDialog.Builder =
+            AlertDialog.Builder(context)
+                    .setTitle(R.string.dialog_restart_title)
+                    .setMessage(R.string.dialog_restart_content)
+                    .setPositiveButton(R.string.dialog_ok, onPositive)
+
+    fun createRemoveStampSongDialog(context: Context, stamp: String, onPositive: (Any, Any) -> Unit): AlertDialog.Builder {
+        return AlertDialog.Builder(context)
+                .setTitle(R.string.dialog_delete_stamp_title)
+                .setMessage(context.resources.getString(R.string.dialog_delete_stamp_content, stamp))
+                .setPositiveButton(R.string.dialog_delete, onPositive)
+                .setNegativeButton(R.string.dialog_cancel, { _, _ -> })
     }
 
-    fun createConfirmDialog(context: Context, content: Int, callback: (Any, Any) -> Unit, dismissListener: DialogInterface.OnDismissListener): MaterialDialog.Builder {
-        return MaterialDialog.Builder(context)
-                .title(R.string.dialog_confirm_title)
-                .content(content)
-                .positiveText(R.string.dialog_ok)
-                .negativeText(R.string.dialog_cancel)
-                .onAny(callback)
-                .dismissListener(dismissListener)
-                .contentColorRes(android.R.color.white)
-                .backgroundColorRes(R.color.material_blue_grey)
-                .theme(Theme.DARK)
+    fun createLetsPlayMusicDialog(context: Context): AlertDialog.Builder {
+        return AlertDialog.Builder(context)
+                .setTitle(R.string.dialog_lets_play_title)
+                .setPositiveButton(R.string.dialog_ok, { _, _ -> })
     }
 
-    fun createPermissionNecessaryDialog(context: Context, callback: (Any, Any) -> Unit): MaterialDialog.Builder {
-        return MaterialDialog.Builder(context)
-                .title(R.string.dialog_permission_necessary_title)
-                .content(R.string.dialog_permission_necessary_content)
-                .positiveText(R.string.dialog_ok)
-                .onAny(callback)
-                .cancelable(false)
-                .contentColorRes(android.R.color.white)
-                .backgroundColorRes(R.color.material_blue_grey)
-                .theme(Theme.DARK)
+    fun createRemoveStampSongDialog(context: Context, song: String, stamp: String, onPositive: (Any, Any) -> Unit, dismissListener: DialogInterface.OnDismissListener): AlertDialog.Builder {
+        return AlertDialog.Builder(context)
+                .setTitle(R.string.dialog_remove_stamp_title)
+                .setMessage(context.resources.getString(R.string.dialog_remove_stamp_content, song, stamp))
+                .setPositiveButton(R.string.dialog_delete, onPositive)
+                .setNegativeButton(R.string.dialog_cancel, {_, _ ->})
+                .setOnDismissListener(dismissListener)
     }
 
-    fun createRestartDialog(context: Context, callback: (Any, Any) -> Unit): MaterialDialog.Builder {
-        return MaterialDialog.Builder(context)
-                .title(R.string.dialog_restart_title)
-                .content(R.string.dialog_restart_content)
-                .positiveText(R.string.dialog_ok)
-                .onAny(callback)
-                .contentColorRes(android.R.color.white)
-                .backgroundColorRes(R.color.material_blue_grey)
-                .theme(Theme.DARK)
+    fun createHistoryDeleteDialog(context: Context, history: String, onPositive: (Any, Any) -> Unit, dismissListener: DialogInterface.OnDismissListener): AlertDialog.Builder {
+        return AlertDialog.Builder(context)
+                .setTitle(R.string.dialog_delete_history_title)
+                .setMessage(context.resources.getString(R.string.dialog_delete_history_content, history))
+                .setPositiveButton(R.string.dialog_delete, onPositive)
+                .setNegativeButton(R.string.dialog_cancel, {_, _ ->})
+                .setOnDismissListener(dismissListener)
     }
 
-    fun createRemoveStampSongDialog(context: Context, stamp: String, callback: MaterialDialog.SingleButtonCallback): MaterialDialog.Builder {
-        return MaterialDialog.Builder(context)
-                .title(R.string.dialog_delete_stamp_title)
-                .content(R.string.dialog_delete_stamp_content, stamp)
-                .positiveText(R.string.dialog_delete)
-                .negativeText(R.string.dialog_cancel)
-                .onAny(callback)
-                .contentColorRes(android.R.color.white)
-                .backgroundColorRes(R.color.material_blue_grey)
-                .theme(Theme.DARK)
+    fun createRetrieveMediaDialog(context: Context, onPositive: (Any, Any) -> Unit, onNegative: (Any, Any) -> Unit, onDismiss: DialogInterface.OnDismissListener): AlertDialog.Builder {
+        return AlertDialog.Builder(context)
+                .setTitle(R.string.dialog_reload_music_title)
+                .setMessage(R.string.dialog_reload_music_content)
+                .setPositiveButton(R.string.dialog_reload, onPositive)
+                .setNegativeButton(R.string.dialog_cancel, onNegative)
+                .setOnDismissListener(onDismiss)
     }
 
-    fun createLetsPlayMusicDialog(context: Context): MaterialDialog.Builder {
-        return MaterialDialog.Builder(context)
-                .title(R.string.dialog_lets_play_title)
-                .positiveText(R.string.dialog_ok)
-                .contentColorRes(android.R.color.white)
-                .backgroundColorRes(R.color.material_blue_grey)
-                .theme(Theme.DARK)
-    }
-
-    fun createRemoveStampSongDialog(context: Context, song: String, stamp: String, callback: MaterialDialog.SingleButtonCallback, dismissListener: DialogInterface.OnDismissListener): MaterialDialog.Builder {
-        return MaterialDialog.Builder(context)
-                .title(R.string.dialog_remove_stamp_title)
-                .content(R.string.dialog_remove_stamp_content, song, stamp)
-                .positiveText(R.string.dialog_delete)
-                .negativeText(R.string.dialog_cancel)
-                .onAny(callback)
-                .dismissListener(dismissListener)
-                .contentColorRes(android.R.color.white)
-                .backgroundColorRes(R.color.material_blue_grey)
-                .theme(Theme.DARK)
-    }
-
-    fun createHistoryDeleteDialog(context: Context, history: String, callback: MaterialDialog.SingleButtonCallback, dismissListener: DialogInterface.OnDismissListener): MaterialDialog.Builder {
-        return MaterialDialog.Builder(context)
-                .title(R.string.dialog_delete_history_title)
-                .content(R.string.dialog_delete_history_content, history)
-                .positiveText(R.string.dialog_delete)
-                .negativeText(R.string.dialog_cancel)
-                .onAny(callback)
-                .dismissListener(dismissListener)
-                .contentColorRes(android.R.color.white)
-                .backgroundColorRes(R.color.material_blue_grey)
-                .theme(Theme.DARK)
-    }
-
-    fun createRetrieveMediaDialog(context: Context, callback: MaterialDialog.SingleButtonCallback, dismissListener: DialogInterface.OnDismissListener): MaterialDialog.Builder {
-        return MaterialDialog.Builder(context)
-                .title(R.string.dialog_reload_music_title)
-                .content(R.string.dialog_reload_music_content)
-                .positiveText(R.string.dialog_reload)
-                .negativeText(R.string.dialog_cancel)
-                .onAny(callback)
-                .dismissListener(dismissListener)
-                .contentColorRes(android.R.color.white)
-                .backgroundColorRes(R.color.material_blue_grey)
-                .theme(Theme.DARK)
-    }
-
-    fun createLicenceDialog(context: Context): MaterialDialog.Builder {
+    fun createLicenceDialog(context: Context): AlertDialog.Builder {
         val dataSet = ArrayList<LicenseEntry>()
         dataSet.add(Licenses.noContent("Android SDK", "Google Inc.", "https://developer.android.com/sdk/terms.html"))
         //TODO
@@ -133,7 +137,7 @@ object DialogFacade {
         dataSet.add(Licenses.noContent("Firebase", "Google Inc.", "https://firebase.google.com/terms/"))
         dataSet.add(Licenses.fromGitHub("google/guava", LICENSE_APACHE_V2))
         dataSet.add(Licenses.fromGitHubMIT("gowong/material-sheet-fab"))
-        dataSet.add(Licenses.fromGitHubMIT("afollestad/material-dialogs"))
+        dataSet.add(Licenses.fromGitHubMIT("afollestad/aesthetic"))
         dataSet.add(Licenses.fromGitHubApacheV2("vajro/MaterialDesignLibrary"))
         dataSet.add(Licenses.fromGitHubApacheV2("sjnyag/AnimationWrapLayout"))
         dataSet.add(Licenses.fromGitHubApacheV2("sjnyag/ForceAnimateAppBarLayout"))
@@ -153,12 +157,9 @@ object DialogFacade {
         list.adapter = adapter
         Licenses.load(dataSet)
 
-        return MaterialDialog.Builder(context)
-                .title(R.string.licence)
-                .customView(list, true)
-                .positiveText(R.string.dialog_ok)
-                .contentColorRes(android.R.color.white)
-                .backgroundColorRes(R.color.material_blue_grey)
-                .theme(Theme.DARK)
+        return AlertDialog.Builder(context)
+                .setTitle(R.string.licence)
+                .setView(list)
+                .setPositiveButton(R.string.dialog_ok, { _, _ -> })
     }
 }

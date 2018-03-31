@@ -6,10 +6,9 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.view.*
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.Theme
 import com.sjn.stamp.MusicService
 import com.sjn.stamp.R
+import com.sjn.stamp.ui.DialogFacade
 import com.sjn.stamp.ui.custom.PeriodSelectLayout
 import com.sjn.stamp.ui.item.RankedArtistItem
 import com.sjn.stamp.ui.item.RankedSongItem
@@ -26,7 +25,7 @@ class RankingPagerFragment : PagerFragment(), PagerFragment.PageFragmentContaine
                               savedInstanceState: Bundle?): View? {
         period = PeriodSelectLayout.Period.latestWeek()
         setHasOptionsMenu(true)
-        initializeFab(R.drawable.ic_play_arrow, ColorStateList.valueOf(ContextCompat.getColor(context!!, R.color.bt_accent)), View.OnClickListener {
+        initializeFab(R.drawable.ic_play_arrow_black_36dp, ColorStateList.valueOf(ContextCompat.getColor(context!!, R.color.fab_color)), View.OnClickListener {
             var fragment: RankingFragment? = null
             fragments!!
                     .filter { it.fragment is RankingFragment && (it.fragment as FabFragment).isShowing }
@@ -62,16 +61,7 @@ class RankingPagerFragment : PagerFragment(), PagerFragment.PageFragmentContaine
         when (item?.itemId) {
             R.id.period -> {
                 activity?.let { activity ->
-                    val periodSelectLayout = PeriodSelectLayout(activity, period!!)
-                    MaterialDialog.Builder(activity)
-                            .title(R.string.dialog_period_select)
-                            .customView(periodSelectLayout, true)
-                            .positiveText(R.string.dialog_ok)
-                            .onPositive({ _, _ -> updateRankingPeriod(periodSelectLayout) })
-                            .contentColorRes(android.R.color.white)
-                            .backgroundColorRes(R.color.material_blue_grey)
-                            .theme(Theme.DARK)
-                            .show()
+                    DialogFacade.createRankingPeriodSelectDialog(activity, period!!, { periodSelectLayout -> updateRankingPeriod(periodSelectLayout) })
                 }
                 return false
             }

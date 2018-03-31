@@ -15,24 +15,12 @@
   limitations under the License.
   -->
 <resources>
-    <color name="color_primary">#212121</color>
-    <color name="color_primary_dark">#000000</color>
-    <color name="color_accent">#ff4081</color>
-    <color name="color_accent_dark">#C2185B</color>
-    <color name="background">#303030</color>
-    <color name="bt_accent">#00B8D4</color>
-    <color name="media_item_icon_playing">@color/bt_accent</color>
-    <color name="media_item_icon_not_playing">@color/bt_accent</color>
+
+    <color name="media_item_icon">#00B8D4</color>
     <color name="fullscreen_secondary_line_color">#E5CCCCCC</color>
     <color name="fullscreen_line_color">#E5FFFFFF</color>
-    <color name="white">#FFFFFF</color>
-    <color name="default_background">#0096a6</color>
-    <color name="material_blue_grey">#ff37474f</color>
-
-    <color name="toggle_off_stroke">#B2B2B2</color>
-    <color name="toggle_on_stroke">#24C48E</color>
-    <color name="toggle_focused_solid">#2224C48E</color>
-    <color name="toggle_on_solid">#6624C48E</color>
+    <color name="queue_title_item_background">#aa7e57c2</color>
+    <color name="header_item_background">#aa7e57c2</color>
 
     <color name="color_1">#E62E25</color>
     <color name="color_2">#EC7526</color>
@@ -41,8 +29,30 @@
     <color name="color_5">#0028F9</color>
     <color name="color_6">#3A24C2</color>
     <color name="color_7">#592EFA</color>
-    <color name="fab_sheet_color">#592EFA</color>
     <color name="fab_color">#FFFFFF</color>
+    <color name="fab_sheet_color">#592EFA</color>
 
-    <color name="material_color_orange_500">#ff9800</color>
+    <color name="button_add_stamp">#1E88E5</color>
+    <color name="button_toggle_off_stroke">#B2B2B2</color>
+    <color name="button_toggle_on_stroke">#24C48E</color>
+    <color name="button_toggle_focused_solid">#2224C48E</color>
+    <color name="button_toggle_on_solid">#6624C48E</color>
+    <color name="button_new_stamp_pressed">#EE9D00</color>
+    <color name="button_new_stamp_focused">#EE9D00</color>
+    <color name="button_new_stamp">#EE9D00</color>
+    <color name="button_new_stamp_solid">#aaEE9D00</color>
+    <color name="button_new_stamp_focused_solid">#22EE9D00</color>
+    <color name="button_new_stamp_pressed_solid">#22EE9D00</color>
+    <color name="button_remove_smart_stamp_focused">#4CAF50</color>
+    <color name="button_remove_smart_stamp_focused_solid">#224CAF50</color>
+    <color name="button_remove_smart_stamp_pressed_solid">#224CAF50</color>
+    <color name="button_remove_smart_stamp_pressed">#4CAF50</color>
+    <color name="button_remove_smart_stamp">#4CAF50</color>
+    <color name="button_remove_smart_stamp_solid">#aa4CAF50</color>
+    <color name="button_remove_stamp">#5F7CD9</color>
+    <color name="button_remove_stamp_solid">#aa5F7CD9</color>
+    <color name="button_remove_stamp_focused">#5F7CD9</color>
+    <color name="button_remove_stamp_focused_solid">#225F7CD9</color>
+    <color name="button_remove_stamp_pressed">#5F7CD9</color>
+    <color name="button_remove_stamp_pressed_solid">#225F7CD9</color>
 </resources>

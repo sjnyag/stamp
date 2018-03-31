@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#242229">
+                android:layout_height="wrap_content">
 
     <RelativeLayout
         android:id="@+id/front_view"
@@ -33,7 +32,6 @@
             android:maxLines="1"
             android:paddingTop="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-            android:textColor="?primaryTextSelector"
             tools:text="Title"/>
 
         <TextView
@@ -47,7 +45,6 @@
             android:maxLines="1"
             android:paddingBottom="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:textColor="?primaryTextSelector"
             tools:text="Subtitle"/>
 
         <TextView
@@ -60,7 +57,6 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="?primaryTextSelector"
             tools:text="1900/01/01"/>
 
         <ImageView
@@ -73,7 +69,7 @@
             android:layout_marginStart="@dimen/media_item_icon_margin_start"
             android:contentDescription="@string/play_item"
             android:src="@drawable/ic_play_arrow_black_36dp"
-            android:tint="@color/media_item_icon_not_playing"
+            android:tint="@color/media_item_icon"
             android:tintMode="src_in"/>
 
     </RelativeLayout>

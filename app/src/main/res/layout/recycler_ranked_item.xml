@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#242229">
+                android:layout_height="wrap_content">
 
     <FrameLayout
         android:id="@+id/front_view"
@@ -17,7 +16,7 @@
             android:layout_gravity="end"
             android:gravity="center"
             android:maxLines="1"
-            android:textColor="@color/media_item_icon_not_playing"
+            android:textColor="@color/media_item_icon"
             android:textSize="64sp"
             tools:text="2"/>
 
@@ -49,7 +48,6 @@
                 android:maxLines="1"
                 android:paddingTop="8dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:textColor="?primaryTextSelector"
                 tools:text="Title"/>
 
             <TextView
@@ -63,7 +61,6 @@
                 android:maxLines="1"
                 android:paddingBottom="8dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:textColor="?primaryTextSelector"
                 tools:text="Subtitle"/>
 
             <TextView
@@ -78,8 +75,7 @@
                 android:ellipsize="end"
                 android:gravity="start|center_vertical"
                 android:maxLines="1"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="18sp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 tools:text="10"/>
 
         </RelativeLayout>

@@ -88,6 +88,6 @@
         android:contentDescription="@string/play_pause"
         android:padding="8dp"
         android:src="@drawable/ic_play_arrow_black_36dp"
-        android:tint="@color/bt_accent"
+        android:tint="@color/media_item_icon"
         android:tintMode="src_in"/>
 </RelativeLayout>

@@ -3,6 +3,7 @@ package com.sjn.stamp.ui.activity
 import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Context
+import android.graphics.Color
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.view.ActionMode
 import android.support.v7.widget.RecyclerView
@@ -15,6 +16,7 @@ import com.sjn.stamp.ui.fragment.media.ListFragment
 import com.sjn.stamp.ui.observer.StampEditStateObserver
 import com.sjn.stamp.utils.CompatibleHelper
 import com.sjn.stamp.utils.LogHelper
+import com.sjn.stamp.utils.ViewHelper
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.helpers.ActionModeHelper
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
@@ -148,7 +150,7 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
     @SuppressLint("NewApi")
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
         LogHelper.d(TAG, "onCreateActionMode START")
-        CompatibleHelper.getColor(resources, R.color.color_accent_dark, theme)?.let { window.statusBarColor = it }
+        CompatibleHelper.getColor(resources, ViewHelper.getThemeColor(this, R.attr.colorAccent, Color.DKGRAY), theme)?.let { window.statusBarColor = it }
         LogHelper.d(TAG, "onCreateActionMode END")
         return true
     }
@@ -160,7 +162,7 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
     @SuppressLint("NewApi")
     override fun onDestroyActionMode(mode: ActionMode) {
         LogHelper.d(TAG, "onDestroyActionMode START")
-        CompatibleHelper.getColor(resources, R.color.color_primary_dark, theme)?.let { window.statusBarColor = it }
+        window.statusBarColor = ViewHelper.getThemeColor(this, R.attr.colorPrimaryDark, Color.DKGRAY)
         LogHelper.d(TAG, "onDestroyActionMode END")
     }
 

@@ -2,30 +2,30 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <shape>
-            <solid android:color="#225F7CD9"/>
+            <solid android:color="@color/button_remove_stamp_pressed_solid"/>
             <stroke
                 android:width="2dp"
-                android:color="#5F7CD9"/>
+                android:color="@color/button_remove_stamp_pressed"/>
             <corners android:radius="8dp"/>
         </shape>
     </item>
 
     <item android:state_focused="true">
         <shape>
-            <solid android:color="#225F7CD9"/>
+            <solid android:color="@color/button_remove_stamp_focused_solid"/>
             <stroke
                 android:width="2dp"
-                android:color="#5F7CD9"/>
+                android:color="@color/button_remove_stamp_focused"/>
             <corners android:radius="8dp"/>
         </shape>
     </item>
 
     <item>
         <shape>
-            <solid android:color="#aa5F7CD9"/>
+            <solid android:color="@color/button_remove_stamp_solid"/>
             <stroke
                 android:width="2dp"
-                android:color="#5F7CD9"/>
+                android:color="@color/button_remove_stamp"/>
             <corners android:radius="8dp"/>
         </shape>
     </item>

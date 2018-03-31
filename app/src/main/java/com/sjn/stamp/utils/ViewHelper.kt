@@ -75,7 +75,7 @@ object ViewHelper {
         4 -> R.color.color_5
         5 -> R.color.color_6
         6 -> R.color.color_7
-        else -> R.color.colorPrimaryDark
+        else -> R.color.md_black_1000
     }
 
 }

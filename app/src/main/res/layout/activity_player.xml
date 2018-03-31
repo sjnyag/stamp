@@ -43,7 +43,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fitsSystemWindows="true"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:elevation="0dp">
 
                 <android.support.design.widget.CollapsingToolbarLayout
@@ -51,10 +50,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fitsSystemWindows="true"
-                    app:contentScrim="@color/color_primary"
+                    app:contentScrim="?colorPrimary"
                     app:elevation="0dp"
                     app:expandedTitleTextAppearance="@android:color/transparent"
-                    app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
+                    app:layout_scrollFlags="scroll|enterAlways"
                     app:titleEnabled="false">
 
                     <ImageView
@@ -95,7 +94,7 @@
                 android:clickable="true"
                 app:borderWidth="0dp"
                 app:fabSize="normal"
-                app:rippleColor="@color/primary"/>
+                app:rippleColor="?colorAccent"/>
 
             <!-- Overlay that dims the screen -->
             <com.gordonwong.materialsheetfab.DimOverlayFrameLayout
@@ -122,8 +121,7 @@
                         android:name="com.sjn.stamp.ui.fragment.StampEditFragment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:background="@color/background"/>
+                        android:layout_alignParentBottom="true"/>
 
                 </android.support.v7.widget.CardView>
 
@@ -137,7 +135,6 @@
             android:id="@+id/dragView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/background"
             android:clickable="true"
             android:focusable="false"
             android:orientation="vertical">
@@ -146,7 +143,6 @@
                 android:id="@+id/controls_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
                 app:cardElevation="8dp">
 
                 <fragment
@@ -155,7 +151,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:background="@color/background"
                     tools:layout="@layout/fragment_playback_controls"/>
 
             </android.support.v7.widget.CardView>

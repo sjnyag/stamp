@@ -61,9 +61,9 @@ object SongStateHelper {
 
     private fun initializeColorStateLists(ctx: Context) {
         sColorStateNotPlaying = ColorStateList.valueOf(ctx.resources.getColor(
-                R.color.media_item_icon_not_playing))
+                R.color.media_item_icon))
         sColorStatePlaying = ColorStateList.valueOf(ctx.resources.getColor(
-                R.color.media_item_icon_playing))
+                R.color.media_item_icon))
     }
 
     private fun getStateFromController(activity: Activity): Int {

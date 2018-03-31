@@ -4,30 +4,30 @@
     <item android:state_pressed="true">
         <shape>
             <corners android:radius="8dp"/>
-            <solid android:color="@color/toggle_focused_solid"/>
+            <solid android:color="@color/button_toggle_focused_solid"/>
             <stroke
                 android:width="2dp"
-                android:color="@color/toggle_on_stroke"/>
+                android:color="@color/button_toggle_on_stroke"/>
         </shape>
     </item>
 
     <item android:state_focused="true">
         <shape>
             <corners android:radius="8dp"/>
-            <solid android:color="@color/toggle_focused_solid"/>
+            <solid android:color="@color/button_toggle_focused_solid"/>
             <stroke
                 android:width="2dp"
-                android:color="@color/toggle_on_stroke"/>
+                android:color="@color/button_toggle_on_stroke"/>
         </shape>
     </item>
 
     <item>
         <shape>
             <corners android:radius="8dp"/>
-            <solid android:color="@color/toggle_on_solid"/>
+            <solid android:color="@color/button_toggle_on_solid"/>
             <stroke
                 android:width="2dp"
-                android:color="@color/toggle_on_stroke"/>
+                android:color="@color/button_toggle_on_stroke"/>
         </shape>
     </item>
 </selector>

@@ -1,7 +1,6 @@
 package com.sjn.stamp.ui.fragment
 
 import android.app.ProgressDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -14,7 +13,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.widget.Toast
-import com.afollestad.materialdialogs.DialogAction
 import com.sjn.stamp.R
 import com.sjn.stamp.controller.SongController
 import com.sjn.stamp.controller.UserSettingController
@@ -40,19 +38,12 @@ class SettingFragment : PreferenceFragmentCompat() {
 
         findPreference("song_db_refresh").onPreferenceClickListener = Preference.OnPreferenceClickListener {
             activity?.let {
-                DialogFacade.createConfirmDialog(it, R.string.dialog_confirm_song_db_refresh, { _, which ->
-                    when (which) {
-                        DialogAction.NEGATIVE -> return@createConfirmDialog
-                        DialogAction.POSITIVE -> {
-                            context?.let {
-                                AnalyticsHelper.trackSetting(it, "song_db_refresh")
-                                Thread(Runnable { SongController(it).refreshAllSongs(MediaRetrieveHelper.allMediaMetadataCompat(it, null)) }).start()
-                            }
-                        }
-                        else -> {
-                        }
+                DialogFacade.createConfirmDialog(it, R.string.dialog_confirm_song_db_refresh, { _, _ ->
+                    context?.let {
+                        AnalyticsHelper.trackSetting(it, "song_db_refresh")
+                        Thread(Runnable { SongController(it).refreshAllSongs(MediaRetrieveHelper.allMediaMetadataCompat(it, null)) }).start()
                     }
-                }, DialogInterface.OnDismissListener { }).show()
+                }).show()
             }
             true
         }
@@ -79,24 +70,17 @@ class SettingFragment : PreferenceFragmentCompat() {
 
         findPreference("export_backup").onPreferenceClickListener = Preference.OnPreferenceClickListener {
             activity?.let {
-                DialogFacade.createConfirmDialog(it, R.string.dialog_confirm_export, { _, which ->
-                    when (which) {
-                        DialogAction.NEGATIVE -> return@createConfirmDialog
-                        DialogAction.POSITIVE -> {
-                            context?.let {
-                                AnalyticsHelper.trackSetting(it, "export_backup")
-                            }
-                            ProgressDialog(activity).run {
-                                setMessage(getString(R.string.message_processing))
-                                show()
-                                activity?.let { RealmHelper.exportBackUp(it) }
-                                dismiss()
-                            }
-                        }
-                        else -> {
-                        }
+                DialogFacade.createConfirmDialog(it, R.string.dialog_confirm_export, { _, _ ->
+                    context?.let {
+                        AnalyticsHelper.trackSetting(it, "export_backup")
                     }
-                }, DialogInterface.OnDismissListener { }).show()
+                    ProgressDialog(activity).run {
+                        setMessage(getString(R.string.message_processing))
+                        show()
+                        activity?.let { RealmHelper.exportBackUp(it) }
+                        dismiss()
+                    }
+                }).show()
             }
             true
         }
@@ -183,25 +167,18 @@ class SettingFragment : PreferenceFragmentCompat() {
             if (resultCode == AppCompatActivity.RESULT_OK) {
                 activity?.let { activity ->
                     if (data?.data?.path?.endsWith(".realm") == true) {
-                        DialogFacade.createConfirmDialog(activity, R.string.dialog_confirm_import, { _, which ->
-                            when (which) {
-                                DialogAction.NEGATIVE -> return@createConfirmDialog
-                                DialogAction.POSITIVE -> {
-                                    context?.let {
-                                        AnalyticsHelper.trackSetting(it, "import_backup")
-                                        ProgressDialog(it).run {
-                                            setMessage(getString(R.string.message_processing))
-                                            show()
-                                            RealmHelper.importBackUp(activity, data.data)
-                                            dismiss()
-                                        }
-                                        DialogFacade.createRestartDialog(it) { _, _ -> activity.recreate() }.show()
-                                    }
+                        DialogFacade.createConfirmDialog(activity, R.string.dialog_confirm_import, { _, _ ->
+                            context?.let {
+                                AnalyticsHelper.trackSetting(it, "import_backup")
+                                ProgressDialog(it).run {
+                                    setMessage(getString(R.string.message_processing))
+                                    show()
+                                    RealmHelper.importBackUp(activity, data.data)
+                                    dismiss()
                                 }
-                                else -> {
-                                }
+                                DialogFacade.createRestartDialog(it) { _, _ -> activity.recreate() }.show()
                             }
-                        }, DialogInterface.OnDismissListener { }).show()
+                        }).show()
                     } else {
                         Toast.makeText(activity, R.string.invalid_backup_selected, Toast.LENGTH_SHORT).show()
                     }

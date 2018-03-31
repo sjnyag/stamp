@@ -27,8 +27,6 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.afollestad.materialdialogs.DialogAction
-import com.afollestad.materialdialogs.MaterialDialog
 import com.sjn.stamp.MusicService
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.DialogFacade
@@ -90,20 +88,15 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
     override fun onRefresh() {
         swipeRefreshLayout ?: return
         activity?.let { activity ->
-            DialogFacade.createRetrieveMediaDialog(activity, MaterialDialog.SingleButtonCallback { _, which ->
-                when (which) {
-                    DialogAction.NEGATIVE -> {
-                        swipeRefreshLayout?.isRefreshing = false
-                        return@SingleButtonCallback
-                    }
-                    DialogAction.POSITIVE -> {
+            DialogFacade.createRetrieveMediaDialog(activity,
+                    { _, _ ->
                         listener?.destroyActionModeIfCan()
                         mediaBrowsable?.sendCustomAction(MusicService.CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER, null, null)
-                        return@SingleButtonCallback
-                    }
-                    else -> swipeRefreshLayout?.isRefreshing = false
-                }
-            }, DialogInterface.OnDismissListener { swipeRefreshLayout?.isRefreshing = false }).show()
+                    },
+                    { _, _ ->
+                        swipeRefreshLayout?.isRefreshing = false
+                    },
+                    DialogInterface.OnDismissListener { swipeRefreshLayout?.isRefreshing = false }).show()
         }
     }
 

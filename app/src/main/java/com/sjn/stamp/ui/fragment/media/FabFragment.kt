@@ -19,6 +19,7 @@ import com.sjn.stamp.ui.item.holder.SongViewHolder
 import com.sjn.stamp.ui.observer.StampEditStateObserver
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.SpotlightHelper
+import com.sjn.stamp.utils.ViewHelper
 import com.takusemba.spotlight.SimpleTarget
 import com.takusemba.spotlight.Spotlight
 
@@ -101,7 +102,7 @@ abstract class FabFragment : Fragment(), StampEditStateObserver.Listener {
                     activity.findViewById<View>(R.id.overlay).apply {
                         visibility = View.VISIBLE
                     },
-                    ContextCompat.getColor(activity, R.color.background),
+                    ViewHelper.getThemeColor(activity, R.attr.colorPrimary, Color.DKGRAY),
                     ContextCompat.getColor(activity, R.color.fab_color))
             centeredMaterialSheetFab?.setEventListener(object : MaterialSheetFabEventListener() {
                 override fun onShowSheet() {}
@@ -172,18 +173,20 @@ abstract class FabFragment : Fragment(), StampEditStateObserver.Listener {
         val layoutManager = recyclerView?.layoutManager as LinearLayoutManager
         val view = recyclerView?.findViewHolderForAdapterPosition(layoutManager.findFirstVisibleItemPosition())
         if (view is SongViewHolder) {
-            activity?.let {
-                Spotlight.with(it)
-                        .setDuration(200L)
-                        .setAnimation(DecelerateInterpolator(2f))
-                        .setTargets(SimpleTarget.Builder(activity!!)
-                                .setPoint(view.showTapTargetView)
-                                .setRadius(120f)
-                                .setTitle(getString(R.string.spotlight_stamp_add_title))
-                                .setDescription(getString(R.string.spotlight_stamp_add_description))
-                                .build())
-                        .start()
-                SpotlightHelper.setShown(it, SpotlightHelper.KEY_STAMP_ADD)
+            view.showTapTargetView?.let { textView ->
+                activity?.let { activity ->
+                    Spotlight.with(activity)
+                            .setDuration(200L)
+                            .setAnimation(DecelerateInterpolator(2f))
+                            .setTargets(SimpleTarget.Builder(activity)
+                                    .setPoint(textView)
+                                    .setRadius(120f)
+                                    .setTitle(getString(R.string.spotlight_stamp_add_title))
+                                    .setDescription(getString(R.string.spotlight_stamp_add_description))
+                                    .build())
+                            .start()
+                    SpotlightHelper.setShown(activity, SpotlightHelper.KEY_STAMP_ADD)
+                }
             }
         }
     }

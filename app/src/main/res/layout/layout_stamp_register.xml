@@ -30,7 +30,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/stamp_input_layout"
         android:layout_marginStart="40dp"
-        android:background="@color/colorPrimary"
+        android:background="?colorAccent"
         android:text="@string/stamp_register"
-        android:textColor="@android:color/white"/>
+        android:textColor="?android:textColorPrimaryInverse"/>
 </RelativeLayout>

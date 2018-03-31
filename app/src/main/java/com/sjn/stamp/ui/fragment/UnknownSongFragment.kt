@@ -10,15 +10,13 @@ import android.support.annotation.RequiresApi
 import android.support.v4.app.Fragment
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import com.afollestad.materialdialogs.DialogAction
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.Theme
 import com.sjn.stamp.R
 import com.sjn.stamp.controller.SongController
 import com.sjn.stamp.model.Song
@@ -50,24 +48,16 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
     private var fastScroller: FastScroller? = null
     private var listState: Parcelable? = null
 
-    private var songSelectDialog: MaterialDialog? = null
+    private var songSelectDialog: AlertDialog? = null
 
     override fun onRefresh() {
         activity?.let {
-            DialogFacade.createConfirmDialog(it, R.string.dialog_confirm_song_db_refresh, { _, which ->
-                when (which) {
-                    DialogAction.NEGATIVE -> {
+            DialogFacade.createConfirmDialog(it, R.string.dialog_confirm_song_db_refresh, { _, _ -> CreateUnknownSongListAsyncTask(this).execute() },
+                    { _, _ ->
                         swipeRefreshLayout?.let {
                             it.isRefreshing = false
                         }
-                    }
-                    DialogAction.POSITIVE -> {
-                        CreateUnknownSongListAsyncTask(this).execute()
-                    }
-                    else -> {
-                    }
-                }
-            }, DialogInterface.OnDismissListener { }).show()
+                    }, DialogInterface.OnDismissListener { }).show()
         }
     }
 
@@ -167,14 +157,7 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
             view.layoutManager = SmoothScrollLinearLayoutManager(activity)
             view.adapter = mergeSongAdapter
             context?.let {
-                songSelectDialog = MaterialDialog.Builder(it)
-                        .title(R.string.dialog_merge_song)
-                        .customView(view, false)
-                        .negativeText(R.string.dialog_cancel)
-                        .contentColorRes(android.R.color.white)
-                        .backgroundColorRes(R.color.material_blue_grey_800)
-                        .theme(Theme.DARK)
-                        .show()
+                songSelectDialog = DialogFacade.createSelectValidSongDialog(it, view)
             }
         }
         CreateMergeSongListAsyncTask(this).execute()
@@ -182,10 +165,8 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
 
     private fun openMergeConfirmDialog(position: Int, unknownSong: Song, mediaMetadata: MediaMetadataCompat) {
         activity?.let {
-            DialogFacade.createConfirmDialog(it, resources.getString(R.string.dialog_confirm_merge_song, unknownSong.title, MediaItemHelper.getTitle(mediaMetadata)), { _, which ->
-                when (which) {
-                    DialogAction.NEGATIVE -> return@createConfirmDialog
-                    DialogAction.POSITIVE -> {
+            DialogFacade.createConfirmDialog(it, resources.getString(R.string.dialog_confirm_merge_song, unknownSong.title, MediaItemHelper.getTitle(mediaMetadata)),
+                    { _, _ ->
                         activity?.let {
                             if (SongController(it).mergeSong(unknownSong, mediaMetadata)) {
                                 it.runOnUiThread({
@@ -196,10 +177,7 @@ class UnknownSongFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Fa
                             }
                         }
                     }
-                    else -> {
-                    }
-                }
-            }, DialogInterface.OnDismissListener { }).show()
+            ).show()
         }
     }
 

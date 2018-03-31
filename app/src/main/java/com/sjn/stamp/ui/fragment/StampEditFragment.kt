@@ -9,15 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import com.afollestad.materialdialogs.DialogAction
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.Theme
 import com.gc.materialdesign.views.ButtonFloatSmall
 import com.github.sjnyag.animationwraplayout.AnimationWrapLayout
 import com.sjn.stamp.R
 import com.sjn.stamp.controller.StampController
 import com.sjn.stamp.ui.DialogFacade
-import com.sjn.stamp.ui.custom.StampRegisterLayout
 import com.sjn.stamp.ui.custom.ToggleTextView
 import com.sjn.stamp.ui.observer.StampEditStateObserver
 
@@ -33,15 +29,7 @@ class StampEditFragment : Fragment(), StampEditStateObserver.Listener {
         registerButton = (View.inflate(context, R.layout.add_stamp_button, null) as ButtonFloatSmall).apply {
             setOnClickListener {
                 context.let {
-                    MaterialDialog.Builder(it).apply {
-                        title(R.string.dialog_stamp_register)
-                        customView(StampRegisterLayout(it, null), true)
-                        positiveText(R.string.dialog_close)
-                        onPositive { _, _ -> }
-                        contentColorRes(android.R.color.white)
-                        backgroundColorRes(R.color.material_blue_grey)
-                        theme(Theme.DARK)
-                    }.show()
+                    DialogFacade.createRegisterStampDialog(it)
                 }
             }
         }
@@ -84,18 +72,11 @@ class StampEditFragment : Fragment(), StampEditStateObserver.Listener {
                 if (stamp.isEmpty()) {
                     return@OnLongClickListener false
                 }
-                DialogFacade.createRemoveStampSongDialog(context, stamp, MaterialDialog.SingleButtonCallback { _, which ->
-                    when (which) {
-                        DialogAction.NEGATIVE -> return@SingleButtonCallback
-                        DialogAction.POSITIVE -> {
-                            getContext().let {
-                                StampController(it).delete(stamp, false)
-                                stampListLayout?.removeViewWithAnimation(view)
-                                updateEmptyString(StampController(it).findAll())
-                            }
-                        }
-                        else -> {
-                        }
+                DialogFacade.createRemoveStampSongDialog(context, stamp, { _, _ ->
+                    getContext().let {
+                        StampController(it).delete(stamp, false)
+                        stampListLayout?.removeViewWithAnimation(view)
+                        updateEmptyString(StampController(it).findAll())
                     }
                 }).show()
                 true

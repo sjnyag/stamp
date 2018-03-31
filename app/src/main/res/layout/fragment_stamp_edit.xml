@@ -17,7 +17,6 @@
         android:paddingTop="8dp"
         android:text="@string/choose_stamps"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-        android:textColor="?primaryTextSelector"
         tools:text="Choose stamps"/>
 
     <TextView
@@ -29,7 +28,6 @@
         android:paddingTop="8dp"
         android:text="@string/empty_stamp"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textColor="?primaryTextSelector"
         android:visibility="gone"/>
 
     <ScrollView
@@ -56,8 +54,8 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/stamp_list"
         android:layout_marginStart="40dp"
-        android:background="@color/colorPrimary"
+        android:background="?colorAccent"
         android:text="@string/dialog_ok"
-        android:textColor="@android:color/white"/>
+        android:textColor="?android:textColorPrimaryInverse"/>
 
 </RelativeLayout>
