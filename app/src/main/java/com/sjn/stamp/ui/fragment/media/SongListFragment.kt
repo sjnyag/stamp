@@ -187,7 +187,7 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        LogHelper.d(TAG, "onCreateView START" + mediaId)
+        LogHelper.d(TAG, "onCreateView START $mediaId")
         val rootView = inflater.inflate(R.layout.fragment_list, container, false)
         if (savedInstanceState != null) {
             listState = savedInstanceState.getParcelable(ListFragment.LIST_STATE_KEY)

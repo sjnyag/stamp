@@ -52,10 +52,10 @@ class PlaybackControlsFragment : Fragment(), MediaControllerObserver.Listener {
             val controller = MediaControllerHelper.getController(it)
                     ?: return@OnClickListener
             val state = controller.playbackState?.state ?: PlaybackStateCompat.STATE_NONE
-            LogHelper.d(TAG, "Button pressed, in state " + state)
+            LogHelper.d(TAG, "Button pressed, in state $state")
             when (v.id) {
                 R.id.play_pause -> {
-                    LogHelper.d(TAG, "Play button pressed, in state " + state)
+                    LogHelper.d(TAG, "Play button pressed, in state $state")
                     if (state == PlaybackStateCompat.STATE_PAUSED ||
                             state == PlaybackStateCompat.STATE_STOPPED ||
                             state == PlaybackStateCompat.STATE_NONE) {

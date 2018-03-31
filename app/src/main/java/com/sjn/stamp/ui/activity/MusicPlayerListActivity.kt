@@ -49,8 +49,6 @@ import java.util.*
  */
 open class MusicPlayerListActivity : MediaBrowserListActivity() {
 
-    private val REQUEST_PERMISSION = 1
-
     private var voiceSearchParams: Bundle? = null
     private var savedInstanceState: Bundle? = null
     private var newIntent: Intent? = null
@@ -105,7 +103,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         LogHelper.d(TAG, "onRequestPermissionsResult")
-        LogHelper.d(TAG, "onRequestPermissionsResult: requestCode " + requestCode)
+        LogHelper.d(TAG, "onRequestPermissionsResult: requestCode $requestCode")
         LogHelper.d(TAG, "onRequestPermissionsResult: permissions " + Arrays.toString(permissions))
         LogHelper.d(TAG, "onRequestPermissionsResult: grantResults " + Arrays.toString(grantResults))
         if (!PermissionHelper.hasPermission(this, MediaRetrieveHelper.PERMISSIONS)) {
@@ -141,7 +139,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
     }
 
     override fun onNewIntent(intent: Intent) {
-        LogHelper.d(TAG, "onNewIntent, intent=" + intent)
+        LogHelper.d(TAG, "onNewIntent, intent=$intent")
         newIntent = intent
     }
 
@@ -150,7 +148,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
     }
 
     override fun playByCategory(mediaId: String) {
-        LogHelper.d(TAG, "playByCategory, mediaId=" + mediaId)
+        LogHelper.d(TAG, "playByCategory, mediaId=$mediaId")
         MediaControllerCompat.getMediaController(this)?.transportControls?.playFromMediaId(mediaId, null)
 
     }
@@ -174,9 +172,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
             voiceSearchParams = null
         }
         reservedUri?.let { uri ->
-            MediaControllerCompat.getMediaController(this)?.let { controller ->
-                controller.transportControls.playFromUri(uri, null)
-            }
+            MediaControllerCompat.getMediaController(this)?.transportControls?.playFromUri(uri, null)
             reservedUri = null
         }
     }
@@ -220,7 +216,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
     }
 
     override fun navigateToBrowser(mediaId: String, fragment: Fragment, sharedElements: List<Pair<String, View>>) {
-        LogHelper.d(TAG, "navigateToBrowser, mediaId=" + mediaId)
+        LogHelper.d(TAG, "navigateToBrowser, mediaId=$mediaId")
         mediaBrowserListFragment?.let {
             if (!TextUtils.equals(it.mediaId, mediaId)) {
                 navigateToBrowser(fragment, true, sharedElements)
@@ -244,6 +240,8 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
         private const val SAVED_MEDIA_ID = "com.sjn.stamp.MEDIA_ID"
 
         const val EXTRA_START_FULLSCREEN = "com.sjn.stamp.EXTRA_START_FULLSCREEN"
+
+        const val REQUEST_PERMISSION = 1
 
         /**
          * Optionally used with [.EXTRA_START_FULLSCREEN] to carry a MediaDescription to

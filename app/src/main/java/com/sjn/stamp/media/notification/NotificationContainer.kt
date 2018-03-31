@@ -43,7 +43,7 @@ class NotificationContainer(
     }
 
     fun create(metadata: MediaMetadataCompat?, playbackState: PlaybackStateCompat?) {
-        LogHelper.d(TAG, "updateNotificationMetadata. metadata=" + metadata)
+        LogHelper.d(TAG, "updateNotificationMetadata. metadata=$metadata")
         notification = NotificationCompat.Builder(context, CHANNEL_ID)
                 .apply {
                     addPreviousAction()
@@ -126,7 +126,7 @@ class NotificationContainer(
     }
 
     private fun NotificationCompat.Builder.setNotificationPlaybackState(playbackState: PlaybackStateCompat?) {
-        LogHelper.d(TAG, "updateNotificationPlaybackState. playbackState=" + playbackState)
+        LogHelper.d(TAG, "updateNotificationPlaybackState. playbackState=$playbackState")
         if (playbackState?.state == PlaybackStateCompat.STATE_PLAYING && playbackState.position >= 0) {
             LogHelper.d(TAG, "updateNotificationPlaybackState. updating playback position to ",
                     (System.currentTimeMillis() - playbackState.position) / 1000, " seconds")

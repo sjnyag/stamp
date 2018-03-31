@@ -36,7 +36,7 @@ object QueueHelper {
 
     private val TAG = LogHelper.makeLogTag(QueueHelper::class.java)
 
-    private val RANDOM_QUEUE_SIZE = 10
+    private const val RANDOM_QUEUE_SIZE = 10
 
     class QueueList : ArrayList<MediaSessionCompat.QueueItem>, Parcelable {
 
@@ -54,6 +54,7 @@ object QueueHelper {
 
         companion object {
             @JvmField
+            @Suppress("unused")
             val CREATOR: Parcelable.Creator<QueueList> = object : Parcelable.Creator<QueueList> {
                 override fun createFromParcel(source: Parcel): QueueList {
                     return QueueList(source)
@@ -165,7 +166,8 @@ object QueueHelper {
 
 
     fun getMusicIndexOnQueueByMusicId(queue: Iterable<MediaSessionCompat.QueueItem>?, musicId: String): Int =
-            queue?.indexOfFirst { musicId == MediaIDHelper.extractMusicIDFromMediaID(it.description.mediaId!!) } ?: -1
+            queue?.indexOfFirst { musicId == MediaIDHelper.extractMusicIDFromMediaID(it.description.mediaId!!) }
+                    ?: -1
 
     fun getMusicIndexOnQueueByMediaId(queue: Iterable<MediaSessionCompat.QueueItem>?, mediaId: String?): Int =
             queue?.indexOfFirst { mediaId == it.description.mediaId } ?: -1
@@ -239,7 +241,7 @@ object QueueHelper {
                 return false
             }
             if (!TextUtils.equals(list1[i].description.mediaId,
-                    list2[i].description.mediaId)) {
+                            list2[i].description.mediaId)) {
                 return false
             }
         }

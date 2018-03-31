@@ -22,7 +22,7 @@ open class RankedArtist(
         for ((key, value) in songCountMap) {
             rankedSongList.add(RankedSong(value, key))
         }
-        Collections.sort(rankedSongList) { t1, t2 -> t2.playCount - t1.playCount }
+        rankedSongList.sortWith(Comparator { t1, t2 -> t2.playCount - t1.playCount })
         return rankedSongList
     }
 }

@@ -101,7 +101,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
      */
     override fun onCustomAction(action: String, extras: Bundle?,
                                 result: MediaBrowserServiceCompat.Result<Bundle>) {
-        LogHelper.d(TAG, "onCustomAction " + action)
+        LogHelper.d(TAG, "onCustomAction $action")
         when (action) {
             CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER -> {
                 result.detach()
@@ -121,7 +121,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
 
     override fun onSearch(query: String, extras: Bundle?,
                           result: MediaBrowserServiceCompat.Result<List<MediaBrowserCompat.MediaItem>>) {
-        LogHelper.d(TAG, "onSearch " + query)
+        LogHelper.d(TAG, "onSearch $query")
         result.detach()
         if (musicProvider.isInitialized) {
             Thread(Runnable { result.sendResult(musicProvider.getChildren(query, resources)) }).start()
@@ -130,7 +130,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
 
     override fun onGetRoot(clientPackageName: String, clientUid: Int,
                            rootHints: Bundle?): MediaBrowserServiceCompat.BrowserRoot? {
-        LogHelper.d(TAG, "OnGetRoot: clientPackageName=" + clientPackageName, "; clientUid=$clientUid ; rootHints=", rootHints)
+        LogHelper.d(TAG, "OnGetRoot: clientPackageName=$clientPackageName", "; clientUid=$clientUid ; rootHints=", rootHints)
         return MediaBrowserServiceCompat.BrowserRoot(MediaIDHelper.MEDIA_ID_ROOT, null)
     }
 

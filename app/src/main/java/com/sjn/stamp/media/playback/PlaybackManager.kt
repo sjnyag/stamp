@@ -257,7 +257,7 @@ class PlaybackManager(
 
         override fun onSkipToQueueItem(queueId: Long) {
             mediaLogger.onSkip(currentMediaId, currentPosition)
-            LogHelper.d(TAG, "OnSkipToQueueItem:" + queueId)
+            LogHelper.d(TAG, "OnSkipToQueueItem:$queueId")
             queueManager.setCurrentQueueItem(queueId)
             queueManager.updateMetadata()
         }

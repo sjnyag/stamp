@@ -125,19 +125,19 @@ class MyStampListFragment : SongListFragment(), UndoHelper.OnUndoListener, Flexi
 
 
     override fun onActionStateChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
-        LogHelper.i(TAG, "onActionStateChanged actionState=" + actionState)
+        LogHelper.i(TAG, "onActionStateChanged actionState=$actionState")
         swipeRefreshLayout?.isEnabled = actionState == ItemTouchHelper.ACTION_STATE_IDLE
     }
 
     override fun onActionCanceled(action: Int) {
-        LogHelper.i(TAG, "onUndoConfirmed action=" + action)
+        LogHelper.i(TAG, "onUndoConfirmed action=$action")
         adapter?.restoreDeletedItems()
         swipeRefreshLayout?.isRefreshing = false
         if (adapter?.isRestoreWithSelection == true) listener?.restoreSelection()
     }
 
     override fun onActionConfirmed(action: Int, event: Int) {
-        LogHelper.i(TAG, "onDeleteConfirmed action=" + action)
+        LogHelper.i(TAG, "onDeleteConfirmed action=$action")
         swipeRefreshLayout?.isRefreshing = false
         for (adapterItem in adapter?.deletedItems ?: emptyList()) {
             try {

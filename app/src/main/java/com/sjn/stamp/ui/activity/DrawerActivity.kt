@@ -126,10 +126,6 @@ abstract class DrawerActivity : AppCompatActivity(), FragmentManager.OnBackStack
 
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
-
     override fun onResume() {
         super.onResume()
         supportFragmentManager.addOnBackStackChangedListener(this)

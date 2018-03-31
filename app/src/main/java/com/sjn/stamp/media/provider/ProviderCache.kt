@@ -45,6 +45,7 @@ internal object ProviderCache {
 
         companion object {
             @JvmField
+            @Suppress("unused")
             val CREATOR: Parcelable.Creator<MediaMapCache> = object : Parcelable.Creator<MediaMapCache> {
                 override fun createFromParcel(source: Parcel): MediaMapCache {
                     val map = HashMap<String, MediaMetadataCompat>()

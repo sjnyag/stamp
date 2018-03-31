@@ -13,6 +13,7 @@ import net.yslibrary.licenseadapter.Licenses
 import net.yslibrary.licenseadapter.Licenses.LICENSE_APACHE_V2
 import java.util.*
 
+@Suppress("unused")
 object DialogFacade {
     fun createConfirmDialog(context: Context, content: String, callback: (Any, Any) -> Unit, dismissListener: DialogInterface.OnDismissListener): MaterialDialog.Builder {
         return MaterialDialog.Builder(context)

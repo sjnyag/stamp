@@ -14,7 +14,7 @@ open class AllProvider(context: Context) : SingleListProvider(context) {
 
     override fun createTrackList(musicListById: Map<String, MediaMetadataCompat>): List<MediaMetadataCompat> {
         return ArrayList(musicListById.values).apply {
-            Collections.sort(this) { lhs, rhs -> compareMediaList(lhs, rhs) }
+            this.sortWith(Comparator { lhs, rhs -> compareMediaList(lhs, rhs) })
         }
     }
 

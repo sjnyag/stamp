@@ -22,6 +22,7 @@ import com.sjn.stamp.utils.MediaPlayerHelper
 /**
  * A class that implements local media playback using [android.media.MediaPlayer]
  */
+@Suppress("unused")
 internal class LocalPlayback(context: Context, private val callback: Playback.Callback, initialStreamPosition: Int, initialMediaId: String?) : Playback, MediaPlayerHelper.MediaPlayerManager.Listener {
 
     private val mediaPlayerManager = MediaPlayerHelper.MediaPlayerManager(context, initialStreamPosition, initialMediaId, this)

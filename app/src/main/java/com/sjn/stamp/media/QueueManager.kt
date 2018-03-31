@@ -147,7 +147,7 @@ class QueueManager(private val context: Context,
         val queue = QueueHelper.getPlayingQueueFromSearch(query, extras, musicProvider)
         setCurrentQueue(context.getString(R.string.search_queue_title), queue)
         updateMetadata()
-        return queue != null && !queue.isEmpty()
+        return !queue.isEmpty()
     }
 
     fun setRandomQueue() {

@@ -21,19 +21,19 @@ import java.util.*
 
 object NotificationHelper {
 
-    val ACTION_CMD = "com.sjn.stamp.ACTION_CMD"
-    val CMD_NAME = "CMD_NAME"
-    val CMD_PLAY = "CMD_PLAY"
-    val CMD_PAUSE = "CMD_PAUSE"
-    val CMD_STOP_CASTING = "CMD_STOP_CASTING"
-    val CMD_KILL = "CMD_KILL"
-    val CMD_SHARE = "CMD_SHARE"
-    val SHARE_MESSAGE = "SHARE_MESSAGE"
-    val HASH_TAG_LIST = "HASH_TAG_LIST"
-    private val CHANNEL_ID = "stamp_channel_02"
-    private val CHANNEL_NAME = "Achievement"
-    private val BUNDLE_KEY_PLAYED_TEXT = "BUNDLE_KEY_PLAYED_TEXT"
-    private val BUNDLE_KEY_HASH_TAG_LIST = "BUNDLE_KEY_HASH_TAG_LIST"
+    const val ACTION_CMD = "com.sjn.stamp.ACTION_CMD"
+    const val CMD_NAME = "CMD_NAME"
+    const val CMD_PLAY = "CMD_PLAY"
+    const val CMD_PAUSE = "CMD_PAUSE"
+    const val CMD_STOP_CASTING = "CMD_STOP_CASTING"
+    const val CMD_KILL = "CMD_KILL"
+    const val CMD_SHARE = "CMD_SHARE"
+    const val SHARE_MESSAGE = "SHARE_MESSAGE"
+    const val HASH_TAG_LIST = "HASH_TAG_LIST"
+    private const val CHANNEL_ID = "stamp_channel_02"
+    private const val CHANNEL_NAME = "Achievement"
+    private const val BUNDLE_KEY_PLAYED_TEXT = "BUNDLE_KEY_PLAYED_TEXT"
+    private const val BUNDLE_KEY_HASH_TAG_LIST = "BUNDLE_KEY_HASH_TAG_LIST"
 
     fun isSendPlayedNotification(count: Int): Boolean {
         return count == 10 || count == 50 || count % 100 == 0 && count >= 100
@@ -140,7 +140,7 @@ object NotificationHelper {
             fun onLoad(builder: NotificationCompat.Builder)
         }
 
-        var bitmap: Bitmap? = null
+        private var bitmap: Bitmap? = null
 
         override fun onPreExecute() {
             bitmap = null

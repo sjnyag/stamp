@@ -225,7 +225,7 @@ object ExoPlayerHelper {
         }
 
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            LogHelper.i(TAG, "ExoPlayer onPlayerStateChanged: playWhenReady=" + playWhenReady, ", playbackState=", playbackState)
+            LogHelper.i(TAG, "ExoPlayer onPlayerStateChanged: playWhenReady=$playWhenReady", ", playbackState=", playbackState)
             when (playbackState) {
                 Player.STATE_IDLE, Player.STATE_BUFFERING, Player.STATE_READY ->
                     listener.onPlaybackStatusChanged(state)
@@ -240,10 +240,10 @@ object ExoPlayerHelper {
                 ExoPlaybackException.TYPE_SOURCE -> error.sourceException.message
                 ExoPlaybackException.TYPE_RENDERER -> error.rendererException.message
                 ExoPlaybackException.TYPE_UNEXPECTED -> error.unexpectedException.message
-                else -> "Unknown: " + error
+                else -> "Unknown: $error"
             }
-            LogHelper.e(TAG, "ExoPlayer error: what=" + what)
-            listener.onError("ExoPlayer error " + what)
+            LogHelper.e(TAG, "ExoPlayer error: what=$what")
+            listener.onError("ExoPlayer error $what")
         }
 
         override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {

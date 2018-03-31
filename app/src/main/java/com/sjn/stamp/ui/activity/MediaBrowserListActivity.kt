@@ -9,9 +9,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.ImageView
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.fragment.media.ListFragment
 import com.sjn.stamp.ui.observer.StampEditStateObserver
@@ -111,7 +109,7 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
         LogHelper.d(TAG, "onQueryTextChange START")
         adapter?.let {
             if (it.hasNewSearchText(newText)) {
-                LogHelper.i(TAG, "onQueryTextChange newText: " + newText)
+                LogHelper.i(TAG, "onQueryTextChange newText: $newText")
                 it.searchText = newText
                 // Fill and Filter mItems with your custom list and automatically animate the changes
                 // Watch out! The original list must be a copy

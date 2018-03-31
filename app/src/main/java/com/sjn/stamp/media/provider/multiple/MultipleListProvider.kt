@@ -25,7 +25,7 @@ abstract class MultipleListProvider(protected var context: Context) : ListProvid
     protected open fun updateTrackListMap(musicListById: MutableMap<String, MediaMetadataCompat>) {
         for (music in musicListById.values) {
             val key = MediaIDHelper.escape(music.getString(mediaKey))
-            if (key != null && !key.isEmpty()) {
+            if (!key.isEmpty()) {
                 var list = trackMap[key]
                 if (list == null) {
                     list = ArrayList()
@@ -61,7 +61,7 @@ abstract class MultipleListProvider(protected var context: Context) : ListProvid
             return emptyList()
         }
         return ArrayList(getTrackListMap(musicListById)[key]).apply {
-            Collections.sort(this) { lhs, rhs -> compareMediaList(lhs, rhs) }
+            this.sortWith(Comparator { lhs, rhs -> compareMediaList(lhs, rhs) })
         }
     }
 
@@ -76,7 +76,7 @@ abstract class MultipleListProvider(protected var context: Context) : ListProvid
             return ArrayList()
         }
         val list = Lists.newArrayList(trackListMap.keys)
-        Collections.sort(list)
+        list.sort()
         return list
     }
 

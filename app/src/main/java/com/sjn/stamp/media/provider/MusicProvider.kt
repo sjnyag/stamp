@@ -53,7 +53,7 @@ class MusicProvider(private val context: Context, private val source: MusicProvi
             }
             return ArrayList<MediaMetadataCompat>(musicMap.size).apply {
                 this += musicMap.values
-                Collections.shuffle(this)
+                this.shuffle()
             }
         }
 
@@ -135,7 +135,7 @@ class MusicProvider(private val context: Context, private val source: MusicProvi
     }
 
     fun getChildren(mediaId: String, resources: Resources): List<MediaBrowserCompat.MediaItem> {
-        LogHelper.i(TAG, "getChildren mediaId: " + mediaId)
+        LogHelper.i(TAG, "getChildren mediaId: $mediaId")
         val mediaItems = ArrayList<MediaBrowserCompat.MediaItem>()
 
         if (!MediaIDHelper.isBrowseable(mediaId)) {

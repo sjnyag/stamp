@@ -26,7 +26,7 @@ abstract class MediaBrowserListFragment : ListFragment(), MediaBrowserObserver.L
         override fun onChildrenLoaded(parentId: String,
                                       children: List<MediaBrowserCompat.MediaItem>) {
             LogHelper.d(TAG, "onChildrenLoaded START")
-            LogHelper.d(TAG, "onChildrenLoaded parentId: " + parentId)
+            LogHelper.d(TAG, "onChildrenLoaded parentId: $parentId")
             LogHelper.d(TAG, "onChildrenLoaded children: " + children.size)
             onMediaBrowserChildrenLoaded(parentId, children)
             LogHelper.d(TAG, "onChildrenLoaded END")
