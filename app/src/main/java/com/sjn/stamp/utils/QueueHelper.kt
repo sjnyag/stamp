@@ -88,7 +88,11 @@ object QueueHelper {
         LogHelper.d(TAG, "getPlayingQueue hierarchy[0]: ", hierarchy[0])
         return if (hierarchy.size == 1) {
             if (MediaIDHelper.isDirect(hierarchy[0])) {
-                convertToQueue(ArrayList(listOf(musicProvider.getMusicByMusicId(MediaIDHelper.extractMusicIDFromMediaID(mediaId)!!)!!)), hierarchy[0])
+                MediaIDHelper.extractMusicIDFromMediaID(mediaId)?.let {
+                    musicProvider.getMusicByMusicId(it)?.let {
+                        convertToQueue(ArrayList(listOf(it)), hierarchy[0])
+                    }
+                } ?: emptyList()
             } else convertToQueue(musicProvider.getMusicsHierarchy(hierarchy[0], null), hierarchy[0])
         } else convertToQueue(musicProvider.getMusicsHierarchy(hierarchy[0], hierarchy[1]), hierarchy[0], hierarchy[1])
 /*TODO

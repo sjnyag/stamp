@@ -231,10 +231,13 @@ class QueueManager(private val context: Context,
                     musicProvider.updateMusicArt(musicId, bitmap, icon)
 
                     // If we are still playing the same music, notify the listeners:
-                    val currentPlayingId = MediaIDHelper.extractMusicIDFromMediaID(currentMusic?.description?.mediaId!!)
-                    if (musicId == currentPlayingId) {
-                        musicProvider.getMusicByMusicId(currentPlayingId)?.let {
-                            listener.onMetadataChanged(it)
+                    currentMusic?.description?.mediaId?.let {
+                        MediaIDHelper.extractMusicIDFromMediaID(it)?.let { currentPlayingId ->
+                            if (musicId == currentPlayingId) {
+                                musicProvider.getMusicByMusicId(currentPlayingId)?.let {
+                                    listener.onMetadataChanged(it)
+                                }
+                            }
                         }
                     }
                 }

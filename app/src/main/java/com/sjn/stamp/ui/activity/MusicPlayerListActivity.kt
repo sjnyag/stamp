@@ -95,6 +95,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
             LogHelper.d(TAG, "has no Permission")
             PermissionHelper.requestPermissions(this, MediaRetrieveHelper.PERMISSIONS, REQUEST_PERMISSION)
         }
+        navigateToBrowser(DrawerMenu.first().fragment, false)
         this.savedInstanceState = savedInstanceState
     }
 
@@ -211,7 +212,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
             drawer?.setSelection(it.menuId.toLong())
         } ?: mediaId?.let {
             navigateToBrowser(it, SongListFragmentFactory.create(it), emptyList())
-        } ?: navigateToBrowser(DrawerMenu.first().fragment, false)
+        }
 
         startFullScreenIfNeeded(intent)
     }
