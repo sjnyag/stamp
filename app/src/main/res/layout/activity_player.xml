@@ -53,7 +53,7 @@
                     app:contentScrim="?colorPrimary"
                     app:elevation="0dp"
                     app:expandedTitleTextAppearance="@android:color/transparent"
-                    app:layout_scrollFlags="scroll|enterAlways"
+                    app:layout_scrollFlags="scroll|exitUntilCollapsed"
                     app:titleEnabled="false">
 
                     <ImageView
