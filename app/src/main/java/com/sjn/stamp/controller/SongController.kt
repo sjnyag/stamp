@@ -111,7 +111,7 @@ class SongController(private val context: Context) {
     private fun registerSongStampList(stampNameList: List<String>, track: MediaMetadataCompat, isSystem: Boolean) {
         RealmHelper.realmInstance.use { realm ->
             for (stampName in stampNameList) {
-                SongDao.findByMediaMetadata(realm, track)?.let {
+                SongDao.findOrCreate(realm, track).let {
                     SongStampDao.register(realm, it.id, stampName, isSystem)
                 }
             }

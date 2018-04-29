@@ -35,7 +35,7 @@ object SongStampDao : BaseDao<SongStamp>() {
         realm.executeTransaction({
             val song = SongDao.findById(realm, songId)
             val songStamp = findOrCreate(realm, name, isSystem)
-            if (song != null && !songStamp.songList.contains(song)) {
+            if (song != null && songStamp.songList.contains(song)) {
                 songStamp.removeSong(song)
                 result = true
             }
