@@ -19,5 +19,6 @@ open class AllProvider(context: Context) : SingleListProvider(context) {
     }
 
     protected open fun compareMediaList(lhs: MediaMetadataCompat, rhs: MediaMetadataCompat): Int =
-            lhs.getString(MediaMetadataCompat.METADATA_KEY_TITLE).compareTo(rhs.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
+            (lhs.getString(MediaMetadataCompat.METADATA_KEY_TITLE)
+                    ?: "").compareTo(rhs.getString(MediaMetadataCompat.METADATA_KEY_TITLE) ?: "")
 }
