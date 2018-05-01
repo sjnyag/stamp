@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
-    android:background="@color/queue_title_item_background"
+    android:background="?android:colorPrimary"
     android:gravity="center_vertical"
     android:orientation="vertical">
 

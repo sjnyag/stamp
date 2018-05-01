@@ -103,7 +103,7 @@ abstract class FabFragment : Fragment(), StampEditStateObserver.Listener {
                         visibility = View.VISIBLE
                     },
                     ViewHelper.getThemeColor(activity, R.attr.colorPrimaryDark, Color.DKGRAY),
-                    ContextCompat.getColor(activity, R.color.fab_color))
+                    ViewHelper.getThemeColor(activity, R.attr.colorAccent, Color.DKGRAY))
             centeredMaterialSheetFab?.setEventListener(object : MaterialSheetFabEventListener() {
                 override fun onShowSheet() {}
 

@@ -16,7 +16,7 @@
             android:layout_gravity="end"
             android:gravity="center"
             android:maxLines="1"
-            android:textColor="@color/media_item_icon"
+            android:textColor="?android:attr/colorAccent"
             android:textSize="64sp"
             tools:text="2"/>
 

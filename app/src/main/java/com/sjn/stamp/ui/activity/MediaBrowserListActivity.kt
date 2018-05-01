@@ -72,12 +72,14 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
 
     private fun initializeActionModeHelper(mode: Int) {
         LogHelper.d(TAG, "initializeActionModeHelper START")
-        actionModeHelper = object : ActionModeHelper(adapter!!, menuResourceId, this) {
-            override fun updateContextTitle(count: Int) {
-                //You can use the internal ActionMode instance
-                mActionMode?.title = if (count == 1) getString(R.string.action_selected_one, Integer.toString(count)) else getString(R.string.action_selected_many, Integer.toString(count))
-            }
-        }.withDefaultMode(mode)
+        adapter?.let {
+            actionModeHelper = object : ActionModeHelper(it, menuResourceId, this) {
+                override fun updateContextTitle(count: Int) {
+                    //You can use the internal ActionMode instance
+                    mActionMode?.title = if (count == 1) getString(R.string.action_selected_one, Integer.toString(count)) else getString(R.string.action_selected_many, Integer.toString(count))
+                }
+            }.withDefaultMode(mode)
+        }
         LogHelper.d(TAG, "initializeActionModeHelper END")
     }
 
@@ -168,14 +170,14 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
 
     override fun updateContextTitle(selectedItemCount: Int) {
         LogHelper.d(TAG, "updateContextTitle START")
-        actionModeHelper!!.updateContextTitle(selectedItemCount)
+        actionModeHelper?.updateContextTitle(selectedItemCount)
         LogHelper.d(TAG, "updateContextTitle END")
     }
 
 
     override fun restoreSelection() {
         LogHelper.d(TAG, "restoreSelection START")
-        actionModeHelper!!.restoreSelection(this)
+        actionModeHelper?.restoreSelection(this)
         LogHelper.d(TAG, "restoreSelection END")
     }
 

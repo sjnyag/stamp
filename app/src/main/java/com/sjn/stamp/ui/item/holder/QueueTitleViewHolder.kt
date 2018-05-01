@@ -13,6 +13,10 @@ class QueueTitleViewHolder(view: View, adapter: FlexibleAdapter<*>) : LongClickD
     var title: TextView = view.findViewById(R.id.title)
     var subtitle: TextView = view.findViewById(R.id.subtitle)
 
+    init{
+        view.background.alpha = 180
+    }
+
     override fun scrollAnimators(animators: List<Animator>, position: Int, isForward: Boolean) {
         AnimatorHelper.slideInFromTopAnimator(animators, itemView, mAdapter.recyclerView)
     }

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright (C) 2014 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,11 +15,8 @@
   -->
 <resources>
 
-    <color name="media_item_icon">#00B8D4</color>
     <color name="fullscreen_secondary_line_color">#E5CCCCCC</color>
     <color name="fullscreen_line_color">#E5FFFFFF</color>
-    <color name="queue_title_item_background">#aa7e57c2</color>
-    <color name="header_item_background">#aa7e57c2</color>
 
     <color name="color_1">#E62E25</color>
     <color name="color_2">#EC7526</color>
@@ -29,8 +25,6 @@
     <color name="color_5">#0028F9</color>
     <color name="color_6">#3A24C2</color>
     <color name="color_7">#592EFA</color>
-    <color name="fab_color">#FFFFFF</color>
-    <color name="fab_sheet_color">#592EFA</color>
 
     <color name="button_add_stamp">#1E88E5</color>
     <color name="button_toggle_off_stroke">#B2B2B2</color>
