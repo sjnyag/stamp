@@ -9,9 +9,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.EditTextPreference
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceFragmentCompat
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.View
+import android.view.*
 import android.widget.Toast
 import com.sjn.stamp.R
 import com.sjn.stamp.controller.SongController
@@ -20,10 +18,12 @@ import com.sjn.stamp.ui.DialogFacade
 import com.sjn.stamp.ui.DrawerMenu
 import com.sjn.stamp.ui.activity.MusicPlayerListActivity
 import com.sjn.stamp.ui.activity.MusicPlayerListActivity.Companion.START_FRAGMENT_KEY
+import com.sjn.stamp.ui.fragment.media.ListFragment
 import com.sjn.stamp.utils.AnalyticsHelper
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaRetrieveHelper
 import com.sjn.stamp.utils.RealmHelper
+import eu.davidea.flexibleadapter.SelectableAdapter
 import org.polaric.colorful.Colorful
 
 class SettingFragment : PreferenceFragmentCompat() {
@@ -34,6 +34,14 @@ class SettingFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val listener = context
+        if (listener is ListFragment.FragmentInteractionListener) {
+            listener.onFragmentChange(null, null, SelectableAdapter.Mode.IDLE)
+        }
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -19,6 +19,7 @@ import com.google.android.gms.cast.framework.CastContext
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.DrawerMenu
 import com.sjn.stamp.ui.fragment.media.PagerFragment
+import com.sjn.stamp.utils.CompatibleHelper
 import com.sjn.stamp.utils.DrawerHelper
 import com.sjn.stamp.utils.LogHelper
 import org.polaric.colorful.ColorfulActivity
@@ -47,17 +48,17 @@ abstract class DrawerActivity : ColorfulActivity(), FragmentManager.OnBackStackC
         }.commit()
     }
 
-    fun updateAppbar(title: String?, function: (activity: Activity, imageView: ImageView) -> Unit) {
-        findViewById<Toolbar>(R.id.toolbar)?.also { toolbar ->
-            toolbar.title = title
+    fun animateAppbar(title: String?, updateImageView: (activity: Activity, imageView: ImageView) -> Unit) {
+        findViewById<Toolbar>(R.id.toolbar)?.apply {
+            setTitle(title)
         }
-        findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)?.also { toolbar ->
-            toolbar.isTitleEnabled = true
-            toolbar.title = title
+        findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)?.apply {
+            isTitleEnabled = true
+            setTitle(title)
         }
         findViewById<ImageView>(R.id.app_bar_image)?.also { imageView ->
             imageView.visibility = View.VISIBLE
-            function(this, imageView)
+            updateImageView(this, imageView)
         }
         findViewById<ForceAnimateAppBarLayout>(R.id.app_bar).run {
             animatedExpand()
@@ -65,24 +66,17 @@ abstract class DrawerActivity : ColorfulActivity(), FragmentManager.OnBackStackC
     }
 
     fun updateAppbar() {
-        val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG)
+        val hasShadow = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG) !is PagerFragment
         findViewById<AppBarLayout>(R.id.app_bar).run {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                if (fragment is PagerFragment) {
-                    elevation = 0F
-                }
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                if (fragment !is PagerFragment) {
-                    elevation = 8F
-                }
+            if (CompatibleHelper.hasLollipop()) {
+                elevation = if (hasShadow) 8F else 0F
             }
         }
-        findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)?.also { toolbar ->
-            toolbar.isTitleEnabled = false
+        findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)?.apply {
+            isTitleEnabled = false
         }
-        findViewById<ImageView>(R.id.app_bar_image)?.also { imageView ->
-            imageView.visibility = View.GONE
+        findViewById<ImageView>(R.id.app_bar_image)?.apply {
+            visibility = View.GONE
         }
     }
 

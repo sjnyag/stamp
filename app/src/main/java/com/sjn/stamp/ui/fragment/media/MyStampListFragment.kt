@@ -79,7 +79,7 @@ class MyStampListFragment : SongListFragment(), UndoHelper.OnUndoListener, Flexi
                 arguments?.also {
                     if (activity is DrawerActivity) {
                         (activity as DrawerActivity).run {
-                            updateAppbar(it.getString("IMAGE_TEXT"), { activity, imageView ->
+                            animateAppbar(it.getString("IMAGE_TEXT"), { activity, imageView ->
                                 AlbumArtHelper.loadAlbumArt(activity, imageView, it.getParcelable("IMAGE_BITMAP"), it.getString("IMAGE_TYPE"), it.getString("IMAGE_URL"), it.getString("IMAGE_TEXT"))
                             })
                         }
