@@ -2,12 +2,12 @@ package com.sjn.stamp.ui.activity
 
 import android.app.Activity
 import android.content.res.Configuration
-import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
@@ -19,11 +19,14 @@ import com.google.android.gms.cast.framework.CastContext
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.DrawerMenu
 import com.sjn.stamp.ui.fragment.media.PagerFragment
-import com.sjn.stamp.utils.*
-import org.polaric.colorful.ColorfulActivity
+import com.sjn.stamp.utils.CompatibleHelper
+import com.sjn.stamp.utils.DrawerHelper
+import com.sjn.stamp.utils.LogHelper
+import com.sjn.stamp.utils.ToolbarColorizeHelper
+import io.multimoon.colorful.CAppCompatActivity
 
 
-abstract class DrawerActivity : ColorfulActivity(), FragmentManager.OnBackStackChangedListener {
+abstract class DrawerActivity : CAppCompatActivity(), FragmentManager.OnBackStackChangedListener {
 
     private var toolbar: Toolbar? = null
     protected var drawer: DrawerHelper.Drawer? = null

@@ -6,18 +6,18 @@
         android:key="appearance"
         android:title="@string/setting_appearance">
 
-        <org.polaric.colorful.ColorPickerPreference
+        <com.sjn.stamp.ui.preference.ColorPickerPreference
             android:key="primary_theme"
             android:title="@string/setting_appearance_primary"
             colorpicker:primary_color="true"/>
 
-        <org.polaric.colorful.ColorPickerPreference
+        <com.sjn.stamp.ui.preference.ColorPickerPreference
             android:key="accent_theme"
             android:title="@string/setting_appearance_accent"
             colorpicker:accent_color="true"/>
 
         <android.support.v14.preference.SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="dark_theme"
             android:title="@string/setting_appearance_dark_theme"/>
 

@@ -3,15 +3,15 @@ package com.sjn.stamp.ui.fragment.media
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.animation.DecelerateInterpolator
-
 import com.gordonwong.materialsheetfab.MaterialSheetFabEventListener
 import com.sjn.stamp.R
+import com.sjn.stamp.getAccent
+import com.sjn.stamp.getPrimaryDark
 import com.sjn.stamp.ui.SongAdapter
 import com.sjn.stamp.ui.custom.CenteredMaterialSheetFab
 import com.sjn.stamp.ui.custom.Fab
@@ -19,9 +19,9 @@ import com.sjn.stamp.ui.item.holder.SongViewHolder
 import com.sjn.stamp.ui.observer.StampEditStateObserver
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.SpotlightHelper
-import com.sjn.stamp.utils.ViewHelper
 import com.takusemba.spotlight.SimpleTarget
 import com.takusemba.spotlight.Spotlight
+import io.multimoon.colorful.Colorful
 
 abstract class FabFragment : Fragment(), StampEditStateObserver.Listener {
 
@@ -93,7 +93,7 @@ abstract class FabFragment : Fragment(), StampEditStateObserver.Listener {
     }
 
     protected fun initializeFabWithStamp() {
-        initializeFab(R.drawable.ic_stamp, ColorStateList.valueOf(Color.WHITE), startStampEdit)
+        initializeFab(R.drawable.ic_stamp, ColorStateList.valueOf(Colorful().getAccent().asInt()), startStampEdit)
         activity?.let { activity ->
             centeredMaterialSheetFab = CenteredMaterialSheetFab(fab!!,
                     activity.findViewById<View>(R.id.fab_sheet).apply {
@@ -102,8 +102,8 @@ abstract class FabFragment : Fragment(), StampEditStateObserver.Listener {
                     activity.findViewById<View>(R.id.overlay).apply {
                         visibility = View.VISIBLE
                     },
-                    ViewHelper.getThemeColor(activity, R.attr.colorPrimaryDark, Color.DKGRAY),
-                    ViewHelper.getThemeColor(activity, R.attr.colorAccent, Color.DKGRAY))
+                    Colorful().getPrimaryDark().asInt(),
+                    Colorful().getAccent().asInt())
             centeredMaterialSheetFab?.setEventListener(object : MaterialSheetFabEventListener() {
                 override fun onShowSheet() {}
 

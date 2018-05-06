@@ -1,18 +1,18 @@
 package com.sjn.stamp
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.support.multidex.MultiDex
 import android.support.multidex.MultiDexApplication
 import android.widget.ImageView
-
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.sjn.stamp.utils.RealmHelper
 import com.squareup.picasso.Picasso
+import io.multimoon.colorful.*
 import net.danlew.android.joda.JodaTimeAndroid
-import org.polaric.colorful.Colorful
 
 @Suppress("unused")
 class StampApplication : MultiDexApplication() {
@@ -24,12 +24,12 @@ class StampApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
-        Colorful.defaults()
-                .primaryColor(Colorful.ThemeColor.DEEP_PURPLE)
-                .accentColor(Colorful.ThemeColor.GREEN)
-                .translucent(true)
-                .dark(true)
-        Colorful.init(this)
+        val defaults = Defaults(
+                primaryColor = ThemeColor.DEEP_PURPLE,
+                accentColor = ThemeColor.GREEN,
+                useDarkTheme = true,
+                translucent = true)
+        initColorful(this, defaults)
         RealmHelper.init(this)
         JodaTimeAndroid.init(this)
         DrawerImageLoader.init(object : AbstractDrawerImageLoader() {
@@ -46,4 +46,32 @@ class StampApplication : MultiDexApplication() {
             }
         })
     }
+}
+
+fun ColorfulDelegate.getTextColor(): Int {
+    return if (Colorful().getDarkTheme()) Color.WHITE else Color.BLACK
+}
+
+fun ColorfulDelegate.getCurrent(primary: Boolean = true, dark: Boolean = false): ColorfulColor {
+    return if (dark) {
+        if (primary) getPrimaryDark() else getAccentDark()
+    } else {
+        if (primary) getPrimary() else getAccent()
+    }
+}
+
+fun ColorfulDelegate.getPrimary(): ColorfulColor {
+    return Colorful().getPrimaryColor().getColorPack().normal()
+}
+
+fun ColorfulDelegate.getAccent(): ColorfulColor {
+    return Colorful().getAccentColor().getColorPack().normal()
+}
+
+fun ColorfulDelegate.getPrimaryDark(): ColorfulColor {
+    return Colorful().getPrimaryColor().getColorPack().dark()
+}
+
+fun ColorfulDelegate.getAccentDark(): ColorfulColor {
+    return Colorful().getAccentColor().getColorPack().dark()
 }

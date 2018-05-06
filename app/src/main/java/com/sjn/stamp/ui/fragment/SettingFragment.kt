@@ -24,7 +24,8 @@ import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaRetrieveHelper
 import com.sjn.stamp.utils.RealmHelper
 import eu.davidea.flexibleadapter.SelectableAdapter
-import org.polaric.colorful.Colorful
+import io.multimoon.colorful.Colorful
+import io.multimoon.colorful.ThemeColorInterface
 
 class SettingFragment : PreferenceFragmentCompat() {
 
@@ -48,29 +49,51 @@ class SettingFragment : PreferenceFragmentCompat() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-        findPreference("primary_theme")?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
-            reboot()
+        findPreference("primary_theme")?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
+            if (newValue is ThemeColorInterface) {
+                context?.let {
+                    Colorful().edit()
+                            .setPrimaryColor(newValue)
+                            .apply(it) {
+                                reboot()
+                            }
+                }
+            }
             true
         }
-        findPreference("accent_theme")?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
-            reboot()
+        findPreference("accent_theme")?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
+            if (newValue is ThemeColorInterface) {
+                context?.let {
+                    Colorful().edit()
+                            .setAccentColor(newValue)
+                            .apply(it) {
+                                reboot()
+                            }
+                }
+            }
             true
         }
         findPreference("dark_theme")?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
             if (newValue is Boolean) {
-                Colorful.config(context)
-                        .dark(newValue)
-                        .apply()
-                reboot()
+                context?.let {
+                    Colorful().edit()
+                            .setDarkTheme(newValue)
+                            .apply(it) {
+                                reboot()
+                            }
+                }
             }
             true
         }
         findPreference("translucent")?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
             if (newValue is Boolean) {
-                Colorful.config(context)
-                        .translucent(newValue)
-                        .apply()
-                reboot()
+                context?.let {
+                    Colorful().edit()
+                            .setTranslucent(newValue)
+                            .apply(it) {
+                                reboot()
+                            }
+                }
             }
             true
         }

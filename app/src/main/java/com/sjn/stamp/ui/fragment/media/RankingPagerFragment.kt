@@ -1,14 +1,13 @@
 package com.sjn.stamp.ui.fragment.media
 
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.view.*
 import com.sjn.stamp.MusicService
 import com.sjn.stamp.R
+import com.sjn.stamp.getAccent
 import com.sjn.stamp.ui.DialogFacade
 import com.sjn.stamp.ui.custom.PeriodSelectLayout
 import com.sjn.stamp.ui.item.RankedArtistItem
@@ -16,7 +15,7 @@ import com.sjn.stamp.ui.item.RankedSongItem
 import com.sjn.stamp.utils.AnalyticsHelper
 import com.sjn.stamp.utils.MediaIDHelper
 import com.sjn.stamp.utils.QueueHelper
-import com.sjn.stamp.utils.ViewHelper
+import io.multimoon.colorful.Colorful
 import java.util.*
 
 class RankingPagerFragment : PagerFragment(), PagerFragment.PageFragmentContainer.Creator {
@@ -28,7 +27,7 @@ class RankingPagerFragment : PagerFragment(), PagerFragment.PageFragmentContaine
         period = PeriodSelectLayout.Period.latestWeek()
         setHasOptionsMenu(true)
         context?.let {
-            initializeFab(R.drawable.ic_play_arrow_black_36dp, ColorStateList.valueOf(ViewHelper.getThemeColor(it, R.attr.colorAccent, Color.DKGRAY)), View.OnClickListener {
+            initializeFab(R.drawable.ic_play_arrow_black_36dp, ColorStateList.valueOf(Colorful().getAccent().asInt()), View.OnClickListener {
                 var fragment: RankingFragment? = null
                 fragments!!
                         .filter { it.fragment is RankingFragment && (it.fragment as FabFragment).isShowing }
