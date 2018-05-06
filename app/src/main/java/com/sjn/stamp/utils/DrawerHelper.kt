@@ -12,6 +12,7 @@ import android.view.View
 import com.mikepenz.materialdrawer.AccountHeader
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.DrawerBuilder
+import com.mikepenz.materialdrawer.model.BaseDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.Nameable
 import com.sjn.stamp.R
@@ -86,6 +87,18 @@ object DrawerHelper {
             if (isRoot) sync()
         }
 
+        fun updateColor(textColor: Int, selectedBackgroundColor: Int) {
+            drawer.drawerItems.listIterator().forEach { it ->
+                if (it is BaseDrawerItem) {
+                    it.withTextColor(textColor)
+                    it.withIconTintingEnabled(true)
+                    it.withIconColor(textColor)
+                    it.withSelectedColor(selectedBackgroundColor)
+                }
+
+            }
+        }
+
         fun sync() {
             drawerToggle.syncState()
         }
@@ -119,7 +132,7 @@ object DrawerHelper {
         fun updateHeader(metadata: MediaMetadataCompat?) {
             metadata?.let {
                 activity.runOnUiThread({
-                    it.description?.iconUri?.let mediaIcon@ { uri ->
+                    it.description?.iconUri?.let mediaIcon@{ uri ->
                         ViewHelper.readBitmapAsync(activity, uri.toString(), AccountHeaderLoader(accountHeader, metadata))
                         return@mediaIcon
                     }

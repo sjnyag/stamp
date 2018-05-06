@@ -8,7 +8,6 @@ import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
@@ -22,6 +21,7 @@ import com.sjn.stamp.ui.DrawerMenu
 import com.sjn.stamp.ui.fragment.media.PagerFragment
 import com.sjn.stamp.utils.*
 import io.multimoon.colorful.CAppCompatActivity
+import io.multimoon.colorful.Colorful
 
 
 abstract class DrawerActivity : CAppCompatActivity(), FragmentManager.OnBackStackChangedListener {
@@ -91,6 +91,10 @@ abstract class DrawerActivity : CAppCompatActivity(), FragmentManager.OnBackStac
                     setToolbarTitle(null)
                 }
             })
+            drawer?.updateColor(
+                    ViewHelper.getThemeColor(this, android.R.attr.textColorPrimary, Color.DKGRAY),
+                    if (Colorful().getDarkTheme()) Color.parseColor("#484848") else Color.parseColor("#E8E8E8")
+            )
             ToolbarColorizeHelper.colorizeToolbar(it, ViewHelper.getThemeColor(this, android.R.attr.textColorPrimary, Color.DKGRAY), this)
         }
     }
