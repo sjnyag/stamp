@@ -2,6 +2,7 @@ package com.sjn.stamp.ui.activity
 
 import android.app.Activity
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
@@ -19,10 +20,7 @@ import com.google.android.gms.cast.framework.CastContext
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.DrawerMenu
 import com.sjn.stamp.ui.fragment.media.PagerFragment
-import com.sjn.stamp.utils.CompatibleHelper
-import com.sjn.stamp.utils.DrawerHelper
-import com.sjn.stamp.utils.LogHelper
-import com.sjn.stamp.utils.ToolbarColorizeHelper
+import com.sjn.stamp.utils.*
 import io.multimoon.colorful.CAppCompatActivity
 
 
@@ -93,6 +91,7 @@ abstract class DrawerActivity : CAppCompatActivity(), FragmentManager.OnBackStac
                     setToolbarTitle(null)
                 }
             })
+            ToolbarColorizeHelper.colorizeToolbar(it, ViewHelper.getThemeColor(this, android.R.attr.textColorPrimary, Color.DKGRAY), this)
         }
     }
 

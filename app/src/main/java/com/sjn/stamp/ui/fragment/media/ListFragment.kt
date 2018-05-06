@@ -17,6 +17,7 @@ import com.sjn.stamp.R
 import com.sjn.stamp.ui.item.ProgressItem
 import com.sjn.stamp.ui.observer.StampEditStateObserver
 import com.sjn.stamp.utils.LogHelper
+import com.sjn.stamp.utils.ViewHelper
 import eu.davidea.fastscroller.FastScroller
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.SelectableAdapter
@@ -116,6 +117,13 @@ abstract class ListFragment : FabFragment(), SwipeRefreshLayout.OnRefreshListene
         LogHelper.d(TAG, "onCreateOptionsMenu START")
         //menu.clear();
         inflater?.inflate(menuResourceId, menu)
+        menu?.let { it ->
+            for (i in 0 until it.size()) {
+                context?.let { context ->
+                    ViewHelper.tintMenuIconByTheme(context, it.getItem(i))
+                }
+            }
+        }
         listener?.initSearchView(menu)
         LogHelper.d(TAG, "onCreateOptionsMenu END")
     }

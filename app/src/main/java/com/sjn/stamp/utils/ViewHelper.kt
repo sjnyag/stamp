@@ -2,12 +2,15 @@ package com.sjn.stamp.utils
 
 import android.app.Activity
 import android.content.Context
-import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
 import android.support.v4.content.ContextCompat
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.DisplayMetrics
+import android.util.TypedValue
+import android.view.MenuItem
 import com.sjn.stamp.R
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
@@ -33,6 +36,19 @@ object ViewHelper {
         }
     }
 
+    fun tintMenuIcon(item: MenuItem, color: Int) {
+        val normalDrawable = item.icon
+        val wrapDrawable = DrawableCompat.wrap(normalDrawable)
+        wrapDrawable?.let {
+            DrawableCompat.setTint(it, color)
+            item.icon = it
+        }
+    }
+
+    fun tintMenuIconByTheme(context: Context, item: MenuItem) {
+        tintMenuIcon(item, ViewHelper.getThemeColor(context, android.R.attr.textColorPrimary, Color.DKGRAY))
+    }
+
     fun getRankingColor(context: Context, position: Int): Int = ContextCompat.getColor(context, getRankingColorResourceId(position))
 
     /**
@@ -44,21 +60,13 @@ object ViewHelper {
      * @return color value
      */
     fun getThemeColor(context: Context, attribute: Int, defaultColor: Int): Int {
-        var themeColor = 0
-        val packageName = context.packageName
-        try {
-            val packageContext = context.createPackageContext(packageName, 0)
-            val applicationInfo = context.packageManager.getApplicationInfo(packageName, 0)
-            packageContext.setTheme(applicationInfo.theme)
-            val theme = packageContext.theme
-            val ta = theme.obtainStyledAttributes(intArrayOf(attribute))
-            themeColor = ta.getColor(0, defaultColor)
-            ta.recycle()
-        } catch (e: PackageManager.NameNotFoundException) {
-            e.printStackTrace()
+        val outValue = TypedValue()
+        val theme = context.theme
+        val wasResolved = theme.resolveAttribute(attribute, outValue, true)
+        if (!wasResolved) {
+            return defaultColor
         }
-
-        return themeColor
+        return ContextCompat.getColor(context, outValue.resourceId)
     }
 
     fun readBitmapAsync(context: Context, url: String, target: Target) {
