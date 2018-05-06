@@ -2,7 +2,7 @@ package com.sjn.stamp.ui.activity
 
 import android.app.Activity
 import android.content.res.Configuration
-import android.os.Build
+import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
@@ -19,9 +19,7 @@ import com.google.android.gms.cast.framework.CastContext
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.DrawerMenu
 import com.sjn.stamp.ui.fragment.media.PagerFragment
-import com.sjn.stamp.utils.CompatibleHelper
-import com.sjn.stamp.utils.DrawerHelper
-import com.sjn.stamp.utils.LogHelper
+import com.sjn.stamp.utils.*
 import org.polaric.colorful.ColorfulActivity
 
 
@@ -118,7 +116,6 @@ abstract class DrawerActivity : ColorfulActivity(), FragmentManager.OnBackStackC
         } catch (e: RuntimeException) {
             e.printStackTrace()
         }
-
     }
 
     override fun onResume() {

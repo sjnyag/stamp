@@ -152,7 +152,7 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
     @SuppressLint("NewApi")
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
         LogHelper.d(TAG, "onCreateActionMode START")
-        CompatibleHelper.getColor(resources, ViewHelper.getThemeColor(this, R.attr.colorAccent, Color.DKGRAY), theme)?.let { window.statusBarColor = it }
+        window.statusBarColor = ViewHelper.getThemeColor(this, R.attr.colorAccent, Color.DKGRAY)
         LogHelper.d(TAG, "onCreateActionMode END")
         return true
     }
