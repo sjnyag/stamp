@@ -10,6 +10,7 @@ import android.widget.ImageView
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
 import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.sjn.stamp.utils.RealmHelper
+import com.squareup.leakcanary.LeakCanary
 import com.squareup.picasso.Picasso
 import io.multimoon.colorful.*
 import net.danlew.android.joda.JodaTimeAndroid
@@ -24,6 +25,12 @@ class StampApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return
+        }
+        LeakCanary.install(this);
         val defaults = Defaults(
                 primaryColor = ThemeColor.DEEP_PURPLE,
                 accentColor = ThemeColor.GREEN,

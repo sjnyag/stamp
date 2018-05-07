@@ -42,8 +42,11 @@ object ViewHelper {
         val normalDrawable = item.icon
         val wrapDrawable = DrawableCompat.wrap(normalDrawable)
         wrapDrawable?.let {
-            DrawableCompat.setTint(it, color)
-            item.icon = it
+            val mutableDrawable = it.mutate()
+            mutableDrawable?.let {
+                DrawableCompat.setTint(it, color)
+                item.icon = it
+            }
         }
     }
 
