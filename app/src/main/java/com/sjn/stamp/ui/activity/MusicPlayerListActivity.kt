@@ -53,6 +53,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
     private var savedInstanceState: Bundle? = null
     private var newIntent: Intent? = null
     private var reservedUri: Uri? = null
+    private var reservedMenu: DrawerMenu? = null
 
     private val mediaId: String?
         get() {
@@ -95,7 +96,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
             LogHelper.d(TAG, "has no Permission")
             PermissionHelper.requestPermissions(this, MediaRetrieveHelper.PERMISSIONS, REQUEST_PERMISSION)
         }
-        navigateToBrowser(DrawerMenu.first().fragment, false)
+        reservedMenu = DrawerMenu.first()
         this.savedInstanceState = savedInstanceState
     }
 
@@ -115,12 +116,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
     public override fun onResume() {
         super.onResume()
         LogHelper.d(TAG, "Activity onResume")
-        (when (newIntent) {
-            null -> intent
-            else -> newIntent
-        })?.let {
-            initializeFromParams(savedInstanceState, it)
-        }
+        initializeFromParams(savedInstanceState, newIntent ?: intent)
         newIntent = null
     }
 
@@ -185,33 +181,38 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
         }
     }
 
-    private fun initializeFromParams(savedInstanceState: Bundle?, intent: Intent) {
-        LogHelper.d(TAG, "initializeFromParams ", intent)
+    private fun initializeFromParams(savedInstanceState: Bundle?, intent: Intent?) {
+        LogHelper.i(TAG, "initializeFromParams ", intent)
         var mediaId: String? = null
-        // check if we were started from a "Play XYZ" voice search. If so, we create the extras
-        // (which contain the query details) in a parameter, so we can reuse it later, when the
-        // MediaSession is connected.
-        if (intent.action != null && intent.action == MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH) {
-            voiceSearchParams = intent.extras
-            LogHelper.d(TAG, "Starting from voice search query=", voiceSearchParams!!.getString(SearchManager.QUERY))
-        } else if (intent.data != null) {
-            LogHelper.d(TAG, "Play from Intent: " + intent.data!!)
-            val controller = MediaControllerCompat.getMediaController(this)
-            if (controller != null) {
-                reservedUri = null
-                controller.transportControls.playFromUri(intent.data, null)
+        intent?.let {
+            // check if we were started from a "Play XYZ" voice search. If so, we create the extras
+            // (which contain the query details) in a parameter, so we can reuse it later, when the
+            // MediaSession is connected.
+            if (intent.action != null && intent.action == MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH) {
+                voiceSearchParams = intent.extras
+                LogHelper.d(TAG, "Starting from voice search query=", voiceSearchParams!!.getString(SearchManager.QUERY))
+            } else if (intent.data != null) {
+                LogHelper.d(TAG, "Play from Intent: " + intent.data!!)
+                val controller = MediaControllerCompat.getMediaController(this)
+                if (controller != null) {
+                    reservedUri = null
+                    controller.transportControls.playFromUri(intent.data, null)
+                } else {
+                    reservedUri = intent.data
+                }
             } else {
-                reservedUri = intent.data
+                // If there is a saved media ID, use it
+                savedInstanceState?.let { mediaId = it.getString(SAVED_MEDIA_ID) }
             }
-        } else {
-            // If there is a saved media ID, use it
-            savedInstanceState?.let { mediaId = it.getString(SAVED_MEDIA_ID) }
         }
-        val targetDrawer = intent.extras?.getInt(START_FRAGMENT_KEY)?.let { DrawerMenu.of(it) }
+        val targetDrawer = intent?.extras?.getInt(START_FRAGMENT_KEY)?.let { DrawerMenu.of(it) }
         targetDrawer?.let {
             drawer?.setSelection(it.menuId.toLong())
         } ?: mediaId?.let {
             navigateToBrowser(it, SongListFragmentFactory.create(it), emptyList())
+        } ?: reservedMenu?.let {
+            navigateToBrowser(it.fragment, false)
+            reservedMenu = null
         }
 
         startFullScreenIfNeeded(intent)

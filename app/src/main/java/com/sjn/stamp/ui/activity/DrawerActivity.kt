@@ -67,8 +67,10 @@ abstract class DrawerActivity : CAppCompatActivity(), FragmentManager.OnBackStac
     fun updateAppbar() {
         val hasShadow = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG) !is PagerFragment
         findViewById<AppBarLayout>(R.id.app_bar).run {
-            if (CompatibleHelper.hasLollipop()) {
-                elevation = if (hasShadow) 8F else 0F
+            afterMeasured {
+                if (CompatibleHelper.hasLollipop()) {
+                    elevation = if (hasShadow) 8F else 0F
+                }
             }
         }
         findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)?.apply {

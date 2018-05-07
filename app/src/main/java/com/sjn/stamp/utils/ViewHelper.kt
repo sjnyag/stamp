@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewTreeObserver
 import com.sjn.stamp.R
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
@@ -86,4 +88,15 @@ object ViewHelper {
         else -> R.color.md_black_1000
     }
 
+}
+
+inline fun <T : View> T.afterMeasured(crossinline f: T.() -> Unit) {
+    viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            if (measuredWidth > 0 && measuredHeight > 0) {
+                viewTreeObserver.removeOnGlobalLayoutListener(this)
+                f()
+            }
+        }
+    })
 }
