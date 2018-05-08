@@ -35,16 +35,20 @@ abstract class DrawerActivity : CAppCompatActivity(), FragmentManager.OnBackStac
     ?: "")
 
     open fun navigateToBrowser(fragment: Fragment, addToBackStack: Boolean, sharedElements: List<Pair<String, View>> = emptyList()) {
-        if (!addToBackStack) {
-            supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-        }
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.container, fragment, FRAGMENT_TAG)
-            if (addToBackStack) {
-                addToBackStack(null)
+        try {
+            if (!addToBackStack) {
+                supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
             }
-            sharedElements.forEach { pair -> addSharedElement(pair.second, pair.first) }
-        }.commit()
+            supportFragmentManager.beginTransaction().apply {
+                replace(R.id.container, fragment, FRAGMENT_TAG)
+                if (addToBackStack) {
+                    addToBackStack(null)
+                }
+                sharedElements.forEach { pair -> addSharedElement(pair.second, pair.first) }
+            }.commit()
+        } catch (ignored: IllegalStateException) {
+            // There's no way to avoid getting this if saveInstanceState has already been called.
+        }
     }
 
     fun animateAppbar(title: String?, updateImageView: (activity: Activity, imageView: ImageView) -> Unit) {
