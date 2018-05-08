@@ -39,14 +39,8 @@ object ViewHelper {
     }
 
     fun tintMenuIcon(item: MenuItem, color: Int) {
-        val normalDrawable = item.icon
-        val wrapDrawable = DrawableCompat.wrap(normalDrawable)
-        wrapDrawable?.let {
-            val mutableDrawable = it.mutate()
-            mutableDrawable?.let {
-                DrawableCompat.setTint(it, color)
-                item.icon = it
-            }
+        item.icon?.let {
+            DrawableCompat.setTint(it, color)
         }
     }
 
