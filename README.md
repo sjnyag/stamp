@@ -5,8 +5,6 @@ Most personal music player
 
 <img src="./playstore-icon.png" width=100px><a href='https://play.google.com/store/apps/details?id=com.sjn.stamp&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height=90px/></a>
 
-<p align="center"><img src="stamp/app/src/main/res/mipmap/512px.png" alt="Stamp" height="200px"></p>
-
 ## Screenshots
 |Player|Timeline|Ranking|Drawer|Stamp|Setting|
 |---|---|---|---|---|---|
