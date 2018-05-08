@@ -96,7 +96,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
             LogHelper.d(TAG, "has no Permission")
             PermissionHelper.requestPermissions(this, MediaRetrieveHelper.PERMISSIONS, REQUEST_PERMISSION)
         }
-        reservedMenu = DrawerMenu.first()
+        reservedMenu = intent?.extras?.getInt(START_FRAGMENT_KEY)?.let { DrawerMenu.of(it) } ?: DrawerMenu.first()
         this.savedInstanceState = savedInstanceState
     }
 
@@ -121,9 +121,8 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
-        val mediaId = mediaId
-        if (mediaId != null) {
-            outState!!.putString(SAVED_MEDIA_ID, mediaId)
+        mediaId?.let {
+            outState?.putString(SAVED_MEDIA_ID, mediaId)
         }
         super.onSaveInstanceState(outState)
     }
@@ -205,13 +204,10 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
                 savedInstanceState?.let { mediaId = it.getString(SAVED_MEDIA_ID) }
             }
         }
-        val targetDrawer = intent?.extras?.getInt(START_FRAGMENT_KEY)?.let { DrawerMenu.of(it) }
-        targetDrawer?.let {
-            drawer?.setSelection(it.menuId.toLong())
-        } ?: mediaId?.let {
+        mediaId?.let {
             navigateToBrowser(it, SongListFragmentFactory.create(it), emptyList())
         } ?: reservedMenu?.let {
-            navigateToBrowser(it.fragment, false)
+            drawer?.setSelection(it.menuId.toLong())
             reservedMenu = null
         }
 
