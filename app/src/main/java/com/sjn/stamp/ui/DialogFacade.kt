@@ -106,7 +106,7 @@ object DialogFacade {
                 .setTitle(R.string.dialog_remove_stamp_title)
                 .setMessage(context.resources.getString(R.string.dialog_remove_stamp_content, song, stamp))
                 .setPositiveButton(R.string.dialog_delete, onPositive)
-                .setNegativeButton(R.string.dialog_cancel, {_, _ ->})
+                .setNegativeButton(R.string.dialog_cancel, { _, _ -> })
                 .setOnDismissListener(dismissListener)
     }
 
@@ -115,7 +115,7 @@ object DialogFacade {
                 .setTitle(R.string.dialog_delete_history_title)
                 .setMessage(context.resources.getString(R.string.dialog_delete_history_content, history))
                 .setPositiveButton(R.string.dialog_delete, onPositive)
-                .setNegativeButton(R.string.dialog_cancel, {_, _ ->})
+                .setNegativeButton(R.string.dialog_cancel, { _, _ -> })
                 .setOnDismissListener(dismissListener)
     }
 
@@ -131,17 +131,20 @@ object DialogFacade {
     fun createLicenceDialog(context: Context): AlertDialog.Builder {
         val dataSet = ArrayList<LicenseEntry>()
         dataSet.add(Licenses.noContent("Android SDK", "Google Inc.", "https://developer.android.com/sdk/terms.html"))
-        //TODO
-        //        dataSet.add(Licenses.noLink("Google Play Services", "Google Inc.", GoogleApiAvailability.getInstance().getOpenSourceSoftwareLicenseInfo(context)));
+
         dataSet.add(Licenses.noContent("Android Support Libraries", "Google Inc.", "https://developer.android.com/sdk/terms.html"))
+
+        dataSet.add(Licenses.fromGitHub("google/ExoPlayer", LICENSE_APACHE_V2))
+
         dataSet.add(Licenses.noContent("Firebase", "Google Inc.", "https://firebase.google.com/terms/"))
+
         dataSet.add(Licenses.fromGitHub("google/guava", LICENSE_APACHE_V2))
         dataSet.add(Licenses.fromGitHubMIT("gowong/material-sheet-fab"))
-        dataSet.add(Licenses.fromGitHubApacheV2("garretyoder/Colorful"))
-        dataSet.add(Licenses.fromGitHubApacheV2("vajro/MaterialDesignLibrary"))
         dataSet.add(Licenses.fromGitHubApacheV2("sjnyag/AnimationWrapLayout"))
         dataSet.add(Licenses.fromGitHubApacheV2("sjnyag/ForceAnimateAppBarLayout"))
         dataSet.add(Licenses.fromGitHubApacheV2("TakuSemba/Spotlight"))
+        dataSet.add(Licenses.fromGitHubApacheV2("vajro/MaterialDesignLibrary"))
+        dataSet.add(Licenses.fromGitHubApacheV2("garretyoder/Colorful"))
         dataSet.add(Licenses.fromGitHubApacheV2("jakewharton/DiskLruCache"))
         dataSet.add(Licenses.fromGitHubApacheV2("mikepenz/MaterialDrawer"))
         dataSet.add(Licenses.fromGitHubBSD("NanoHttpd/nanohttpd"))
