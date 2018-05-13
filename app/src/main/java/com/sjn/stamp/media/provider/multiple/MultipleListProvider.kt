@@ -24,7 +24,7 @@ abstract class MultipleListProvider(protected var context: Context) : ListProvid
 
     protected open fun updateTrackListMap(musicListById: MutableMap<String, MediaMetadataCompat>) {
         for (music in musicListById.values) {
-            val key = MediaIDHelper.escape(music.getString(mediaKey))
+            val key = MediaIDHelper.escape(music.getString(mediaKey)?: "")
             if (!key.isEmpty()) {
                 var list = trackMap[key]
                 if (list == null) {
@@ -80,7 +80,7 @@ abstract class MultipleListProvider(protected var context: Context) : ListProvid
         return list
     }
 
-    private fun createHierarchyAwareMediaID(metadata: MediaMetadataCompat): String = MediaIDHelper.createMediaID(metadata.description.mediaId, providerMediaId, metadata.getString(mediaKey))
+    private fun createHierarchyAwareMediaID(metadata: MediaMetadataCompat): String = MediaIDHelper.createMediaID(metadata.description.mediaId, providerMediaId, metadata.getString(mediaKey)?: "")
 
     private fun createBrowsableMediaItemForKey(key: String): MediaBrowserCompat.MediaItem = MediaItemHelper.createBrowsableItem(MediaIDHelper.createMediaID(null, providerMediaId, key), MediaIDHelper.unescape(key))
 

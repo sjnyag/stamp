@@ -12,13 +12,18 @@ object MediaControllerObserver : MediaControllerCompat.Callback() {
     private val listenerList = Collections.synchronizedList(ArrayList<Listener>())
 
     interface Listener {
-        fun onPlaybackStateChanged(state: PlaybackStateCompat?)
+        fun onPlaybackStateChanged(state: PlaybackStateCompat?) {}
 
-        fun onMetadataChanged(metadata: MediaMetadataCompat?)
+        fun onMetadataChanged(metadata: MediaMetadataCompat?) {}
 
-        fun onMediaControllerConnected()
+        fun onMediaControllerConnected() {}
 
-        fun onSessionDestroyed()
+        fun onSessionDestroyed() {}
+
+        fun onRepeatModeChanged(@PlaybackStateCompat.RepeatMode repeatMode: Int) {}
+
+        fun onShuffleModeChanged(@PlaybackStateCompat.ShuffleMode shuffleMode: Int) {}
+
     }
 
     fun register(mediaController: MediaControllerCompat) {
@@ -47,6 +52,20 @@ object MediaControllerObserver : MediaControllerCompat.Callback() {
         LogHelper.i(TAG, "removeListener")
         if (listenerList.contains(listener)) {
             listenerList.remove(listener)
+        }
+    }
+
+    override fun onRepeatModeChanged(@PlaybackStateCompat.RepeatMode repeatMode: Int) {
+        LogHelper.i(TAG, "onPlaybackStateChanged ", listenerList?.size)
+        for (listener in ArrayList(listenerList)) {
+            listener.onRepeatModeChanged(repeatMode)
+        }
+    }
+
+    override fun onShuffleModeChanged(@PlaybackStateCompat.ShuffleMode shuffleMode: Int) {
+        LogHelper.i(TAG, "onPlaybackStateChanged ", listenerList?.size)
+        for (listener in ArrayList(listenerList)) {
+            listener.onShuffleModeChanged(shuffleMode)
         }
     }
 

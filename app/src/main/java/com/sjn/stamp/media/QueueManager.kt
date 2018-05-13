@@ -16,18 +16,19 @@
 
 package com.sjn.stamp.media
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import com.sjn.stamp.R
+import com.sjn.stamp.controller.CustomController
 import com.sjn.stamp.controller.UserSettingController
 import com.sjn.stamp.media.provider.MusicProvider
 import com.sjn.stamp.media.provider.single.QueueProvider
-import com.sjn.stamp.model.constant.RepeatState
-import com.sjn.stamp.model.constant.ShuffleState
+import com.sjn.stamp.ui.observer.MediaControllerObserver
 import com.sjn.stamp.utils.*
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
@@ -38,9 +39,9 @@ import java.util.*
  * queue. Also provides methods to set the current queue based on common queries, relying on a
  * given MusicProvider to provide the actual media metadata.
  */
-class QueueManager(private val context: Context,
+class QueueManager(private val service: MediaBrowserServiceCompat,
                    private val musicProvider: MusicProvider,
-                   private val listener: MetadataUpdateListener) : QueueProvider.QueueListener, CustomController.ShuffleStateListener {
+                   private val listener: MetadataUpdateListener) : QueueProvider.QueueListener, MediaControllerObserver.Listener {
 
     override val playingQueueMetadata: Iterable<MediaMetadataCompat>
         get() = playingQueue.map { MediaItemHelper.convertToMetadata(it, currentMusic?.description?.mediaId) }
@@ -53,7 +54,7 @@ class QueueManager(private val context: Context,
     private var mTarget: Target? = null
 
     private val playingQueue: List<MediaSessionCompat.QueueItem>
-        get() = if (CustomController.shuffleState === ShuffleState.SHUFFLE) {
+        get() = if (CustomController.getShuffleMode(service) == PlaybackStateCompat.SHUFFLE_MODE_ALL) {
             shuffledQueue
         } else orderedQueue
 
@@ -62,8 +63,8 @@ class QueueManager(private val context: Context,
             null
         } else playingQueue[currentIndex]
 
-    override fun onShuffleStateChanged(state: ShuffleState) {
-        if (state === ShuffleState.SHUFFLE) {
+    override fun onShuffleModeChanged(@PlaybackStateCompat.ShuffleMode shuffleMode: Int) {
+        if (shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_ALL) {
             updateShuffleQueue()
         } else {
             //TODO Bug will occur when Callback called but ShuffleState won't change
@@ -80,8 +81,8 @@ class QueueManager(private val context: Context,
     }
 
     init {
-        CustomController.addShuffleStateListenerSet(this)
         musicProvider.setQueueListener(this)
+        MediaControllerObserver.addListener(this)
     }
 
     fun restorePreviousState(lastMusicId: String?, queueIdentifyMediaId: String) {
@@ -127,7 +128,7 @@ class QueueManager(private val context: Context,
         if (index < 0) {
             // skip backwards before the first song will keep you on the first song
             index = 0
-        } else if (CustomController.repeatState === RepeatState.ALL && playingQueue.isNotEmpty()) {
+        } else if (CustomController.getRepeatMode(service) == PlaybackStateCompat.REPEAT_MODE_ALL && playingQueue.isNotEmpty()) {
             // skip forwards when in last song will cycle back to start of the queue
             index %= playingQueue.size
         }
@@ -145,13 +146,13 @@ class QueueManager(private val context: Context,
 
     fun setQueueFromSearch(query: String, extras: Bundle): Boolean {
         val queue = QueueHelper.getPlayingQueueFromSearch(query, extras, musicProvider)
-        setCurrentQueue(context.getString(R.string.search_queue_title), queue)
+        setCurrentQueue(service.getString(R.string.search_queue_title), queue)
         updateMetadata()
         return !queue.isEmpty()
     }
 
     fun setRandomQueue() {
-        setCurrentQueue(context.getString(R.string.random_queue_title), QueueHelper.getRandomQueue(musicProvider))
+        setCurrentQueue(service.getString(R.string.random_queue_title), QueueHelper.getRandomQueue(musicProvider))
         updateMetadata()
     }
 
@@ -168,7 +169,7 @@ class QueueManager(private val context: Context,
             canReuseQueue = setCurrentQueueItem(mediaId)
         }
         if (!canReuseQueue) {
-            val queueTitle = context.getString(R.string.browse_musics_by_genre_subtitle,
+            val queueTitle = service.getString(R.string.browse_musics_by_genre_subtitle,
                     MediaIDHelper.extractBrowseCategoryValueFromMediaID(mediaId))
             setCurrentQueue(queueTitle, QueueHelper.getPlayingQueue(mediaId, musicProvider), mediaId, startMusicId)
         }
@@ -178,7 +179,7 @@ class QueueManager(private val context: Context,
     fun setCurrentQueue(title: String, newQueue: List<MediaSessionCompat.QueueItem>,
                         initialMediaId: String? = null, startMusicId: String? = null) {
         orderedQueue = newQueue
-        if (CustomController.shuffleState === ShuffleState.SHUFFLE) {
+        if (CustomController.getShuffleMode(service) == PlaybackStateCompat.SHUFFLE_MODE_ALL) {
             updateShuffleQueue()
         }
         var index = -1
@@ -242,7 +243,7 @@ class QueueManager(private val context: Context,
                     }
                 }
             }
-            ViewHelper.readBitmapAsync(context, albumUri, mTarget!!)
+            ViewHelper.readBitmapAsync(service, albumUri, mTarget!!)
         }
     }
 

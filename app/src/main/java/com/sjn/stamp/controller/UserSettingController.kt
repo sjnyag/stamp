@@ -1,35 +1,9 @@
 package com.sjn.stamp.controller
 
-import com.sjn.stamp.model.constant.RepeatState
-import com.sjn.stamp.model.constant.ShuffleState
 import com.sjn.stamp.model.dao.UserSettingDao
 import com.sjn.stamp.utils.RealmHelper
 
 class UserSettingController {
-
-    var shuffleState: ShuffleState
-        get() {
-            return RealmHelper.realmInstance.use { realm ->
-                UserSettingDao.getUserSetting(realm).fetchShuffleStateValue()
-            }
-        }
-        set(shuffleState) {
-            RealmHelper.realmInstance.use { realm ->
-                UserSettingDao.updateShuffleState(realm, shuffleState)
-            }
-        }
-
-    var repeatState: RepeatState
-        get() {
-            return RealmHelper.realmInstance.use { realm ->
-                UserSettingDao.getUserSetting(realm).fetchRepeatState()
-            }
-        }
-        set(repeatState) {
-            return RealmHelper.realmInstance.use { realm ->
-                UserSettingDao.updateRepeatState(realm, repeatState)
-            }
-        }
 
     var queueIdentifyMediaId: String
         get() {

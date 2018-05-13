@@ -1,21 +1,11 @@
 package com.sjn.stamp.model.dao
 
 import com.sjn.stamp.model.UserSetting
-import com.sjn.stamp.model.constant.RepeatState
-import com.sjn.stamp.model.constant.ShuffleState
 import io.realm.Realm
 
 object UserSettingDao : BaseDao<UserSetting>() {
 
     fun getUserSetting(realm: Realm): UserSetting = findOrCreate(realm)
-
-    fun updateShuffleState(realm: Realm, shuffleState: ShuffleState) {
-        realm.executeTransactionAsync { r -> findOrCreate(r).applyShuffleState(shuffleState) }
-    }
-
-    fun updateRepeatState(realm: Realm, repeatState: RepeatState) {
-        realm.executeTransactionAsync { r -> findOrCreate(r).applyRepeatState(repeatState) }
-    }
 
     fun updateQueueIdentifyMediaId(realm: Realm, queueIdentifyMediaId: String) {
         realm.executeTransactionAsync { r -> findOrCreate(r).queueIdentifyMediaId = queueIdentifyMediaId }

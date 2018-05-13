@@ -36,10 +36,8 @@ import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
 import com.sjn.stamp.R
-import com.sjn.stamp.media.CustomController
+import com.sjn.stamp.controller.CustomController
 import com.sjn.stamp.media.StampSession
-import com.sjn.stamp.model.constant.RepeatState
-import com.sjn.stamp.model.constant.ShuffleState
 import com.sjn.stamp.ui.activity.MusicPlayerListActivity
 import com.sjn.stamp.ui.observer.MediaControllerObserver
 import com.sjn.stamp.utils.AlbumArtHelper
@@ -53,7 +51,7 @@ import java.util.concurrent.TimeUnit
  * A full screen player that shows the current playing music with a background image
  * depicting the album art. The activity also has controls to seek/pause/play the audio.
  */
-class FullScreenPlayerFragment : Fragment(), CustomController.RepeatStateListener, CustomController.ShuffleStateListener, MediaControllerObserver.Listener {
+class FullScreenPlayerFragment : Fragment(), MediaControllerObserver.Listener {
 
     private var skipPrev: ImageView? = null
     private var skipNext: ImageView? = null
@@ -157,8 +155,8 @@ class FullScreenPlayerFragment : Fragment(), CustomController.RepeatStateListene
         })
 
         repeat?.setImageDrawable(noRepeatDrawable)
-        repeat?.setOnClickListener { CustomController.toggleRepeatState() }
-        shuffle?.setOnClickListener { CustomController.toggleShuffleState() }
+        repeat?.setOnClickListener { CustomController.toggleRepeatMode(activity) }
+        shuffle?.setOnClickListener { CustomController.toggleShuffleMode(activity) }
 
         seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -222,18 +220,14 @@ class FullScreenPlayerFragment : Fragment(), CustomController.RepeatStateListene
         super.onStart()
         MediaControllerObserver.addListener(this)
         onMediaControllerConnected()
-        CustomController.addRepeatStateListenerSet(this)
-        CustomController.addShuffleStateListenerSet(this)
-        onRepeatStateChanged(CustomController.repeatState)
-        onShuffleStateChanged(CustomController.shuffleState)
+        onRepeatModeChanged(CustomController.getRepeatMode(activity))
+        onShuffleModeChanged(CustomController.getShuffleMode(activity))
     }
 
     override fun onStop() {
         LogHelper.i(TAG, "onStop")
         super.onStop()
         MediaControllerObserver.removeListener(this)
-        CustomController.removeRepeatStateListenerSet(this)
-        CustomController.removeShuffleStateListenerSet(this)
     }
 
     override fun onDestroy() {
@@ -243,25 +237,26 @@ class FullScreenPlayerFragment : Fragment(), CustomController.RepeatStateListene
         executorService.shutdown()
     }
 
-    override fun onRepeatStateChanged(state: RepeatState) {
-        when (state) {
-            RepeatState.ONE -> repeat?.setImageDrawable(repeatOneDrawable)
-            RepeatState.ALL -> {
+    override fun onRepeatModeChanged(@PlaybackStateCompat.RepeatMode repeatMode: Int) {
+        when (repeatMode) {
+            PlaybackStateCompat.REPEAT_MODE_ONE -> repeat?.setImageDrawable(repeatOneDrawable)
+            PlaybackStateCompat.REPEAT_MODE_ALL -> {
                 repeatAllDrawable?.alpha = 255
                 repeat?.setImageDrawable(repeatAllDrawable)
             }
-            RepeatState.NONE -> {
+            PlaybackStateCompat.REPEAT_MODE_NONE -> {
                 repeatAllDrawable?.alpha = 50
                 repeat?.setImageDrawable(repeatAllDrawable)
             }
         }
     }
 
-    override fun onShuffleStateChanged(state: ShuffleState) {
-        when (state) {
-            ShuffleState.SHUFFLE -> shuffleDrawable?.alpha = 255
-            ShuffleState.NONE -> shuffleDrawable?.alpha = 50
+    override fun onShuffleModeChanged(@PlaybackStateCompat.ShuffleMode shuffleMode: Int) {
+        when (shuffleMode) {
+            PlaybackStateCompat.SHUFFLE_MODE_ALL -> shuffleDrawable?.alpha = 255
+            PlaybackStateCompat.SHUFFLE_MODE_NONE -> shuffleDrawable?.alpha = 50
         }
+        shuffle?.setImageDrawable(shuffleDrawable)
     }
 
 

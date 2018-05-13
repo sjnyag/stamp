@@ -114,7 +114,7 @@ class MusicProvider(private val context: Context, private val source: MusicProvi
             return emptyList()
         }
         return query.toLowerCase(Locale.getDefault()).run {
-            musicMap.values.filter { it.getString(metadataField).toLowerCase(Locale.getDefault()).contains(this) }
+            musicMap.values.filter { it.getString(metadataField)?.toLowerCase(Locale.getDefault())?.contains(this) == true }
         }
     }
 

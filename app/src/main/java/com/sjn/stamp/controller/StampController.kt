@@ -150,7 +150,7 @@ class StampController(private val context: Context) {
         for (song in musicListById.values) {
             for ((stampName, categoryQueryMap) in this) {
                 for ((categoryType, queryList) in categoryQueryMap) {
-                    if (queryList.contains(song.getString(categoryType.key).toLowerCase(Locale.getDefault()))) {
+                    if (queryList.contains(song.getString(categoryType.key)?.toLowerCase(Locale.getDefault()))) {
                         result.putSong(stampName, song)
                     }
                 }

@@ -110,21 +110,21 @@ object MediaItemHelper {
 
     fun createSong(metadata: MediaMetadataCompat): Song =
             Song(0,
-                    metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID),
-                    metadata.getString(MediaItemHelper.CUSTOM_METADATA_TRACK_SOURCE),
-                    getAlbum(metadata)!!,
+                    metadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID) ?: "",
+                    metadata.getString(MediaItemHelper.CUSTOM_METADATA_TRACK_SOURCE) ?: "",
+                    getAlbum(metadata) ?: "",
                     fetchLong(metadata, MediaMetadataCompat.METADATA_KEY_DURATION),
-                    fetchString(metadata, MediaMetadataCompat.METADATA_KEY_GENRE)!!,
-                    fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI)!!,
-                    getTitle(metadata)!!,
+                    fetchString(metadata, MediaMetadataCompat.METADATA_KEY_GENRE) ?: "",
+                    fetchString(metadata, MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI) ?: "",
+                    getTitle(metadata) ?: "",
                     fetchLong(metadata, MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER),
                     fetchLong(metadata, MediaMetadataCompat.METADATA_KEY_NUM_TRACKS),
-                    fetchString(metadata, MediaMetadataCompat.METADATA_KEY_DATE)!!,
+                    fetchString(metadata, MediaMetadataCompat.METADATA_KEY_DATE) ?: "",
                     RealmList(), null,
                     TotalSongHistory(),
                     ArtistDao.newStandalone(
-                            getArtist(metadata)!!,
-                            getAlbumArtUri(metadata)!!
+                            getArtist(metadata) ?: "",
+                            getAlbumArtUri(metadata) ?: ""
                     )
             )
 
@@ -204,7 +204,7 @@ object MediaItemHelper {
                     .setMediaId(uri.toString())
                     .setTitle(trackName)
                     .setSubtitle(artistName)
-                    .setDescription("streaming from " + scheme)
+                    .setDescription("streaming from $scheme")
                     //.setIconUri(Uri.parse(mCoverArtUrl))
                     .build(), 0)
         } catch (e: Exception) {

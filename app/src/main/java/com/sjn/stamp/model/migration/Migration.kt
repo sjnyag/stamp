@@ -7,7 +7,7 @@ class Migration : RealmMigration {
 
     companion object {
         private val TAG = LogHelper.makeLogTag(Migration::class.java)
-        const val VERSION = 5
+        const val VERSION = 6
     }
 
     override fun migrate(realm: DynamicRealm, version: Long, newVersion: Long) {
@@ -32,6 +32,10 @@ class Migration : RealmMigration {
         }
         if (oldVersion == 4L) {
             migrateTo5(realm, schema)
+            oldVersion++
+        }
+        if (oldVersion == 5L) {
+            migrateTo6(realm, schema)
             oldVersion++
         }
         if (oldVersion != newVersion) {
@@ -201,6 +205,13 @@ class Migration : RealmMigration {
                 })
         schema.get("TotalSongHistory")
                 .removeField("song")
+
+    }
+
+    private fun migrateTo6(realm: DynamicRealm, schema: RealmSchema) {
+        schema.get("UserSetting")
+                .removeField("repeatState")
+                .removeField("shuffleState")
 
     }
 }

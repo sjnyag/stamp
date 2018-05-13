@@ -20,11 +20,10 @@ import com.sjn.stamp.ui.activity.IntentDispatchActivity
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.TvHelper
 
-class StampSession internal constructor(context: Context, callback: MediaSessionCompat.Callback, private val sessionListener: SessionListener?) {
+class StampSession internal constructor(context: Context, callback: MediaSessionCompat.Callback, private val sessionListener: SessionListener?) : MediaSessionCompat(context, "MusicService") {
 
     private val mediaRouter: MediaRouter = MediaRouter.getInstance(context.applicationContext)
     private val sessionExtras: Bundle = Bundle()
-    private val session: MediaSessionCompat
     private var castSessionManager: SessionManager? = null
 
     internal interface SessionListener {
@@ -37,18 +36,16 @@ class StampSession internal constructor(context: Context, callback: MediaSession
 
     init {
         // Start a new MediaSession
-        session = MediaSessionCompat(context, "MusicService").apply {
-            setCallback(callback)
-            setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
-            setSessionActivity(
-                    PendingIntent.getActivity(
-                            context.applicationContext,
-                            99 /*request code*/,
-                            Intent(context.applicationContext, IntentDispatchActivity::class.java),
-                            PendingIntent.FLAG_UPDATE_CURRENT)
-            )
-            setExtras(sessionExtras)
-        }
+        setCallback(callback)
+        setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
+        setSessionActivity(
+                PendingIntent.getActivity(
+                        context.applicationContext,
+                        99 /*request code*/,
+                        Intent(context.applicationContext, IntentDispatchActivity::class.java),
+                        PendingIntent.FLAG_UPDATE_CURRENT)
+        )
+        setExtras(sessionExtras)
         initCastSession(context)
     }
 
@@ -61,7 +58,7 @@ class StampSession internal constructor(context: Context, callback: MediaSession
             LogHelper.i(TAG, "onSessionEnded error: ", error)
             sessionListener?.let {
                 sessionExtras.remove(EXTRA_CONNECTED_CAST)
-                session.setExtras(sessionExtras)
+                setExtras(sessionExtras)
                 mediaRouter.setMediaSessionCompat(null)
                 it.toLocalPlayback()
             }
@@ -74,8 +71,8 @@ class StampSession internal constructor(context: Context, callback: MediaSession
             LogHelper.i(TAG, "onSessionStarted sessionId: ", sessionId)
             sessionListener?.let {
                 sessionExtras.putString(EXTRA_CONNECTED_CAST, castSession.castDevice.friendlyName)
-                session.setExtras(sessionExtras)
-                mediaRouter.setMediaSessionCompat(session)
+                setExtras(sessionExtras)
+                mediaRouter.setMediaSessionCompat(this@StampSession)
                 it.toCastCallback()
             }
         }
@@ -99,37 +96,19 @@ class StampSession internal constructor(context: Context, callback: MediaSession
         override fun onSessionSuspended(castSession: CastSession, reason: Int) {}
     }
 
-    val sessionToken: MediaSessionCompat.Token?
-        get() = session.sessionToken
-
-    fun setMetadata(metadata: MediaMetadataCompat) {
-        session.setMetadata(metadata)
-    }
 
     fun updateQueue(newQueue: List<MediaSessionCompat.QueueItem>, title: String) {
-        session.setQueue(newQueue)
-        session.setQueueTitle(title)
+        setQueue(newQueue)
+        setQueueTitle(title)
     }
 
-    fun handleIntent(startIntent: Intent) {
-        MediaButtonReceiver.handleIntent(session, startIntent)
-    }
-
-    fun release() {
-        session.release()
+    override fun release() {
+        super.release()
         castSessionManager?.removeSessionManagerListener(castSessionCallback, CastSession::class.java)
     }
 
-    fun setActive(active: Boolean) {
-        session.isActive = active
-    }
-
-    fun setPlaybackState(playbackState: PlaybackStateCompat) {
-        try {
-            session.setPlaybackState(playbackState)
-        } catch (e: IllegalStateException) {
-            e.printStackTrace()
-        }
+    fun handleIntent(startIntent: Intent) {
+        MediaButtonReceiver.handleIntent(this, startIntent)
     }
 
     fun stopCasting(context: Context) {
