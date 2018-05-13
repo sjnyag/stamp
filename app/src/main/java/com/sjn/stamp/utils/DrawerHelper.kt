@@ -19,6 +19,7 @@ import com.sjn.stamp.R
 import com.sjn.stamp.ui.DrawerMenu
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
+import java.util.*
 
 object DrawerHelper {
 
@@ -30,7 +31,7 @@ object DrawerHelper {
         private val accountHeader: AccountHeader = AccountHeaderBuilder().apply {
             withSelectionListEnabledForSingleProfile(false)
             withActivity(activity)
-            withHeaderBackground(R.drawable.drawer_header)
+            withHeaderBackground(Drawable.createFromStream(activity.assets.open(String.format("drawer/mb-bg-fb-%0${2}d.jpg", Random().nextInt(30) + 1)), null))
         }.build()
         private val drawer = DrawerBuilder().apply {
             withActivity(activity)

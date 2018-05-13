@@ -64,6 +64,7 @@ android {
     applicationVariants.all {
         variant -> variant.resValue "string", "versionName", variant.versionName
     }
+    sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
 }
 
 repositories {
