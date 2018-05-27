@@ -22,10 +22,12 @@ class IntentDispatchActivity : AppCompatActivity() {
             return
         }
         val newIntent = Intent(this, MusicPlayerListActivity::class.java).apply {
-            intent?.let {
-                action = it.action
-                data = it.data
-                putExtras(it.extras)
+            intent?.let { currentIntent ->
+                this.action = currentIntent.action
+                this.data = currentIntent.data
+                currentIntent.extras?.let { extras ->
+                    this.putExtras(extras)
+                }
             }
         }
         if (NotificationHelper.ACTION_CMD == newIntent.action && NotificationHelper.CMD_SHARE == newIntent.getStringExtra(NotificationHelper.CMD_NAME)) {

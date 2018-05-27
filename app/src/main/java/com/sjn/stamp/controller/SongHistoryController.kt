@@ -78,7 +78,7 @@ class SongHistoryController(private val context: Context) {
     private fun register(mediaId: String, recordType: RecordType, date: Date) {
         val musicId = resolveMusicId(mediaId) ?: return
         RealmHelper.realmInstance.use { realm ->
-            val song = SongDao.findOrCreateByMediaId(realm, musicId, context)
+            val song = SongDao.findOrCreateByMusicId(realm, musicId, context)
             song ?: return
             val playCount = TotalSongHistoryDao.increment(realm, song.id, recordType)
             SongHistoryDao.create(realm, song, recordType, date, playCount)

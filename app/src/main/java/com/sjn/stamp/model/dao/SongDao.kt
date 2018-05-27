@@ -49,22 +49,26 @@ object SongDao : BaseDao<Song>() {
         return song
     }
 
-    fun findOrCreateByMediaId(realm: Realm, mediaId: String, context: Context): Song? {
+    fun findOrCreateByMusicId(realm: Realm, mediaId: String, context: Context): Song? {
         var song: Song? = findByMediaId(realm, mediaId)
         if (song == null) {
-            val metadata = MediaRetrieveHelper.findByMusicId(context, mediaId.toLong(), null)
-            metadata ?: return null
-            song = Song()
-            song.id = getAutoIncrementId(realm)
-            val artist = ArtistDao.findOrCreate(realm, MediaItemHelper.getArtist(metadata), MediaItemHelper.getAlbumArtUri(metadata))
-            val totalSongHistory = TotalSongHistoryDao.findOrCreate(realm, song.id)
-            song.artist = artist
-            song.totalSongHistory = totalSongHistory
-            song.loadMediaMetadataCompat(metadata)
-            realm.beginTransaction()
-            realm.copyToRealm(song)
-            realm.commitTransaction()
-            return song
+            try {
+                val metadata = MediaRetrieveHelper.findByMusicId(context, mediaId.toLong(), null)
+                metadata ?: return null
+                song = Song()
+                song.id = getAutoIncrementId(realm)
+                val artist = ArtistDao.findOrCreate(realm, MediaItemHelper.getArtist(metadata), MediaItemHelper.getAlbumArtUri(metadata))
+                val totalSongHistory = TotalSongHistoryDao.findOrCreate(realm, song.id)
+                song.artist = artist
+                song.totalSongHistory = totalSongHistory
+                song.loadMediaMetadataCompat(metadata)
+                realm.beginTransaction()
+                realm.copyToRealm(song)
+                realm.commitTransaction()
+                return song
+            } catch (e: NumberFormatException) {
+                return null
+            }
         }
         return song
     }
