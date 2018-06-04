@@ -64,7 +64,7 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
         get() = R.menu.song_list
 
     override fun emptyMessage(): String {
-        if (mediaId == null || mediaId?.isEmpty() == true) return super.emptyMessage()
+        if (!isAdded || mediaId == null || mediaId?.isEmpty() == true) return super.emptyMessage()
         return mediaId?.let { MediaIDHelper.getProviderType(it)?.getEmptyMessage(resources) }
                 ?: super.emptyMessage()
     }

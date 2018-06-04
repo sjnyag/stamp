@@ -259,7 +259,6 @@ class FullScreenPlayerFragment : Fragment(), MediaControllerObserver.Listener {
         shuffle?.setImageDrawable(shuffleDrawable)
     }
 
-
     private fun fetchImageAsync(description: MediaDescriptionCompat) {
         description.iconUri ?: return
         currentArtUrl = description.iconUri.toString()

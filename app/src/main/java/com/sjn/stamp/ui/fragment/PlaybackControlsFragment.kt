@@ -18,9 +18,9 @@ package com.sjn.stamp.ui.fragment
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,7 +45,7 @@ class PlaybackControlsFragment : Fragment(), MediaControllerObserver.Listener {
     private var subtitle: TextView? = null
     private var extraInfo: TextView? = null
     private var albumArt: ImageView? = null
-    private var artUrl: String = ""
+    private var currentArtUrl: String = ""
 
     private val buttonListener = View.OnClickListener { v ->
         activity?.let {
@@ -120,11 +120,13 @@ class PlaybackControlsFragment : Fragment(), MediaControllerObserver.Listener {
         metadata ?: return
         title?.text = metadata.description.title
         subtitle?.text = metadata.description.subtitle
-        val newArtUrl = metadata.description.iconUri?.toString()
-        if (newArtUrl != null && !TextUtils.equals(newArtUrl, artUrl)) {
-            artUrl = newArtUrl
-            AlbumArtHelper.updateAlbumArt(activity, albumArt, artUrl, metadata.description.title)
-        }
+        fetchImageAsync(metadata.description)
+    }
+
+    private fun fetchImageAsync(description: MediaDescriptionCompat) {
+        description.iconUri ?: return
+        currentArtUrl = description.iconUri.toString()
+        AlbumArtHelper.updateAlbumArt(activity, albumArt, currentArtUrl, description.title)
     }
 
     private fun updateExtraInfo(text: String?) {

@@ -2,16 +2,19 @@ package com.sjn.stamp.utils
 
 import android.app.Activity
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.custom.TextDrawable
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import java.io.FileNotFoundException
 import java.util.*
 
 
@@ -71,22 +74,42 @@ object AlbumArtHelper {
             view.setImageDrawable(createTextDrawable(text))
             return
         }
-        Picasso.with(activity).load(artUrl).placeholder(createTextDrawable(text)).resize(targetWidth, targetHeight).into(view, object : Callback {
-            override fun onSuccess() {
-                if (view.getTag(R.id.image_view_album_art_url) != null && artUrl != view.getTag(R.id.image_view_album_art_url)) {
-                    updateAlbumArt(activity, view, view.getTag(R.id.image_view_album_art_url) as String, text)
-                } else {
-                    view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP)
-                }
-            }
 
-            override fun onError() {
-                view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
-                view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-                view.setImageDrawable(createTextDrawable(text))
-                //view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));
+        Thread(Runnable {
+            try {
+                val bitmap = BitmapFactory.decodeStream(activity.contentResolver.openInputStream(Uri.parse(artUrl)))
+                activity.runOnUiThread({
+                    if (artUrl == view.getTag(R.id.image_view_album_art_url)) {
+                        view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP)
+                        view.setImageBitmap(bitmap)
+                    }
+                })
+            } catch (e: FileNotFoundException) {
+                activity.runOnUiThread({
+                    if (artUrl == view.getTag(R.id.image_view_album_art_url)) {
+                        view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
+                        view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+                        view.setImageDrawable(createTextDrawable(text))
+                    }
+                })
             }
-        })
+        }).start()
+//        Picasso.with(activity).load(artUrl).placeholder(createTextDrawable(text)).resize(targetWidth, targetHeight).into(view, object : Callback {
+//            override fun onSuccess() {
+//                if (view.getTag(R.id.image_view_album_art_url) != null && artUrl != view.getTag(R.id.image_view_album_art_url)) {
+//                    updateAlbumArt(activity, view, view.getTag(R.id.image_view_album_art_url) as String, text)
+//                } else {
+//                    view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP)
+//                }
+//            }
+//
+//            override fun onError() {
+//                view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
+//                view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+//                view.setImageDrawable(createTextDrawable(text))
+//                //view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));
+//            }
+//        })
     }
 
     fun createTextBitmap(text: CharSequence?) =

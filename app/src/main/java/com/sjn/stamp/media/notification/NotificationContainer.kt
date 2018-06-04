@@ -12,6 +12,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.sjn.stamp.R
 import com.sjn.stamp.media.StampSession.Companion.EXTRA_CONNECTED_CAST
+import com.sjn.stamp.ui.fragment.PlaybackControlsFragment
 import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.NotificationHelper
