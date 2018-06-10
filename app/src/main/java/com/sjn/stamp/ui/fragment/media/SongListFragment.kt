@@ -281,7 +281,7 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
         LogHelper.d(TAG, "onStop START")
         super.onStop()
         createListAsyncTask?.cancel(true)
-        MediaControllerObserver.addListener(this)
+        MediaControllerObserver.removeListener(this)
         MusicListObserver.removeListener(this)
         LogHelper.d(TAG, "onStop END")
     }

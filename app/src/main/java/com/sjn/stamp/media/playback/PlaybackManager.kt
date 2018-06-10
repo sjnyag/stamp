@@ -73,8 +73,6 @@ class PlaybackManager(
 
     fun restorePreviousState() {
         queueManager.restorePreviousState(UserSettingController().lastMusicId, UserSettingController().queueIdentifyMediaId)
-        CustomController.setShuffleMode(service, PreferenceHelper.loadShuffle(service, PlaybackStateCompat.SHUFFLE_MODE_NONE))
-        CustomController.setRepeatMode(service, PreferenceHelper.loadRepeat(service, PlaybackStateCompat.REPEAT_MODE_NONE))
         updatePlaybackState(null)
     }
 

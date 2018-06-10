@@ -9,16 +9,14 @@ import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import com.sjn.stamp.controller.CustomController
 import com.sjn.stamp.media.notification.NotificationManager
 import com.sjn.stamp.media.playback.Playback
 import com.sjn.stamp.media.playback.PlaybackManager
 import com.sjn.stamp.media.provider.MusicProvider
 import com.sjn.stamp.media.source.LocalMediaSource
 import com.sjn.stamp.ui.observer.MediaControllerObserver
-import com.sjn.stamp.utils.LogHelper
-import com.sjn.stamp.utils.MediaIDHelper
-import com.sjn.stamp.utils.MediaRetrieveHelper
-import com.sjn.stamp.utils.NotificationHelper
+import com.sjn.stamp.utils.*
 import java.util.*
 
 class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServiceCallback {
@@ -49,26 +47,25 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
             override fun onMusicCatalogReady(success: Boolean) {
                 LogHelper.d(TAG, "MusicProvider.callBack start")
                 playbackManager = PlaybackManager(this@MusicService, this@MusicService, musicProvider, Playback.Type.LOCAL)
+                playbackManager?.restorePreviousState()
                 sessionToken = playbackManager?.sessionToken
                 sessionToken?.let {
                     mediaController = MediaControllerCompat(this@MusicService, it).apply {
                         MediaControllerObserver.register(this)
                     }
                 }
-                MediaControllerObserver.notifyConnected()
-                Thread(Runnable {
-                    playbackManager?.restorePreviousState()
-                    try {
-                        notificationManager = NotificationManager(this@MusicService)
-                    } catch (e: RemoteException) {
-                        throw IllegalStateException("Could not create a NotificationManager", e)
-                    }
-                    if (playOnPrepared) {
-                        playOnPrepared = false
-                        mediaController?.transportControls?.play()
-                    }
-                    LogHelper.d(TAG, "MusicProvider.callBack end")
-                }).start()
+                CustomController.setShuffleMode(this@MusicService, PreferenceHelper.loadShuffle(this@MusicService, PlaybackStateCompat.SHUFFLE_MODE_NONE))
+                CustomController.setRepeatMode(this@MusicService, PreferenceHelper.loadRepeat(this@MusicService, PlaybackStateCompat.REPEAT_MODE_NONE))
+                try {
+                    notificationManager = NotificationManager(this@MusicService)
+                } catch (e: RemoteException) {
+                    throw IllegalStateException("Could not create a NotificationManager", e)
+                }
+                if (playOnPrepared) {
+                    playOnPrepared = false
+                    mediaController?.transportControls?.play()
+                }
+                LogHelper.d(TAG, "MusicProvider.callBack end")
             }
         })
     }

@@ -2,7 +2,9 @@ package com.sjn.stamp.utils
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
 import android.support.v4.content.ContextCompat
@@ -68,8 +70,21 @@ object ViewHelper {
         return ContextCompat.getColor(context, outValue.resourceId)
     }
 
-    fun readBitmapAsync(context: Context, url: String, target: Target) {
-        Handler(Looper.getMainLooper()).post { Picasso.with(context).load(url).into(target) }
+    fun readBitmapAsync(context: Context, url: String, onLoad: (Bitmap?) -> Unit) {
+        Handler(Looper.getMainLooper()).post {
+            val target = object : Target {
+                override fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom) {
+                    onLoad(bitmap)
+                }
+
+                override fun onBitmapFailed(errorDrawable: Drawable?) {
+                    onLoad(null)
+                }
+
+                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+            }
+            Picasso.with(context).load(url).into(target)
+        }
     }
 
     private fun getDisplayMetrics(context: Context): DisplayMetrics = context.resources.displayMetrics

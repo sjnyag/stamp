@@ -16,8 +16,6 @@
 
 package com.sjn.stamp.media
 
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.MediaMetadataCompat
@@ -30,8 +28,6 @@ import com.sjn.stamp.media.provider.MusicProvider
 import com.sjn.stamp.media.provider.single.QueueProvider
 import com.sjn.stamp.ui.observer.MediaControllerObserver
 import com.sjn.stamp.utils.*
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
 import java.util.*
 
 /**
@@ -50,8 +46,6 @@ class QueueManager(private val service: MediaBrowserServiceCompat,
     private var orderedQueue: List<MediaSessionCompat.QueueItem> = Collections.synchronizedList(ArrayList())
     private var shuffledQueue: MutableList<MediaSessionCompat.QueueItem> = Collections.synchronizedList(ArrayList())
     private var currentIndex: Int = 0
-    //to avoid GC
-    private var mTarget: Target? = null
 
     private val playingQueue: List<MediaSessionCompat.QueueItem>
         get() = if (CustomController.getShuffleMode(service) == PlaybackStateCompat.SHUFFLE_MODE_ALL) {
@@ -202,48 +196,30 @@ class QueueManager(private val service: MediaBrowserServiceCompat,
     //TODO:
     fun updateMetadata() {
         LogHelper.d(TAG, "updateMetadata")
-        if (currentMusic == null) {
-            return
-        }
-        val musicId = MediaIDHelper.extractMusicIDFromMediaID(currentMusic!!.description.mediaId!!)
+        val musicId = MediaIDHelper.extractMusicIDFromMediaID(currentMusic?.description?.mediaId)
                 ?: return
         val metadata = musicProvider.getMusicByMusicId(musicId) ?: return
-
         listener.onMetadataChanged(metadata)
 
         // Set the proper album artwork on the media session, so it can be shown in the
         // locked screen and in other places.
         if (metadata.description.iconBitmap == null && metadata.description.iconUri != null) {
             val albumUri = metadata.description.iconUri!!.toString()
-            mTarget = object : Target {
-                override fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom) {
-                    setMetadataMusicArt(bitmap)
-                }
-
-                override fun onBitmapFailed(errorDrawable: Drawable?) {
-                    val bitmap = AlbumArtHelper.createTextBitmap(metadata.description.title)
-                    setMetadataMusicArt(bitmap)
-                }
-
-                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
-
-                private fun setMetadataMusicArt(bitmap: Bitmap) {
-                    val icon = AlbumArtHelper.createIcon(bitmap)
-                    musicProvider.updateMusicArt(musicId, bitmap, icon)
-
-                    // If we are still playing the same music, notify the listeners:
-                    currentMusic?.description?.mediaId?.let {
-                        MediaIDHelper.extractMusicIDFromMediaID(it)?.let { currentPlayingId ->
-                            if (musicId == currentPlayingId) {
-                                musicProvider.getMusicByMusicId(currentPlayingId)?.let {
-                                    listener.onMetadataChanged(it)
-                                }
+            ViewHelper.readBitmapAsync(service, albumUri, { _bitmap ->
+                val bitmap = _bitmap ?: AlbumArtHelper.createTextBitmap(metadata.description.title)
+                val icon = AlbumArtHelper.createIcon(bitmap)
+                musicProvider.updateMusicArt(musicId, bitmap, icon)
+                // If we are still playing the same music, notify the listeners:
+                currentMusic?.description?.mediaId?.let {
+                    MediaIDHelper.extractMusicIDFromMediaID(it)?.let { currentPlayingId ->
+                        if (musicId == currentPlayingId) {
+                            musicProvider.getMusicByMusicId(currentPlayingId)?.let {
+                                listener.onMetadataChanged(it)
                             }
                         }
                     }
                 }
-            }
-            ViewHelper.readBitmapAsync(service, albumUri, mTarget!!)
+            })
         }
     }
 

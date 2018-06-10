@@ -129,13 +129,10 @@ class NotificationContainer(
     private fun NotificationCompat.Builder.setNotificationPlaybackState(playbackState: PlaybackStateCompat?) {
         LogHelper.d(TAG, "updateNotificationPlaybackState. playbackState=$playbackState")
         if (playbackState?.state == PlaybackStateCompat.STATE_PLAYING && playbackState.position >= 0) {
-            LogHelper.d(TAG, "updateNotificationPlaybackState. updating playback position to ",
-                    (System.currentTimeMillis() - playbackState.position) / 1000, " seconds")
             setWhen(System.currentTimeMillis() - playbackState.position)
                     .setShowWhen(true)
                     .setUsesChronometer(true)
         } else {
-            LogHelper.d(TAG, "updateNotificationPlaybackState. hiding playback position")
             setWhen(0)
                     .setShowWhen(false)
                     .setUsesChronometer(false)

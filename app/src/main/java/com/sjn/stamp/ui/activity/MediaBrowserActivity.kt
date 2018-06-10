@@ -12,12 +12,11 @@ import com.sjn.stamp.ui.MediaBrowsable
 import com.sjn.stamp.ui.observer.MediaBrowserObserver
 import com.sjn.stamp.ui.observer.MediaControllerObserver
 import com.sjn.stamp.utils.LogHelper
+import com.sjn.stamp.utils.MediaControllerHelper
 
 abstract class MediaBrowserActivity : DrawerActivity(), MediaBrowsable, MediaControllerObserver.Listener {
 
     override var mediaBrowser: MediaBrowserCompat? = null
-    private val mediaController: MediaControllerCompat?
-        get() = MediaControllerCompat.getMediaController(this)
 
     private val connectionCallback: MediaBrowserCompat.ConnectionCallback = object : MediaBrowserCompat.ConnectionCallback() {
         override fun onConnected() {
@@ -63,7 +62,7 @@ abstract class MediaBrowserActivity : DrawerActivity(), MediaBrowsable, MediaCon
 
     override fun onMediaControllerConnected() {
         LogHelper.d(TAG, "onMediaControllerConnected, mediaController==null? ", mediaController == null)
-        mediaController?.let {
+        MediaControllerHelper.getController(this)?.let {
             onMetadataChanged(it.metadata)
             onPlaybackStateChanged(it.playbackState)
         }

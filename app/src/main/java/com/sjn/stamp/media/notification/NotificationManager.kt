@@ -17,11 +17,11 @@
 package com.sjn.stamp.media.notification
 
 import android.os.RemoteException
+import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import com.sjn.stamp.MusicService
 import com.sjn.stamp.ui.observer.MediaControllerObserver
 import com.sjn.stamp.utils.LogHelper
 
@@ -30,7 +30,7 @@ import com.sjn.stamp.utils.LogHelper
  * MediaSession. Maintaining a visible notification (usually) guarantees that the music service
  * won't be killed during playback.
  */
-class NotificationManager @Throws(RemoteException::class) constructor(private val service: MusicService) : MediaControllerObserver.Listener {
+class NotificationManager @Throws(RemoteException::class) constructor(private val service: MediaBrowserServiceCompat) : MediaControllerObserver.Listener {
 
     companion object {
         private val TAG = LogHelper.makeLogTag(NotificationManager::class.java)
@@ -71,7 +71,7 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
      */
     fun startNotification() {
         LogHelper.i(TAG, "startNotification")
-        if (!started) {
+        if (!started && controller != null) {
             currentMetadata = controller!!.metadata
             playbackState = controller!!.playbackState
             if (playbackState == null) {
