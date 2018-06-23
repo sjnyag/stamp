@@ -177,7 +177,7 @@ object MediaPlayerHelper {
             if (isPlaying) {
                 context.startService(Intent(context, MusicService::class.java).apply {
                     action = NotificationHelper.ACTION_CMD
-                    putExtra(NotificationHelper.CMD_NAME, NotificationHelper.CMD_PAUSE)
+                    putExtra(NotificationHelper.CMD_NAME, MusicService.NOTIFICATION_CMD_PAUSE)
                 })
             }
         }

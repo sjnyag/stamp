@@ -149,7 +149,6 @@ object DialogFacade {
         dataSet.add(Licenses.fromGitHubApacheV2("mikepenz/MaterialDrawer"))
         dataSet.add(Licenses.fromGitHubBSD("NanoHttpd/nanohttpd"))
         dataSet.add(Licenses.fromGitHubApacheV2("umano/AndroidSlidingUpPanel"))
-        dataSet.add(Licenses.fromGitHubApacheV2("square/picasso"))
         dataSet.add(Licenses.fromGitHubApacheV2("davideas/FlexibleAdapter"))
         dataSet.add(Licenses.fromGitHubApacheV2("dlew/joda-time-android"))
         dataSet.add(Licenses.fromGitHubApacheV2("yshrsmz/LicenseAdapter"))

@@ -5,7 +5,7 @@ import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceViewHolder
 import android.util.AttributeSet
 import com.sjn.stamp.R
-import com.sjn.stamp.getCurrent
+import com.sjn.stamp.utils.getCurrent
 import io.multimoon.colorful.Colorful
 import io.multimoon.colorful.ThemeColor
 

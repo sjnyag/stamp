@@ -2,44 +2,23 @@ package com.sjn.stamp.utils
 
 import android.content.res.Configuration
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import com.mikepenz.materialdrawer.AccountHeader
 import com.mikepenz.materialdrawer.AccountHeaderBuilder
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.BaseDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.Nameable
-import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader
-import com.mikepenz.materialdrawer.util.DrawerImageLoader
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.DrawerMenu
-import com.squareup.picasso.Picasso
 import java.util.*
 
 object DrawerHelper {
-
-    fun initialize() {
-        DrawerImageLoader.init(object : AbstractDrawerImageLoader() {
-            override fun set(imageView: ImageView?, uri: Uri?, placeholder: Drawable?) {
-                imageView?.let {
-                    Picasso.with(it.context).load(uri).placeholder(placeholder).into(it)
-                }
-            }
-
-            override fun cancel(imageView: ImageView?) {
-                imageView?.let {
-                    Picasso.with(it.context).cancelRequest(imageView)
-                }
-            }
-        })
-    }
 
     class Drawer(private val activity: AppCompatActivity, toolbar: Toolbar, private val listener: Listener) {
         interface Listener {
@@ -149,27 +128,19 @@ object DrawerHelper {
         }
 
         fun updateHeader(metadata: MediaMetadataCompat?) {
-            metadata?.let {
-                it.description?.iconUri?.let {
-                    ViewHelper.readBitmapAsync(activity, it.toString(), { bitmap ->
-                        if (bitmap == null) {
-                            createDefaultHeader(metadata, accountHeader)
-                            return@readBitmapAsync
-                        }
-                        accountHeader.clear()
-                        accountHeader.addProfiles(createProfileItem(metadata).apply {
-                            withIcon(bitmap)
-                        })
-                    })
-                    createDefaultHeader(metadata, accountHeader)
-                }
+            AlbumArtHelper.readBitmapAsync(activity, metadata?.description?.iconUri, metadata?.description?.title?.toString()
+            ) { bitmap ->
+                accountHeader.clear()
+                accountHeader.addProfiles(createProfileItem(metadata).apply {
+                    withIcon(bitmap)
+                })
             }
         }
     }
 
-    private fun createProfileItem(metadata: MediaMetadataCompat): ProfileDrawerItem {
+    private fun createProfileItem(metadata: MediaMetadataCompat?): ProfileDrawerItem {
         return ProfileDrawerItem().apply {
-            metadata.description?.let { description ->
+            metadata?.description?.let { description ->
                 description.title?.let {
                     withName(it.toString())
                 }
@@ -178,13 +149,6 @@ object DrawerHelper {
                 }
             }
         }
-    }
-
-    private fun createDefaultHeader(metadata: MediaMetadataCompat, accountHeader: AccountHeader) {
-        accountHeader.clear()
-        accountHeader.addProfiles(createProfileItem(metadata).apply {
-            withIcon(AlbumArtHelper.createTextBitmap(metadata.description.title))
-        })
     }
 
 }

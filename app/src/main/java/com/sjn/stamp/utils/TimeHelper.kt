@@ -27,6 +27,9 @@ object TimeHelper {
     val japanDay: Int
         get() = japanNow.dayOfMonth
 
+    val localUnixTime: Long
+        get() = System.currentTimeMillis()
+
     fun getDateText(date: Date, resources: Resources): String {
         val dateTime = TimeHelper.toDateTime(date).minusSeconds(20)
         val now = TimeHelper.japanNow

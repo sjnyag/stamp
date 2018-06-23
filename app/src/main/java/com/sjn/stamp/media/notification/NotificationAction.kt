@@ -27,7 +27,7 @@ enum class NotificationAction(val action: String) {
         override fun exec(context: Context, control: MediaControllerCompat.TransportControls) {
             context.startService(Intent(context, MusicService::class.java).apply {
                 action = NotificationHelper.ACTION_CMD
-                putExtra(NotificationHelper.CMD_NAME, NotificationHelper.CMD_STOP_CASTING)
+                putExtra(NotificationHelper.CMD_NAME, MusicService.NOTIFICATION_CMD_STOP_CASTING)
             })
         }
     }, ;
@@ -60,7 +60,7 @@ enum class NotificationAction(val action: String) {
                 PendingIntent.getService(context, REQUEST_CODE,
                         Intent(context, MusicService::class.java).apply {
                             action = NotificationHelper.ACTION_CMD
-                            putExtra(NotificationHelper.CMD_NAME, NotificationHelper.CMD_KILL)
+                            putExtra(NotificationHelper.CMD_NAME, MusicService.NOTIFICATION_CMD_KILL)
                         },
                         PendingIntent.FLAG_CANCEL_CURRENT)
 

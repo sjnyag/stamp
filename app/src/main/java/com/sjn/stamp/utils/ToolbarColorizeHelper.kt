@@ -18,7 +18,6 @@ package com.sjn.stamp.utils
 import android.app.Activity
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-import android.os.Build
 import android.support.v7.view.menu.ActionMenuItemView
 import android.support.v7.widget.ActionMenuView
 import android.support.v7.widget.Toolbar
@@ -26,10 +25,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.ImageButton
-
 import com.sjn.stamp.R
-
-import java.util.ArrayList
+import com.sjn.stamp.utils.CompatibleHelper.hasJellyBean
+import java.util.*
 
 
 /**
@@ -112,10 +110,10 @@ object ToolbarColorizeHelper {
     }
 
     private fun removeOnGlobalLayoutListener(v: View, listener: ViewTreeObserver.OnGlobalLayoutListener) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            v.viewTreeObserver.removeGlobalOnLayoutListener(listener)
-        } else {
+        if (hasJellyBean()) {
             v.viewTreeObserver.removeOnGlobalLayoutListener(listener)
+        } else {
+            v.viewTreeObserver.removeGlobalOnLayoutListener(listener)
         }
     }
 }

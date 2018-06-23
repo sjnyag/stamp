@@ -16,7 +16,7 @@ class IntentDispatchActivity : AppCompatActivity() {
         if (intent.getStringExtra("Shortcut") == "Play") {
             startService(Intent(this, MusicService::class.java).apply {
                 action = NotificationHelper.ACTION_CMD
-                putExtra(NotificationHelper.CMD_NAME, NotificationHelper.CMD_PLAY)
+                putExtra(NotificationHelper.CMD_NAME, MusicService.NOTIFICATION_CMD_PLAY)
             })
             finish()
             return

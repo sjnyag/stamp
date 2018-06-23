@@ -1,6 +1,7 @@
 package com.sjn.stamp.utils
 
 import android.app.Activity
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -8,15 +9,15 @@ import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
+import android.provider.MediaStore
 import android.view.View
 import android.widget.ImageView
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.custom.TextDrawable
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
 import java.io.FileNotFoundException
 import java.util.*
-
 
 object AlbumArtHelper {
     // Resolution reasonable for carrying around as an icon (generally in
@@ -28,22 +29,44 @@ object AlbumArtHelper {
     private const val IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP = "bitmap"
     private const val IMAGE_VIEW_ALBUM_ART_TYPE_TEXT = "text"
 
+    fun readBitmapSync(context: Context, url: String?, title: String?): Bitmap {
+        return readBitmapSync(context, Uri.parse(url), title)
+    }
+
+    fun readBitmapSync(context: Context, url: Uri?, title: String?): Bitmap {
+        return try {
+            MediaStore.Images.Media.getBitmap(context.contentResolver, url)
+        } catch (e: FileNotFoundException) {
+            AlbumArtHelper.createTextBitmap(title)
+        }
+    }
+
+    fun readBitmapAsync(context: Context, url: String?, title: String?, onLoad: (Bitmap) -> Unit) {
+        Handler(Looper.getMainLooper()).post {
+            onLoad(readBitmapSync(context, url, title))
+        }
+    }
+
+    fun readBitmapAsync(context: Context, url: Uri?, title: String?, onLoad: (Bitmap) -> Unit) {
+        Handler(Looper.getMainLooper()).post {
+            onLoad(readBitmapSync(context, url, title))
+        }
+    }
+
     fun loadAlbumArt(activity: Activity, view: ImageView, bitmap: Bitmap?, imageType: String?, artUrl: String?, text: String?) {
         view.setTag(R.id.image_view_album_art_url, artUrl)
         view.setTag(R.id.image_view_album_art_text, text)
         view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
         if (imageType == "bitmap") {
-            Picasso.with(activity).load(artUrl).placeholder(BitmapDrawable(activity.resources, bitmap)).into(view, object : Callback {
-                override fun onSuccess() {
-                    view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP)
-                }
-
-                override fun onError() {
-                    view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
-                    view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-                    view.setImageDrawable(createTextDrawable(text ?: ""))
-                }
-            })
+            view.setImageBitmap(bitmap)
+            try {
+                view.setImageBitmap(MediaStore.Images.Media.getBitmap(activity.contentResolver, Uri.parse(artUrl)))
+                view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP)
+            } catch (e: FileNotFoundException) {
+                view.setImageDrawable(createTextDrawable(text ?: ""))
+                view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
+                view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+            }
         } else if (imageType == "text") {
             view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
             view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
@@ -94,22 +117,6 @@ object AlbumArtHelper {
                 }
             }
         }).start()
-//        Picasso.with(activity).load(artUrl).placeholder(createTextDrawable(text)).resize(targetWidth, targetHeight).into(view, object : Callback {
-//            override fun onSuccess() {
-//                if (view.getTag(R.id.image_view_album_art_url) != null && artUrl != view.getTag(R.id.image_view_album_art_url)) {
-//                    updateAlbumArt(activity, view, view.getTag(R.id.image_view_album_art_url) as String, text)
-//                } else {
-//                    view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP)
-//                }
-//            }
-//
-//            override fun onError() {
-//                view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
-//                view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-//                view.setImageDrawable(createTextDrawable(text))
-//                //view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));
-//            }
-//        })
     }
 
     fun createTextBitmap(text: CharSequence?) =

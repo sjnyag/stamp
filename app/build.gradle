@@ -115,7 +115,6 @@ dependencies {
     }
     implementation 'com.nanohttpd:nanohttpd-webserver:2.1.1'
     implementation 'com.sothree.slidinguppanel:library:3.3.0'
-    implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation "com.takisoft.fix:preference-v7:$versions.supportLib.0"
     implementation 'eu.davidea:flexible-adapter:5.0.0-rc3'
     implementation 'net.danlew:android.joda:2.6.0'

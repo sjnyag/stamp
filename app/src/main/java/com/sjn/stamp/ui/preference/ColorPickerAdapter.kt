@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.sjn.stamp.R
-import com.sjn.stamp.getCurrent
 import io.multimoon.colorful.ThemeColor
 
 internal class ColorPickerAdapter(private val context: Context) : RecyclerView.Adapter<ColorPickerAdapter.ItemViewHolder>() {

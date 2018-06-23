@@ -29,6 +29,10 @@ object CompatibleHelper {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
     }
 
+    fun hasJellyBean(): Boolean {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
+    }
+
     fun getColor(resources: Resources, resourceId: Int, theme: Resources.Theme): Int? {
         if (hasMarshmallow()) {
             resources.getColor(resourceId, theme)

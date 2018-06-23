@@ -7,7 +7,6 @@ import android.support.v4.media.MediaMetadataCompat
 import android.view.*
 import com.sjn.stamp.MusicService
 import com.sjn.stamp.R
-import com.sjn.stamp.getAccent
 import com.sjn.stamp.ui.DialogFacade
 import com.sjn.stamp.ui.custom.PeriodSelectLayout
 import com.sjn.stamp.ui.item.RankedArtistItem
@@ -15,6 +14,7 @@ import com.sjn.stamp.ui.item.RankedSongItem
 import com.sjn.stamp.utils.AnalyticsHelper
 import com.sjn.stamp.utils.MediaIDHelper
 import com.sjn.stamp.utils.QueueHelper
+import com.sjn.stamp.utils.getAccent
 import io.multimoon.colorful.Colorful
 import java.util.*
 
@@ -64,7 +64,7 @@ class RankingPagerFragment : PagerFragment(), PagerFragment.PageFragmentContaine
         when (item?.itemId) {
             R.id.period -> {
                 activity?.let { activity ->
-                    DialogFacade.createRankingPeriodSelectDialog(activity, period!!, { periodSelectLayout -> updateRankingPeriod(periodSelectLayout) })
+                    DialogFacade.createRankingPeriodSelectDialog(activity, period!!) { periodSelectLayout -> updateRankingPeriod(periodSelectLayout) }
                 }
                 return false
             }

@@ -9,7 +9,7 @@ import android.support.v7.widget.Toolbar
 import android.view.View
 
 import com.sjn.stamp.R
-import com.sjn.stamp.getCurrent
+import com.sjn.stamp.utils.getCurrent
 import io.multimoon.colorful.Colorful
 
 import io.multimoon.colorful.ThemeColor

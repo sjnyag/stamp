@@ -204,9 +204,8 @@ class QueueManager(private val service: MediaBrowserServiceCompat,
         // Set the proper album artwork on the media session, so it can be shown in the
         // locked screen and in other places.
         if (metadata.description.iconBitmap == null && metadata.description.iconUri != null) {
-            val albumUri = metadata.description.iconUri!!.toString()
-            ViewHelper.readBitmapAsync(service, albumUri) { _bitmap ->
-                val bitmap = _bitmap ?: AlbumArtHelper.createTextBitmap(metadata.description.title)
+            AlbumArtHelper.readBitmapAsync(service, metadata.description?.iconUri, metadata.description?.title?.toString()
+            ) { bitmap ->
                 val icon = AlbumArtHelper.createIcon(bitmap)
                 musicProvider.updateMusicArt(musicId, bitmap, icon)
                 // If we are still playing the same music, notify the listeners:
@@ -220,6 +219,7 @@ class QueueManager(private val service: MediaBrowserServiceCompat,
                     }
                 }
             }
+
         }
     }
 

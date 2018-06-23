@@ -10,6 +10,11 @@ import com.sjn.stamp.utils.PreferenceHelper
 
 object CustomController {
 
+    fun restore(service: MediaBrowserServiceCompat) {
+        setShuffleMode(service, PreferenceHelper.loadShuffle(service, PlaybackStateCompat.SHUFFLE_MODE_NONE))
+        setRepeatMode(service, PreferenceHelper.loadRepeat(service, PlaybackStateCompat.REPEAT_MODE_NONE))
+    }
+
     fun getShuffleMode(service: MediaBrowserServiceCompat?): Int = getShuffleMode(MediaControllerHelper.getController(service))
 
     fun getShuffleMode(activity: Activity?): Int = getShuffleMode(MediaControllerHelper.getController(activity))

@@ -4,7 +4,6 @@ import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Color
-import android.provider.MediaStore
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.media.MediaMetadataCompat
@@ -17,7 +16,6 @@ import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.NotificationHelper
 import com.sjn.stamp.utils.ViewHelper
-import java.io.FileNotFoundException
 
 class NotificationContainer(
         private val context: Context,
@@ -59,11 +57,7 @@ class NotificationContainer(
                     setupStyle(metadata)
                     addCastAction()
                     setNotificationPlaybackState(playbackState)
-                    setLargeIcon(try {
-                        MediaStore.Images.Media.getBitmap(context.contentResolver, metadata?.description?.iconUri)
-                    } catch (e: FileNotFoundException) {
-                        AlbumArtHelper.createTextBitmap(metadata?.description?.title?.toString())
-                    })
+                    setLargeIcon(AlbumArtHelper.readBitmapSync(context, metadata?.description?.iconUri, metadata?.description?.title?.toString()))
                 }.build()
     }
 
@@ -136,7 +130,4 @@ class NotificationContainer(
         // Make sure that the notification can be dismissed by the user when we are not playing:
         setOngoing(playbackState?.state == PlaybackStateCompat.STATE_PLAYING)
     }
-
-    private fun MediaMetadataCompat.getTextDrawableBitmap() =
-            AlbumArtHelper.createTextBitmap(description.title)
 }

@@ -97,7 +97,7 @@ class PlaybackManager(
             PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN
         }
         var state = playback.state
-        val playBackState = PlaybackStateCompat.Builder().setActions(availableActions)
+        val playbackState = PlaybackStateCompat.Builder().setActions(availableActions)
                 .apply {
                     // If there is an error message, send it to the playback state:
                     error?.let {
@@ -114,7 +114,7 @@ class PlaybackManager(
                         setActiveQueueItemId(it.queueId)
                     }
                 }.build()
-        serviceCallback.onPlaybackStateUpdated(playBackState)
+        session.setPlaybackState(playbackState)
         if (state.isRequireNotification) {
             serviceCallback.onNotificationRequired()
         }
@@ -126,10 +126,6 @@ class PlaybackManager(
 
     fun setActive(active: Boolean) {
         session.isActive = active
-    }
-
-    fun setPlaybackState(playbackState: PlaybackStateCompat) {
-        session.setPlaybackState(playbackState)
     }
 
     fun stopCasting() {
@@ -238,6 +234,7 @@ class PlaybackManager(
             if (playback.state.isPlayable) {
                 mediaLogger.onStart()
             }
+            setActive(true)
             serviceCallback.onPlaybackStart()
             playback.play(queueItem)
         }
@@ -367,6 +364,7 @@ class PlaybackManager(
             if (playback.state.isPlayable) {
                 mediaLogger.onStart()
             }
+            setActive(true)
             serviceCallback.onPlaybackStart()
             playback.play(it)
         }
@@ -379,6 +377,7 @@ class PlaybackManager(
         LogHelper.d(TAG, "handlePauseRequest: state=" + playback.state)
         if (playback.isPlaying) {
             playback.pause()
+            setActive(false)
             serviceCallback.onPlaybackStop()
         }
     }
@@ -393,6 +392,7 @@ class PlaybackManager(
     private fun handleStopRequest(withError: String?) {
         LogHelper.d(TAG, "handleStopRequest: state=" + playback.state + " error=", withError)
         playback.stop(true)
+        setActive(false)
         serviceCallback.onPlaybackStop()
         updatePlaybackState(withError)
     }
@@ -431,8 +431,6 @@ class PlaybackManager(
         fun onNotificationRequired()
 
         fun onPlaybackStop()
-
-        fun onPlaybackStateUpdated(newState: PlaybackStateCompat)
     }
 
     companion object {

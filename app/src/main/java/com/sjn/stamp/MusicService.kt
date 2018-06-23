@@ -8,7 +8,6 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.session.MediaControllerCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import com.sjn.stamp.controller.CustomController
 import com.sjn.stamp.media.notification.NotificationManager
 import com.sjn.stamp.media.playback.Playback
@@ -16,13 +15,20 @@ import com.sjn.stamp.media.playback.PlaybackManager
 import com.sjn.stamp.media.provider.MusicProvider
 import com.sjn.stamp.media.source.LocalMediaSource
 import com.sjn.stamp.ui.observer.MediaControllerObserver
-import com.sjn.stamp.utils.*
+import com.sjn.stamp.utils.LogHelper
+import com.sjn.stamp.utils.MediaIDHelper
+import com.sjn.stamp.utils.MediaRetrieveHelper
+import com.sjn.stamp.utils.NotificationHelper
 import java.util.*
 
 class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServiceCallback {
 
     companion object {
         private val TAG = LogHelper.makeLogTag(MusicService::class.java)
+        const val NOTIFICATION_CMD_PLAY = "CMD_PLAY"
+        const val NOTIFICATION_CMD_PAUSE = "CMD_PAUSE"
+        const val NOTIFICATION_CMD_STOP_CASTING = "CMD_STOP_CASTING"
+        const val NOTIFICATION_CMD_KILL = "CMD_KILL"
         const val CUSTOM_ACTION_RELOAD_MUSIC_PROVIDER = "RELOAD_MUSIC_PROVIDER"
         const val CUSTOM_ACTION_SET_QUEUE = "SET_QUEUE"
         const val CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_TITLE = "SET_QUEUE_BUNDLE_KEY_TITLE"
@@ -30,32 +36,34 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
         const val CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_QUEUE = "SET_QUEUE_BUNDLE_KEY_QUEUE"
     }
 
-    private lateinit var musicProvider: MusicProvider
-    private var notificationManager = NotificationManager(this)
+    private var playOnPrepared = false
+
     private var playbackManager: PlaybackManager? = null
     private var mediaController: MediaControllerCompat? = null
-    private var playOnPrepared = false
+
+    private val notificationManager = NotificationManager(this)
+    private val musicProvider = MusicProvider(this,
+            LocalMediaSource(this, object : MediaRetrieveHelper.PermissionRequiredCallback {
+                override fun onPermissionRequired() {
+                }
+            }))
 
     override fun onCreate() {
         super.onCreate()
         LogHelper.d(TAG, "onCreate")
-        musicProvider = MusicProvider(this, LocalMediaSource(this, object : MediaRetrieveHelper.PermissionRequiredCallback {
-            override fun onPermissionRequired() {
-            }
-        }))
         musicProvider.retrieveMediaAsync(object : MusicProvider.Callback {
             override fun onMusicCatalogReady(success: Boolean) {
                 LogHelper.d(TAG, "MusicProvider.callBack start")
-                playbackManager = PlaybackManager(this@MusicService, this@MusicService, musicProvider, Playback.Type.LOCAL)
-                playbackManager?.restorePreviousState()
+                playbackManager = PlaybackManager(this@MusicService, this@MusicService, musicProvider, Playback.Type.LOCAL).apply {
+                    restorePreviousState()
+                }
                 sessionToken = playbackManager?.sessionToken
                 sessionToken?.let {
                     mediaController = MediaControllerCompat(this@MusicService, it).apply {
                         MediaControllerObserver.register(this)
                     }
                 }
-                CustomController.setShuffleMode(this@MusicService, PreferenceHelper.loadShuffle(this@MusicService, PlaybackStateCompat.SHUFFLE_MODE_NONE))
-                CustomController.setRepeatMode(this@MusicService, PreferenceHelper.loadRepeat(this@MusicService, PlaybackStateCompat.REPEAT_MODE_NONE))
+                CustomController.restore(this@MusicService)
                 try {
                     notificationManager.updateSessionToken()
                 } catch (e: RemoteException) {
@@ -70,6 +78,15 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
         })
     }
 
+    override fun onDestroy() {
+        LogHelper.d(TAG, "onDestroy")
+        mediaController?.let {
+            it.transportControls.stop()
+            MediaControllerObserver.unregister(it)
+        }
+        notificationManager.stopNotification()
+    }
+
     override fun onStartCommand(startIntent: Intent?, flags: Int, startId: Int): Int {
         LogHelper.d(TAG, "onStartCommand")
         startIntent?.let {
@@ -80,15 +97,6 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
             }
         }
         return Service.START_NOT_STICKY
-    }
-
-    override fun onDestroy() {
-        LogHelper.d(TAG, "onDestroy")
-        mediaController?.let {
-            it.transportControls.stop()
-            MediaControllerObserver.unregister(it)
-        }
-        notificationManager.stopNotification()
     }
 
     /**
@@ -106,7 +114,10 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
             CUSTOM_ACTION_SET_QUEUE -> {
                 result.detach()
                 extras?.let {
-                    playbackManager?.startNewQueue(extras.getString(CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_TITLE), extras.getString(CUSTOM_ACTION_SET_QUEUE_BUNDLE_MEDIA_ID), extras.getParcelableArrayList(CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_QUEUE))
+                    playbackManager?.startNewQueue(
+                            extras.getString(CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_TITLE),
+                            extras.getString(CUSTOM_ACTION_SET_QUEUE_BUNDLE_MEDIA_ID),
+                            extras.getParcelableArrayList(CUSTOM_ACTION_SET_QUEUE_BUNDLE_KEY_QUEUE))
                 }
                 return
             }
@@ -147,7 +158,6 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
      */
     override fun onPlaybackStart() {
         LogHelper.d(TAG, "onPlaybackStart")
-        playbackManager?.setActive(true)
         // The service needs to continue running even after the bound client (usually a
         // MediaController) disconnects, otherwise the music playback will stop.
         // Calling startService(Intent) will keep the service running until it is explicitly killed.
@@ -157,13 +167,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
 
     override fun onPlaybackStop() {
         LogHelper.d(TAG, "onPlaybackStop")
-        playbackManager?.setActive(false)
         notificationManager.stopForeground(false)
-    }
-
-    override fun onPlaybackStateUpdated(newState: PlaybackStateCompat) {
-        LogHelper.d(TAG, "onPlaybackStateUpdated ", newState)
-        playbackManager?.setPlaybackState(newState)
     }
 
     override fun onNotificationRequired() {
@@ -174,11 +178,11 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
     private fun handleActionCommand(command: String) {
         LogHelper.d(TAG, "handleActionCommand ", command)
         when (command) {
-            NotificationHelper.CMD_PLAY -> mediaController?.transportControls?.play()
+            NOTIFICATION_CMD_PLAY -> mediaController?.transportControls?.play()
                     ?: run { playOnPrepared = true }
-            NotificationHelper.CMD_PAUSE -> mediaController?.transportControls?.pause()
-            NotificationHelper.CMD_STOP_CASTING -> playbackManager?.stopCasting()
-            NotificationHelper.CMD_KILL -> playbackManager?.let { stopSelf() }
+            NOTIFICATION_CMD_PAUSE -> mediaController?.transportControls?.pause()
+            NOTIFICATION_CMD_STOP_CASTING -> playbackManager?.stopCasting()
+            NOTIFICATION_CMD_KILL -> playbackManager?.let { stopSelf() }
         }
     }
 

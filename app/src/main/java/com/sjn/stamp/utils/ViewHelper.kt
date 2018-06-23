@@ -1,24 +1,23 @@
 package com.sjn.stamp.utils
 
+import android.animation.Animator
+import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.drawable.Drawable
-import android.os.Handler
-import android.os.Looper
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewTreeObserver
 import com.sjn.stamp.R
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
-
+import eu.davidea.flexibleadapter.helpers.ItemTouchHelperCallback
+import eu.davidea.viewholders.FlexibleViewHolder
 
 @Suppress("unused")
 object ViewHelper {
@@ -40,16 +39,6 @@ object ViewHelper {
         }
     }
 
-    fun tintMenuIcon(item: MenuItem, color: Int) {
-        item.icon?.let {
-            DrawableCompat.setTint(it, color)
-        }
-    }
-
-    fun tintMenuIconByTheme(context: Context, item: MenuItem) {
-        tintMenuIcon(item, ViewHelper.getThemeColor(context, android.R.attr.textColorPrimary, Color.DKGRAY))
-    }
-
     fun getRankingColor(context: Context, position: Int): Int = ContextCompat.getColor(context, getRankingColorResourceId(position))
 
     /**
@@ -68,23 +57,6 @@ object ViewHelper {
             return defaultColor
         }
         return ContextCompat.getColor(context, outValue.resourceId)
-    }
-
-    fun readBitmapAsync(context: Context, url: String, onLoad: (Bitmap?) -> Unit) {
-        Handler(Looper.getMainLooper()).post {
-            val target = object : Target {
-                override fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom) {
-                    onLoad(bitmap)
-                }
-
-                override fun onBitmapFailed(errorDrawable: Drawable?) {
-                    onLoad(null)
-                }
-
-                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
-            }
-            Picasso.with(context).load(url).into(target)
-        }
     }
 
     private fun getDisplayMetrics(context: Context): DisplayMetrics = context.resources.displayMetrics
@@ -111,4 +83,33 @@ inline fun <T : View> T.afterMeasured(crossinline f: T.() -> Unit) {
             }
         }
     })
+}
+
+fun MenuItem.tintByTheme(context: Context) {
+    this.icon?.let {
+        DrawableCompat.setTint(it, ViewHelper.getThemeColor(context, android.R.attr.textColorPrimary, Color.DKGRAY))
+    }
+}
+
+fun RecyclerView.cancelSwipe(position: Int) {
+    val holder = this.findViewHolderForLayoutPosition(position)
+    if (holder is ItemTouchHelperCallback.ViewHolderCallback) {
+        val view = (holder as ItemTouchHelperCallback.ViewHolderCallback).frontView
+        ObjectAnimator.ofFloat(view, "translationX", view.translationX, 0F).apply {
+            addListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animator: Animator) {}
+
+                override fun onAnimationEnd(animator: Animator) {
+                    view.translationX = 0f
+                }
+
+                override fun onAnimationCancel(animation: Animator) {
+                    view.translationX = 0f
+                }
+
+                override fun onAnimationRepeat(animator: Animator) {}
+            })
+        }.start()
+        (holder as? FlexibleViewHolder)?.onActionStateChanged(position, ItemTouchHelper.ACTION_STATE_IDLE)
+    }
 }

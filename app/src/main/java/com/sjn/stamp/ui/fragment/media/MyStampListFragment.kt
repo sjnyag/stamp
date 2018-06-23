@@ -17,7 +17,7 @@ import com.sjn.stamp.ui.item.SongItem
 import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaIDHelper
-import com.sjn.stamp.utils.SwipeHelper
+import com.sjn.stamp.utils.cancelSwipe
 import eu.davidea.fastscroller.FastScroller
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager
@@ -102,7 +102,7 @@ class MyStampListFragment : SongListFragment(), UndoHelper.OnUndoListener, Flexi
         activity?.run {
             if (categoryValue?.let { StampController(this).isCategoryStamp(it, false, item.mediaId) } == true) {
                 Toast.makeText(this, R.string.error_message_stamp_failed, Toast.LENGTH_LONG).show()
-                SwipeHelper.cancel(recyclerView, position)
+                recyclerView?.cancelSwipe(position)
                 return
             }
             tryRemove(item, position)

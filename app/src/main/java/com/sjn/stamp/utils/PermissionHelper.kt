@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.PermissionChecker
 
+@Suppress("unused")
 object PermissionHelper {
 
     fun requestPermissions(activity: Activity?, permissionList: Array<String>?, requestCode: Int): Boolean {

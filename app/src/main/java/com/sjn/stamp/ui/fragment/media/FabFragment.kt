@@ -10,15 +10,15 @@ import android.view.View
 import android.view.animation.DecelerateInterpolator
 import com.gordonwong.materialsheetfab.MaterialSheetFabEventListener
 import com.sjn.stamp.R
-import com.sjn.stamp.getAccent
-import com.sjn.stamp.getPrimaryDark
 import com.sjn.stamp.ui.SongAdapter
 import com.sjn.stamp.ui.custom.CenteredMaterialSheetFab
 import com.sjn.stamp.ui.custom.Fab
 import com.sjn.stamp.ui.item.holder.SongViewHolder
 import com.sjn.stamp.ui.observer.StampEditStateObserver
 import com.sjn.stamp.utils.LogHelper
-import com.sjn.stamp.utils.SpotlightHelper
+import com.sjn.stamp.utils.PreferenceHelper
+import com.sjn.stamp.utils.getAccent
+import com.sjn.stamp.utils.getPrimaryDark
 import com.takusemba.spotlight.SimpleTarget
 import com.takusemba.spotlight.Spotlight
 import io.multimoon.colorful.Colorful
@@ -158,7 +158,7 @@ abstract class FabFragment : Fragment(), StampEditStateObserver.Listener {
                 if (centeredMaterialSheetFab?.isSheetVisible() == true) {
                     centeredMaterialSheetFab?.hideSheet()
                 }
-                if (isShowing && !SpotlightHelper.isShown(activity, SpotlightHelper.KEY_STAMP_ADD)) {
+                if (isShowing && !PreferenceHelper.isSpotlightShown(activity, PreferenceHelper.SpotlightKey.STAMP_ADD)) {
                     showSpotlight()
                 }
             }
@@ -185,7 +185,7 @@ abstract class FabFragment : Fragment(), StampEditStateObserver.Listener {
                                     .setDescription(getString(R.string.spotlight_stamp_add_description))
                                     .build())
                             .start()
-                    SpotlightHelper.setShown(activity, SpotlightHelper.KEY_STAMP_ADD)
+                    PreferenceHelper.setSpotlightShown(activity, PreferenceHelper.SpotlightKey.STAMP_ADD)
                 }
             }
         }
