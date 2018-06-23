@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Color
+import android.provider.MediaStore
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.media.MediaMetadataCompat
@@ -12,11 +13,11 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.sjn.stamp.R
 import com.sjn.stamp.media.StampSession.Companion.EXTRA_CONNECTED_CAST
-import com.sjn.stamp.ui.fragment.PlaybackControlsFragment
 import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.NotificationHelper
 import com.sjn.stamp.utils.ViewHelper
+import java.io.FileNotFoundException
 
 class NotificationContainer(
         private val context: Context,
@@ -24,19 +25,19 @@ class NotificationContainer(
         private val controller: MediaControllerCompat
 ) {
     companion object {
-        private val TAG = LogHelper.makeLogTag(Notification::class.java)
+        private val TAG = LogHelper.makeLogTag(NotificationContainer::class.java)
         const val NOTIFICATION_ID = 412
         const val CHANNEL_ID = "stamp_channel_01"
         const val CHANNEL_NAME = "Controller"
     }
 
     var notification: Notification? = null
-
-    private var bitmapLoadTask: NotificationHelper.SetNotificationBitmapAsyncTask? = null
+    private var previousState: PlaybackStateCompat? = null
     private val notificationColor: Int = ViewHelper.getThemeColor(context, R.attr.colorPrimary, Color.DKGRAY)
     private val notificationManager: NotificationManagerCompat = NotificationManagerCompat.from(context)
 
     init {
+        LogHelper.d(TAG, "init")
         NotificationHelper.createChannel(context, CHANNEL_ID, CHANNEL_NAME)
         // Cancel all notifications to handle the case where the Service was killed and
         // restarted by the system.
@@ -44,7 +45,12 @@ class NotificationContainer(
     }
 
     fun create(metadata: MediaMetadataCompat?, playbackState: PlaybackStateCompat?) {
-        LogHelper.d(TAG, "updateNotificationMetadata. metadata=$metadata")
+        LogHelper.d(TAG, "create")
+        if (previousState == playbackState) {
+            LogHelper.d(TAG, "create skip")
+            return
+        }
+        previousState = playbackState
         notification = NotificationCompat.Builder(context, CHANNEL_ID)
                 .apply {
                     addPreviousAction()
@@ -53,31 +59,22 @@ class NotificationContainer(
                     setupStyle(metadata)
                     addCastAction()
                     setNotificationPlaybackState(playbackState)
-                    metadata?.let {
-                        fetchBitmapFromURLAsync(this, it)
-                    }
+                    setLargeIcon(try {
+                        MediaStore.Images.Media.getBitmap(context.contentResolver, metadata?.description?.iconUri)
+                    } catch (e: FileNotFoundException) {
+                        AlbumArtHelper.createTextBitmap(metadata?.description?.title?.toString())
+                    })
                 }.build()
     }
 
-    fun start() = notification?.let { notificationManager.notify(NOTIFICATION_ID, it) }
+    fun start() {
+        LogHelper.d(TAG, "start")
+        notification?.let { notificationManager.notify(NOTIFICATION_ID, it) }
+    }
 
-    fun cancel() = notificationManager.cancel(NOTIFICATION_ID)
-
-    private fun fetchBitmapFromURLAsync(builder: NotificationCompat.Builder, metadata: MediaMetadataCompat) {
-        metadata.description.iconUri?.let {
-            if (bitmapLoadTask?.loadPreparedBitmap(builder, it) == true) {
-                return
-            }
-            builder.setLargeIcon(metadata.getTextDrawableBitmap())
-            bitmapLoadTask?.cancel(true)
-            bitmapLoadTask = NotificationHelper.SetNotificationBitmapAsyncTask(context, object : NotificationHelper.SetNotificationBitmapAsyncTask.Callback {
-                override fun onLoad(builder: NotificationCompat.Builder) {
-                    this@NotificationContainer.notification = builder.build()
-                    this@NotificationContainer.start()
-                }
-            }, metadata.description.title.toString(), it, builder)
-            bitmapLoadTask?.execute()
-        }
+    fun cancel() {
+        LogHelper.d(TAG, "cancel")
+        notificationManager.cancel(NOTIFICATION_ID)
     }
 
     private fun NotificationCompat.Builder.addPreviousAction() =
@@ -127,7 +124,6 @@ class NotificationContainer(
     }
 
     private fun NotificationCompat.Builder.setNotificationPlaybackState(playbackState: PlaybackStateCompat?) {
-        LogHelper.d(TAG, "updateNotificationPlaybackState. playbackState=$playbackState")
         if (playbackState?.state == PlaybackStateCompat.STATE_PLAYING && playbackState.position >= 0) {
             setWhen(System.currentTimeMillis() - playbackState.position)
                     .setShowWhen(true)

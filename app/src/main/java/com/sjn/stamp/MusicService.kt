@@ -31,7 +31,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
     }
 
     private lateinit var musicProvider: MusicProvider
-    private var notificationManager: NotificationManager? = null
+    private var notificationManager = NotificationManager(this)
     private var playbackManager: PlaybackManager? = null
     private var mediaController: MediaControllerCompat? = null
     private var playOnPrepared = false
@@ -57,7 +57,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
                 CustomController.setShuffleMode(this@MusicService, PreferenceHelper.loadShuffle(this@MusicService, PlaybackStateCompat.SHUFFLE_MODE_NONE))
                 CustomController.setRepeatMode(this@MusicService, PreferenceHelper.loadRepeat(this@MusicService, PlaybackStateCompat.REPEAT_MODE_NONE))
                 try {
-                    notificationManager = NotificationManager(this@MusicService)
+                    notificationManager.updateSessionToken()
                 } catch (e: RemoteException) {
                     throw IllegalStateException("Could not create a NotificationManager", e)
                 }
@@ -88,7 +88,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
             it.transportControls.stop()
             MediaControllerObserver.unregister(it)
         }
-        notificationManager?.stopNotification()
+        notificationManager.stopNotification()
     }
 
     /**
@@ -152,13 +152,13 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
         // MediaController) disconnects, otherwise the music playback will stop.
         // Calling startService(Intent) will keep the service running until it is explicitly killed.
         startService(Intent(applicationContext, MusicService::class.java))
-        notificationManager?.startForeground()
+        notificationManager.startForeground()
     }
 
     override fun onPlaybackStop() {
         LogHelper.d(TAG, "onPlaybackStop")
         playbackManager?.setActive(false)
-        notificationManager?.stopForeground(false)
+        notificationManager.stopForeground(false)
     }
 
     override fun onPlaybackStateUpdated(newState: PlaybackStateCompat) {
@@ -168,7 +168,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
 
     override fun onNotificationRequired() {
         LogHelper.d(TAG, "onNotificationRequired")
-        notificationManager?.startNotification()
+        notificationManager.startNotification()
     }
 
     private fun handleActionCommand(command: String) {

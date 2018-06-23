@@ -78,20 +78,20 @@ object AlbumArtHelper {
         Thread(Runnable {
             try {
                 val bitmap = BitmapFactory.decodeStream(activity.contentResolver.openInputStream(Uri.parse(artUrl)))
-                activity.runOnUiThread({
+                activity.runOnUiThread {
                     if (artUrl == view.getTag(R.id.image_view_album_art_url)) {
                         view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP)
                         view.setImageBitmap(bitmap)
                     }
-                })
+                }
             } catch (e: FileNotFoundException) {
-                activity.runOnUiThread({
+                activity.runOnUiThread {
                     if (artUrl == view.getTag(R.id.image_view_album_art_url)) {
                         view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
                         view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
                         view.setImageDrawable(createTextDrawable(text))
                     }
-                })
+                }
             }
         }).start()
 //        Picasso.with(activity).load(artUrl).placeholder(createTextDrawable(text)).resize(targetWidth, targetHeight).into(view, object : Callback {

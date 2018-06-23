@@ -205,7 +205,7 @@ class QueueManager(private val service: MediaBrowserServiceCompat,
         // locked screen and in other places.
         if (metadata.description.iconBitmap == null && metadata.description.iconUri != null) {
             val albumUri = metadata.description.iconUri!!.toString()
-            ViewHelper.readBitmapAsync(service, albumUri, { _bitmap ->
+            ViewHelper.readBitmapAsync(service, albumUri) { _bitmap ->
                 val bitmap = _bitmap ?: AlbumArtHelper.createTextBitmap(metadata.description.title)
                 val icon = AlbumArtHelper.createIcon(bitmap)
                 musicProvider.updateMusicArt(musicId, bitmap, icon)
@@ -219,7 +219,7 @@ class QueueManager(private val service: MediaBrowserServiceCompat,
                         }
                     }
                 }
-            })
+            }
         }
     }
 

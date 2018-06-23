@@ -39,18 +39,11 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
     private var sessionToken: MediaSessionCompat.Token? = null
     private var controller: MediaControllerCompat? = null
 
-    private var playbackState: PlaybackStateCompat? = null
-    private var currentMetadata: MediaMetadataCompat? = null
     private var notificationContainer: NotificationContainer? = null
 
     private var started = false
 
     private var receiver: NotificationReceiver? = null
-
-
-    init {
-        updateSessionToken()
-    }
 
     fun startForeground() {
         LogHelper.i(TAG, "startForeground")
@@ -72,19 +65,14 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
     fun startNotification() {
         LogHelper.i(TAG, "startNotification")
         if (!started && controller != null) {
-            currentMetadata = controller!!.metadata
-            playbackState = controller!!.playbackState
-            if (playbackState == null) {
-                stopForeground(true)
-                return
-            }
             // The notification must be updated after setting started to true
             notificationContainer?.let {
+                LogHelper.i(TAG, "startNotification notificationContainer != null")
                 MediaControllerObserver.addListener(this)
                 receiver?.let {
                     service.registerReceiver(it, NotificationAction.createIntentFilter())
                 }
-                it.create(currentMetadata, playbackState)
+                it.create(controller?.metadata, controller?.playbackState)
                 it.start()
                 startForeground()
                 started = true
@@ -117,7 +105,7 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
      * (see [android.media.session.MediaController.Callback.onSessionDestroyed])
      */
     @Throws(RemoteException::class)
-    private fun updateSessionToken() {
+    fun updateSessionToken() {
         LogHelper.i(TAG, "updateSessionToken")
         val freshToken = service.sessionToken
         if (sessionToken == null && freshToken != null || sessionToken != null && sessionToken != freshToken) {
@@ -139,35 +127,32 @@ class NotificationManager @Throws(RemoteException::class) constructor(private va
     override fun onMediaControllerConnected() = Unit
 
     override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
-        LogHelper.d(TAG, "Received new playback state", state)
-        playbackState = state
-        if (playbackState?.state == PlaybackStateCompat.STATE_STOPPED || playbackState?.state == PlaybackStateCompat.STATE_NONE) {
+        LogHelper.d(TAG, "Received new playback state ", state)
+        if (state?.needToStopNotification() == true) {
             stopNotification()
+        } else if (state?.ignore() == true) {
         } else {
-            if (playbackState == null || !started) {
+            if (state == null || !started) {
                 stopForeground(true)
                 return
             } else {
                 notificationContainer?.let {
-                    it.create(currentMetadata, playbackState)
+                    it.create(controller?.metadata, controller?.playbackState)
                     it.start()
                 }
             }
         }
     }
 
+    private fun PlaybackStateCompat.needToStopNotification(): Boolean {
+        return this.state == PlaybackStateCompat.STATE_STOPPED || this.state == PlaybackStateCompat.STATE_NONE
+    }
+
+    private fun PlaybackStateCompat.ignore(): Boolean {
+        return this.state == PlaybackStateCompat.STATE_BUFFERING || this.state == PlaybackStateCompat.STATE_CONNECTING
+    }
+
     override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
-        LogHelper.d(TAG, "Received new metadata ", metadata)
-        currentMetadata = metadata
-        if (playbackState == null || !started) {
-            stopForeground(true)
-            return
-        } else {
-            notificationContainer?.let {
-                it.create(currentMetadata, playbackState)
-                it.start()
-            }
-        }
     }
 
     override fun onSessionDestroyed() {
