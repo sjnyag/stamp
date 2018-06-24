@@ -124,12 +124,12 @@ class PlaybackManager(
         session.handleIntent(startIntent)
     }
 
-    fun setActive(active: Boolean) {
-        session.isActive = active
-    }
-
     fun stopCasting() {
         session.stopCasting(service)
+    }
+
+    private fun setActive(active: Boolean) {
+        session.isActive = active
     }
 
     /**
@@ -137,16 +137,7 @@ class PlaybackManager(
      */
     override fun onCompletion() {
         mediaLogger.onComplete(currentMediaId)
-        // The media player finished playing the current song, so we go ahead
-        // and start the next.
-        val skipCount = if (CustomController.getRepeatMode(service) == PlaybackStateCompat.REPEAT_MODE_ONE) 0 else 1
-        if (queueManager.skipQueuePosition(skipCount)) {
-            handlePlayRequest()
-            queueManager.updateMetadata()
-        } else {
-            // If skipping was not possible, we stop and release the resources:
-            handleStopRequest(null)
-        }
+        handleSkip()
     }
 
     override fun onPlaybackStatusChanged(state: Int) {
@@ -155,6 +146,7 @@ class PlaybackManager(
 
     override fun onError(error: String) {
         updatePlaybackState(error)
+        handleSkip(1)
     }
 
     override fun setCurrentMediaId(mediaId: String) {
@@ -229,14 +221,7 @@ class PlaybackManager(
     private inner class MediaSessionCallback : MediaSessionCompat.Callback() {
 
         override fun onPlayFromUri(uri: Uri?, extras: Bundle?) {
-            uri ?: return
-            val queueItem = MediaItemHelper.createQueueItem(service, uri) ?: return
-            if (playback.state.isPlayable) {
-                mediaLogger.onStart()
-            }
-            setActive(true)
-            serviceCallback.onPlaybackStart()
-            playback.play(queueItem)
+            handlePlayRequest(MediaItemHelper.createQueueItem(service, uri))
         }
 
         override fun onPlay() {
@@ -358,9 +343,9 @@ class PlaybackManager(
     /**
      * Handle a request to play music
      */
-    private fun handlePlayRequest() {
+    private fun handlePlayRequest(music: MediaSessionCompat.QueueItem? = queueManager.currentMusic) {
         LogHelper.d(TAG, "handlePlayRequest: state=" + playback.state)
-        queueManager.currentMusic?.let {
+        music?.let {
             if (playback.state.isPlayable) {
                 mediaLogger.onStart()
             }
@@ -397,6 +382,18 @@ class PlaybackManager(
         updatePlaybackState(withError)
     }
 
+    private fun handleSkip(skipCount: Int = if (CustomController.getRepeatMode(service) == PlaybackStateCompat.REPEAT_MODE_ONE) 0 else 1) {
+        // The media player finished playing the current song, so we go ahead
+        // and start the next.
+        if (queueManager.skipQueuePosition(skipCount)) {
+            handlePlayRequest()
+            queueManager.updateMetadata()
+        } else {
+            // If skipping was not possible, we stop and release the resources:
+            handleStopRequest(null)
+        }
+    }
+
     /**
      * Switch to a different Playback instance, maintaining all playback state, if possible.
      */
@@ -408,15 +405,15 @@ class PlaybackManager(
         playback = playbackType.createInstance(service, this, Math.max(playback.currentStreamPosition, 0), currentMediaId)
         playback.start()
         when (oldState) {
-            PlaybackStateCompat.STATE_BUFFERING, PlaybackStateCompat.STATE_CONNECTING, PlaybackStateCompat.STATE_PAUSED -> this.playback.pause()
+            PlaybackStateCompat.STATE_BUFFERING, PlaybackStateCompat.STATE_CONNECTING, PlaybackStateCompat.STATE_PAUSED -> handlePauseRequest()
             PlaybackStateCompat.STATE_PLAYING -> {
                 val currentMusic = queueManager.currentMusic
                 if (resumePlaying && currentMusic != null) {
-                    this.playback.play(currentMusic)
+                    handlePlayRequest(currentMusic)
                 } else if (!resumePlaying) {
-                    this.playback.pause()
+                    handlePauseRequest()
                 } else {
-                    this.playback.stop(true)
+                    handleStopRequest(null)
                 }
             }
             PlaybackStateCompat.STATE_NONE -> {

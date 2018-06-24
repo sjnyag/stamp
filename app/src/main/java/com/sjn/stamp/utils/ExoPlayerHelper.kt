@@ -61,7 +61,7 @@ object ExoPlayerHelper {
         val currentStreamPosition: Long get() = mediaPlayer?.currentPosition ?: 0L
 
         fun play(item: MediaSessionCompat.QueueItem) {
-            if (item.description.mediaUri == null) {
+            val path = item.description.mediaUri?.toString() ?: run {
                 listener.onError("Media not found.")
                 return
             }
@@ -74,29 +74,25 @@ object ExoPlayerHelper {
                 configMediaPlayerState()
                 return
             }
-            createMediaPlayerIfNeeded()
-            mediaPlayer?.let {
-                item.description.mediaUri?.toString()?.let { path ->
+            createMediaPlayerIfNeeded().run {
+                // Android "O" makes much greater use of AudioAttributes, especially
+                // with regards to AudioFocus. All of UAMP's tracks are music, but
+                // if your content includes spoken word such as audiobooks or podcasts
+                // then the content type should be set to CONTENT_TYPE_SPEECH for those
+                // tracks.
+                this.audioAttributes = AudioAttributes.Builder()
+                        .setContentType(CONTENT_TYPE_MUSIC)
+                        .setUsage(USAGE_MEDIA)
+                        .build()
 
-                    // Android "O" makes much greater use of AudioAttributes, especially
-                    // with regards to AudioFocus. All of UAMP's tracks are music, but
-                    // if your content includes spoken word such as audiobooks or podcasts
-                    // then the content type should be set to CONTENT_TYPE_SPEECH for those
-                    // tracks.
-                    it.audioAttributes = AudioAttributes.Builder()
-                            .setContentType(CONTENT_TYPE_MUSIC)
-                            .setUsage(USAGE_MEDIA)
-                            .build()
-
-                    val dataSourceFactory = DefaultDataSourceFactory(context, Util.getUserAgent(context, context.applicationInfo.packageName))
-                    val mediaSource = ExtractorMediaSource.Factory(dataSourceFactory).apply {
-                        setExtractorsFactory(DefaultExtractorsFactory())
-                    }.createMediaSource(Uri.parse(path))
-                    // Prepares media to play (happens on background thread) and triggers
-                    // {@code onPlayerStateChanged} callback when the stream is ready to play.
-                    it.playWhenReady = true
-                    it.prepare(mediaSource)
-                }
+                val dataSourceFactory = DefaultDataSourceFactory(context, Util.getUserAgent(context, context.applicationInfo.packageName))
+                val mediaSource = ExtractorMediaSource.Factory(dataSourceFactory).apply {
+                    setExtractorsFactory(DefaultExtractorsFactory())
+                }.createMediaSource(Uri.parse(path))
+                // Prepares media to play (happens on background thread) and triggers
+                // {@code onPlayerStateChanged} callback when the stream is ready to play.
+                this.playWhenReady = true
+                this.prepare(mediaSource)
             }
         }
 
@@ -169,12 +165,14 @@ object ExoPlayerHelper {
          * the media player if needed, or reset the existing media player if one
          * already exists.
          */
-        private fun createMediaPlayerIfNeeded() {
+        private fun createMediaPlayerIfNeeded(): SimpleExoPlayer {
             LogHelper.d(TAG, "createMediaPlayerIfNeeded. needed? ", mediaPlayer == null)
-            if (mediaPlayer == null) {
-                mediaPlayer = ExoPlayerFactory.newSimpleInstance(context, DefaultTrackSelector()).apply {
+            return mediaPlayer ?: run {
+                val player = ExoPlayerFactory.newSimpleInstance(context, DefaultTrackSelector()).apply {
                     addListener(this@ExoPlayerManager)
                 }
+                mediaPlayer = player
+                return player
             }
         }
 

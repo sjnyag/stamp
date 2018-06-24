@@ -182,7 +182,8 @@ object MediaItemHelper {
         return MediaSessionCompat.QueueItem(description, id)
     }
 
-    fun createQueueItem(context: Context, uri: Uri): MediaSessionCompat.QueueItem? {
+    fun createQueueItem(context: Context, uri: Uri?): MediaSessionCompat.QueueItem? {
+        uri ?: return null
         val pathSegments = uri.pathSegments
         val host = uri.host
         val scheme = uri.scheme
