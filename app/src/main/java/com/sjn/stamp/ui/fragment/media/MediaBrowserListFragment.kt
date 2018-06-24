@@ -6,6 +6,7 @@ import android.support.v4.media.MediaBrowserCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.sjn.stamp.R
 import com.sjn.stamp.ui.MediaBrowsable
 import com.sjn.stamp.ui.observer.MediaBrowserObserver
 import com.sjn.stamp.utils.LogHelper
@@ -149,7 +150,8 @@ abstract class MediaBrowserListFragment : ListFragment(), MediaBrowserObserver.L
                 }
 
                 override fun onError(itemId: String) {
-                    MediaIDHelper.extractBrowseCategoryValueFromMediaID(it)?.let { listener?.setToolbarTitle(it) }
+                    val title = MediaIDHelper.extractBrowseCategoryValueFromMediaID(it) ?: getString(R.string.app_name)
+                    listener?.setToolbarTitle(title)
                 }
             })
         }
