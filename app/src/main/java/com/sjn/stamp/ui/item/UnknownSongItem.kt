@@ -42,7 +42,7 @@ class UnknownSongItem(id: String, song: Song) : AbstractItem<UnknownSongViewHold
             holder.date.text = TimeHelper.getDateText(lastPlayed!!, context.resources)
         }
         holder.mediaId = mediaId
-        if (albumArt.isNotEmpty()) AlbumArtHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArt, title)
+        if (albumArt.isNotEmpty()) AlbumArtHelper.update(context as Activity, holder.albumArtView, albumArt, title)
 
     }
 

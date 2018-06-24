@@ -24,5 +24,7 @@
     <item type="id" name="image_view_album_art_type"/>
     <item type="id" name="image_view_album_art_url"/>
     <item type="id" name="image_view_album_art_text"/>
+    <item type="id" name="image_view_album_art_query"/>
+    <item type="id" name="image_view_album_art_query_result"/>
     <item type="id" name="fab_type"/>
 </resources>

@@ -5,8 +5,10 @@ import android.content.Context
 import android.support.v4.media.MediaMetadataCompat
 import android.view.View
 import com.sjn.stamp.R
+import com.sjn.stamp.ui.MediaBrowsable
 import com.sjn.stamp.ui.item.holder.RankedViewHolder
 import com.sjn.stamp.utils.AlbumArtHelper
+import com.sjn.stamp.utils.MediaIDHelper
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.IFilterable
 import eu.davidea.flexibleadapter.utils.FlexibleUtils
@@ -16,16 +18,15 @@ class RankedArtistItem(
         val context: Context,
         val track: MediaMetadataCompat,
         val artistName: String,
-        artUrl: String?,
         val playCount: Int,
-        val order: Int)
+        val order: Int,
+        private val mediaBrowsable: MediaBrowsable?)
     : AbstractItem<RankedViewHolder>(artistName), IFilterable, Serializable {
 
     private val mostPlayedSongTitle = track.description.title?.toString() ?: ""
     override val title = artistName
     override val subtitle = context.getString(R.string.item_ranking_most_played, mostPlayedSongTitle)
             ?: ""
-    private val albumArt = artUrl ?: ""
 
     init {
         isDraggable = true
@@ -46,7 +47,7 @@ class RankedArtistItem(
             holder.countView.text = playCount.toString()
             holder.orderView.text = order.toString()
         }
-        if (albumArt.isNotEmpty()) AlbumArtHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArt, artistName)
+        AlbumArtHelper.searchAndUpdate(context as Activity, holder.albumArtView, title, MediaIDHelper.createMediaID(null, MediaIDHelper.MEDIA_ID_MUSICS_BY_ARTIST, title), mediaBrowsable)
     }
 
     override fun filter(constraint: String): Boolean = artistName.toLowerCase().trim { it <= ' ' }.contains(constraint)

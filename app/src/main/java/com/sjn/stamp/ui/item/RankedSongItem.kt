@@ -43,7 +43,7 @@ class RankedSongItem(
             holder.countView.text = playCount.toString()
             holder.orderView.text = order.toString()
         }
-        if (albumArt.isNotEmpty()) AlbumArtHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArt, title)
+        if (albumArt.isNotEmpty()) AlbumArtHelper.update(context as Activity, holder.albumArtView, albumArt, title)
     }
 
     override fun filter(constraint: String): Boolean =

@@ -16,6 +16,7 @@ import com.sjn.stamp.controller.SongHistoryController
 import com.sjn.stamp.model.RankedArtist
 import com.sjn.stamp.model.RankedSong
 import com.sjn.stamp.model.Shareable
+import com.sjn.stamp.ui.MediaBrowsable
 import com.sjn.stamp.ui.SongAdapter
 import com.sjn.stamp.ui.SongListFragmentFactory
 import com.sjn.stamp.ui.custom.PeriodSelectLayout
@@ -189,13 +190,13 @@ class RankingFragment : MediaBrowserListFragment() {
     private class CalculateAsyncTask internal constructor(internal var fragment: RankingFragment, internal var adapter: SongAdapter, internal var mCallback: Callback, internal var mPeriod: PeriodSelectLayout.Period, internal var mSongHistoryController: SongHistoryController) : AsyncTask<Void, Void, Void>() {
 
         internal interface Callback {
-            fun createItemList(context: Context, realm: Realm, period: PeriodSelectLayout.Period, songHistoryController: SongHistoryController): List<AbstractFlexibleItem<*>>
+            fun createItemList(context: Context, realm: Realm, period: PeriodSelectLayout.Period, songHistoryController: SongHistoryController, mediaBrowsable: MediaBrowsable?): List<AbstractFlexibleItem<*>>
         }
 
         override fun doInBackground(vararg params: Void): Void? {
             RealmHelper.realmInstance.use {
                 fragment.activity?.let { activity ->
-                    fragment.currentItems = mCallback.createItemList(activity, it, mPeriod, mSongHistoryController)
+                    fragment.currentItems = mCallback.createItemList(activity, it, mPeriod, mSongHistoryController, fragment.mediaBrowsable)
                     activity.runOnUiThread(Runnable {
                         if (!fragment.isAdded) {
                             return@Runnable
@@ -217,7 +218,7 @@ class RankingFragment : MediaBrowserListFragment() {
             override fun getRankingShareMessage(resources: Resources, controller: SongHistoryController, period: PeriodSelectLayout.Period, songNum: Int): String =
                     RealmHelper.realmInstance.use { createShareMessage(resources, controller.getRankedSongList(it, period).toList(), songNum) }
 
-            override fun createItemList(context: Context, realm: Realm, period: PeriodSelectLayout.Period, songHistoryController: SongHistoryController): List<AbstractFlexibleItem<*>> {
+            override fun createItemList(context: Context, realm: Realm, period: PeriodSelectLayout.Period, songHistoryController: SongHistoryController, mediaBrowsable: MediaBrowsable?): List<AbstractFlexibleItem<*>> {
                 var order = 1
                 return songHistoryController.getRankedSongList(realm, period).map { newSimpleItem(it, order++) }
             }
@@ -231,13 +232,13 @@ class RankingFragment : MediaBrowserListFragment() {
             override fun getRankingShareMessage(resources: Resources, controller: SongHistoryController, period: PeriodSelectLayout.Period, songNum: Int): String =
                     RealmHelper.realmInstance.use { createShareMessage(resources, controller.getRankedArtistList(it, period).toList(), songNum) }
 
-            override fun createItemList(context: Context, realm: Realm, period: PeriodSelectLayout.Period, songHistoryController: SongHistoryController): List<AbstractFlexibleItem<*>> {
+            override fun createItemList(context: Context, realm: Realm, period: PeriodSelectLayout.Period, songHistoryController: SongHistoryController, mediaBrowsable: MediaBrowsable?): List<AbstractFlexibleItem<*>> {
                 var order = 1
-                return songHistoryController.getRankedArtistList(realm, period).map { newSimpleItem(context, it, order++) }
+                return songHistoryController.getRankedArtistList(realm, period).map { newSimpleItem(context, it, order++, mediaBrowsable) }
             }
 
-            private fun newSimpleItem(context: Context, rankedArtist: RankedArtist, order: Int): RankedArtistItem =
-                    RankedArtistItem(context, rankedArtist.mostPlayedSong()!!.buildMediaMetadataCompat(), rankedArtist.artist.name, rankedArtist.artist.albumArtUri, rankedArtist.playCount, order)
+            private fun newSimpleItem(context: Context, rankedArtist: RankedArtist, order: Int, mediaBrowsable: MediaBrowsable?): RankedArtistItem =
+                    RankedArtistItem(context, rankedArtist.mostPlayedSong()!!.buildMediaMetadataCompat(), rankedArtist.artist.name, rankedArtist.playCount, order, mediaBrowsable)
 
         };
 

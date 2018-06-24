@@ -1,7 +1,6 @@
 package com.sjn.stamp.ui.item
 
 import android.app.Activity
-import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.view.View
 import com.sjn.stamp.R
@@ -37,7 +36,6 @@ class SongItem(
     override fun createViewHolder(view: View, adapter: FlexibleAdapter<*>): SongViewHolder = SongViewHolder(view, adapter, activity)
 
     override fun bindViewHolder(adapter: FlexibleAdapter<*>, holder: SongViewHolder, position: Int, payloads: List<*>) {
-        val context = holder.itemView.context
         if (adapter.hasSearchText()) {
             FlexibleUtils.highlightText(holder.title, title, adapter.searchText)
             FlexibleUtils.highlightText(holder.subtitle, subtitle, adapter.searchText)
@@ -48,22 +46,9 @@ class SongItem(
 
         holder.mediaId = mediaId
         if (albumArt.isNotEmpty()) {
-            AlbumArtHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArt, title)
+            AlbumArtHelper.update(activity, holder.albumArtView, albumArt, title)
         } else {
-            mediaBrowsable.search(mediaId, null, object : MediaBrowserCompat.SearchCallback() {
-                override fun onSearchResult(query: String, extras: Bundle?, items: List<MediaBrowserCompat.MediaItem>) {
-                    for (metadata in items) {
-                        if (metadata.description.iconUri == null) {
-                            continue
-                        }
-                        if (query == holder.mediaId && metadata.description.iconUri != null) {
-                            AlbumArtHelper.updateAlbumArt(context as Activity, holder.albumArtView, metadata.description.iconUri.toString(), title)
-                        }
-                        break
-                    }
-                }
-
-            })
+            AlbumArtHelper.searchAndUpdate(activity, holder.albumArtView, title, mediaId, mediaBrowsable)
         }
         holder.update(holder.imageView, mediaId, isPlayable)
         holder.updateStampList(mediaId)

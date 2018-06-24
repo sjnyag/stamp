@@ -9,12 +9,15 @@ import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import android.support.v4.media.MediaBrowserCompat
 import android.view.View
 import android.widget.ImageView
 import com.sjn.stamp.R
+import com.sjn.stamp.ui.MediaBrowsable
 import com.sjn.stamp.ui.custom.TextDrawable
 import java.io.FileNotFoundException
 import java.util.*
@@ -36,7 +39,7 @@ object AlbumArtHelper {
     fun readBitmapSync(context: Context, url: Uri?, title: String?): Bitmap {
         return try {
             MediaStore.Images.Media.getBitmap(context.contentResolver, url)
-        } catch (e: FileNotFoundException) {
+        } catch (e: Exception) {
             AlbumArtHelper.createTextBitmap(title)
         }
     }
@@ -53,7 +56,7 @@ object AlbumArtHelper {
         }
     }
 
-    fun loadAlbumArt(activity: Activity, view: ImageView, bitmap: Bitmap?, imageType: String?, artUrl: String?, text: String?) {
+    fun reload(activity: Activity, view: ImageView, bitmap: Bitmap?, imageType: String?, artUrl: String?, text: String?) {
         view.setTag(R.id.image_view_album_art_url, artUrl)
         view.setTag(R.id.image_view_album_art_text, text)
         view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
@@ -62,7 +65,7 @@ object AlbumArtHelper {
             try {
                 view.setImageBitmap(MediaStore.Images.Media.getBitmap(activity.contentResolver, Uri.parse(artUrl)))
                 view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP)
-            } catch (e: FileNotFoundException) {
+            } catch (e: Exception) {
                 view.setImageDrawable(createTextDrawable(text ?: ""))
                 view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
                 view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
@@ -75,18 +78,52 @@ object AlbumArtHelper {
 
     }
 
-    fun updateAlbumArt(activity: Activity?, view: ImageView?, artUrl: String?, text: CharSequence?, targetWidth: Int = 128, targetHeight: Int = 128) {
+    fun update(activity: Activity?, view: ImageView?, artUrl: String?, text: CharSequence?) {
         activity?.let { _activity ->
             view?.let { _view ->
                 artUrl?.let { _artUrl ->
-                    updateAlbumArtImpl(_activity, _view, _artUrl, text?.toString()
-                            ?: "", targetWidth, targetHeight)
+                    updateAlbumArtImpl(_activity, _view, _artUrl, text?.toString() ?: "")
                 }
             }
         }
     }
 
-    private fun updateAlbumArtImpl(activity: Activity, view: ImageView, artUrl: String, text: String, targetWidth: Int, targetHeight: Int) {
+    fun searchAndUpdate(activity: Activity, view: ImageView, title: String, query: String, mediaBrowsable: MediaBrowsable?) {
+        if (view.getTag(R.id.image_view_album_art_query) == query && view.getTag(R.id.image_view_album_art_query_result) != null) {
+            AlbumArtHelper.update(activity, view, view.getTag(R.id.image_view_album_art_query_result).toString(), title)
+            return
+        }
+        view.setTag(R.id.image_view_album_art_query, query)
+        view.setTag(R.id.image_view_album_art_query_result, null)
+        AlbumArtHelper.setPlaceHolder(activity, view, title)
+        mediaBrowsable?.search(query, null, object : MediaBrowserCompat.SearchCallback() {
+            override fun onSearchResult(query: String, extras: Bundle?, items: List<MediaBrowserCompat.MediaItem>) {
+                if (view.getTag(R.id.image_view_album_art_query) != query) {
+                    return
+                }
+                for (metadata in items) {
+                    if (metadata.description.iconUri != null) {
+                        view.setTag(R.id.image_view_album_art_query_result, metadata.description.iconUri)
+                        AlbumArtHelper.update(activity, view, metadata.description.iconUri.toString(), title)
+                        break
+                    }
+                }
+            }
+
+        })
+    }
+
+    fun setPlaceHolder(activity: Activity?, view: ImageView?, text: String?) {
+        activity?.runOnUiThread {
+            view?.apply {
+                setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
+                view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+                view.setImageDrawable(createTextDrawable(text ?: ""))
+            }
+        }
+    }
+
+    private fun updateAlbumArtImpl(activity: Activity, view: ImageView, artUrl: String, text: String) {
         view.setTag(R.id.image_view_album_art_url, artUrl)
         view.setTag(R.id.image_view_album_art_text, text)
         view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)

@@ -39,7 +39,7 @@ class SimpleMediaMetadataItem(metadata: MediaMetadataCompat)
             holder.title.text = title
             holder.subtitle.text = subtitle
         }
-        if (albumArt.isNotEmpty()) AlbumArtHelper.updateAlbumArt(context as Activity, holder.albumArtView, albumArt, title)
+        if (albumArt.isNotEmpty()) AlbumArtHelper.update(context as Activity, holder.albumArtView, albumArt, title)
     }
 
     override fun filter(constraint: String): Boolean {

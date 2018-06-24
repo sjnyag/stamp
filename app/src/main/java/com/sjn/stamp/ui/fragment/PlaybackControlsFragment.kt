@@ -126,7 +126,7 @@ class PlaybackControlsFragment : Fragment(), MediaControllerObserver.Listener {
     private fun fetchImageAsync(description: MediaDescriptionCompat) {
         description.iconUri ?: return
         currentArtUrl = description.iconUri.toString()
-        AlbumArtHelper.updateAlbumArt(activity, albumArt, currentArtUrl, description.title)
+        AlbumArtHelper.update(activity, albumArt, currentArtUrl, description.title)
     }
 
     private fun updateExtraInfo(text: String?) {
