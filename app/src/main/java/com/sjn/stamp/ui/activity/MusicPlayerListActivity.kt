@@ -89,7 +89,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
 
         ActivityCompat.postponeEnterTransition(this)
         setContentView(R.layout.activity_player)
-        initializeToolbar()
+        initializeView()
 
         if (!PermissionHelper.hasPermission(this, MediaRetrieveHelper.PERMISSIONS)) {
             LogHelper.d(TAG, "has no Permission")

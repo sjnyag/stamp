@@ -169,7 +169,7 @@ object AlbumArtHelper {
             .build(if (text.isEmpty()) "" else text[0].toString(), ColorGenerator.MATERIAL.getColor(text))
 
     fun toBitmap(drawable: Drawable): Bitmap {
-        if (drawable is BitmapDrawable) {
+        if (drawable is BitmapDrawable && drawable.bitmap != null) {
             return drawable.bitmap
         }
         val width = if (drawable.intrinsicWidth > 0) drawable.intrinsicWidth else 96

@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Context
 import android.graphics.Color
+import android.support.design.widget.CollapsingToolbarLayout
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.app.AppCompatActivity
@@ -14,10 +15,13 @@ import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import com.sjn.stamp.R
+import com.sjn.stamp.utils.ViewHelper.dpToPx
 import eu.davidea.flexibleadapter.helpers.ItemTouchHelperCallback
 import eu.davidea.viewholders.FlexibleViewHolder
+
 
 @Suppress("unused")
 object ViewHelper {
@@ -112,4 +116,12 @@ fun RecyclerView.cancelSwipe(position: Int) {
         }.start()
         (holder as? FlexibleViewHolder)?.onActionStateChanged(position, ItemTouchHelper.ACTION_STATE_IDLE)
     }
+}
+
+fun CollapsingToolbarLayout.setHeight(context: Context, dp: Float) {
+    this.layoutParams = this.layoutParams.apply { height = dpToPx(context, dp).toInt() }
+}
+
+fun CollapsingToolbarLayout.setHeightWrapContent() {
+    this.layoutParams = this.layoutParams.apply { height = ViewGroup.LayoutParams.WRAP_CONTENT }
 }

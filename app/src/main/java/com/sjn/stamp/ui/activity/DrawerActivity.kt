@@ -18,9 +18,9 @@ import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.DrawerMenu
+import com.sjn.stamp.ui.custom.SlidingUpPanelLayout
 import com.sjn.stamp.ui.fragment.media.PagerFragment
 import com.sjn.stamp.utils.*
-import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import io.multimoon.colorful.CAppCompatActivity
 import io.multimoon.colorful.Colorful
 
@@ -28,6 +28,7 @@ import io.multimoon.colorful.Colorful
 abstract class DrawerActivity : CAppCompatActivity(), FragmentManager.OnBackStackChangedListener {
 
     private var toolbar: Toolbar? = null
+    private var slidingUpPanelLayout: SlidingUpPanelLayout? = null
     protected var drawer: DrawerHelper.Drawer? = null
 
     abstract fun onOptionsItemSelected(itemId: Int): Boolean
@@ -53,19 +54,21 @@ abstract class DrawerActivity : CAppCompatActivity(), FragmentManager.OnBackStac
     }
 
     fun expandSlide(): Boolean {
-        val slidingUpPanelLayout = findViewById<SlidingUpPanelLayout>(R.id.sliding_layout)
-        if (slidingUpPanelLayout != null && slidingUpPanelLayout.panelState != SlidingUpPanelLayout.PanelState.EXPANDED) {
-            slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
-            return true
+        slidingUpPanelLayout?.let {
+            if (it.panelState != SlidingUpPanelLayout.PanelState.EXPANDED) {
+                it.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
+                return true
+            }
         }
         return false
     }
 
     fun collapseSlide(): Boolean {
-        val slidingUpPanelLayout = findViewById<SlidingUpPanelLayout>(R.id.sliding_layout)
-        if (slidingUpPanelLayout != null && slidingUpPanelLayout.panelState != SlidingUpPanelLayout.PanelState.COLLAPSED) {
-            slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
-            return true
+        slidingUpPanelLayout?.let {
+            if (it.panelState != SlidingUpPanelLayout.PanelState.COLLAPSED) {
+                it.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
+                return true
+            }
         }
         return false
     }
@@ -77,6 +80,7 @@ abstract class DrawerActivity : CAppCompatActivity(), FragmentManager.OnBackStac
         findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)?.apply {
             isTitleEnabled = true
             setTitle(title)
+            setHeight(context, 350F)
         }
         findViewById<ImageView>(R.id.app_bar_image)?.also { imageView ->
             imageView.visibility = View.VISIBLE
@@ -98,13 +102,14 @@ abstract class DrawerActivity : CAppCompatActivity(), FragmentManager.OnBackStac
         }
         findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)?.apply {
             isTitleEnabled = false
+            setHeightWrapContent()
         }
         findViewById<ImageView>(R.id.app_bar_image)?.apply {
             visibility = View.GONE
         }
     }
 
-    protected fun initializeToolbar() {
+    protected fun initializeView() {
         toolbar = findViewById<View>(R.id.toolbar) as Toolbar?
         toolbar?.let {
             it.inflateMenu(R.menu.main)
@@ -122,6 +127,7 @@ abstract class DrawerActivity : CAppCompatActivity(), FragmentManager.OnBackStac
             )
             ToolbarColorizeHelper.colorizeToolbar(it, ViewHelper.getThemeColor(this, android.R.attr.textColorPrimary, Color.DKGRAY), this)
         }
+        slidingUpPanelLayout = findViewById(R.id.sliding_layout)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

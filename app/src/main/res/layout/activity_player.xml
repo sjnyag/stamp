@@ -13,157 +13,145 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             xmlns:sothree="http://schemas.android.com/apk/res-auto"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:fitsSystemWindows="true"
-             tools:context=".ui.activity.MusicPlayerListActivity">
+<com.sjn.stamp.ui.custom.SlidingUpPanelLayout
+    android:id="@+id/sliding_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:gravity="bottom"
+    app:umanoFadeColor="#00000000"
+    app:umanoPanelHeight="64dp"
+    app:umanoShadowHeight="8dp"
+    tools:context=".ui.activity.MusicPlayerListActivity">
 
-    <com.sothree.slidinguppanel.SlidingUpPanelLayout
-        android:id="@+id/sliding_layout"
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/main_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        android:gravity="bottom"
-        sothree:umanoPanelHeight="64dp"
-        sothree:umanoShadowHeight="8dp">
+        android:layout_height="match_parent">
 
-        <android.support.design.widget.CoordinatorLayout
-            android:id="@+id/main_view"
+        <com.github.sjnyag.forceanimateappbarlayout.ForceAnimateAppBarLayout
+            android:id="@+id/app_bar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true">
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            app:elevation="0dp">
 
-            <!-- Toolbar -->
-            <com.github.sjnyag.forceanimateappbarlayout.ForceAnimateAppBarLayout
-                android:id="@+id/app_bar"
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/toolbar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fitsSystemWindows="true"
-                app:elevation="0dp">
+                app:contentScrim="?colorPrimary"
+                app:elevation="0dp"
+                app:expandedTitleTextAppearance="@android:color/transparent"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:titleEnabled="false">
 
-                <android.support.design.widget.CollapsingToolbarLayout
-                    android:id="@+id/toolbar_layout"
+                <ImageView
+                    android:id="@+id/app_bar_image"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="350dp"
+                    android:contentDescription="@string/play_item"
                     android:fitsSystemWindows="true"
-                    app:contentScrim="?colorPrimary"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/drawer_header"
                     app:elevation="0dp"
-                    app:expandedTitleTextAppearance="@android:color/transparent"
-                    app:layout_scrollFlags="scroll|exitUntilCollapsed"
-                    app:titleEnabled="false">
+                    app:layout_collapseMode="parallax"/>
 
-                    <ImageView
-                        android:id="@+id/app_bar_image"
-                        android:layout_width="match_parent"
-                        android:layout_height="350dp"
-                        android:contentDescription="@string/play_item"
-                        android:fitsSystemWindows="true"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/drawer_header"
-                        android:visibility="gone"
-                        app:elevation="0dp"
-                        app:layout_collapseMode="parallax"/>
-
-                    <android.support.v7.widget.Toolbar
-                        android:id="@+id/toolbar"
-                        android:layout_width="match_parent"
-                        android:layout_height="?attr/actionBarSize"
-                        app:elevation="0dp"
-                        app:layout_collapseMode="pin"/>
-
-                </android.support.design.widget.CollapsingToolbarLayout>
-
-            </com.github.sjnyag.forceanimateappbarlayout.ForceAnimateAppBarLayout>
-
-            <RelativeLayout
-                android:id="@+id/container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
-            <com.sjn.stamp.ui.custom.Fab
-                android:id="@+id/fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|bottom"
-                android:layout_margin="@dimen/fab_margin"
-                android:clickable="true"
-                app:borderWidth="0dp"
-                app:fabSize="normal"
-                app:rippleColor="?colorAccent"/>
-
-            <!-- Overlay that dims the screen -->
-            <com.gordonwong.materialsheetfab.DimOverlayFrameLayout
-                android:id="@+id/overlay"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"/>
-
-            <!-- Circular reveal container for the sheet -->
-            <io.codetail.widget.RevealLinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="end|bottom"
-                android:orientation="vertical">
-                <!-- Sheet that contains your items -->
-                <android.support.v7.widget.CardView
-                    android:id="@+id/fab_sheet"
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone">
+                    android:layout_height="?attr/actionBarSize"
+                    app:elevation="0dp"
+                    app:layout_collapseMode="pin"/>
 
-                    <fragment
-                        android:id="@+id/fragment_stamp_list"
-                        android:name="com.sjn.stamp.ui.fragment.StampEditFragment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"/>
+            </android.support.design.widget.CollapsingToolbarLayout>
 
-                </android.support.v7.widget.CardView>
+        </com.github.sjnyag.forceanimateappbarlayout.ForceAnimateAppBarLayout>
 
-
-            </io.codetail.widget.RevealLinearLayout>
-
-
-        </android.support.design.widget.CoordinatorLayout>
-
-        <LinearLayout
-            android:id="@+id/dragView"
+        <RelativeLayout
+            android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+        <com.sjn.stamp.ui.custom.Fab
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="@dimen/fab_margin"
             android:clickable="true"
-            android:focusable="false"
+            app:borderWidth="0dp"
+            app:fabSize="normal"
+            app:rippleColor="?colorAccent"/>
+
+        <com.gordonwong.materialsheetfab.DimOverlayFrameLayout
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
+        <io.codetail.widget.RevealLinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="end|bottom"
             android:orientation="vertical">
 
             <android.support.v7.widget.CardView
-                android:id="@+id/controls_container"
+                android:id="@+id/fab_sheet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardElevation="8dp">
+                android:visibility="gone">
 
                 <fragment
-                    android:id="@+id/fragment_playback_controls"
-                    android:name="com.sjn.stamp.ui.fragment.PlaybackControlsFragment"
+                    android:id="@+id/fragment_stamp_list"
+                    android:name="com.sjn.stamp.ui.fragment.StampEditFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    tools:layout="@layout/fragment_playback_controls"/>
+                    android:layout_alignParentBottom="true"/>
 
             </android.support.v7.widget.CardView>
 
+        </io.codetail.widget.RevealLinearLayout>
+
+
+    </android.support.design.widget.CoordinatorLayout>
+
+    <LinearLayout
+        android:id="@+id/dragView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="24dp"
+        android:clickable="true"
+        android:focusable="false"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/controls_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="8dp">
+
             <fragment
-                android:id="@+id/fragment_full_player"
-                android:name="com.sjn.stamp.ui.fragment.FullScreenPlayerFragment"
+                android:id="@+id/fragment_playback_controls"
+                android:name="com.sjn.stamp.ui.fragment.PlaybackControlsFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:layout="@layout/fragment_full_player"/>
+                android:layout_alignParentBottom="true"
+                tools:layout="@layout/fragment_playback_controls"/>
 
-        </LinearLayout>
+        </android.support.v7.widget.CardView>
 
-    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+        <fragment
+            android:id="@+id/fragment_full_player"
+            android:name="com.sjn.stamp.ui.fragment.FullScreenPlayerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout="@layout/fragment_full_player"/>
 
-</FrameLayout>
+    </LinearLayout>
+
+</com.sjn.stamp.ui.custom.SlidingUpPanelLayout>
