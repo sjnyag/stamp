@@ -20,6 +20,7 @@ import com.sjn.stamp.R
 import com.sjn.stamp.ui.DrawerMenu
 import com.sjn.stamp.ui.fragment.media.PagerFragment
 import com.sjn.stamp.utils.*
+import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import io.multimoon.colorful.CAppCompatActivity
 import io.multimoon.colorful.Colorful
 
@@ -49,6 +50,24 @@ abstract class DrawerActivity : CAppCompatActivity(), FragmentManager.OnBackStac
         } catch (ignored: IllegalStateException) {
             // There's no way to avoid getting this if saveInstanceState has already been called.
         }
+    }
+
+    fun expandSlide(): Boolean {
+        val slidingUpPanelLayout = findViewById<SlidingUpPanelLayout>(R.id.sliding_layout)
+        if (slidingUpPanelLayout != null && slidingUpPanelLayout.panelState != SlidingUpPanelLayout.PanelState.EXPANDED) {
+            slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
+            return true
+        }
+        return false
+    }
+
+    fun collapseSlide(): Boolean {
+        val slidingUpPanelLayout = findViewById<SlidingUpPanelLayout>(R.id.sliding_layout)
+        if (slidingUpPanelLayout != null && slidingUpPanelLayout.panelState != SlidingUpPanelLayout.PanelState.COLLAPSED) {
+            slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
+            return true
+        }
+        return false
     }
 
     fun animateAppbar(title: String?, updateImageView: (activity: Activity, imageView: ImageView) -> Unit) {
@@ -123,6 +142,9 @@ abstract class DrawerActivity : CAppCompatActivity(), FragmentManager.OnBackStac
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         LogHelper.d(TAG, "Activity onCreate")
+        if (CompatibleHelper.hasLollipop()) {
+            findViewById<View>(android.R.id.content).systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        }
         try {
             CastContext.getSharedInstance(this)
         } catch (e: RuntimeException) {

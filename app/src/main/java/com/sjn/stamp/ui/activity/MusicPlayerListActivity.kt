@@ -37,7 +37,6 @@ import com.sjn.stamp.ui.fragment.media.PagerFragment
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaRetrieveHelper
 import com.sjn.stamp.utils.PermissionHelper
-import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import java.util.*
 
@@ -174,9 +173,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
 
     private fun startFullScreenIfNeeded(intent: Intent?) {
         if (intent?.getBooleanExtra(EXTRA_START_FULLSCREEN, false) == true) {
-            val slidingUpPanelLayout = findViewById<SlidingUpPanelLayout>(R.id.sliding_layout)
-                    ?: return
-            slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
+            expandSlide()
         }
     }
 
@@ -225,9 +222,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
     }
 
     override fun onBackPressed() {
-        val slidingUpPanelLayout = findViewById<SlidingUpPanelLayout>(R.id.sliding_layout)
-        if (slidingUpPanelLayout != null && slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.EXPANDED) {
-            slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
+        if(collapseSlide()){
             return
         }
         super.onBackPressed()

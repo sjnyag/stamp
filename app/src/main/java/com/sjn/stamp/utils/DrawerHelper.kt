@@ -34,6 +34,7 @@ object DrawerHelper {
             withActivity(activity)
             withAccountHeader(accountHeader)
             withToolbar(toolbar)
+            withFullscreen(true)
             inflateMenu(R.menu.drawer)
             withSelectedItem(currentMenuId)
             withOnDrawerNavigationListener {
