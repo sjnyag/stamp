@@ -174,8 +174,8 @@ class MusicProvider(private val context: Context, private val source: MusicProvi
     fun cacheAndNotifyLatestMusicMap() {
         Thread(Runnable {
             musicMap = createLatestMusicMap()
-            ProviderCache.saveCache(context, musicMap)
-            LogHelper.i(TAG, "Write " + musicMap.size + " songs to cache")
+//            ProviderCache.saveCache(context, musicMap)
+//            LogHelper.i(TAG, "Write " + musicMap.size + " songs to cache")
             MusicListObserver.notifyMediaListUpdated()
         }).start()
     }
@@ -218,11 +218,11 @@ class MusicProvider(private val context: Context, private val source: MusicProvi
                 try {
                     if (musicProvider.currentState == ListProvider.ProviderState.NON_INITIALIZED) {
                         musicProvider.currentState = ListProvider.ProviderState.INITIALIZING
-                        musicProvider.musicMap = ProviderCache.readCache(musicProvider.context)
-                        LogHelper.i(TAG, "Read " + musicProvider.musicMap.size + " songs from cache")
-                        if (musicProvider.musicMap.size == 0) {
-                            musicProvider.musicMap = musicProvider.createLatestMusicMap()
-                        }
+//                        musicProvider.musicMap = ProviderCache.readCache(musicProvider.context)
+//                        LogHelper.i(TAG, "Read " + musicProvider.musicMap.size + " songs from cache")
+//                        if (musicProvider.musicMap.size == 0) {
+                        musicProvider.musicMap = musicProvider.createLatestMusicMap()
+//                        }
                         musicProvider.currentState = ListProvider.ProviderState.INITIALIZED
                     }
                 } catch (e: Exception) {
