@@ -22,7 +22,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:gravity="bottom"
-    app:umanoFadeColor="#00000000"
+    app:umanoFadeColor="#BBFFFFFF"
     app:umanoPanelHeight="64dp"
     app:umanoShadowHeight="8dp"
     tools:context=".ui.activity.MusicPlayerListActivity">
