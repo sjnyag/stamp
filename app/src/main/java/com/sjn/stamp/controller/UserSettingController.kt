@@ -1,6 +1,8 @@
 package com.sjn.stamp.controller
 
+import android.content.Context
 import com.sjn.stamp.model.dao.UserSettingDao
+import com.sjn.stamp.utils.PreferenceHelper
 import com.sjn.stamp.utils.RealmHelper
 
 class UserSettingController {
@@ -38,9 +40,7 @@ class UserSettingController {
     return result;
     */
 
-    fun hideAlbumArtOnLockScreen(): Boolean {
-        return false
-    }
+    fun hideAlbumArtOnLockScreen(context: Context?) = PreferenceHelper.isHideAlbumArtOnLockScreen(context)
 
     var newSongDays: Int
         get() {

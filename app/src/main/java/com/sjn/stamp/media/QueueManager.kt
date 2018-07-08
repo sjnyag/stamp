@@ -202,8 +202,9 @@ class QueueManager(private val service: MediaBrowserServiceCompat,
         val metadata = musicProvider.getMusicByMusicId(musicId) ?: return
         // Set the proper album artwork on the media session, so it can be shown in the
         // locked screen and in other places.
-        if (UserSettingController().hideAlbumArtOnLockScreen()) {
-            updateSessionAlbumArt(AlbumArtHelper.createTextBitmap(metadata.description?.title?.toString()), musicId)
+        if (UserSettingController().hideAlbumArtOnLockScreen(service)) {
+            musicProvider.updateMusicArt(musicId, null, null)
+            listener.onMetadataChanged(metadata)
         } else {
             AlbumArtHelper.readBitmapAsync(service, metadata.description?.iconUri, metadata.description?.title?.toString()
             ) { bitmap ->

@@ -2,16 +2,13 @@ package com.sjn.stamp.ui.fragment
 
 import android.app.ProgressDialog
 import android.content.Intent
-import android.content.res.Resources
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
-import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.EditTextPreference
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceFragmentCompat
-import android.util.TypedValue
 import android.view.*
 import android.widget.Toast
 import com.sjn.stamp.R
@@ -97,15 +94,23 @@ class SettingFragment : PreferenceFragmentCompat() {
             }
             true
         }
+        findPreference("hide_album_art_on_lock_screen")?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
+            if (newValue is Boolean) {
+                context?.let {
+                    PreferenceHelper.setHideAlbumArtOnLockScreen(context, newValue)
+                }
+            }
+            true
+        }
 
         findPreference("song_db_refresh")?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             activity?.let {
-                DialogFacade.createConfirmDialog(it, R.string.dialog_confirm_song_db_refresh, { _, _ ->
+                DialogFacade.createConfirmDialog(it, R.string.dialog_confirm_song_db_refresh) { _, _ ->
                     context?.let {
                         AnalyticsHelper.trackSetting(it, "song_db_refresh")
                         Thread(Runnable { SongController(it).refreshAllSongs(MediaRetrieveHelper.allMediaMetadataCompat(it, null)) }).start()
                     }
-                }).show()
+                }.show()
             }
             true
         }
@@ -132,7 +137,7 @@ class SettingFragment : PreferenceFragmentCompat() {
 
         findPreference("export_backup")?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             activity?.let {
-                DialogFacade.createConfirmDialog(it, R.string.dialog_confirm_export, { _, _ ->
+                DialogFacade.createConfirmDialog(it, R.string.dialog_confirm_export) { _, _ ->
                     context?.let {
                         AnalyticsHelper.trackSetting(it, "export_backup")
                     }
@@ -142,7 +147,7 @@ class SettingFragment : PreferenceFragmentCompat() {
                         activity?.let { RealmHelper.exportBackUp(it) }
                         dismiss()
                     }
-                }).show()
+                }.show()
             }
             true
         }
@@ -229,7 +234,7 @@ class SettingFragment : PreferenceFragmentCompat() {
             if (resultCode == AppCompatActivity.RESULT_OK) {
                 activity?.let { activity ->
                     if (data?.data?.path?.endsWith(".realm") == true) {
-                        DialogFacade.createConfirmDialog(activity, R.string.dialog_confirm_import, { _, _ ->
+                        DialogFacade.createConfirmDialog(activity, R.string.dialog_confirm_import) { _, _ ->
                             context?.let {
                                 AnalyticsHelper.trackSetting(it, "import_backup")
                                 ProgressDialog(it).run {
@@ -242,7 +247,7 @@ class SettingFragment : PreferenceFragmentCompat() {
                                     reboot()
                                 }.show()
                             }
-                        }).show()
+                        }.show()
                     } else {
                         Toast.makeText(activity, R.string.invalid_backup_selected, Toast.LENGTH_SHORT).show()
                     }

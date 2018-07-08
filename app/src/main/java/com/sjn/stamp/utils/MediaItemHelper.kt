@@ -50,7 +50,7 @@ object MediaItemHelper {
                     .build()
 
 
-    fun updateMusicArt(metadata: MediaMetadataCompat, albumArt: Bitmap, icon: Bitmap): MediaMetadataCompat =
+    fun updateMusicArt(metadata: MediaMetadataCompat, albumArt: Bitmap?, icon: Bitmap?): MediaMetadataCompat =
             MediaMetadataCompat.Builder(metadata)
                     // set high resolution bitmap in METADATA_KEY_ALBUM_ART. This is used, for
                     // example, on the lockscreen background when the media session is active.

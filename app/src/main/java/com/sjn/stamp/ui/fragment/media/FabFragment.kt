@@ -158,7 +158,7 @@ abstract class FabFragment : Fragment(), StampEditStateObserver.Listener {
                 if (centeredMaterialSheetFab?.isSheetVisible() == true) {
                     centeredMaterialSheetFab?.hideSheet()
                 }
-                if (isShowing && !PreferenceHelper.isSpotlightShown(activity, PreferenceHelper.SpotlightKey.STAMP_ADD)) {
+                if (isShowing && !PreferenceHelper.isSpotlightShown(activity, PreferenceHelper.Key.Spotlight.STAMP_ADD)) {
                     showSpotlight()
                 }
             }
@@ -185,7 +185,7 @@ abstract class FabFragment : Fragment(), StampEditStateObserver.Listener {
                                     .setDescription(getString(R.string.spotlight_stamp_add_description))
                                     .build())
                             .start()
-                    PreferenceHelper.setSpotlightShown(activity, PreferenceHelper.SpotlightKey.STAMP_ADD)
+                    PreferenceHelper.setSpotlightShown(activity, PreferenceHelper.Key.Spotlight.STAMP_ADD)
                 }
             }
         }

@@ -17,9 +17,14 @@
             colorpicker:accent_color="true"/>
 
         <android.support.v14.preference.SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="dark_theme"
             android:title="@string/setting_appearance_dark_theme"/>
+
+        <android.support.v14.preference.SwitchPreference
+            android:defaultValue="false"
+            android:key="hide_album_art_on_lock_screen"
+            android:summary="@string/setting_appearance_hide_album_art_on_lock_screen"/>
 
         <!--
         <android.support.v14.preference.SwitchPreference
@@ -47,6 +52,7 @@
             android:numeric="integer"
             android:title="@string/setting_songs_most_played_song_size"/>
     </PreferenceCategory>
+
     <PreferenceCategory
         android:key="backup"
         android:title="@string/setting_backup">
@@ -59,6 +65,7 @@
             android:key="export_backup"
             android:title="@string/export_backup"/>
     </PreferenceCategory>
+
     <PreferenceCategory
         android:key="song_history"
         android:title="@string/song_history">
@@ -73,6 +80,7 @@
             android:title="@string/song_db_unknown">
         </Preference>
     </PreferenceCategory>
+
     <PreferenceCategory
         android:key="application_information"
         android:title="@string/setting_application_information">

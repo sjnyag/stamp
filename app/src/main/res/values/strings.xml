@@ -152,6 +152,7 @@
     <string name="setting_appearance_accent">Accent</string>
     <string name="setting_appearance_dark_theme">Dark Theme</string>
     <string name="setting_appearance_translucent">Translucent</string>
+    <string name="setting_appearance_hide_album_art_on_lock_screen">Hide album art on lock screen</string>
 
     <string name="setting_songs">Songs</string>
     <string name="setting_songs_new_song_days">Days for \"NEW\"(0~999)</string>
