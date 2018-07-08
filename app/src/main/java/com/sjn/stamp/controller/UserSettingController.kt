@@ -38,6 +38,10 @@ class UserSettingController {
     return result;
     */
 
+    fun hideAlbumArtOnLockScreen(): Boolean {
+        return false
+    }
+
     var newSongDays: Int
         get() {
             return RealmHelper.realmInstance.use { realm ->

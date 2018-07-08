@@ -16,6 +16,7 @@
 
 package com.sjn.stamp.media
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.MediaMetadataCompat
@@ -199,27 +200,28 @@ class QueueManager(private val service: MediaBrowserServiceCompat,
         val musicId = MediaIDHelper.extractMusicIDFromMediaID(currentMusic?.description?.mediaId)
                 ?: return
         val metadata = musicProvider.getMusicByMusicId(musicId) ?: return
-        listener.onMetadataChanged(metadata)
-
         // Set the proper album artwork on the media session, so it can be shown in the
         // locked screen and in other places.
-        if (metadata.description.iconBitmap == null && metadata.description.iconUri != null) {
+        if (UserSettingController().hideAlbumArtOnLockScreen()) {
+            updateSessionAlbumArt(AlbumArtHelper.createTextBitmap(metadata.description?.title?.toString()), musicId)
+        } else {
             AlbumArtHelper.readBitmapAsync(service, metadata.description?.iconUri, metadata.description?.title?.toString()
             ) { bitmap ->
-                val icon = AlbumArtHelper.createIcon(bitmap)
-                musicProvider.updateMusicArt(musicId, bitmap, icon)
-                // If we are still playing the same music, notify the listeners:
-                currentMusic?.description?.mediaId?.let {
-                    MediaIDHelper.extractMusicIDFromMediaID(it)?.let { currentPlayingId ->
-                        if (musicId == currentPlayingId) {
-                            musicProvider.getMusicByMusicId(currentPlayingId)?.let {
-                                listener.onMetadataChanged(it)
-                            }
-                        }
-                    }
+                updateSessionAlbumArt(bitmap, musicId)
+            }
+        }
+    }
+
+    private fun updateSessionAlbumArt(bitmap: Bitmap, musicId: String) {
+        val icon = AlbumArtHelper.createIcon(bitmap)
+        musicProvider.updateMusicArt(musicId, bitmap, icon)
+        // If we are still playing the same music, notify the listeners:
+        MediaIDHelper.extractMusicIDFromMediaID(currentMusic?.description?.mediaId)?.let { currentPlayingId ->
+            if (musicId == currentPlayingId) {
+                musicProvider.getMusicByMusicId(currentPlayingId)?.let {
+                    listener.onMetadataChanged(it)
                 }
             }
-
         }
     }
 
