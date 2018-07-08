@@ -19,7 +19,6 @@ import android.widget.ImageView
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.MediaBrowsable
 import com.sjn.stamp.ui.custom.TextDrawable
-import java.io.FileNotFoundException
 import java.util.*
 
 object AlbumArtHelper {
@@ -144,7 +143,7 @@ object AlbumArtHelper {
                         view.setImageBitmap(bitmap)
                     }
                 }
-            } catch (e: FileNotFoundException) {
+            } catch (e: Exception) {
                 activity.runOnUiThread {
                     if (artUrl == view.getTag(R.id.image_view_album_art_url)) {
                         view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
