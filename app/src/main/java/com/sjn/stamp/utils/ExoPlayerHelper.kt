@@ -120,7 +120,7 @@ object ExoPlayerHelper {
 
         override fun onHeadphonesDisconnected() {
             if (isPlaying) {
-                context.startService(Intent(context, MusicService::class.java).apply {
+                context.startForegroundServiceCompatible(Intent(context, MusicService::class.java).apply {
                     action = NotificationHelper.ACTION_CMD
                     putExtra(NotificationHelper.CMD_NAME, MusicService.NOTIFICATION_CMD_PAUSE)
                 })

@@ -7,6 +7,7 @@ import com.sjn.stamp.MusicService
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.NotificationHelper
 import com.sjn.stamp.utils.ShareHelper
+import com.sjn.stamp.utils.startForegroundServiceCompatible
 
 class IntentDispatchActivity : AppCompatActivity() {
 
@@ -14,7 +15,7 @@ class IntentDispatchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         LogHelper.d(TAG, "onCreate")
         if (intent.getStringExtra("Shortcut") == "Play") {
-            startService(Intent(this, MusicService::class.java).apply {
+            startForegroundServiceCompatible(Intent(this, MusicService::class.java).apply {
                 action = NotificationHelper.ACTION_CMD
                 putExtra(NotificationHelper.CMD_NAME, MusicService.NOTIFICATION_CMD_PLAY)
             })

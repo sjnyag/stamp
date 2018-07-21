@@ -15,10 +15,7 @@ import com.sjn.stamp.media.playback.PlaybackManager
 import com.sjn.stamp.media.provider.MusicProvider
 import com.sjn.stamp.media.source.LocalMediaSource
 import com.sjn.stamp.ui.observer.MediaControllerObserver
-import com.sjn.stamp.utils.LogHelper
-import com.sjn.stamp.utils.MediaIDHelper
-import com.sjn.stamp.utils.MediaRetrieveHelper
-import com.sjn.stamp.utils.NotificationHelper
+import com.sjn.stamp.utils.*
 import java.util.*
 
 class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServiceCallback {
@@ -161,7 +158,7 @@ class MusicService : MediaBrowserServiceCompat(), PlaybackManager.PlaybackServic
         // The service needs to continue running even after the bound client (usually a
         // MediaController) disconnects, otherwise the music playback will stop.
         // Calling startService(Intent) will keep the service running until it is explicitly killed.
-        startService(Intent(applicationContext, MusicService::class.java))
+        startForegroundServiceCompatible(Intent(applicationContext, MusicService::class.java))
         notificationManager.startForeground()
     }
 

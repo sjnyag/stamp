@@ -9,6 +9,7 @@ import android.support.v4.media.session.MediaControllerCompat
 import com.sjn.stamp.MusicService
 import com.sjn.stamp.ui.activity.MusicPlayerListActivity
 import com.sjn.stamp.utils.NotificationHelper
+import com.sjn.stamp.utils.startForegroundServiceCompatible
 
 enum class NotificationAction(val action: String) {
     PLAY("com.sjn.stamp.play") {
@@ -25,7 +26,7 @@ enum class NotificationAction(val action: String) {
     },
     STOP_CAST("com.sjn.stamp.stop_cast") {
         override fun exec(context: Context, control: MediaControllerCompat.TransportControls) {
-            context.startService(Intent(context, MusicService::class.java).apply {
+            context.startForegroundServiceCompatible(Intent(context, MusicService::class.java).apply {
                 action = NotificationHelper.ACTION_CMD
                 putExtra(NotificationHelper.CMD_NAME, MusicService.NOTIFICATION_CMD_STOP_CASTING)
             })

@@ -1,6 +1,8 @@
 package com.sjn.stamp.utils
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -8,6 +10,7 @@ import android.graphics.RectF
 import android.os.Build
 
 object CompatibleHelper {
+
     private fun hasMarshmallow(): Boolean {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
     }
@@ -46,5 +49,13 @@ object CompatibleHelper {
         canvas.saveLayer(bounds, paint)
     } else {
         canvas.saveLayer(bounds, paint, Canvas.HAS_ALPHA_LAYER_SAVE_FLAG or Canvas.FULL_COLOR_LAYER_SAVE_FLAG)
+    }
+}
+
+fun Context.startForegroundServiceCompatible(intent: Intent) {
+    if (CompatibleHelper.hasOreo()) {
+        startForegroundService(intent)
+    } else {
+        startService(intent)
     }
 }
