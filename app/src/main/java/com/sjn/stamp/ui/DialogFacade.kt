@@ -148,6 +148,7 @@ object DialogFacade {
         dataSet.add(Licenses.fromGitHubApacheV2("jakewharton/DiskLruCache"))
         dataSet.add(Licenses.fromGitHubApacheV2("mikepenz/MaterialDrawer"))
         dataSet.add(Licenses.fromGitHubBSD("NanoHttpd/nanohttpd"))
+        dataSet.add(Licenses.fromGitHubApacheV2("qhutch/ElevationImageView"))
         dataSet.add(Licenses.fromGitHubApacheV2("umano/AndroidSlidingUpPanel"))
         dataSet.add(Licenses.fromGitHubApacheV2("davideas/FlexibleAdapter"))
         dataSet.add(Licenses.fromGitHubApacheV2("dlew/joda-time-android"))

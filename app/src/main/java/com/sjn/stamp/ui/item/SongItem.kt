@@ -31,7 +31,7 @@ class SongItem(
         isSwipeable = true
     }
 
-    override fun getLayoutRes(): Int = R.layout.recycler_song_item
+    override fun getLayoutRes(): Int = if (isBrowsable) R.layout.recycler_song_group_item else R.layout.recycler_song_item
 
     override fun createViewHolder(view: View, adapter: FlexibleAdapter<*>): SongViewHolder = SongViewHolder(view, adapter, activity)
 

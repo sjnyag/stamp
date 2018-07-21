@@ -24,12 +24,14 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.sjn.stamp.MusicService
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.DialogFacade
+import com.sjn.stamp.ui.MediaBrowsable
 import com.sjn.stamp.ui.SongAdapter
 import com.sjn.stamp.ui.activity.DrawerActivity
 import com.sjn.stamp.ui.item.SongItem
@@ -42,6 +44,7 @@ import com.sjn.stamp.utils.MediaIDHelper
 import eu.davidea.fastscroller.FastScroller
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager
+import eu.davidea.flexibleadapter.common.SmoothScrollStaggeredLayoutManager
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 
 /**
@@ -253,6 +256,15 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
                 return@Runnable
             }
             loading?.visibility = loadingVisibility
+
+            if (currentItems.isNotEmpty() && currentItems.first() is SongItem && (currentItems.first() as SongItem).isBrowsable)
+                recyclerView?.apply {
+                    activity?.let {
+                        this.layoutManager = SmoothScrollStaggeredLayoutManager(it, 2, StaggeredGridLayoutManager.VERTICAL).apply {
+                            listState?.let { onRestoreInstanceState(it) }
+                        }
+                    }
+                }
             adapter?.updateDataSet(currentItems)
             if (currentItems.isEmpty()) hideFab() else showFab()
         })
@@ -308,12 +320,16 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
         @Synchronized
         private fun createItemList(songList: List<MediaBrowserCompat.MediaItem>): List<AbstractFlexibleItem<*>> {
             return mFragment.mediaBrowsable?.let { browser ->
-                mFragment.activity?.let { activity ->
-                    songList.map { song -> SongItem(song, browser, activity) }
-                }
+                songList.mapNotNull { song -> mFragment.createItem(song, browser) }
             } ?: emptyList()
         }
 
+    }
+
+    protected open fun createItem(mediaItem: MediaBrowserCompat.MediaItem, mediaBrowsable: MediaBrowsable): SongItem? {
+        return activity?.let {
+            SongItem(mediaItem, mediaBrowsable, it)
+        }
     }
 
     companion object {

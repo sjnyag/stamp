@@ -26,6 +26,8 @@ android {
         versionName stampVersionName
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        renderscriptTargetApi 18
+        renderscriptSupportModeEnabled true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -114,6 +116,7 @@ dependencies {
         transitive = true
     }
     implementation 'com.nanohttpd:nanohttpd-webserver:2.1.1'
+    implementation 'com.qhutch.elevationimageview:elevationimageview:2.0'
     implementation 'com.sothree.slidinguppanel:library:3.3.0'
     implementation "com.takisoft.fix:preference-v7:$versions.supportLib.0"
     implementation 'eu.davidea:flexible-adapter:5.0.0-rc3'

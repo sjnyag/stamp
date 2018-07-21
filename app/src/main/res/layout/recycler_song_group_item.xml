@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    android:id="@+id/front_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_centerInParent="true"
+        android:contentDescription="@string/album_art"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:src="@android:drawable/btn_star_big_on"/>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="4dp"
+        android:background="@drawable/light_bg_gradient"
+        app:layout_constraintBottom_toBottomOf="@+id/image"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintStart_toStartOf="@+id/image">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/dark_color"
+            app:layout_constraintBottom_toTopOf="@+id/subtitle"
+            app:layout_constraintEnd_toStartOf="@+id/play_eq"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Title"/>
+
+        <TextView
+            android:id="@+id/subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/date"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Subtitle"/>
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/play_eq"
+            app:layout_constraintStart_toStartOf="@+id/subtitle"
+            tools:text="1900/01/01"/>
+
+        <com.qhutch.elevationimageview.ElevationImageView
+            android:id="@+id/play_eq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_play_arrow_black_36dp"
+            android:contentDescription="@string/play_item"
+            android:elevation="8dp"
+            android:tint="?android:attr/colorAccent"
+            android:tintMode="src_in"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <com.github.sjnyag.animationwraplayout.AnimationWrapLayout
+        android:id="@+id/stamp_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/image"
+        tools:each_margin_height="4dp"
+        tools:each_margin_width="4dp"/>
+
+</android.support.constraint.ConstraintLayout>

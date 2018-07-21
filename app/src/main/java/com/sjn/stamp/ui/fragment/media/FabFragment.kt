@@ -4,7 +4,6 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewCompat
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.animation.DecelerateInterpolator
@@ -15,10 +14,7 @@ import com.sjn.stamp.ui.custom.CenteredMaterialSheetFab
 import com.sjn.stamp.ui.custom.Fab
 import com.sjn.stamp.ui.item.holder.SongViewHolder
 import com.sjn.stamp.ui.observer.StampEditStateObserver
-import com.sjn.stamp.utils.LogHelper
-import com.sjn.stamp.utils.PreferenceHelper
-import com.sjn.stamp.utils.getAccent
-import com.sjn.stamp.utils.getPrimaryDark
+import com.sjn.stamp.utils.*
 import com.takusemba.spotlight.SimpleTarget
 import com.takusemba.spotlight.Spotlight
 import io.multimoon.colorful.Colorful
@@ -170,8 +166,7 @@ abstract class FabFragment : Fragment(), StampEditStateObserver.Listener {
         if (recyclerView == null) {
             return
         }
-        val layoutManager = recyclerView?.layoutManager as LinearLayoutManager
-        val view = recyclerView?.findViewHolderForAdapterPosition(layoutManager.findFirstVisibleItemPosition())
+        val view = recyclerView?.findFirstVisibleViewHolder()
         if (view is SongViewHolder) {
             view.showTapTargetView?.let { textView ->
                 activity?.let { activity ->

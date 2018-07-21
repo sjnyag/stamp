@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
@@ -24,6 +23,7 @@ import com.sjn.stamp.ui.item.SongHistoryItem
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaIDHelper
 import com.sjn.stamp.utils.RealmHelper
+import com.sjn.stamp.utils.findFirstVisibleItemPosition
 import eu.davidea.fastscroller.FastScroller
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager
@@ -209,8 +209,7 @@ class TimelineFragment : MediaBrowserListFragment(), UndoHelper.OnUndoListener, 
             calcCurrentPosition().let { position -> if (position > bufferSize) bufferSize else position }
 
     private fun calcCurrentPosition(): Int =
-            (recyclerView?.layoutManager as LinearLayoutManager?)?.findFirstVisibleItemPosition()
-                    ?: 0
+            recyclerView?.findFirstVisibleItemPosition() ?: 0
 
     private fun newSimpleItem(songHistory: SongHistory, header: IHeader<*>, resources: Resources, activity: Activity): SongHistoryItem {
         return SongHistoryItem(songHistory, header as DateHeaderItem, resources, activity)

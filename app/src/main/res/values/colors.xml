@@ -15,8 +15,9 @@
   -->
 <resources>
 
-    <color name="fullscreen_secondary_line_color">#E5CCCCCC</color>
-    <color name="fullscreen_line_color">#E5FFFFFF</color>
+    <color name="light_color">#E5FFFFFF</color>
+    <color name="light_secondary_color">#E5CCCCCC</color>
+    <color name="dark_color">#E5000000</color>
 
     <color name="color_1">#E62E25</color>
     <color name="color_2">#EC7526</color>

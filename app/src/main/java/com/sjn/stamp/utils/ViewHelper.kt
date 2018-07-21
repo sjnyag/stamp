@@ -9,7 +9,9 @@ import android.support.design.widget.CollapsingToolbarLayout
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.StaggeredGridLayoutManager
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.DisplayMetrics
 import android.util.TypedValue
@@ -125,3 +127,30 @@ fun CollapsingToolbarLayout.setHeight(context: Context, dp: Float) {
 fun CollapsingToolbarLayout.setHeightWrapContent() {
     this.layoutParams = this.layoutParams.apply { height = ViewGroup.LayoutParams.WRAP_CONTENT }
 }
+
+fun RecyclerView.findFirstVisibleItemPosition(): Int {
+    return if (this.layoutManager is LinearLayoutManager) {
+        val layoutManager = this.layoutManager as LinearLayoutManager
+        layoutManager.findFirstVisibleItemPosition()
+    } else if (this.layoutManager is StaggeredGridLayoutManager) {
+        val layoutManager = this.layoutManager as StaggeredGridLayoutManager
+        var firstVisibleItems: IntArray? = null
+        firstVisibleItems = layoutManager.findFirstCompletelyVisibleItemPositions(firstVisibleItems)
+        if (firstVisibleItems?.isNotEmpty() == true) {
+            firstVisibleItems[0]
+        } else {
+            RecyclerView.NO_POSITION
+        }
+    } else {
+        RecyclerView.NO_POSITION
+    }
+}
+
+fun RecyclerView.findFirstVisibleViewHolder(): RecyclerView.ViewHolder? =
+        this.findFirstVisibleItemPosition().let {
+            if (it != RecyclerView.NO_POSITION) {
+                this.findViewHolderForAdapterPosition(it)
+            } else {
+                null
+            }
+        }

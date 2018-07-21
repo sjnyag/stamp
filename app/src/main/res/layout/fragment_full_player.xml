@@ -33,7 +33,7 @@ limitations under the License.
         android:layout_height="fill_parent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:background="@drawable/fullscreen_bg_gradient">
+        android:background="@drawable/dark_bg_gradient">
 
         <TextView
             android:id="@+id/line1"
@@ -46,7 +46,7 @@ limitations under the License.
             android:shadowColor="@android:color/black"
             android:shadowRadius="20"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/fullscreen_line_color"/>
+            android:textColor="@color/light_color"/>
 
         <TextView
             android:id="@+id/line2"
@@ -60,7 +60,7 @@ limitations under the License.
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:shadowColor="@android:color/black"
             android:shadowRadius="20"
-            android:textColor="@color/fullscreen_secondary_line_color"/>
+            android:textColor="@color/light_secondary_color"/>
 
         <TextView
             android:id="@+id/line3"
@@ -74,7 +74,7 @@ limitations under the License.
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:shadowColor="@android:color/black"
             android:shadowRadius="20"
-            android:textColor="@color/fullscreen_secondary_line_color"/>
+            android:textColor="@color/light_secondary_color"/>
 
         <LinearLayout
             android:id="@+id/controllers"
