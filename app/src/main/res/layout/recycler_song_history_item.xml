@@ -60,7 +60,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             tools:text="1900/01/01"/>
 
-        <ImageView
+        <com.qhutch.elevationimageview.ElevationImageView
             android:id="@+id/play_eq"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -69,6 +69,7 @@
             android:layout_marginEnd="@dimen/media_item_icon_margin_end"
             android:layout_marginStart="@dimen/media_item_icon_margin_start"
             android:contentDescription="@string/play_item"
+            android:elevation="8dp"
             android:src="@drawable/ic_play_arrow_black_36dp"
             android:tint="?android:attr/colorAccent"
             android:tintMode="src_in"/>
