@@ -12,7 +12,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.MediaStore
 import android.support.v4.media.MediaBrowserCompat
 import android.view.View
 import android.widget.ImageView
@@ -31,13 +30,38 @@ object AlbumArtHelper {
     private const val IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP = "bitmap"
     private const val IMAGE_VIEW_ALBUM_ART_TYPE_TEXT = "text"
 
+    fun readBitmap(context: Context, uri: Uri?) = getThumbnail(context, uri)
+
+    fun getThumbnail(context: Context, uri: Uri?, size: Int = 256): Bitmap? {
+        if (uri == null) {
+            return null
+        }
+        val onlyBoundsOptions = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+            inPreferredConfig = Bitmap.Config.ARGB_8888
+        }
+        context.contentResolver.openInputStream(uri).use {
+            BitmapFactory.decodeStream(it, null, onlyBoundsOptions)
+        }
+        if (onlyBoundsOptions.outWidth == -1 || onlyBoundsOptions.outHeight == -1) {
+            return null
+        }
+        val originalSize = if (onlyBoundsOptions.outHeight > onlyBoundsOptions.outWidth) onlyBoundsOptions.outHeight else onlyBoundsOptions.outWidth
+        return context.contentResolver.openInputStream(uri).use {
+            BitmapFactory.decodeStream(it, null, BitmapFactory.Options().apply {
+                inSampleSize = if (originalSize > size) originalSize / size else 1
+                inPreferredConfig = Bitmap.Config.ARGB_8888
+            })
+        }
+    }
+
     fun readBitmapSync(context: Context, url: String?, title: String?): Bitmap {
         return readBitmapSync(context, Uri.parse(url), title)
     }
 
     fun readBitmapSync(context: Context, url: Uri?, title: String?): Bitmap {
         return try {
-            MediaStore.Images.Media.getBitmap(context.contentResolver, url)
+            readBitmap(context, url) ?: AlbumArtHelper.createTextBitmap(title)
         } catch (e: Exception) {
             AlbumArtHelper.createTextBitmap(title)
         }
@@ -62,8 +86,14 @@ object AlbumArtHelper {
         if (imageType == "bitmap") {
             view.setImageBitmap(bitmap)
             try {
-                view.setImageBitmap(MediaStore.Images.Media.getBitmap(activity.contentResolver, Uri.parse(artUrl)))
-                view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP)
+                readBitmap(activity, Uri.parse(artUrl))?.let {
+                    view.setImageBitmap(it)
+                    view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP)
+                } ?: run {
+                    view.setImageDrawable(createTextDrawable(text ?: ""))
+                    view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
+                    view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+                }
             } catch (e: Exception) {
                 view.setImageDrawable(createTextDrawable(text ?: ""))
                 view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
