@@ -24,6 +24,7 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -204,11 +205,7 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
             setAnimationOnScrolling(false)
         }
         recyclerView?.apply {
-            activity?.let {
-                this.layoutManager = SmoothScrollLinearLayoutManager(it).apply {
-                    listState?.let { onRestoreInstanceState(it) }
-                }
-            }
+            this.switchLayoutManager()
             this.adapter = this@SongListFragment.adapter
         }
         adapter?.apply {
@@ -256,15 +253,7 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
                 return@Runnable
             }
             loading?.visibility = loadingVisibility
-
-            if (currentItems.isNotEmpty() && currentItems.first() is SongItem && (currentItems.first() as SongItem).isBrowsable)
-                recyclerView?.apply {
-                    activity?.let {
-                        this.layoutManager = SmoothScrollStaggeredLayoutManager(it, 2, StaggeredGridLayoutManager.VERTICAL).apply {
-                            listState?.let { onRestoreInstanceState(it) }
-                        }
-                    }
-                }
+            recyclerView?.switchLayoutManager()
             adapter?.updateDataSet(currentItems)
             if (currentItems.isEmpty()) hideFab() else showFab()
         })
@@ -297,6 +286,24 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
         MusicListObserver.removeListener(this)
         LogHelper.d(TAG, "onStop END")
     }
+
+    private fun RecyclerView.switchLayoutManager() {
+        activity?.let {
+            if (isBrowsableList() && this.layoutManager !is StaggeredGridLayoutManager) {
+                this.layoutManager = SmoothScrollStaggeredLayoutManager(it, 2, StaggeredGridLayoutManager.VERTICAL).apply {
+                    listState?.let { onRestoreInstanceState(it) }
+                }
+            } else if (this.layoutManager == null) {
+                this.layoutManager = SmoothScrollLinearLayoutManager(it).apply {
+                    listState?.let { onRestoreInstanceState(it) }
+                }
+            }
+        }
+
+    }
+
+    private fun isBrowsableList(): Boolean =
+            currentItems.isNotEmpty() && currentItems.first() is SongItem && (currentItems.first() as SongItem).isBrowsable
 
     private class CreateListAsyncTask internal constructor(internal var mFragment: SongListFragment, internal val mSongList: List<MediaBrowserCompat.MediaItem>) : AsyncTask<Void, Void, Void>() {
 
