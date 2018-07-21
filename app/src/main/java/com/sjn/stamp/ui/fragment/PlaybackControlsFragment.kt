@@ -24,7 +24,6 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -40,7 +39,7 @@ import com.sjn.stamp.utils.MediaControllerHelper
  */
 class PlaybackControlsFragment : Fragment(), MediaControllerObserver.Listener {
 
-    private var playPause: ImageButton? = null
+    private var playPause: ImageView? = null
     private var title: TextView? = null
     private var subtitle: TextView? = null
     private var extraInfo: TextView? = null

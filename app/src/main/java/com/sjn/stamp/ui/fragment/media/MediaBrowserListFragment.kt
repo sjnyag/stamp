@@ -150,7 +150,7 @@ abstract class MediaBrowserListFragment : ListFragment(), MediaBrowserObserver.L
                 }
 
                 override fun onError(itemId: String) {
-                    val title = MediaIDHelper.extractBrowseCategoryValueFromMediaID(it) ?: getString(R.string.app_name)
+                    val title = MediaIDHelper.extractBrowseCategoryValueFromMediaID(it) ?: context?.getString(R.string.app_name)
                     listener?.setToolbarTitle(title)
                 }
             })
