@@ -1,5 +1,5 @@
 # Stamp
-![Build Status](https://www.bitrise.io/app/2aaea794417a13a8/status.svg?token=2ZKZnFpFMhdn8084URutMQ&branch=master)
+![Build Status](https://app.bitrise.io/app/2aaea794417a13a8.svg?token=2ZKZnFpFMhdn8084URutMQ)
 
 Most personal music player
 
