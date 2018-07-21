@@ -214,8 +214,7 @@ class QueueManager(private val service: MediaBrowserServiceCompat,
     }
 
     private fun updateSessionAlbumArt(bitmap: Bitmap, musicId: String) {
-        val icon = AlbumArtHelper.createIcon(bitmap)
-        musicProvider.updateMusicArt(musicId, bitmap, icon)
+        musicProvider.updateMusicArt(musicId, bitmap, bitmap)
         // If we are still playing the same music, notify the listeners:
         MediaIDHelper.extractMusicIDFromMediaID(currentMusic?.description?.mediaId)?.let { currentPlayingId ->
             if (musicId == currentPlayingId) {

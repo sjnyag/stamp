@@ -21,39 +21,8 @@ import com.sjn.stamp.ui.custom.TextDrawable
 import java.util.*
 
 object AlbumArtHelper {
-    // Resolution reasonable for carrying around as an icon (generally in
-    // MediaDescription.getIconBitmap). This should not be bigger than necessary, because
-    // the MediaDescription object should be lightweight. If you set it too high and try to
-    // serialize the MediaDescription, you may get FAILED BINDER TRANSACTION errors.
-    private const val MAX_ART_WIDTH_ICON = 128  // pixels
-    private const val MAX_ART_HEIGHT_ICON = 128  // pixels
     private const val IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP = "bitmap"
     private const val IMAGE_VIEW_ALBUM_ART_TYPE_TEXT = "text"
-
-    fun readBitmap(context: Context, uri: Uri?) = getThumbnail(context, uri)
-
-    fun getThumbnail(context: Context, uri: Uri?, size: Int = 256): Bitmap? {
-        if (uri == null) {
-            return null
-        }
-        val onlyBoundsOptions = BitmapFactory.Options().apply {
-            inJustDecodeBounds = true
-            inPreferredConfig = Bitmap.Config.ARGB_8888
-        }
-        context.contentResolver.openInputStream(uri).use {
-            BitmapFactory.decodeStream(it, null, onlyBoundsOptions)
-        }
-        if (onlyBoundsOptions.outWidth == -1 || onlyBoundsOptions.outHeight == -1) {
-            return null
-        }
-        val originalSize = if (onlyBoundsOptions.outHeight > onlyBoundsOptions.outWidth) onlyBoundsOptions.outHeight else onlyBoundsOptions.outWidth
-        return context.contentResolver.openInputStream(uri).use {
-            BitmapFactory.decodeStream(it, null, BitmapFactory.Options().apply {
-                inSampleSize = if (originalSize > size) originalSize / size else 1
-                inPreferredConfig = Bitmap.Config.ARGB_8888
-            })
-        }
-    }
 
     fun readBitmapSync(context: Context, url: String?, title: String?): Bitmap {
         return readBitmapSync(context, Uri.parse(url), title)
@@ -81,28 +50,11 @@ object AlbumArtHelper {
 
     fun reload(activity: Activity, view: ImageView, bitmap: Bitmap?, imageType: String?, artUrl: String?, text: String?) {
         view.setTag(R.id.image_view_album_art_url, artUrl)
-        view.setTag(R.id.image_view_album_art_text, text)
-        view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
         if (imageType == "bitmap") {
             view.setImageBitmap(bitmap)
-            try {
-                readBitmap(activity, Uri.parse(artUrl))?.let {
-                    view.setImageBitmap(it)
-                    view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP)
-                } ?: run {
-                    view.setImageDrawable(createTextDrawable(text ?: ""))
-                    view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
-                    view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-                }
-            } catch (e: Exception) {
-                view.setImageDrawable(createTextDrawable(text ?: ""))
-                view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
-                view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-            }
+            view.loadBitmap(activity, artUrl, text)
         } else if (imageType == "text") {
-            view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
-            view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-            view.setImageDrawable(createTextDrawable(text ?: ""))
+            view.setTextDrawable(text)
         }
 
     }
@@ -127,65 +79,83 @@ object AlbumArtHelper {
         AlbumArtHelper.setPlaceHolder(activity, view, title)
         mediaBrowsable?.search(query, null, object : MediaBrowserCompat.SearchCallback() {
             override fun onSearchResult(query: String, extras: Bundle?, items: List<MediaBrowserCompat.MediaItem>) {
-                if (view.getTag(R.id.image_view_album_art_query) != query) {
-                    return
-                }
-                for (metadata in items) {
-                    if (metadata.description.iconUri != null) {
-                        view.setTag(R.id.image_view_album_art_query_result, metadata.description.iconUri)
-                        AlbumArtHelper.update(activity, view, metadata.description.iconUri.toString(), title)
-                        break
-                    }
-                }
+                updateByExistingAlbumArt(activity, view, title, query, items)
             }
 
         })
     }
 
-    fun setPlaceHolder(activity: Activity?, view: ImageView?, text: String?) {
+    private fun setPlaceHolder(activity: Activity?, view: ImageView?, text: String?) {
         activity?.runOnUiThread {
-            view?.apply {
-                setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
-                view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-                view.setImageDrawable(createTextDrawable(text ?: ""))
-            }
+            view?.setTextDrawable(text)
         }
     }
 
-    private fun updateAlbumArtImpl(activity: Activity, view: ImageView, artUrl: String, text: String) {
-        view.setTag(R.id.image_view_album_art_url, artUrl)
-        view.setTag(R.id.image_view_album_art_text, text)
-        view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
-        if (artUrl.isEmpty()) {
-            //view.setImageDrawable(ContextCompat.getDrawable(activity, R.mipmap.ic_launcher));
-            view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
-            view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-            view.setImageDrawable(createTextDrawable(text))
+    private fun updateByExistingAlbumArt(activity: Activity, view: ImageView, title: String, query: String, items: List<MediaBrowserCompat.MediaItem>) {
+        if (view.getTag(R.id.image_view_album_art_query) != query) {
             return
         }
-
         Thread(Runnable {
             try {
-                val bitmap = BitmapFactory.decodeStream(activity.contentResolver.openInputStream(Uri.parse(artUrl)))
-                activity.runOnUiThread {
-                    if (artUrl == view.getTag(R.id.image_view_album_art_url)) {
-                        view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP)
-                        view.setImageBitmap(bitmap)
+                readBitmap(activity, Uri.parse(items.first().description.iconUri.toString()))?.let {
+                    activity.runOnUiThread {
+                        view.setTag(R.id.image_view_album_art_url, items.first().description.iconUri.toString())
+                        view.setAlbumArtBitmap(it)
                     }
-                }
+                } ?: throw Exception()
             } catch (e: Exception) {
-                activity.runOnUiThread {
-                    if (artUrl == view.getTag(R.id.image_view_album_art_url)) {
-                        view.setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
-                        view.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
-                        view.setImageDrawable(createTextDrawable(text))
-                    }
+                if (items.size > 1) {
+                    updateByExistingAlbumArt(activity, view, title, query, items.drop(1))
+                } else {
+                    view.setTextDrawable(title)
                 }
             }
         }).start()
     }
 
-    fun createTextBitmap(text: CharSequence?) =
+    private fun updateAlbumArtImpl(activity: Activity, view: ImageView, artUrl: String, text: String) {
+        view.setTag(R.id.image_view_album_art_url, artUrl)
+        if (artUrl.isEmpty()) {
+            view.setTextDrawable(text)
+            return
+        }
+        Thread(Runnable {
+            view.loadBitmap(activity, artUrl, text)
+        }).start()
+    }
+
+    private fun ImageView.setTextDrawable(text: String?) {
+        setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_TEXT)
+        setTag(R.id.image_view_album_art_text, text)
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+        setImageDrawable(createTextDrawable(text ?: ""))
+    }
+
+    private fun ImageView.setAlbumArtBitmap(bitmap: Bitmap) {
+        setTag(R.id.image_view_album_art_type, IMAGE_VIEW_ALBUM_ART_TYPE_BITMAP)
+        setImageBitmap(bitmap)
+    }
+
+    private fun ImageView.loadBitmap(activity: Activity, artUrl: String?, text: String?) {
+        var bitmap: Bitmap? = null
+        try {
+            readBitmap(activity, Uri.parse(artUrl))?.let {
+                bitmap = it
+            }
+        } catch (e: Exception) {
+        }
+        activity.runOnUiThread {
+            if (artUrl == getTag(R.id.image_view_album_art_url)) {
+                bitmap?.let {
+                    setAlbumArtBitmap(it)
+                } ?: run {
+                    setTextDrawable(text)
+                }
+            }
+        }
+    }
+
+    private fun createTextBitmap(text: CharSequence?) =
             toBitmap(createTextDrawable(text?.toString() ?: ""))
 
     private fun createTextDrawable(text: String): TextDrawable = TextDrawable.builder()
@@ -211,10 +181,31 @@ object AlbumArtHelper {
         return bitmap
     }
 
-    fun createIcon(bitmap: Bitmap): Bitmap {
-        val scaleFactor = Math.min(MAX_ART_WIDTH_ICON.toDouble() / bitmap.width, MAX_ART_HEIGHT_ICON.toDouble() / bitmap.height)
-        return Bitmap.createScaledBitmap(bitmap, (bitmap.width * scaleFactor).toInt(), (bitmap.height * scaleFactor).toInt(), false)
+    private fun readBitmap(context: Context, uri: Uri?) = getThumbnail(context, uri)
+
+    private fun getThumbnail(context: Context, uri: Uri?, size: Int = 256): Bitmap? {
+        if (uri == null) {
+            return null
+        }
+        val onlyBoundsOptions = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+            inPreferredConfig = Bitmap.Config.ARGB_8888
+        }
+        context.contentResolver.openInputStream(uri).use {
+            BitmapFactory.decodeStream(it, null, onlyBoundsOptions)
+        }
+        if (onlyBoundsOptions.outWidth == -1 || onlyBoundsOptions.outHeight == -1) {
+            return null
+        }
+        val originalSize = if (onlyBoundsOptions.outHeight > onlyBoundsOptions.outWidth) onlyBoundsOptions.outHeight else onlyBoundsOptions.outWidth
+        return context.contentResolver.openInputStream(uri).use {
+            BitmapFactory.decodeStream(it, null, BitmapFactory.Options().apply {
+                inSampleSize = if (originalSize > size) originalSize / size else 1
+                inPreferredConfig = Bitmap.Config.ARGB_8888
+            })
+        }
     }
+
 
     private class ColorGenerator private constructor(private val colors: List<Int>) {
         private val random: Random = Random(System.currentTimeMillis())
