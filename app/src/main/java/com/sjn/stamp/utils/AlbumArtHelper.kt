@@ -53,7 +53,7 @@ object AlbumArtHelper {
         if (imageType == "bitmap") {
             view.loadBitmap(activity, artUrl, text)
         } else if (imageType == "text") {
-            view.setTextDrawable(text)
+            setPlaceHolder(activity, view, text)
         }
 
     }
@@ -90,23 +90,18 @@ object AlbumArtHelper {
         }
     }
 
-    private fun updateByExistingAlbumArt(activity: Activity, view: ImageView, title: String, query: String, items: List<MediaBrowserCompat.MediaItem>) {
+    private fun updateByExistingAlbumArt(activity: Activity, view: ImageView, text: String, query: String, items: List<MediaBrowserCompat.MediaItem>) {
         if (view.getTag(R.id.image_view_album_art_query) != query) {
             return
         }
+        if (items.isEmpty()) {
+            setPlaceHolder(activity, view, text)
+            return
+        }
         Thread(Runnable {
-            try {
-                readBitmap(activity, Uri.parse(items.first().description.iconUri.toString()))?.let {
-                    activity.runOnUiThread {
-                        view.setTag(R.id.image_view_album_art_url, items.first().description.iconUri.toString())
-                        view.setAlbumArtBitmap(it)
-                    }
-                } ?: throw Exception()
-            } catch (e: Exception) {
+            view.loadBitmap(activity, items.first().description.iconUri.toString()) {
                 if (items.size > 1) {
-                    updateByExistingAlbumArt(activity, view, title, query, items.drop(1))
-                } else {
-                    view.setTextDrawable(title)
+                    updateByExistingAlbumArt(activity, view, text, query, items.drop(1))
                 }
             }
         }).start()
@@ -115,7 +110,7 @@ object AlbumArtHelper {
     private fun updateAlbumArtImpl(activity: Activity, view: ImageView, artUrl: String, text: String) {
         view.setTag(R.id.image_view_album_art_url, artUrl)
         if (artUrl.isEmpty()) {
-            view.setTextDrawable(text)
+            setPlaceHolder(activity, view, text)
             return
         }
         Thread(Runnable {
@@ -135,7 +130,7 @@ object AlbumArtHelper {
         setImageBitmap(bitmap)
     }
 
-    private fun ImageView.loadBitmap(activity: Activity, artUrl: String?, text: String?) {
+    private fun ImageView.loadBitmap(activity: Activity, artUrl: String?, onNothing: () -> Unit) {
         var bitmap: Bitmap? = null
         try {
             readBitmap(activity, Uri.parse(artUrl))?.let {
@@ -143,15 +138,18 @@ object AlbumArtHelper {
             }
         } catch (e: Exception) {
         }
-        activity.runOnUiThread {
-            if (artUrl == getTag(R.id.image_view_album_art_url)) {
-                bitmap?.let {
-                    setAlbumArtBitmap(it)
-                } ?: run {
-                    setTextDrawable(text)
-                }
+        bitmap?.let {
+            activity.runOnUiThread {
+                setTag(R.id.image_view_album_art_url, artUrl)
+                setAlbumArtBitmap(it)
             }
+        } ?: run {
+            onNothing()
         }
+    }
+
+    private fun ImageView.loadBitmap(activity: Activity, artUrl: String?, text: String?) {
+        loadBitmap(activity, artUrl) { setPlaceHolder(activity, this, text) }
     }
 
     private fun createTextBitmap(text: CharSequence?) =

@@ -220,6 +220,7 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
         }
         initializeFabWithStamp()
         if (isShowing) {
+            updateFab()
             notifyFragmentChange()
         }
         mediaId?.let {
@@ -254,8 +255,8 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
             }
             loading?.visibility = loadingVisibility
             recyclerView?.switchLayoutManager()
+            updateFab()
             adapter?.updateDataSet(currentItems)
-            if (currentItems.isEmpty()) hideFab() else showFab()
         })
         LogHelper.d(TAG, "draw END")
     }
@@ -300,6 +301,20 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
             }
         }
 
+    }
+
+    private fun updateFab() {
+        if (currentItems.isEmpty()) {
+            hideFab()
+        } else {
+            mediaId?.let {
+                if (MediaIDHelper.getCategoryType(it) != null || !isBrowsableList()) {
+                    showFab()
+                } else {
+                    hideFab()
+                }
+            }
+        }
     }
 
     private fun isBrowsableList(): Boolean =
