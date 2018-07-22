@@ -36,9 +36,6 @@ class SongViewHolder constructor(view: View, adapter: FlexibleAdapter<*>, activi
                 putString("IMAGE_TYPE", albumArtView.getTag(R.id.image_view_album_art_type)?.toString())
                 putString("IMAGE_URL", albumArtView.getTag(R.id.image_view_album_art_url)?.toString())
                 putString("IMAGE_TEXT", albumArtView.getTag(R.id.image_view_album_art_text)?.toString())
-                albumArtView.drawable?.let {
-                    putParcelable("IMAGE_BITMAP", AlbumArtHelper.toBitmap(albumArtView.drawable))
-                }
             }
         }, emptyList())
 //        var imageTransitionName = ""

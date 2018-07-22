@@ -228,7 +228,7 @@ open class SongListFragment : MediaBrowserListFragment(), MusicListObserver.List
                     if (activity is DrawerActivity) {
                         (activity as DrawerActivity).run {
                             animateAppbar(it.getString("IMAGE_TEXT")) { activity, imageView ->
-                                AlbumArtHelper.reload(activity, imageView, it.getParcelable("IMAGE_BITMAP"), it.getString("IMAGE_TYPE"), it.getString("IMAGE_URL"), it.getString("IMAGE_TEXT"))
+                                AlbumArtHelper.reload(activity, imageView, it.getString("IMAGE_TYPE"), it.getString("IMAGE_URL"), it.getString("IMAGE_TEXT"))
                             }
                         }
 

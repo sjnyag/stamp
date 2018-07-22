@@ -48,10 +48,9 @@ object AlbumArtHelper {
         }
     }
 
-    fun reload(activity: Activity, view: ImageView, bitmap: Bitmap?, imageType: String?, artUrl: String?, text: String?) {
+    fun reload(activity: Activity, view: ImageView, imageType: String?, artUrl: String?, text: String?) {
         view.setTag(R.id.image_view_album_art_url, artUrl)
         if (imageType == "bitmap") {
-            view.setImageBitmap(bitmap)
             view.loadBitmap(activity, artUrl, text)
         } else if (imageType == "text") {
             view.setTextDrawable(text)
