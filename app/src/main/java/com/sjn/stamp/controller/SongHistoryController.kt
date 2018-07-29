@@ -29,7 +29,7 @@ class SongHistoryController(private val context: Context) {
                         return@loop
                     }
                     songHistory.song?.let {
-                        if (it.isNotEmpty()) {
+                        if (it.isNotEmpty() && it.first().mediaId.isNotEmpty()) {
                             songList.add(MediaItemHelper.convertToMetadata(songHistory.song.first()))
                         }
                     }

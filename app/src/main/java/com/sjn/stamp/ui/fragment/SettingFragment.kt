@@ -16,11 +16,10 @@ import com.sjn.stamp.controller.SongController
 import com.sjn.stamp.controller.UserSettingController
 import com.sjn.stamp.ui.DialogFacade
 import com.sjn.stamp.ui.DrawerMenu
+import com.sjn.stamp.ui.activity.DrawerActivity
 import com.sjn.stamp.ui.activity.MusicPlayerListActivity
 import com.sjn.stamp.ui.activity.MusicPlayerListActivity.Companion.START_FRAGMENT_KEY
-import com.sjn.stamp.ui.fragment.media.ListFragment
 import com.sjn.stamp.utils.*
-import eu.davidea.flexibleadapter.SelectableAdapter
 import io.multimoon.colorful.Colorful
 import io.multimoon.colorful.ThemeColorInterface
 
@@ -32,14 +31,6 @@ class SettingFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val listener = context
-        if (listener is ListFragment.FragmentInteractionListener) {
-            listener.onFragmentChange(null, null, SelectableAdapter.Mode.IDLE)
-        }
-        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,7 +109,7 @@ class SettingFragment : PreferenceFragmentCompat() {
         findPreference("song_db_unknown")?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             fragmentManager?.let {
                 val transaction = it.beginTransaction()
-                transaction.add(R.id.container, UnknownSongFragment())
+                transaction.replace(R.id.container, UnknownSongListFragment(), DrawerActivity.FRAGMENT_TAG)
                 transaction.addToBackStack(null)
                 transaction.commit()
             }

@@ -14,6 +14,7 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.sjn.stamp.R
+import com.sjn.stamp.ui.SongAdapter
 import com.sjn.stamp.ui.item.ProgressItem
 import com.sjn.stamp.ui.observer.StampEditStateObserver
 import com.sjn.stamp.utils.LogHelper
@@ -25,7 +26,7 @@ import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import java.util.*
 
 
-abstract class ListFragment : FabFragment(), SwipeRefreshLayout.OnRefreshListener, FastScroller.OnScrollStateChangeListener, FlexibleAdapter.OnItemClickListener, FlexibleAdapter.OnItemLongClickListener, FlexibleAdapter.EndlessScrollListener, FlexibleAdapter.OnUpdateListener, StampEditStateObserver.Listener {
+abstract class ListFragment : FabFragment(), SwipeRefreshLayout.OnRefreshListener, FastScroller.OnScrollStateChangeListener, SongAdapter.OriginalItemListener, FlexibleAdapter.OnItemClickListener, FlexibleAdapter.OnItemLongClickListener, FlexibleAdapter.EndlessScrollListener, FlexibleAdapter.OnUpdateListener, StampEditStateObserver.Listener {
 
     abstract val menuResourceId: Int
     var currentItems: List<AbstractFlexibleItem<*>> = ArrayList()
@@ -65,7 +66,7 @@ abstract class ListFragment : FabFragment(), SwipeRefreshLayout.OnRefreshListene
     interface FragmentInteractionListener {
 
         fun onFragmentChange(swipeRefreshLayout: SwipeRefreshLayout?, recyclerView: RecyclerView?,
-                             @SelectableAdapter.Mode mode: Int)
+                             @SelectableAdapter.Mode mode: Int, menuResourceId: Int)
 
         fun initSearchView(menu: Menu?)
 
@@ -130,7 +131,7 @@ abstract class ListFragment : FabFragment(), SwipeRefreshLayout.OnRefreshListene
 
     fun notifyFragmentChange() {
         LogHelper.d(TAG, "notifyFragmentChange START")
-        listener?.onFragmentChange(swipeRefreshLayout, recyclerView, SelectableAdapter.Mode.IDLE)
+        listener?.onFragmentChange(swipeRefreshLayout, recyclerView, SelectableAdapter.Mode.IDLE, menuResourceId)
         LogHelper.d(TAG, "notifyFragmentChange END")
     }
 
@@ -169,6 +170,12 @@ abstract class ListFragment : FabFragment(), SwipeRefreshLayout.OnRefreshListene
         state.putParcelable(LIST_STATE_KEY, listState)
         LogHelper.d(TAG, "onSaveInstanceState END")
     }
+
+
+    /**
+     * [SongAdapter.OriginalItemListener]
+     */
+    override fun onNeedOriginalItem() = currentItems
 
     /**
      * [FastScroller.OnScrollStateChangeListener]

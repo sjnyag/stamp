@@ -37,7 +37,6 @@ import com.sjn.stamp.ui.fragment.media.PagerFragment
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaRetrieveHelper
 import com.sjn.stamp.utils.PermissionHelper
-import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import java.util.*
 
 /**
@@ -71,16 +70,6 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
                 }
             }
             return null
-        }
-
-    override val currentMediaItems: List<AbstractFlexibleItem<*>>
-        get() {
-            return mediaBrowserListFragment?.currentItems ?: emptyList()
-        }
-
-    override val menuResourceId: Int
-        get() {
-            return mediaBrowserListFragment?.menuResourceId ?: 0
         }
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -135,7 +124,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
         newIntent = intent
     }
 
-    override fun search(query: String, extras: Bundle?, callback: MediaBrowserCompat.SearchCallback) {
+    override fun searchMediaItems(query: String, extras: Bundle?, callback: MediaBrowserCompat.SearchCallback) {
         mediaBrowser?.search(query, extras, callback)
     }
 
@@ -222,7 +211,7 @@ open class MusicPlayerListActivity : MediaBrowserListActivity() {
     }
 
     override fun onBackPressed() {
-        if(collapseSlide()){
+        if (collapseSlide()) {
             return
         }
         super.onBackPressed()

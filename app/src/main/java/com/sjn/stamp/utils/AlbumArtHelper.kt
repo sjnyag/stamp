@@ -76,7 +76,7 @@ object AlbumArtHelper {
         view.setTag(R.id.image_view_album_art_query, query)
         view.setTag(R.id.image_view_album_art_query_result, null)
         AlbumArtHelper.setPlaceHolder(activity, view, title)
-        mediaBrowsable?.search(query, null, object : MediaBrowserCompat.SearchCallback() {
+        mediaBrowsable?.searchMediaItems(query, null, object : MediaBrowserCompat.SearchCallback() {
             override fun onSearchResult(query: String, extras: Bundle?, items: List<MediaBrowserCompat.MediaItem>) {
                 updateByExistingAlbumArt(activity, view, title, query, items)
             }

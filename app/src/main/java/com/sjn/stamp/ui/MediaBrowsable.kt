@@ -8,7 +8,7 @@ import android.view.View
 interface MediaBrowsable {
     val mediaBrowser: MediaBrowserCompat?
 
-    fun search(query: String, extras: Bundle?, callback: MediaBrowserCompat.SearchCallback)
+    fun searchMediaItems(query: String, extras: Bundle?, callback: MediaBrowserCompat.SearchCallback)
 
     fun playByCategory(mediaId: String)
 

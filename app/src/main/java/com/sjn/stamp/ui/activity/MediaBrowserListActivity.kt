@@ -12,25 +12,20 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import com.sjn.stamp.R
+import com.sjn.stamp.ui.SongAdapter
 import com.sjn.stamp.ui.fragment.media.ListFragment
 import com.sjn.stamp.ui.observer.StampEditStateObserver
-import com.sjn.stamp.utils.CompatibleHelper
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.ViewHelper
-import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.helpers.ActionModeHelper
-import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import java.util.*
 
 
 abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQueryTextListener, ListFragment.FragmentInteractionListener, ActionMode.Callback {
 
     private var searchView: SearchView? = null
-    private var adapter: FlexibleAdapter<AbstractFlexibleItem<*>>? = null
+    private var adapter: SongAdapter? = null
     private var actionModeHelper: ActionModeHelper? = null
-
-    abstract val currentMediaItems: List<AbstractFlexibleItem<*>>
-    abstract val menuResourceId: Int
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         LogHelper.d(TAG, "onPrepareOptionsMenu START")
@@ -70,7 +65,7 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
         LogHelper.d(TAG, "initSearchView END")
     }
 
-    private fun initializeActionModeHelper(mode: Int) {
+    private fun initializeActionModeHelper(mode: Int, menuResourceId: Int) {
         LogHelper.d(TAG, "initializeActionModeHelper START")
         adapter?.let {
             actionModeHelper = object : ActionModeHelper(it, menuResourceId, this) {
@@ -95,16 +90,16 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
         LogHelper.d(TAG, "destroyActionModeIfCan END")
     }
 
-    override fun onFragmentChange(swipeRefreshLayout: SwipeRefreshLayout?, recyclerView: RecyclerView?, mode: Int) {
+    override fun onFragmentChange(swipeRefreshLayout: SwipeRefreshLayout?, recyclerView: RecyclerView?, mode: Int, menuResourceId: Int) {
         LogHelper.d(TAG, "onFragmentChange START")
         //recyclerView = recyclerView;
 
-        if (recyclerView?.adapter is FlexibleAdapter<*>) {
-            adapter = recyclerView.adapter as FlexibleAdapter<AbstractFlexibleItem<*>>
+        if (recyclerView?.adapter is SongAdapter) {
+            adapter = recyclerView.adapter as SongAdapter
         }
         //swipeRefreshLayout = swipeRefreshLayout;
         //initializeSwipeToRefresh();
-        initializeActionModeHelper(mode)
+        initializeActionModeHelper(mode, menuResourceId)
         updateAppbar()
         LogHelper.d(TAG, "onFragmentChange END")
     }
@@ -117,7 +112,7 @@ abstract class MediaBrowserListActivity : MediaBrowserActivity(), SearchView.OnQ
                 it.searchText = newText
                 // Fill and Filter mItems with your custom list and automatically animate the changes
                 // Watch out! The original list must be a copy
-                it.filterItems(ArrayList(currentMediaItems), 200)
+                it.filterItems(ArrayList(it.originalItems), 200)
             }
 
         }
