@@ -141,6 +141,7 @@ object AlbumArtHelper {
         bitmap?.let {
             activity.runOnUiThread {
                 setTag(R.id.image_view_album_art_url, artUrl)
+                setTag(R.id.image_view_album_art_query_result, artUrl)
                 setAlbumArtBitmap(it)
             }
         } ?: run {
