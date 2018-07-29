@@ -29,4 +29,7 @@ object TotalSongHistoryDao : BaseDao<TotalSongHistory>() {
         realm.commitTransaction()
         return totalSongHistory.playCount
     }
+
+    fun isPlayedExists(realm: Realm): Boolean =
+            realm.where(TotalSongHistory::class.java).greaterThanOrEqualTo("playCount", 1).findFirst() != null
 }

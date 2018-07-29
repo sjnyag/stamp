@@ -40,7 +40,7 @@ class SongHistoryController(private val context: Context) {
     val hasHistory: Boolean
         get() =
             RealmHelper.realmInstance.use { realm ->
-                SongHistoryDao.isExists(realm)
+                TotalSongHistoryDao.isPlayedExists(realm)
             }
 
     fun onPlay(mediaId: String, date: Date) {
