@@ -1,14 +1,12 @@
-package com.sjn.stamp.controller
+package com.sjn.stamp.utils
 
 import android.app.Activity
 import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import com.sjn.stamp.utils.MediaControllerHelper
-import com.sjn.stamp.utils.PreferenceHelper
 
 
-object CustomController {
+object PlayModeHelper {
 
     fun restore(service: MediaBrowserServiceCompat) {
         setShuffleMode(service, PreferenceHelper.loadShuffle(service, PlaybackStateCompat.SHUFFLE_MODE_NONE))
@@ -67,13 +65,13 @@ object CustomController {
                 }
     }
 
-    fun setShuffleMode(service: MediaBrowserServiceCompat, @PlaybackStateCompat.ShuffleMode shuffleMode: Int) {
+    private fun setShuffleMode(service: MediaBrowserServiceCompat, @PlaybackStateCompat.ShuffleMode shuffleMode: Int) {
         MediaControllerHelper.getController(service)?.transportControls?.setShuffleMode(shuffleMode).also {
             PreferenceHelper.saveShuffle(service, shuffleMode)
         }
     }
 
-    fun setRepeatMode(service: MediaBrowserServiceCompat, @PlaybackStateCompat.RepeatMode repeatMode: Int) {
+    private fun setRepeatMode(service: MediaBrowserServiceCompat, @PlaybackStateCompat.RepeatMode repeatMode: Int) {
         MediaControllerHelper.getController(service)?.transportControls?.setRepeatMode(repeatMode).also {
             PreferenceHelper.saveRepeat(service, repeatMode)
         }

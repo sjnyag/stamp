@@ -26,7 +26,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.sjn.stamp.R
-import com.sjn.stamp.controller.CustomController
+import com.sjn.stamp.utils.PlayModeHelper
 import com.sjn.stamp.controller.SongHistoryController
 import com.sjn.stamp.controller.UserSettingController
 import com.sjn.stamp.media.MediaLogger
@@ -382,7 +382,7 @@ class PlaybackManager(
         updatePlaybackState(withError)
     }
 
-    private fun handleSkip(skipCount: Int = if (CustomController.getRepeatMode(service) == PlaybackStateCompat.REPEAT_MODE_ONE) 0 else 1) {
+    private fun handleSkip(skipCount: Int = if (PlayModeHelper.getRepeatMode(service) == PlaybackStateCompat.REPEAT_MODE_ONE) 0 else 1) {
         // The media player finished playing the current song, so we go ahead
         // and start the next.
         if (queueManager.skipQueuePosition(skipCount)) {

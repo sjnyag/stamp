@@ -23,7 +23,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.sjn.stamp.R
-import com.sjn.stamp.controller.CustomController
+import com.sjn.stamp.utils.PlayModeHelper
 import com.sjn.stamp.controller.UserSettingController
 import com.sjn.stamp.media.provider.MusicProvider
 import com.sjn.stamp.media.provider.single.QueueProvider
@@ -49,7 +49,7 @@ class QueueManager(private val service: MediaBrowserServiceCompat,
     private var currentIndex: Int = 0
 
     private val playingQueue: List<MediaSessionCompat.QueueItem>
-        get() = if (CustomController.getShuffleMode(service) == PlaybackStateCompat.SHUFFLE_MODE_ALL) {
+        get() = if (PlayModeHelper.getShuffleMode(service) == PlaybackStateCompat.SHUFFLE_MODE_ALL) {
             shuffledQueue
         } else orderedQueue
 
@@ -123,7 +123,7 @@ class QueueManager(private val service: MediaBrowserServiceCompat,
         if (index < 0) {
             // skip backwards before the first song will keep you on the first song
             index = 0
-        } else if (CustomController.getRepeatMode(service) == PlaybackStateCompat.REPEAT_MODE_ALL && playingQueue.isNotEmpty()) {
+        } else if (PlayModeHelper.getRepeatMode(service) == PlaybackStateCompat.REPEAT_MODE_ALL && playingQueue.isNotEmpty()) {
             // skip forwards when in last song will cycle back to start of the queue
             index %= playingQueue.size
         }
@@ -174,7 +174,7 @@ class QueueManager(private val service: MediaBrowserServiceCompat,
     fun setCurrentQueue(title: String, newQueue: List<MediaSessionCompat.QueueItem>,
                         initialMediaId: String? = null, startMusicId: String? = null) {
         orderedQueue = newQueue
-        if (CustomController.getShuffleMode(service) == PlaybackStateCompat.SHUFFLE_MODE_ALL) {
+        if (PlayModeHelper.getShuffleMode(service) == PlaybackStateCompat.SHUFFLE_MODE_ALL) {
             updateShuffleQueue()
         }
         var index = -1

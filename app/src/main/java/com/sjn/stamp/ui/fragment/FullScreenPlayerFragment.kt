@@ -36,7 +36,7 @@ import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
 import com.sjn.stamp.R
-import com.sjn.stamp.controller.CustomController
+import com.sjn.stamp.utils.PlayModeHelper
 import com.sjn.stamp.media.StampSession
 import com.sjn.stamp.ui.activity.MusicPlayerListActivity
 import com.sjn.stamp.ui.observer.MediaControllerObserver
@@ -155,8 +155,8 @@ class FullScreenPlayerFragment : Fragment(), MediaControllerObserver.Listener {
         })
 
         repeat?.setImageDrawable(noRepeatDrawable)
-        repeat?.setOnClickListener { CustomController.toggleRepeatMode(activity) }
-        shuffle?.setOnClickListener { CustomController.toggleShuffleMode(activity) }
+        repeat?.setOnClickListener { PlayModeHelper.toggleRepeatMode(activity) }
+        shuffle?.setOnClickListener { PlayModeHelper.toggleShuffleMode(activity) }
 
         seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -220,8 +220,8 @@ class FullScreenPlayerFragment : Fragment(), MediaControllerObserver.Listener {
         super.onStart()
         MediaControllerObserver.addListener(this)
         onMediaControllerConnected()
-        onRepeatModeChanged(CustomController.getRepeatMode(activity))
-        onShuffleModeChanged(CustomController.getShuffleMode(activity))
+        onRepeatModeChanged(PlayModeHelper.getRepeatMode(activity))
+        onShuffleModeChanged(PlayModeHelper.getShuffleMode(activity))
     }
 
     override fun onStop() {
