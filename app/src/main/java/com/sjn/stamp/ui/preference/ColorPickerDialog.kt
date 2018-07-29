@@ -14,14 +14,10 @@ import io.multimoon.colorful.Colorful
 
 import io.multimoon.colorful.ThemeColor
 
-class ColorPickerDialog(context: Context, private val primary: Boolean) : Dialog(context), View.OnClickListener, ColorPickerAdapter.OnItemClickListener {
+class ColorPickerDialog(context: Context, private val primary: Boolean) : Dialog(context), ColorPickerAdapter.OnItemClickListener {
     private var recycler: RecyclerView? = null
     private var toolbar: Toolbar? = null
     private var listener: OnColorSelectedListener? = null
-
-    override fun onClick(view: View) {
-        dismiss()
-    }
 
     override fun onItemClick(color: ThemeColor) {
         dismiss()
@@ -41,7 +37,7 @@ class ColorPickerDialog(context: Context, private val primary: Boolean) : Dialog
             }
         }
         toolbar?.apply {
-            setNavigationOnClickListener(this@ColorPickerDialog)
+            setNavigationOnClickListener { dismiss() }
             setBackgroundColor(Colorful().getCurrent(primary).asInt())
             title = "Select Color"
             setNavigationIcon(android.R.drawable.ic_menu_close_clear_cancel)

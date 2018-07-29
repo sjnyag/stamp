@@ -22,23 +22,15 @@ object DialogFacade {
                 AlertDialog.Builder(context)
                         .setTitle(R.string.dialog_period_select)
                         .setView(this)
-                        .setPositiveButton(R.string.dialog_ok, { _, _ -> updateRankingPeriod(this) })
+                        .setPositiveButton(R.string.dialog_ok) { _, _ -> updateRankingPeriod(this) }
                         .show()
             }
-
-    fun createSelectValidSongDialog(context: Context, view: RecyclerView): AlertDialog =
-            AlertDialog.Builder(context).apply {
-                setTitle(R.string.dialog_merge_song)
-                setView(view)
-                setNegativeButton(R.string.dialog_cancel, { _, _ -> })
-            }.show()
-
 
     fun createRegisterStampDialog(context: Context): AlertDialog =
             AlertDialog.Builder(context).apply {
                 setTitle(R.string.dialog_stamp_register)
                 setView(StampRegisterLayout(context, null))
-                setPositiveButton(R.string.dialog_close, { _, _ -> })
+                setPositiveButton(R.string.dialog_close) { _, _ -> }
             }.show()
 
 
@@ -47,8 +39,8 @@ object DialogFacade {
                     .setTitle(R.string.dialog_confirm_title)
                     .setMessage(content)
                     .setPositiveButton(R.string.dialog_ok, onPositive)
-                    .setNegativeButton(R.string.dialog_cancel, { _, _ -> })
-                    .setOnDismissListener({ })
+                    .setNegativeButton(R.string.dialog_cancel) { _, _ -> }
+                    .setOnDismissListener { }
 
     fun createConfirmDialog(context: Context, content: String, onPositive: (Any, Any) -> Unit, onNegative: (Any, Any) -> Unit, onDismiss: DialogInterface.OnDismissListener): AlertDialog.Builder =
             AlertDialog.Builder(context)
@@ -63,8 +55,8 @@ object DialogFacade {
                     .setTitle(R.string.dialog_confirm_title)
                     .setMessage(content)
                     .setPositiveButton(R.string.dialog_ok, onPositive)
-                    .setNegativeButton(R.string.dialog_cancel, { _, _ -> })
-                    .setOnDismissListener({ })
+                    .setNegativeButton(R.string.dialog_cancel) { _, _ -> }
+                    .setOnDismissListener { }
 
     fun createConfirmDialog(context: Context, content: Int, onPositive: (Any, Any) -> Unit, onNegative: (Any, Any) -> Unit, onDismiss: DialogInterface.OnDismissListener): AlertDialog.Builder =
             AlertDialog.Builder(context)
@@ -92,13 +84,13 @@ object DialogFacade {
                 .setTitle(R.string.dialog_delete_stamp_title)
                 .setMessage(context.resources.getString(R.string.dialog_delete_stamp_content, stamp))
                 .setPositiveButton(R.string.dialog_delete, onPositive)
-                .setNegativeButton(R.string.dialog_cancel, { _, _ -> })
+                .setNegativeButton(R.string.dialog_cancel) { _, _ -> }
     }
 
     fun createLetsPlayMusicDialog(context: Context): AlertDialog.Builder {
         return AlertDialog.Builder(context)
                 .setTitle(R.string.dialog_lets_play_title)
-                .setPositiveButton(R.string.dialog_ok, { _, _ -> })
+                .setPositiveButton(R.string.dialog_ok) { _, _ -> }
     }
 
     fun createRemoveStampSongDialog(context: Context, song: String, stamp: String, onPositive: (Any, Any) -> Unit, dismissListener: DialogInterface.OnDismissListener): AlertDialog.Builder {
@@ -106,7 +98,7 @@ object DialogFacade {
                 .setTitle(R.string.dialog_remove_stamp_title)
                 .setMessage(context.resources.getString(R.string.dialog_remove_stamp_content, song, stamp))
                 .setPositiveButton(R.string.dialog_delete, onPositive)
-                .setNegativeButton(R.string.dialog_cancel, { _, _ -> })
+                .setNegativeButton(R.string.dialog_cancel) { _, _ -> }
                 .setOnDismissListener(dismissListener)
     }
 
@@ -115,7 +107,7 @@ object DialogFacade {
                 .setTitle(R.string.dialog_delete_history_title)
                 .setMessage(context.resources.getString(R.string.dialog_delete_history_content, history))
                 .setPositiveButton(R.string.dialog_delete, onPositive)
-                .setNegativeButton(R.string.dialog_cancel, { _, _ -> })
+                .setNegativeButton(R.string.dialog_cancel) { _, _ -> }
                 .setOnDismissListener(dismissListener)
     }
 
@@ -163,6 +155,6 @@ object DialogFacade {
         return AlertDialog.Builder(context)
                 .setTitle(R.string.licence)
                 .setView(list)
-                .setPositiveButton(R.string.dialog_ok, { _, _ -> })
+                .setPositiveButton(R.string.dialog_ok) { _, _ -> }
     }
 }

@@ -5,8 +5,6 @@ import android.graphics.Color
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +14,7 @@ import com.sjn.stamp.model.Song
 import com.sjn.stamp.model.dao.SongDao
 import com.sjn.stamp.ui.DialogFacade
 import com.sjn.stamp.ui.SongAdapter
+import com.sjn.stamp.ui.SongSelectDialog
 import com.sjn.stamp.ui.fragment.media.ListFragment
 import com.sjn.stamp.ui.item.SimpleMediaMetadataItem
 import com.sjn.stamp.ui.item.UnknownSongItem
@@ -24,15 +23,12 @@ import com.sjn.stamp.utils.MediaItemHelper
 import com.sjn.stamp.utils.MediaRetrieveHelper
 import com.sjn.stamp.utils.RealmHelper
 import eu.davidea.fastscroller.FastScroller
-import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 
 class UnknownSongListFragment : ListFragment() {
-    private var mergeSongRecyclerView: RecyclerView? = null
-    private var mergeSongAdapter: SongAdapter? = null
 
-    private var songSelectDialog: AlertDialog? = null
+    var dialog: SongSelectDialog? = null
 
     /**
      * [ListFragment]
@@ -62,12 +58,7 @@ class UnknownSongListFragment : ListFragment() {
     override fun onLoadMore(lastPosition: Int, currentPage: Int) {}
 
     override fun onItemClick(position: Int): Boolean {
-        adapter?.let {
-            val item = it.getItem(position)
-            if (item is UnknownSongItem) {
-                openSongSelectDialog(item.songId)
-            }
-        }
+        openSongSelectDialog(position)
         return false
     }
 
@@ -122,34 +113,26 @@ class UnknownSongListFragment : ListFragment() {
         return rootView
     }
 
-    private fun openSongSelectDialog(unknownSongId: Long) {
-        mergeSongRecyclerView = RecyclerView(activity, null)
-        mergeSongAdapter = SongAdapter(emptyList(), FlexibleAdapter.OnItemClickListener { p ->
-            mergeSongAdapter?.let {
-                val item = it.getItem(p)
-                if (item is SimpleMediaMetadataItem) {
-                    context?.let {
-                        val song = SongController(it).findSong(unknownSongId)
-                        val mediaMetadata = SongController(it).resolveMediaMetadata(item.mediaId)
-                        if (song != null && mediaMetadata != null) {
-                            openMergeConfirmDialog(p, song, mediaMetadata)
+    private fun openSongSelectDialog(position: Int) {
+        val unknownSongItem = adapter?.getItem(position) as? UnknownSongItem ?: return
+        context?.let {
+            dialog = SongSelectDialog(it).apply {
+                setOnSongSelectedListener(object : SongSelectDialog.OnSongSelectedListener {
+                    override fun onSongSelected(item: SimpleMediaMetadataItem) {
+                        context?.let {
+                            SongController(it).resolveMediaMetadata(item.mediaId)?.let {
+                                openMergeConfirmDialog(unknownSongItem.song, it, position)
+                            }
                         }
                     }
-                }
-            }
-            false
-        })
-        mergeSongRecyclerView?.let { view ->
-            view.layoutManager = SmoothScrollLinearLayoutManager(activity)
-            view.adapter = mergeSongAdapter
-            context?.let {
-                songSelectDialog = DialogFacade.createSelectValidSongDialog(it, view)
+
+                })
             }
         }
-        CreateMergeSongListAsyncTask(this).execute()
+        dialog?.show()
     }
 
-    private fun openMergeConfirmDialog(position: Int, unknownSong: Song, mediaMetadata: MediaMetadataCompat) {
+    private fun openMergeConfirmDialog(unknownSong: Song, mediaMetadata: MediaMetadataCompat, position: Int) {
         activity?.let {
             DialogFacade.createConfirmDialog(it, resources.getString(R.string.dialog_confirm_merge_song, unknownSong.title, MediaItemHelper.getTitle(mediaMetadata))
             ) { _, _ ->
@@ -158,7 +141,7 @@ class UnknownSongListFragment : ListFragment() {
                         it.runOnUiThread {
                             adapter?.removeItem(position)
                             adapter?.notifyItemRemoved(position)
-                            songSelectDialog?.dismiss()
+                            dialog?.dismiss()
                         }
                     }
                 }
@@ -169,27 +152,6 @@ class UnknownSongListFragment : ListFragment() {
     @Synchronized
     private fun createItemList(): List<AbstractFlexibleItem<*>> =
             SongDao.findUnknown(RealmHelper.realmInstance).mapIndexedTo(ArrayList()) { id, song -> UnknownSongItem(id.toString(), song) }
-
-    private class CreateMergeSongListAsyncTask constructor(val fragment: UnknownSongListFragment) : AsyncTask<Void, Void, List<MediaMetadataCompat>>() {
-
-        override fun doInBackground(vararg params: Void): List<MediaMetadataCompat> {
-            fragment.context?.let {
-                return MediaRetrieveHelper.allMediaMetadataCompat(it, null)
-            }
-            return emptyList()
-        }
-
-        override fun onPostExecute(result: List<MediaMetadataCompat>) {
-            if (result.isEmpty()) return
-            fragment.activity?.runOnUiThread(Runnable {
-                if (!fragment.isAdded) {
-                    return@Runnable
-                }
-                fragment.mergeSongAdapter?.updateDataSet(result.map { SimpleMediaMetadataItem(it) })
-            })
-        }
-
-    }
 
     private class CreateUnknownSongListAsyncTask constructor(val fragment: UnknownSongListFragment) : AsyncTask<Void, Void, Void>() {
 

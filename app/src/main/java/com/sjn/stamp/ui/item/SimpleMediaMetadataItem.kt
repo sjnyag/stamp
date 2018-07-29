@@ -1,6 +1,5 @@
 package com.sjn.stamp.ui.item
 
-import android.app.Activity
 import android.support.v4.media.MediaMetadataCompat
 import android.view.View
 import com.sjn.stamp.R
@@ -39,7 +38,7 @@ class SimpleMediaMetadataItem(metadata: MediaMetadataCompat)
             holder.title.text = title
             holder.subtitle.text = subtitle
         }
-        if (albumArt.isNotEmpty()) AlbumArtHelper.update(context as Activity, holder.albumArtView, albumArt, title)
+        if (albumArt.isNotEmpty()) AlbumArtHelper.update(context, holder.albumArtView, albumArt, title)
     }
 
     override fun filter(constraint: String): Boolean {

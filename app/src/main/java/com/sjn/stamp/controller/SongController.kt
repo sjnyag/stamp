@@ -25,11 +25,8 @@ class SongController(private val context: Context) {
 
     fun mergeSong(unknownSong: Song, mediaMetadata: MediaMetadataCompat): Boolean {
         RealmHelper.realmInstance.use { realm ->
-            SongDao.findByMediaMetadata(realm, mediaMetadata)?.let {
-                return SongDao.merge(realm, unknownSong.id, it.id)
-            }
+            return SongDao.merge(realm, unknownSong.id, SongDao.findOrCreate(realm, mediaMetadata).id)
         }
-        return false
     }
 
     fun calculateSmartStamp(songId: Long, playCount: Int, recordType: RecordType) {

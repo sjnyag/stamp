@@ -56,7 +56,7 @@ class SongHistoryItem constructor(songHistory: SongHistory, private var header: 
             holder.subtitle.text = subtitle
         }
         holder.date.text = TimeHelper.getDateText(recordedAt, context.resources)
-        if (albumArtUri.isNotEmpty()) AlbumArtHelper.update(context as Activity, holder.albumArtView, albumArtUri, title)
+        if (albumArtUri.isNotEmpty()) AlbumArtHelper.update(context, holder.albumArtView, albumArtUri, title)
         holder.updateStampList(mediaId)
     }
 

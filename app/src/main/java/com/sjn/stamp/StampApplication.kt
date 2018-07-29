@@ -4,7 +4,6 @@ import android.content.Context
 import android.support.multidex.MultiDex
 import android.support.multidex.MultiDexApplication
 import com.sjn.stamp.utils.ColorfulHelper
-import com.sjn.stamp.utils.DrawerHelper
 import com.sjn.stamp.utils.RealmHelper
 import com.squareup.leakcanary.LeakCanary
 import net.danlew.android.joda.JodaTimeAndroid

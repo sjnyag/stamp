@@ -8,7 +8,6 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.session.MediaControllerCompat
-import com.sjn.stamp.utils.PlayModeHelper
 import com.sjn.stamp.media.notification.NotificationManager
 import com.sjn.stamp.media.playback.Playback
 import com.sjn.stamp.media.playback.PlaybackManager

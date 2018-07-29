@@ -30,12 +30,12 @@ private constructor(context: Context, private val classLoader: ClassLoader, name
                 writeString(PARCELABLE)
                 writeParcelable(value, 0)
             }.let { parcel ->
-                        if (saveInUI) {
-                            saveValue(cache, parcel, it)
-                        } else {
-                            storeExecutor.execute(StoreParcelableValueTask(cache, parcel, it))
-                        }
-                    }
+                if (saveInUI) {
+                    saveValue(cache, parcel, it)
+                } else {
+                    storeExecutor.execute(StoreParcelableValueTask(cache, parcel, it))
+                }
+            }
         }
     }
 
@@ -45,12 +45,12 @@ private constructor(context: Context, private val classLoader: ClassLoader, name
                 writeString(LIST)
                 writeList(values)
             }.let { parcel ->
-                        if (saveInUI) {
-                            saveValue(cache, parcel, it)
-                        } else {
-                            storeExecutor.execute(StoreParcelableValueTask(cache, parcel, it))
-                        }
-                    }
+                if (saveInUI) {
+                    saveValue(cache, parcel, it)
+                } else {
+                    storeExecutor.execute(StoreParcelableValueTask(cache, parcel, it))
+                }
+            }
         }
     }
 

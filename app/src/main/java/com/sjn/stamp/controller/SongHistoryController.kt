@@ -22,9 +22,9 @@ class SongHistoryController(private val context: Context) {
 
     val topSongList: List<MediaMetadataCompat>
         get() =
-             RealmHelper.realmInstance.use { realm ->
+            RealmHelper.realmInstance.use { realm ->
                 val songList = ArrayList<MediaMetadataCompat>()
-                TotalSongHistoryDao.findPlayed(realm).forEach loop@ { songHistory ->
+                TotalSongHistoryDao.findPlayed(realm).forEach loop@{ songHistory ->
                     if (songHistory.playCount == 0 || songList.size >= UserSettingController().mostPlayedSongSize) {
                         return@loop
                     }

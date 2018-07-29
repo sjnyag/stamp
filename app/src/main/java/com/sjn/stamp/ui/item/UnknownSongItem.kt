@@ -1,6 +1,5 @@
 package com.sjn.stamp.ui.item
 
-import android.app.Activity
 import android.view.View
 import com.sjn.stamp.R
 import com.sjn.stamp.model.Song
@@ -12,9 +11,8 @@ import eu.davidea.flexibleadapter.items.IFilterable
 import eu.davidea.flexibleadapter.utils.FlexibleUtils
 import java.io.Serializable
 
-class UnknownSongItem(id: String, song: Song) : AbstractItem<UnknownSongViewHolder>(id), IFilterable, Serializable {
+class UnknownSongItem(id: String, val song: Song) : AbstractItem<UnknownSongViewHolder>(id), IFilterable, Serializable {
 
-    val songId = song.id
     private val lastPlayed = if (song.songHistoryList != null && !song.songHistoryList.isEmpty()) song.songHistoryList.last().recordedAt else null
     private val mediaId = song.mediaId
     override val title = song.title
@@ -44,7 +42,7 @@ class UnknownSongItem(id: String, song: Song) : AbstractItem<UnknownSongViewHold
             }
         }
         holder.mediaId = mediaId
-        if (albumArt.isNotEmpty()) AlbumArtHelper.update(context as Activity, holder.albumArtView, albumArt, title)
+        if (albumArt.isNotEmpty()) AlbumArtHelper.update(context, holder.albumArtView, albumArt, title)
 
     }
 

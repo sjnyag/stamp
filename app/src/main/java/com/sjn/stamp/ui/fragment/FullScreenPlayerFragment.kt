@@ -36,13 +36,13 @@ import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
 import com.sjn.stamp.R
-import com.sjn.stamp.utils.PlayModeHelper
 import com.sjn.stamp.media.StampSession
 import com.sjn.stamp.ui.activity.MusicPlayerListActivity
 import com.sjn.stamp.ui.observer.MediaControllerObserver
 import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.LogHelper
 import com.sjn.stamp.utils.MediaControllerHelper
+import com.sjn.stamp.utils.PlayModeHelper
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit

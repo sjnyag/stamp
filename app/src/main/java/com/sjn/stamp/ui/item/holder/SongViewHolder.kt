@@ -8,7 +8,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.sjn.stamp.R
 import com.sjn.stamp.ui.SongListFragmentFactory
-import com.sjn.stamp.utils.AlbumArtHelper
 import com.sjn.stamp.utils.SongStateHelper
 import com.sjn.stamp.utils.ViewHelper
 import eu.davidea.flexibleadapter.FlexibleAdapter

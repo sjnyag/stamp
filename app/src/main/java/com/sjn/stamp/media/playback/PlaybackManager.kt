@@ -26,7 +26,6 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.sjn.stamp.R
-import com.sjn.stamp.utils.PlayModeHelper
 import com.sjn.stamp.controller.SongHistoryController
 import com.sjn.stamp.controller.UserSettingController
 import com.sjn.stamp.media.MediaLogger

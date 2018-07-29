@@ -1,6 +1,5 @@
 package com.sjn.stamp.utils
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -48,73 +47,73 @@ object AlbumArtHelper {
         }
     }
 
-    fun reload(activity: Activity, view: ImageView, imageType: String?, artUrl: String?, text: String?) {
+    fun reload(context: Context, view: ImageView, imageType: String?, artUrl: String?, text: String?) {
         view.setTag(R.id.image_view_album_art_url, artUrl)
         if (imageType == "bitmap") {
-            view.loadBitmap(activity, artUrl, text)
+            view.loadBitmap(context, artUrl, text)
         } else if (imageType == "text") {
-            setPlaceHolder(activity, view, text)
+            setPlaceHolder(view, text)
         }
 
     }
 
-    fun update(activity: Activity?, view: ImageView?, artUrl: String?, text: CharSequence?) {
-        activity?.let { _activity ->
+    fun update(context: Context?, view: ImageView?, artUrl: String?, text: CharSequence?) {
+        context?.let { _context ->
             view?.let { _view ->
                 artUrl?.let { _artUrl ->
-                    updateAlbumArtImpl(_activity, _view, _artUrl, text?.toString() ?: "")
+                    updateAlbumArtImpl(_context, _view, _artUrl, text?.toString() ?: "")
                 }
             }
         }
     }
 
-    fun searchAndUpdate(activity: Activity, view: ImageView, title: String, query: String, mediaBrowsable: MediaBrowsable?) {
+    fun searchAndUpdate(context: Context, view: ImageView, title: String, query: String, mediaBrowsable: MediaBrowsable?) {
         if (view.getTag(R.id.image_view_album_art_query) == query && view.getTag(R.id.image_view_album_art_query_result) != null) {
-            AlbumArtHelper.update(activity, view, view.getTag(R.id.image_view_album_art_query_result).toString(), title)
+            AlbumArtHelper.update(context, view, view.getTag(R.id.image_view_album_art_query_result).toString(), title)
             return
         }
         view.setTag(R.id.image_view_album_art_query, query)
         view.setTag(R.id.image_view_album_art_query_result, null)
-        AlbumArtHelper.setPlaceHolder(activity, view, title)
+        AlbumArtHelper.setPlaceHolder(view, title)
         mediaBrowsable?.searchMediaItems(query, null, object : MediaBrowserCompat.SearchCallback() {
             override fun onSearchResult(query: String, extras: Bundle?, items: List<MediaBrowserCompat.MediaItem>) {
-                updateByExistingAlbumArt(activity, view, title, query, items)
+                updateByExistingAlbumArt(context, view, title, query, items)
             }
 
         })
     }
 
-    private fun setPlaceHolder(activity: Activity?, view: ImageView?, text: String?) {
-        activity?.runOnUiThread {
+    private fun setPlaceHolder(view: ImageView?, text: String?) {
+        Handler(Looper.getMainLooper()).post {
             view?.setTextDrawable(text)
         }
     }
 
-    private fun updateByExistingAlbumArt(activity: Activity, view: ImageView, text: String, query: String, items: List<MediaBrowserCompat.MediaItem>) {
+    private fun updateByExistingAlbumArt(context: Context, view: ImageView, text: String, query: String, items: List<MediaBrowserCompat.MediaItem>) {
         if (view.getTag(R.id.image_view_album_art_query) != query) {
             return
         }
         if (items.isEmpty()) {
-            setPlaceHolder(activity, view, text)
+            setPlaceHolder(view, text)
             return
         }
         Thread(Runnable {
-            view.loadBitmap(activity, items.first().description.iconUri.toString()) {
+            view.loadBitmap(context, items.first().description.iconUri.toString()) {
                 if (items.size > 1) {
-                    updateByExistingAlbumArt(activity, view, text, query, items.drop(1))
+                    updateByExistingAlbumArt(context, view, text, query, items.drop(1))
                 }
             }
         }).start()
     }
 
-    private fun updateAlbumArtImpl(activity: Activity, view: ImageView, artUrl: String, text: String) {
+    private fun updateAlbumArtImpl(context: Context, view: ImageView, artUrl: String, text: String) {
         view.setTag(R.id.image_view_album_art_url, artUrl)
         if (artUrl.isEmpty()) {
-            setPlaceHolder(activity, view, text)
+            setPlaceHolder(view, text)
             return
         }
         Thread(Runnable {
-            view.loadBitmap(activity, artUrl, text)
+            view.loadBitmap(context, artUrl, text)
         }).start()
     }
 
@@ -130,16 +129,16 @@ object AlbumArtHelper {
         setImageBitmap(bitmap)
     }
 
-    private fun ImageView.loadBitmap(activity: Activity, artUrl: String?, onNothing: () -> Unit) {
+    private fun ImageView.loadBitmap(context: Context, artUrl: String?, onNothing: () -> Unit) {
         var bitmap: Bitmap? = null
         try {
-            readBitmap(activity, Uri.parse(artUrl))?.let {
+            readBitmap(context, Uri.parse(artUrl))?.let {
                 bitmap = it
             }
         } catch (e: Exception) {
         }
         bitmap?.let {
-            activity.runOnUiThread {
+            Handler(Looper.getMainLooper()).post {
                 setTag(R.id.image_view_album_art_url, artUrl)
                 setTag(R.id.image_view_album_art_query_result, artUrl)
                 setAlbumArtBitmap(it)
@@ -149,8 +148,8 @@ object AlbumArtHelper {
         }
     }
 
-    private fun ImageView.loadBitmap(activity: Activity, artUrl: String?, text: String?) {
-        loadBitmap(activity, artUrl) { setPlaceHolder(activity, this, text) }
+    private fun ImageView.loadBitmap(context: Context, artUrl: String?, text: String?) {
+        loadBitmap(context, artUrl) { setPlaceHolder(this, text) }
     }
 
     private fun createTextBitmap(text: CharSequence?) =
