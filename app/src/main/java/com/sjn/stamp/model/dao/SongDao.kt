@@ -97,6 +97,10 @@ object SongDao : BaseDao<Song>() {
         return true
     }
 
+    fun delete(realm: Realm, id: Long) {
+        realm.executeTransactionAsync { r -> r.where(Song::class.java).equalTo("id", id).findFirst().deleteFromRealm() }
+    }
+
     private fun saveUnknown(realm: Realm, songId: Long) {
         val realmSong = findById(realm, songId) ?: return
         realm.beginTransaction()

@@ -123,7 +123,6 @@ class MyStampListFragment : SongListFragment(), UndoHelper.OnUndoListener, Flexi
         }
     }
 
-
     override fun onActionStateChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
         LogHelper.i(TAG, "onActionStateChanged actionState=$actionState")
         swipeRefreshLayout?.isEnabled = actionState == ItemTouchHelper.ACTION_STATE_IDLE

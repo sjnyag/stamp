@@ -167,4 +167,10 @@ class SongController(private val context: Context) {
         })
     }
 
+    fun delete(song: Song) {
+        return RealmHelper.realmInstance.use { realm ->
+            SongDao.delete(realm, song.id)
+        }
+    }
+
 }

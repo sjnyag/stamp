@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +18,7 @@ import com.sjn.stamp.ui.DialogFacade
 import com.sjn.stamp.ui.SongAdapter
 import com.sjn.stamp.ui.SongSelectDialog
 import com.sjn.stamp.ui.fragment.media.ListFragment
+import com.sjn.stamp.ui.item.AbstractItem
 import com.sjn.stamp.ui.item.SimpleMediaMetadataItem
 import com.sjn.stamp.ui.item.UnknownSongItem
 import com.sjn.stamp.ui.observer.StampEditStateObserver
@@ -23,10 +26,12 @@ import com.sjn.stamp.utils.MediaItemHelper
 import com.sjn.stamp.utils.MediaRetrieveHelper
 import com.sjn.stamp.utils.RealmHelper
 import eu.davidea.fastscroller.FastScroller
+import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.common.SmoothScrollLinearLayoutManager
+import eu.davidea.flexibleadapter.helpers.UndoHelper
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 
-class UnknownSongListFragment : ListFragment() {
+class UnknownSongListFragment : ListFragment(), UndoHelper.OnUndoListener, FlexibleAdapter.OnItemSwipeListener {
 
     var dialog: SongSelectDialog? = null
 
@@ -100,7 +105,7 @@ class UnknownSongListFragment : ListFragment() {
             fastScroller = rootView.findViewById<View>(R.id.fast_scroller) as FastScroller
             isLongPressDragEnabled = false
             isHandleDragEnabled = false
-            isSwipeEnabled = false
+            isSwipeEnabled = true
             setUnlinkAllItemsOnRemoveHeaders(false)
             setDisplayHeadersAtStartUp(false)
             setStickyHeaders(false)
@@ -111,6 +116,56 @@ class UnknownSongListFragment : ListFragment() {
             it.visibility = View.GONE
         }
         return rootView
+    }
+
+    override fun onItemSwipe(position: Int, direction: Int) {
+        if (adapter?.getItem(position) !is UnknownSongItem) return
+        val item = adapter?.getItem(position) as UnknownSongItem
+        activity?.run {
+            tryRemove(item, position)
+        }
+    }
+
+    private fun tryRemove(item: AbstractItem<*>, position: Int) {
+        val positions = mutableListOf(position)
+        val message = StringBuilder().append(item.title).append(" ").append(getString(R.string.action_deleted))
+        if (item.isSelectable) adapter?.setRestoreSelectionOnUndo(false)
+        adapter?.isPermanentDelete = false
+        swipeRefreshLayout?.isRefreshing = true
+        activity?.let {
+            UndoHelper(adapter, this@UnknownSongListFragment)
+                    .withPayload(null)
+                    .withConsecutive(true)
+                    .start(positions, it.findViewById(R.id.main_view), message, getString(R.string.undo), UndoHelper.UNDO_TIMEOUT)
+        }
+    }
+
+    override fun onActionStateChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+        swipeRefreshLayout?.isEnabled = actionState == ItemTouchHelper.ACTION_STATE_IDLE
+    }
+
+    override fun onActionCanceled(action: Int) {
+        adapter?.restoreDeletedItems()
+        swipeRefreshLayout?.isRefreshing = false
+        if (adapter?.isRestoreWithSelection == true) listener?.restoreSelection()
+    }
+
+    override fun onActionConfirmed(action: Int, event: Int) {
+        swipeRefreshLayout?.isRefreshing = false
+        for (adapterItem in adapter?.deletedItems ?: emptyList()) {
+            try {
+                when (adapterItem.layoutRes) {
+                    R.layout.recycler_unknown_song_item -> {
+                        val item = adapterItem as UnknownSongItem
+                        activity?.let {
+                            SongController(it).delete(item.song)
+                        }
+                    }
+                }
+            } catch (e: IllegalStateException) {
+                e.printStackTrace()
+            }
+        }
     }
 
     private fun openSongSelectDialog(position: Int) {

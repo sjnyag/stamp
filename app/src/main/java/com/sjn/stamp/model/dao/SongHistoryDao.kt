@@ -42,7 +42,7 @@ object SongHistoryDao : BaseDao<SongHistory>() {
 
     fun create(realm: Realm, rawSong: Song, recordType: RecordType, date: Date, count: Int) {
         SongDao.findById(realm, rawSong.id)?.let { song ->
-            realm.executeTransaction({
+            realm.executeTransaction {
                 realm.copyToRealm(SongHistory().apply {
                     this.id = getAutoIncrementId(realm)
                     this.device = DeviceDao.findOrCreate(realm)
@@ -51,7 +51,7 @@ object SongHistoryDao : BaseDao<SongHistory>() {
                     this.count = count
                     this.song = song
                 })
-            })
+            }
         }
     }
 
