@@ -97,8 +97,20 @@ object SongDao : BaseDao<Song>() {
         return true
     }
 
-    fun delete(realm: Realm, id: Long) {
-        realm.executeTransactionAsync { r -> r.where(Song::class.java).equalTo("id", id).findFirst().deleteFromRealm() }
+    fun delete(realm: Realm, songId: Long) {
+        realm.executeTransactionAsync { r ->
+            val song = findById(r, songId) ?: return@executeTransactionAsync
+            song.songHistoryList?.forEach {
+                it.deleteFromRealm()
+            }
+            song.songStampList.forEach {
+                if (it.songList.contains(song)) {
+                    it.songList.remove(song)
+                }
+            }
+            song.totalSongHistory.deleteFromRealm()
+            song.deleteFromRealm()
+        }
     }
 
     private fun saveUnknown(realm: Realm, songId: Long) {

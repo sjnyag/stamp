@@ -21,25 +21,25 @@ object SongStampDao : BaseDao<SongStamp>() {
                     ?: emptyList()
 
     fun register(realm: Realm, songId: Long, name: String, isSystem: Boolean) {
-        realm.executeTransaction({
+        realm.executeTransaction {
             val song = SongDao.findById(realm, songId)
             if (song != null) {
                 val songStamp = findOrCreate(realm, name, isSystem)
                 songStamp.addSong(song)
             }
-        })
+        }
     }
 
     fun remove(realm: Realm, songId: Long, name: String, isSystem: Boolean): Boolean {
         var result = false
-        realm.executeTransaction({
+        realm.executeTransaction {
             val song = SongDao.findById(realm, songId)
             val songStamp = findOrCreate(realm, name, isSystem)
             if (song != null && songStamp.songList.contains(song)) {
                 songStamp.removeSong(song)
                 result = true
             }
-        })
+        }
         return result
     }
 
@@ -61,9 +61,9 @@ object SongStampDao : BaseDao<SongStamp>() {
     }
 
     fun delete(realm: Realm, name: String, isSystem: Boolean) {
-        realm.executeTransaction({
+        realm.executeTransaction {
             realm.where(SongStamp::class.java).equalTo("name", name).equalTo("isSystem", isSystem).findAll().deleteAllFromRealm()
-        })
+        }
     }
 
     private fun create(realm: Realm, name: String, isSystem: Boolean): SongStamp {
