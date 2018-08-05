@@ -14,6 +14,10 @@ class AlbumListProvider(context: Context) : MultipleListProvider(context) {
     override val titleId: Int = R.string.media_item_label_album
 
     override fun compareMediaList(lhs: MediaMetadataCompat, rhs: MediaMetadataCompat): Int =
-            if (lhs.getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER) < rhs.getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER)) -1 else 1
+            when {
+                lhs.getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER) < rhs.getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER) -> -1
+                lhs.getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER) == rhs.getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER) -> 0
+                else -> 1
+            }
 
 }

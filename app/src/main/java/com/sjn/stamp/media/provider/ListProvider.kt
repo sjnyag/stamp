@@ -18,6 +18,12 @@ abstract class ListProvider {
 
     fun getRootMenu(resources: Resources): MediaBrowserCompat.MediaItem = MediaItemHelper.createBrowsableItem(providerMediaId, resources.getString(titleId))
 
+    protected fun compareByTitle(lhs: MediaMetadataCompat, rhs: MediaMetadataCompat): Int {
+        val lh = lhs.getString(MediaMetadataCompat.METADATA_KEY_TITLE) ?: ""
+        val rh = rhs.getString(MediaMetadataCompat.METADATA_KEY_TITLE) ?: ""
+        return lh.compareTo(rh)
+    }
+
     abstract fun reset()
 
     abstract fun getListItems(mediaId: String, resources: Resources, state: ProviderState,

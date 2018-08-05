@@ -18,8 +18,7 @@ class MyStampListProvider(context: Context) : MultipleListProvider(context) {
     override val titleId: Int = R.string.media_item_label_stamp
 
     override fun compareMediaList(lhs: MediaMetadataCompat, rhs: MediaMetadataCompat): Int =
-            (lhs.getString(MediaMetadataCompat.METADATA_KEY_TITLE)
-                    ?: "").compareTo(rhs.getString(MediaMetadataCompat.METADATA_KEY_TITLE) ?: "")
+            compareByTitle(lhs, rhs)
 
     override fun updateTrackListMap(musicListById: MutableMap<String, MediaMetadataCompat>) {
         StampController(context).createStampMap(musicListById, trackMap, false)

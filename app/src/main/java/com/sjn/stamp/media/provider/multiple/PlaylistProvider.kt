@@ -19,6 +19,7 @@ class PlaylistProvider(context: Context) : MultipleListProvider(context) {
         PlaylistController(context).loadAllPlaylist(trackMap)
     }
 
-    override fun compareMediaList(lhs: MediaMetadataCompat, rhs: MediaMetadataCompat): Int = 1
+    override fun compareMediaList(lhs: MediaMetadataCompat, rhs: MediaMetadataCompat): Int =
+            compareByTitle(lhs, rhs)
 
 }

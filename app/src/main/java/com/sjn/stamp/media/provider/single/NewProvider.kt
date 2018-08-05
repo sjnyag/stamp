@@ -17,9 +17,11 @@ class NewProvider(context: Context) : AllProvider(context) {
     override fun createTrackList(musicListById: Map<String, MediaMetadataCompat>): List<MediaMetadataCompat> =
             subList(super.createTrackList(musicListById), UserSettingController().newSongDays)
 
-    override fun compareMediaList(lhs: MediaMetadataCompat, rhs: MediaMetadataCompat): Int =
-            (rhs.getString(MediaMetadataCompat.METADATA_KEY_DATE)
-                    ?: "").compareTo(lhs.getString(MediaMetadataCompat.METADATA_KEY_DATE) ?: "")
+    override fun compareMediaList(lhs: MediaMetadataCompat, rhs: MediaMetadataCompat): Int {
+        val lh = lhs.getString(MediaMetadataCompat.METADATA_KEY_DATE) ?: ""
+        val rh = rhs.getString(MediaMetadataCompat.METADATA_KEY_DATE) ?: ""
+        return lh.compareTo(rh)
+    }
 
     private fun subList(list: List<MediaMetadataCompat>, days: Int): List<MediaMetadataCompat> =
             list.indices
