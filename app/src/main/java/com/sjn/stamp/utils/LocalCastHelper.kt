@@ -25,7 +25,7 @@ object LocalCastHelper {
             }
             return when {
                 session.uri.contains("image") -> serveImage()
-            //session.uri.contains("debug") -> NanoHTTPD.Response(NOT_FOUND, NanoHTTPD.MIME_PLAINTEXT, media?.description?.mediaUri?.toString())
+                //session.uri.contains("debug") -> NanoHTTPD.Response(NOT_FOUND, NanoHTTPD.MIME_PLAINTEXT, media?.description?.mediaUri?.toString())
                 else -> serveMusic()
             }
         }

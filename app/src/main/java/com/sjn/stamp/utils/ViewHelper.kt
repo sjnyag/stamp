@@ -5,6 +5,8 @@ import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Context
 import android.graphics.Color
+import android.os.Handler
+import android.os.Looper
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
@@ -89,6 +91,18 @@ inline fun <T : View> T.afterMeasured(crossinline f: T.() -> Unit) {
             }
         }
     })
+}
+
+inline fun Context.runOnUiThread(crossinline f: () -> Unit) {
+    if (this is Activity) {
+        this.runOnUiThread {
+            f()
+        }
+    } else {
+        Handler(Looper.getMainLooper()).post {
+            f()
+        }
+    }
 }
 
 fun MenuItem.tintByTheme(context: Context) {
