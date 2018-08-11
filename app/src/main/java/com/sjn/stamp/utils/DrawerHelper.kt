@@ -28,7 +28,7 @@ object DrawerHelper {
         private val accountHeader: AccountHeader = AccountHeaderBuilder().apply {
             withSelectionListEnabledForSingleProfile(false)
             withActivity(activity)
-            withHeaderBackground(Drawable.createFromStream(activity.assets.open(String.format("drawer/mb-bg-fb-%0${2}d.jpg", Random().nextInt(30) + 1)), null))
+            withHeaderBackground(Drawable.createFromStream(activity.assets.open(String.format(Locale.US, "drawer/mb-bg-fb-%0${2}d.jpg", Random().nextInt(30) + 1)), null))
         }.build()
         private val drawer = DrawerBuilder().apply {
             withActivity(activity)
